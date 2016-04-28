@@ -21,11 +21,11 @@ from source.
 
 2. To install Python binding on Windows:
 
-	Run the following command in command prompt:
+  Run the following command in command prompt:
 
         C:\> C:\location_to_python\python.exe setup.py install
 
-	Next, copy all the DLL files from the 'Core engine for Windows' package available
-	on the same Keystone download page and paste it in the path:
+  Next, copy all the DLL files from the 'Core engine for Windows' package available
+  on the same Keystone download page and paste it in the path:
 
         C:\location_to_python\Lib\site-packages\keystone\
