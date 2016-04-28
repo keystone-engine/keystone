@@ -23,9 +23,11 @@ Keystone is available under a dual license:
 
 - Version 2 of the GNU General Public License (GPLv2). (I.e. Without the "any later version" clause.).
   License information can be found in the [COPYING file](COPYING) and the [EXCEPTIONS-CLIENT file](EXCEPTIONS-CLIENT).
+
   This combination allows almost all of open source projects to use Keystone without conflicts.
 
 - For commercial usage in production environments, contact the authors of Keystone to buy a royalty-free license.
+
   See [LICENSE-COM.TXT](LICENSE-COM.TXT) for more information.
 
 
