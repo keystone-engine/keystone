@@ -1,0 +1,17 @@
+language: cpp
+
+sudo: false
+
+script:
+        - mkdir build
+        - cd build
+        - ../make-share.sh
+        - ../make-lib.sh
+
+compiler:
+        - clang
+        - gcc
+
+os:
+        - linux
+        - osx

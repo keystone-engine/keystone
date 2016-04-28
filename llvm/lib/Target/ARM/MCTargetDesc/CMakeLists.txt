@@ -1,0 +1,10 @@
+add_llvm_library(LLVMARMDesc
+  ARMAsmBackend.cpp
+  ARMELFObjectWriter.cpp
+  ARMMachObjectWriter.cpp
+  ARMMCAsmInfo.cpp
+  ARMMCCodeEmitter.cpp
+  ARMMCExpr.cpp
+  ARMMCTargetDesc.cpp
+  ARMWinCOFFObjectWriter.cpp
+  )

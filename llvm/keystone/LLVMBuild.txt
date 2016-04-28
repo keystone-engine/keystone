@@ -1,0 +1,14 @@
+;===------------------------------------------------------------------------===;
+;
+; This is an LLVMBuild description file for the Keystone library
+;
+; For more information on the LLVMBuild system, please see:
+;
+;   http://llvm.org/docs/LLVMBuild.html
+;
+;===------------------------------------------------------------------------===;
+
+[component_0]
+type = Library
+name = keystone
+parent = Libraries

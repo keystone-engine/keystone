@@ -1,0 +1,8 @@
+This file lists all the sponsors of Keystone Engine.
+Thanks a lot for your great support!
+----------------------------------------------------
+
+Mike Guidry
+Synacktiv Digital Security (www.synacktiv.com)
+Tim "diff" Strazzere
+Veris Group (www.verisgroup.com)

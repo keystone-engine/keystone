@@ -1,0 +1,15 @@
+This directory contains sample code for Keystone engine.
+
+- On Linux/Mac OSX/*nix, compile sample with "make" as following:
+
+        $ make
+
+    Then run the resulted "sample"
+
+- On Windows, compile sample with "nmake.bat" as following (CMake is required):
+
+        $ mkdir build
+        $ cd build
+        $ ../nmake.bat
+
+    Then run the resulted "sample.exe"

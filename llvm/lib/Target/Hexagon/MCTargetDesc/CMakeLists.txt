@@ -1,0 +1,14 @@
+add_llvm_library(LLVMHexagonDesc
+  HexagonAsmBackend.cpp
+  HexagonELFObjectWriter.cpp
+  HexagonMCAsmInfo.cpp
+  HexagonMCChecker.cpp
+  HexagonMCCodeEmitter.cpp
+  HexagonMCCompound.cpp
+  HexagonMCDuplexInfo.cpp
+  HexagonMCExpr.cpp
+  HexagonMCInstrInfo.cpp
+  HexagonMCShuffler.cpp
+  HexagonMCTargetDesc.cpp
+  HexagonShuffler.cpp
+  )

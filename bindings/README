@@ -1,0 +1,3 @@
+This directory contains all the bindings for Keystone.
+
+See python/README.TXT for how to install the Python binding.
