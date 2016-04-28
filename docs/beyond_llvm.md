@@ -1,8 +1,3 @@
----
-layout: default
-title: Keystone & LLVM
----
-
 ## Keystone & LLVM
 
 Keystone engine is based on the [MC component](http://blog.llvm.org/2010/04/intro-to-llvm-mc-project.html) of the LLVM compiler infrastructure, which among many stuffs has an assembler engine inside. LLVM even has a tool named *llvm-mc* that can be used to compile input string of assembly instructions.
