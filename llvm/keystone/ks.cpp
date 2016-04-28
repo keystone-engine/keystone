@@ -174,6 +174,7 @@ ks_err ks_open(ks_arch arch, ks_mode mode, ks_engine **result)
 
     if (arch < KS_ARCH_MAX) {
         ks = (struct ks_struct *)calloc(1, sizeof(*ks));
+        ks = new(ks) ks_struct;
         if (!ks) {
             // memory insufficient
             return KS_ERR_NOMEM;
