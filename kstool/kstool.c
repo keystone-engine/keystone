@@ -11,7 +11,7 @@ static void usage(char *prog)
 {
     printf("Kstool v%s for Keystone Assembler Engine (www.keystone-engine.org)\nBy Nguyen Anh Quynh, 2016\n\n", VERSION);
     printf("Syntax: %s <arch+mode> <assembly-string>\n", prog);
-    printf("\n  The following <arch+mode> options are supported:\n");
+    printf("\nThe following <arch+mode> options are supported:\n");
     printf("        x16:       X86 16bit, Intel syntax\n");
     printf("        x32:       X86 32bit, Intel syntax\n");
     printf("        x64:       X86 64bit, Intel syntax\n");
@@ -147,7 +147,7 @@ int main(int argc, char **argv)
         printf("ERROR: failed on ks_asm() with count = %lu, error = '%s' (code = %u)\n", count, ks_strerror(ks_errno(ks)), ks_errno(ks));
     } else {
         size_t i;
-        printf("Kstool for Keystone Engine (www.keystone-engine.org)\n\n");
+        printf("Kstool v%s for Keystone Engine (www.keystone-engine.org)\n\n", VERSION);
 
         printf("%s = [ ", assembly);
         for (i = 0; i < size; i++) {
