@@ -1161,7 +1161,8 @@ void X86MCCodeEmitter::EmitOpcodePrefix(uint64_t TSFlags, unsigned &CurByte,
 void X86MCCodeEmitter::
 encodeInstruction(MCInst &MI, raw_ostream &OS,
                   SmallVectorImpl<MCFixup> &Fixups,
-                  const MCSubtargetInfo &STI) const {
+                  const MCSubtargetInfo &STI) const
+{
   unsigned Opcode = MI.getOpcode();
   const MCInstrDesc &Desc = MCII.get(Opcode);
   uint64_t TSFlags = Desc.TSFlags;

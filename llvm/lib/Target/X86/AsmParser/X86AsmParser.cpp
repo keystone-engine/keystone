@@ -2504,18 +2504,6 @@ bool X86AsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
     }
   }
 
-  // Transforms "int $3" into "int3" as a size optimization.  We can't write an
-  // instalias with an immediate operand yet.
-  if (Name == "int" && Operands.size() == 2) {
-    X86Operand &Op1 = static_cast<X86Operand &>(*Operands[1]);
-    if (Op1.isImm())
-      if (auto *CE = dyn_cast<MCConstantExpr>(Op1.getImm()))
-        if (CE->getValue() == 3) {
-          Operands.erase(Operands.begin() + 1);
-          static_cast<X86Operand &>(*Operands[0]).setTokenValue("int3");
-        }
-  }
-
   // Transforms "xlat mem8" into "xlatb"
   if ((Name == "xlat" || Name == "xlatb") && Operands.size() == 2) {
     X86Operand &Op1 = static_cast<X86Operand &>(*Operands[1]);
