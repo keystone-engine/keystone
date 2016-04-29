@@ -11,8 +11,7 @@ extern "C" {
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
-
-#include "platform.h"
+#include <stdbool.h>
 
 #ifdef _MSC_VER
 #pragma warning(disable:4201)
