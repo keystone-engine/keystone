@@ -1094,7 +1094,7 @@ void X86MCCodeEmitter::EmitSegmentOverridePrefix(unsigned &CurByte,
   case 0: break;
   case X86::CS: EmitByte(0x2E, CurByte, OS); break;
   case X86::SS: EmitByte(0x36, CurByte, OS); break;
-  case X86::DS: EmitByte(0x3E, CurByte, OS); break;
+  case X86::DS: /* ignore default segment DS */ break;
   case X86::ES: EmitByte(0x26, CurByte, OS); break;
   case X86::FS: EmitByte(0x64, CurByte, OS); break;
   case X86::GS: EmitByte(0x65, CurByte, OS); break;
