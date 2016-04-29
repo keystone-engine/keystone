@@ -1,6 +1,8 @@
 Keystone Engine
 ==============
 
+[![Build Status](https://travis-ci.com/keystone-engine/beta.svg?token=qRatki7fioYiV8ckDzCq&branch=master)](https://travis-ci.com/keystone-engine/beta)
+
 Keystone is a lightweight multi-platform, multi-architecture assembler framework.
 It offers some unparalleled features:
 
