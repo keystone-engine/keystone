@@ -24,6 +24,7 @@ Daniel Collin
 Vitaly Osipov
 Dang Hoang Vu
 Paul Rascagneres
+postmodern
 
 
 Contributors (in no particular order)
