@@ -2645,7 +2645,7 @@ bool X86AsmParser::MatchAndEmitATTInstruction(SMLoc IDLoc, unsigned &Opcode,
   assert(!Operands.empty() && "Unexpect empty operand list!");
   X86Operand &Op = static_cast<X86Operand &>(*Operands[0]);
   assert(Op.isToken() && "Leading operand should always be a mnemonic!");
-  ArrayRef<SMRange> EmptyRanges = None;
+  //ArrayRef<SMRange> EmptyRanges = None;
 
   // First, handle aliases that expand to multiple instructions.
   MatchFPUWaitAlias(IDLoc, Op, Operands, Out, MatchingInlineAsm);
@@ -2754,6 +2754,7 @@ bool X86AsmParser::MatchAndEmitATTInstruction(SMLoc IDLoc, unsigned &Opcode,
     }
     OS << ")";
 #endif
+    //printf("*** >>> InvalidOperand 11\n");
     ErrorCode = KS_ERR_ASM_X86_INVALIDOPERAND;
     //Error(IDLoc, OS.str(), EmptyRanges, MatchingInlineAsm);
     return true;
@@ -2765,19 +2766,23 @@ bool X86AsmParser::MatchAndEmitATTInstruction(SMLoc IDLoc, unsigned &Opcode,
   // mnemonic was invalid.
   if (std::count(std::begin(Match), std::end(Match), Match_MnemonicFail) == 4) {
     if (!WasOriginallyInvalidOperand) {
-      ArrayRef<SMRange> Ranges =
-          MatchingInlineAsm ? EmptyRanges : Op.getLocRange();
+      //ArrayRef<SMRange> Ranges =
+      //    MatchingInlineAsm ? EmptyRanges : Op.getLocRange();
+      //return Error(IDLoc, "invalid instruction mnemonic '" + Base + "'",
+      //             Ranges, MatchingInlineAsm);
       ErrorCode = KS_ERR_ASM_X86_MNEMONICFAIL;
-      return Error(IDLoc, "invalid instruction mnemonic '" + Base + "'",
-                   Ranges, MatchingInlineAsm);
+      return true;
     }
 
     // Recover location info for the operand if we know which was the problem.
     if (ErrorInfo != ~0ULL) {
-      if (ErrorInfo >= Operands.size())
-        ErrorCode = KS_ERR_ASM_X86_INVALIDOPERAND;
-        return Error(IDLoc, "too few operands for instruction",
-                     EmptyRanges, MatchingInlineAsm);
+      if (ErrorInfo >= Operands.size()) {
+          //printf("*** >>> InvalidOperand 22\n");
+          ErrorCode = KS_ERR_ASM_X86_INVALIDOPERAND;
+          //return Error(IDLoc, "too few operands for instruction",
+          //             EmptyRanges, MatchingInlineAsm);
+          return true;
+      }
 
       X86Operand &Operand = (X86Operand &)*Operands[ErrorInfo];
       if (Operand.getStartLoc().isValid()) {
@@ -2787,9 +2792,11 @@ bool X86AsmParser::MatchAndEmitATTInstruction(SMLoc IDLoc, unsigned &Opcode,
       }
     }
 
+    //printf("*** >>> InvalidOperand 33\n");
     ErrorCode = KS_ERR_ASM_X86_INVALIDOPERAND;
-    return Error(IDLoc, "invalid operand for instruction", EmptyRanges,
-                 MatchingInlineAsm);
+    //return Error(IDLoc, "invalid operand for instruction", EmptyRanges,
+    //             MatchingInlineAsm);
+    return true;
   }
 
   // If one instruction matched with a missing feature, report this as a
@@ -2798,23 +2805,26 @@ bool X86AsmParser::MatchAndEmitATTInstruction(SMLoc IDLoc, unsigned &Opcode,
                  Match_MissingFeature) == 1) {
     ErrorInfo = ErrorInfoMissingFeature;
     ErrorCode = KS_ERR_ASM_X86_MISSINGFEATURE;
-    return ErrorMissingFeature(IDLoc, ErrorInfoMissingFeature,
-                               MatchingInlineAsm);
+    //return ErrorMissingFeature(IDLoc, ErrorInfoMissingFeature,
+    //                           MatchingInlineAsm);
+    return true;
   }
 
   // If one instruction matched with an invalid operand, report this as an
   // operand failure.
   if (std::count(std::begin(Match), std::end(Match),
                  Match_InvalidOperand) == 1) {
+    //printf("*** >>> InvalidOperand 44\n");
     ErrorCode = KS_ERR_ASM_X86_INVALIDOPERAND;
-    return Error(IDLoc, "invalid operand for instruction", EmptyRanges,
-                 MatchingInlineAsm);
+    //return Error(IDLoc, "invalid operand for instruction", EmptyRanges,
+    //             MatchingInlineAsm);
+    return true;
   }
 
   // If all of these were an outright failure, report it in a useless way.
   ErrorCode = KS_ERR_ASM_X86_MNEMONICFAIL;
-  Error(IDLoc, "unknown use of instruction mnemonic without a size suffix",
-        EmptyRanges, MatchingInlineAsm);
+  //Error(IDLoc, "unknown use of instruction mnemonic without a size suffix",
+  //      EmptyRanges, MatchingInlineAsm);
   return true;
 }
 
@@ -2828,7 +2838,7 @@ bool X86AsmParser::MatchAndEmitIntelInstruction(SMLoc IDLoc, unsigned &Opcode,
   X86Operand &Op = static_cast<X86Operand &>(*Operands[0]);
   assert(Op.isToken() && "Leading operand should always be a mnemonic!");
   StringRef Mnemonic = Op.getToken();
-  ArrayRef<SMRange> EmptyRanges = None;
+  //ArrayRef<SMRange> EmptyRanges = None;
 
   // First, handle aliases that expand to multiple instructions.
   MatchFPUWaitAlias(IDLoc, Op, Operands, Out, MatchingInlineAsm);
@@ -2900,11 +2910,12 @@ bool X86AsmParser::MatchAndEmitIntelInstruction(SMLoc IDLoc, unsigned &Opcode,
 
   // If it's a bad mnemonic, all results will be the same.
   if (Match.back() == Match_MnemonicFail) {
-    ArrayRef<SMRange> Ranges =
-        MatchingInlineAsm ? EmptyRanges : Op.getLocRange();
+    //ArrayRef<SMRange> Ranges =
+    //    MatchingInlineAsm ? EmptyRanges : Op.getLocRange();
     ErrorCode = KS_ERR_ASM_X86_MNEMONICFAIL;
-    return Error(IDLoc, "invalid instruction mnemonic '" + Mnemonic + "'",
-                 Ranges, MatchingInlineAsm);
+    //return Error(IDLoc, "invalid instruction mnemonic '" + Mnemonic + "'",
+    //             Ranges, MatchingInlineAsm);
+    return true;
   }
 
   // If exactly one matched, then we treat that as a successful match (and the
@@ -2927,12 +2938,16 @@ bool X86AsmParser::MatchAndEmitIntelInstruction(SMLoc IDLoc, unsigned &Opcode,
   } else if (NumSuccessfulMatches > 1) {
     assert(UnsizedMemOp &&
            "multiple matches only possible with unsized memory operands");
-    ArrayRef<SMRange> Ranges =
-        MatchingInlineAsm ? EmptyRanges : UnsizedMemOp->getLocRange();
+    //ArrayRef<SMRange> Ranges =
+    //    MatchingInlineAsm ? EmptyRanges : UnsizedMemOp->getLocRange();
+
+    //return Error(UnsizedMemOp->getStartLoc(),
+    //             "ambiguous operand size for instruction '" + Mnemonic + "\'",
+    //             Ranges, MatchingInlineAsm);
+
+    //printf("*** >>> InvalidOperand 55\n");
     ErrorCode = KS_ERR_ASM_X86_INVALIDOPERAND;
-    return Error(UnsizedMemOp->getStartLoc(),
-                 "ambiguous operand size for instruction '" + Mnemonic + "\'",
-                 Ranges, MatchingInlineAsm);
+    return true;
   }
 
   // If one instruction matched with a missing feature, report this as a
@@ -2941,23 +2956,27 @@ bool X86AsmParser::MatchAndEmitIntelInstruction(SMLoc IDLoc, unsigned &Opcode,
                  Match_MissingFeature) == 1) {
     ErrorInfo = ErrorInfoMissingFeature;
     ErrorCode = KS_ERR_ASM_X86_MISSINGFEATURE;
-    return ErrorMissingFeature(IDLoc, ErrorInfoMissingFeature,
-                               MatchingInlineAsm);
+    //return ErrorMissingFeature(IDLoc, ErrorInfoMissingFeature,
+    //                           MatchingInlineAsm);
+    return true;
   }
 
   // If one instruction matched with an invalid operand, report this as an
   // operand failure.
   if (std::count(std::begin(Match), std::end(Match),
                  Match_InvalidOperand) == 1) {
+    //printf("*** >>> InvalidOperand 66\n");
     ErrorCode = KS_ERR_ASM_X86_INVALIDOPERAND;
-    return Error(IDLoc, "invalid operand for instruction", EmptyRanges,
-                 MatchingInlineAsm);
+    //return Error(IDLoc, "invalid operand for instruction", EmptyRanges,
+    //             MatchingInlineAsm);
+    return true;
   }
 
   // If all of these were an outright failure, report it in a useless way.
   ErrorCode = KS_ERR_ASM_X86_MNEMONICFAIL;
-  return Error(IDLoc, "unknown instruction mnemonic", EmptyRanges,
-               MatchingInlineAsm);
+  //return Error(IDLoc, "unknown instruction mnemonic", EmptyRanges,
+  //             MatchingInlineAsm);
+  return true;
 }
 
 bool X86AsmParser::OmitRegisterFromClobberLists(unsigned RegNo) {
