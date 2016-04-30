@@ -5,7 +5,7 @@
 
 # Fill in the information in the form below when you create a new regression
 
-# Github issue: #7
+# Github issue: #xxx
 # Author: Nguyen Anh Quynh
 
 from keystone import *
