@@ -1267,6 +1267,10 @@ RewriteIntelBracExpression(SmallVectorImpl<AsmRewrite> &AsmRewrites,
   }
 }
 
+#if defined(_WIN32) || defined(_WIN64)
+#define strcasecmp _stricmp
+#endif
+
 bool X86AsmParser::ParseIntelExpression(IntelExprStateMachine &SM, SMLoc &End)
 {
   unsigned int ErrorCode;
