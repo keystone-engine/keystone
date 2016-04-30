@@ -418,6 +418,7 @@ ks_err ks_option(ks_engine *ks, ks_opt_type type, size_t value)
                     ks->syntax = (ks_opt_value)value;
                     ks->MAI->setAssemblerDialect(1);
                     break;
+                case KS_OPT_SYNTAX_GAS:
                 case KS_OPT_SYNTAX_ATT:
                     ks->syntax = (ks_opt_value)value;
                     ks->MAI->setAssemblerDialect(0);
