@@ -34,9 +34,9 @@ https://www.visualstudio.com
 
 2. Test Keystone with "kstool" like below.
 
-        $ kstool x32 "add eax, ebx"
+        $ kstool.exe x32 "add eax, ebx"
 
-  Run "kstool" without any option to find out how to use this handy tool.
+  Run "kstool.exe" without any option to find out how to use this handy tool.
 
 
 3. Learn more on how to code your own tools with our samples.
