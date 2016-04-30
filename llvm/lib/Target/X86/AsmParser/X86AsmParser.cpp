@@ -1805,9 +1805,16 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand() {
   unsigned Size = getIntelMemOperandSize(Tok.getString());
   if (Size) {
     Parser.Lex(); // Eat operand size (e.g., byte, word).
-    if (Tok.getString() != "PTR" && Tok.getString() != "ptr")
-      return ErrorOperand(Tok.getLoc(), "Expected 'PTR' or 'ptr' token!");
-    Parser.Lex(); // Eat ptr.
+    if (KsSyntax == KS_OPT_SYNTAX_NASM) {
+        // Nasm do not accept 'PTR' in memory operands
+        if (Tok.getString() == "PTR" && Tok.getString() == "ptr")
+            return ErrorOperand(Tok.getLoc(), "Do not expected 'PTR' or 'ptr' token!");
+    } else {
+        // LLVM requires 'PTR' in memory operand
+        if (Tok.getString() != "PTR" && Tok.getString() != "ptr")
+            return ErrorOperand(Tok.getLoc(), "Expected 'PTR' or 'ptr' token!");
+        Parser.Lex(); // Eat ptr.
+    }
     PtrInOperand = true;
   }
   Start = Tok.getLoc();

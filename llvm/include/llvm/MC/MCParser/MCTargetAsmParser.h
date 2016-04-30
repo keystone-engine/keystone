@@ -117,6 +117,9 @@ protected: // Can only create subclasses.
   const MCSubtargetInfo *STI;
 
 public:
+  // save Keystone syntax
+  int KsSyntax;
+
   ~MCTargetAsmParser() override;
 
   const MCSubtargetInfo &getSTI() const;

@@ -413,6 +413,7 @@ ks_err ks_option(ks_engine *ks, ks_opt_type type, size_t value)
             switch(value) {
                 default:
                     return KS_ERR_OPT_INVALID;
+                case KS_OPT_SYNTAX_NASM:
                 case KS_OPT_SYNTAX_INTEL:
                     ks->syntax = (ks_opt_value)value;
                     ks->MAI->setAssemblerDialect(1);
@@ -473,6 +474,7 @@ int ks_asm(ks_engine *ks,
 
     MCAsmParser *Parser = createMCAsmParser(ks->SrcMgr, *Ctx, *Streamer, *ks->MAI);
     MCTargetAsmParser *TAP = ks->TheTarget->createMCAsmParser(*ks->STI, *Parser, *ks->MCII, ks->MCOptions);
+    TAP->KsSyntax = ks->syntax;
 
     Parser->setTargetParser(*TAP);
 
