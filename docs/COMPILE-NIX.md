@@ -4,38 +4,44 @@ For Windows, see [COMPILE-WINDOWS.md](COMPILE-WINDOWS.md)
 
 0. Dependency
 
-CMake is required as dependency.
+CMake is required to build keystone.
 
 - On Mac OS X, you can install "cmake" with "brew".
 
         $ brew install cmake
 
-- On Utunbu Linux, install "cmake" with.
+- On Ubuntu Linux, install "cmake" with:
 
         $ sudo apt-get install cmake
 
 
-1. From the root directory of Keystone source, compile dynamic library
-   with below commands.
+1. From the root directory of Keystone source, compile as a dynamic library
+   with the following commands.
 
         $ mkdir build
         $ cd build
         $ ../make-share.sh
 
-   You can also compile static libray with.
+   You can also compile static a library with:
 
         $ mkdir build
         $ cd build
         $ ../make-lib.sh
 
 
-2. Right after building step, install Keystone.
+2. Right after building, install Keystone.
 
         $ sudo make install
 
-   Besides the libraries & C header files under directory "include/keystone",
-   this step also installs a tool named "kstool" into the system.
-   (Find source of "kstool" in directory "kstool/kstool")
+   Keystone is installed in '/usr/local', depending on your distribution (eg. Ubuntu) you might
+   need to add '/usr/local/lib' to '/etc/ld.so.conf'. Then update the dynamic linker
+   with:
+        
+        $ sudo ldconfig
+   
+   Besides the libraries & C header files under  thedirectory "include/keystone",
+   this step also installs a tool named "kstool" on the system.
+   (The source of "kstool" is in the directory "kstool/kstool")
 
 
 3. Test Keystone with "kstool" like below.
