@@ -13,14 +13,10 @@ extern "C" {
 #include <stdio.h>
 #include <stdbool.h>
 
-#ifdef _MSC_VER
+#ifdef _MSC_VER     // MSVC compiler
 #pragma warning(disable:4201)
 #pragma warning(disable:4100)
-#ifdef KEYSTONE_SHARED
 #define KEYSTONE_EXPORT __declspec(dllexport)
-#else    // defined(KEYSTONE_STATIC)
-#define KEYSTONE_EXPORT
-#endif
 #else
 #ifdef __GNUC__
 #define KEYSTONE_EXPORT __attribute__((visibility("default")))
