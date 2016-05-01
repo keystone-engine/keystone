@@ -15,9 +15,12 @@ build_script:
 artifacts:
   - path: build\llvm\bin\keystone.dll
     name: keystone.dll
+	type: zip
 
   - path: build\llvm\lib\keystone.lib
     name: keystone.lib
+	type: zip
 
   - path: build\kstool\kstool.exe
     name: kstool.exe
+	type: zip
