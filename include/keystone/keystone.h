@@ -54,6 +54,7 @@ typedef enum ks_arch {
 
 // Mode type
 typedef enum ks_mode {
+    KS_MODE_NONE = 0,
     KS_MODE_LITTLE_ENDIAN = 0,    // little-endian mode (default mode)
     KS_MODE_BIG_ENDIAN = 1 << 30, // big-endian mode
     // arm / arm64
