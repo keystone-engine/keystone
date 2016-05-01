@@ -12,3 +12,12 @@ build_script:
   - ..\nmake-dll.bat
   - ..\nmake-lib.bat
 
+artifacts:
+  - path: build\llvm\bin\keystone.dll
+    name: keystone.dll
+
+  - path: build\llvm\lib\keystone.lib
+    name: keystone.lib
+
+  - path: build\kstool\kstool.exe
+    name: kstool.exe
