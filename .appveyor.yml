@@ -25,12 +25,12 @@ artifacts:
 
   - path: build\llvm\bin\keystone.dll
     name: keystone.dll
-	type: DLL
+    type: DLL
 
   - path: build\llvm\lib\keystone.lib
     name: keystone.lib
-	type: LIB
+    type: LIB
 
   - path: build\kstool\kstool.exe
     name: kstool.exe
-	type: EXE
+    type: EXE
