@@ -13,12 +13,12 @@ build_script:
   - ..\nmake-lib.bat
 
 after_build:
-  - 7z a keystone-windows.zip build\llvm\bin\keystone.dll
-  - 7z a keystone-windows.zip build\llvm\lib\keystone.lib
-  - 7z a keystone-windows.zip build\kstool\kstool.exe
+  - 7z a keystone-windows.zip llvm\bin\keystone.dll
+  - 7z a keystone-windows.zip llvm\lib\keystone.lib
+  - 7z a keystone-windows.zip kstool\kstool.exe
 
 artifacts:
-  - path: keystone-windows.zip
+  - path: build\keystone-windows.zip
     name: keystone-windows.zip
 
   - path: build\llvm\bin\keystone.dll
