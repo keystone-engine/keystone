@@ -20,8 +20,8 @@ after_build:
   - 7z a keystone-windows-latest.zip zip\*
 
 artifacts:
-  - path: build\keystone-windows.zip
-    name: keystone-windows.zip
+  - path: build\keystone-windows-latest.zip
+    name: keystone-windows-latest.zip
 
   - path: build\llvm\bin\keystone.dll
     name: keystone.dll
