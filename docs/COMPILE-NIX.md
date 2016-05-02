@@ -2,7 +2,7 @@ This documentation explains how to build & install Keystone on all kind of nix O
 For Windows, see [COMPILE-WINDOWS.md](COMPILE-WINDOWS.md)
 
 
-0. Dependency
+1. Dependency
 
   CMake is required to build keystone.
 
@@ -15,7 +15,7 @@ For Windows, see [COMPILE-WINDOWS.md](COMPILE-WINDOWS.md)
         $ sudo apt-get install cmake
 
 
-1. From the root directory of Keystone source, compile its dynamic library
+2. From the root directory of Keystone source, compile its dynamic library
    with the following commands.
 
         $ mkdir build
@@ -44,7 +44,7 @@ For Windows, see [COMPILE-WINDOWS.md](COMPILE-WINDOWS.md)
         $ make -j8
 
 
-2. Right after building, install Keystone.
+3. Right after building, install Keystone.
 
         $ sudo make install
 
@@ -59,14 +59,14 @@ For Windows, see [COMPILE-WINDOWS.md](COMPILE-WINDOWS.md)
    (The source of "kstool" is in the directory "kstool/kstool")
 
 
-3. Test Keystone with "kstool" like below.
+4. Test Keystone with "kstool" like below.
 
         $ kstool x32 "add eax, ebx"
 
    Run "kstool" without any option to find out how to use this handy tool.
 
 
-4. Learn more on how to code your own tools with our samples.
+5. Learn more on how to code your own tools with our samples.
 
    For C sample code, see code in directory samples/
 

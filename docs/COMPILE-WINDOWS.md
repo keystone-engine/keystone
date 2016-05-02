@@ -2,7 +2,7 @@ This documentation explains how to build Keystone on Windows.
 For *nix OS, see [COMPILE-NIX.md](COMPILE-NIX.md)
 
 
-0. Dependency
+1. Dependency
 
   CMake is required as dependency.
   Download & install cmake from http://www.cmake.org
@@ -11,7 +11,7 @@ For *nix OS, see [COMPILE-NIX.md](COMPILE-NIX.md)
   https://www.visualstudio.com
 
 
-1. Open the Visual Studio Command Promplt, and from the root directory
+2. Open the Visual Studio Command Promplt, and from the root directory
   of Keystone source, do:
 
         $ mkdir build
@@ -47,14 +47,14 @@ For *nix OS, see [COMPILE-NIX.md](COMPILE-NIX.md)
   (Find source of "kstool" in directory "kstool/kstool")
 
 
-2. Test Keystone with "kstool" like below.
+3. Test Keystone with "kstool" like below.
 
         $ kstool.exe x32 "add eax, ebx"
 
   Run "kstool.exe" without any option to find out how to use this handy tool.
 
 
-3. Learn more on how to code your own tools with our samples.
+4. Learn more on how to code your own tools with our samples.
 
    For C sample code, see code in directory samples/
 
