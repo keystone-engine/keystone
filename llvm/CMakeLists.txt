@@ -139,20 +139,6 @@ if(WIN32 AND NOT UNIX)
 endif()
 include(CPack)
 
-# Sanity check our source directory to make sure that we are not trying to
-# generate an in-tree build (unless on MSVC_IDE, where it is ok), and to make
-# sure that we don't have any stray generated files lying around in the tree
-# (which would end up getting picked up by header search, instead of the correct
-# versions).
-if( CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR AND NOT MSVC_IDE )
-  message(FATAL_ERROR "In-source builds are not allowed.
-CMake would overwrite the makefiles distributed with LLVM.
-Please create a directory and run cmake from there, passing the path
-to this source directory as the last argument.
-This process created the file `CMakeCache.txt' and the directory `CMakeFiles'.
-Please delete them.")
-endif()
-
 string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
 
 if (CMAKE_BUILD_TYPE AND

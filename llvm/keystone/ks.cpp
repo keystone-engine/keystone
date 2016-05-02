@@ -33,9 +33,9 @@ unsigned int ks_version(unsigned int *major, unsigned int *minor)
 
 
 KEYSTONE_EXPORT
-unsigned int ks_errno(ks_engine *ks)
+ks_err ks_errno(ks_engine *ks)
 {
-    return ks->errnum;
+    return (ks_err)ks->errnum;
 }
 
 

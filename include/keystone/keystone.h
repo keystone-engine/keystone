@@ -224,7 +224,7 @@ ks_err ks_close(ks_engine *ks);
  @return: error code of ks_err enum type (KS_ERR_*, see above)
 */
 KEYSTONE_EXPORT
-unsigned int ks_errno(ks_engine *ks);
+ks_err ks_errno(ks_engine *ks);
 
 
 /*
