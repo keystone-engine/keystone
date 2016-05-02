@@ -22,11 +22,26 @@ CMake is required to build keystone.
         $ cd build
         $ ../make-share.sh
 
+   By default, this builds all architectures, which is: AArch64, ARM, Hexagon,
+   Mips, PowerPC, Sparc, SystemZ & X86. To compile just some selected ones,
+   pass a semicolon-separated list of targets to LLVM_TARGETS_TO_BUILD,
+   like follows if we only want AArch64 & X86.
+
+        $ cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DLLVM_TARGETS_TO_BUILD="AArch64, X86" -G "Unix Makefiles" ..
+        $ make -j8
+
    You can also compile static a library with:
 
         $ mkdir build
         $ cd build
         $ ../make-lib.sh
+
+   Like above, this builds all architectures. To compile just some selected ones,
+   pass a semicolon-separated list of targets to LLVM_TARGETS_TO_BUILD,
+   like follows if we only want AArch64 & X86.
+
+        $ cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DLLVM_TARGETS_TO_BUILD="AArch64, X86" -G "Unix Makefiles" ..
+        $ make -j8
 
 
 2. Right after building, install Keystone.

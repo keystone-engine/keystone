@@ -21,9 +21,24 @@ https://www.visualstudio.com
 
         $ ..\nmake-dll.bat
 
+   By default, this builds all architectures, which is: AArch64, ARM, Hexagon,
+   Mips, PowerPC, Sparc, SystemZ & X86. To compile just some selected ones,
+   pass a semicolon-separated list of targets to LLVM_TARGETS_TO_BUILD,
+   like follows if we only want AArch64 & X86.
+
+        $ cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DLLVM_TARGETS_TO_BUILD="AArch64, X86" -G "NMake Makefiles" ..
+        $ nmake
+
   To build LIB file, run:
 
         $ ..\nmake-lib.bat
+
+   Like above, this builds all architectures. To compile just some selected ones,
+   pass a semicolon-separated list of targets to LLVM_TARGETS_TO_BUILD,
+   like follows if we only want AArch64 & X86.
+
+        $ cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DLLVM_TARGETS_TO_BUILD="AArch64, X86" -G "NMake Makefiles" ..
+        $ nmake
 
   Find the generated libraries in build\llvm\lib\keystone.{dll,lib}
   
