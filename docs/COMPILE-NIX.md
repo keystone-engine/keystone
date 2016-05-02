@@ -2,20 +2,20 @@ This documentation explains how to build & install Keystone on all kind of nix O
 For Windows, see [COMPILE-WINDOWS.md](COMPILE-WINDOWS.md)
 
 
-Dependency
+0. Dependency
 
-CMake is required to build keystone.
+  CMake is required to build keystone.
 
-- On Mac OS X, you can install "cmake" with "brew".
+  - On Mac OS X, you can install "cmake" with "brew".
 
         $ brew install cmake
 
-- On Ubuntu Linux, install "cmake" with:
+  - On Ubuntu Linux, install "cmake" with:
 
         $ sudo apt-get install cmake
 
 
-1. From the root directory of Keystone source, compile as a dynamic library
+1. From the root directory of Keystone source, compile its dynamic library
    with the following commands.
 
         $ mkdir build

@@ -2,13 +2,13 @@ This documentation explains how to build Keystone on Windows.
 For *nix OS, see [COMPILE-NIX.md](COMPILE-NIX.md)
 
 
-Dependency
+0. Dependency
 
-CMake is required as dependency.
-Download & install cmake from http://www.cmake.org
+  CMake is required as dependency.
+  Download & install cmake from http://www.cmake.org
 
-Microsoft Visual Studio is required for compiling. Download & install it from 
-https://www.visualstudio.com
+  Microsoft Visual Studio is required for compiling. Download & install it from 
+  https://www.visualstudio.com
 
 
 1. Open the Visual Studio Command Promplt, and from the root directory
@@ -21,10 +21,10 @@ https://www.visualstudio.com
 
         $ ..\nmake-dll.bat
 
-   By default, this builds all architectures, which is: AArch64, ARM, Hexagon,
-   Mips, PowerPC, Sparc, SystemZ & X86. To compile just some selected ones,
-   pass a semicolon-separated list of targets to LLVM_TARGETS_TO_BUILD,
-   like follows if we only want AArch64 & X86.
+  By default, this builds all architectures, which is: AArch64, ARM, Hexagon,
+  Mips, PowerPC, Sparc, SystemZ & X86. To compile just some selected ones,
+  pass a semicolon-separated list of targets to LLVM_TARGETS_TO_BUILD,
+  like follows if we only want AArch64 & X86.
 
         $ cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DLLVM_TARGETS_TO_BUILD="AArch64, X86" -G "NMake Makefiles" ..
         $ nmake
@@ -33,9 +33,9 @@ https://www.visualstudio.com
 
         $ ..\nmake-lib.bat
 
-   Like above, this builds all architectures. To compile just some selected ones,
-   pass a semicolon-separated list of targets to LLVM_TARGETS_TO_BUILD,
-   like follows if we only want AArch64 & X86.
+  Like above, this builds all architectures. To compile just some selected ones,
+  pass a semicolon-separated list of targets to LLVM_TARGETS_TO_BUILD,
+  like follows if we only want AArch64 & X86.
 
         $ cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DLLVM_TARGETS_TO_BUILD="AArch64, X86" -G "NMake Makefiles" ..
         $ nmake
