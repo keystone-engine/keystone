@@ -12,30 +12,54 @@ static void usage(char *prog)
     printf("Kstool v%s for Keystone Assembler Engine (www.keystone-engine.org)\nBy Nguyen Anh Quynh, 2016\n\n", VERSION);
     printf("Syntax: %s <arch+mode> <assembly-string>\n", prog);
     printf("\nThe following <arch+mode> options are supported:\n");
-    printf("        x16:       X86 16bit, Intel syntax\n");
-    printf("        x32:       X86 32bit, Intel syntax\n");
-    printf("        x64:       X86 64bit, Intel syntax\n");
-    printf("        x16att:    X86 16bit, AT&T syntax\n");
-    printf("        x32att:    X86 32bit, AT&T syntax\n");
-    printf("        x64att:    X86 64bit, AT&T syntax\n");
-    printf("        arm:       ARM - little endian\n");
-    printf("        armbe:     ARM - big endian\n");
-    printf("        thumb:     Thumb - little endian\n");
-    printf("        thumbbe:   Thumb - big endian\n");
-    printf("        arm64:     AArch64\n");
-    printf("        hexagon:   Hexagon\n");
-    printf("        mips:      Mips - little endian\n");
-    printf("        mipsbe:    Mips - big endian\n");
-    printf("        mips64:    Mips64 - little endian\n");
-    printf("        mips64be:  Mips64 - big endian\n");
-    printf("        ppc32be:   PowerPC32 - big endian\n");
-    printf("        ppc64:     PowerPC64 - little endian\n");
-    printf("        ppc64be:   PowerPC64 - big endian\n");
-    printf("        sparc:     Sparc - little endian\n");
-    printf("        sparcbe:   Sparc - big endian\n");
-    printf("        sparc64:   Sparc64 - little endian\n");
-    printf("        sparc64be: Sparc64 - big endian\n");
-    printf("        systemz:   SystemZ (S390x)\n");
+
+    if (ks_arch_supported(KS_ARCH_X86)) {
+        printf("        x16:       X86 16bit, Intel syntax\n");
+        printf("        x32:       X86 32bit, Intel syntax\n");
+        printf("        x64:       X86 64bit, Intel syntax\n");
+        printf("        x16att:    X86 16bit, AT&T syntax\n");
+        printf("        x32att:    X86 32bit, AT&T syntax\n");
+        printf("        x64att:    X86 64bit, AT&T syntax\n");
+    }
+
+    if (ks_arch_supported(KS_ARCH_ARM)) {
+        printf("        arm:       ARM - little endian\n");
+        printf("        armbe:     ARM - big endian\n");
+        printf("        thumb:     Thumb - little endian\n");
+        printf("        thumbbe:   Thumb - big endian\n");
+    }
+
+    if (ks_arch_supported(KS_ARCH_ARM64)) {
+        printf("        arm64:     AArch64\n");
+    }
+
+    if (ks_arch_supported(KS_ARCH_HEXAGON)) {
+        printf("        hexagon:   Hexagon\n");
+    }
+
+    if (ks_arch_supported(KS_ARCH_MIPS)) {
+        printf("        mips:      Mips - little endian\n");
+        printf("        mipsbe:    Mips - big endian\n");
+        printf("        mips64:    Mips64 - little endian\n");
+        printf("        mips64be:  Mips64 - big endian\n");
+    }
+
+    if (ks_arch_supported(KS_ARCH_PPC)) {
+        printf("        ppc32be:   PowerPC32 - big endian\n");
+        printf("        ppc64:     PowerPC64 - little endian\n");
+        printf("        ppc64be:   PowerPC64 - big endian\n");
+    }
+
+    if (ks_arch_supported(KS_ARCH_SPARC)) {
+        printf("        sparc:     Sparc - little endian\n");
+        printf("        sparcbe:   Sparc - big endian\n");
+        printf("        sparc64:   Sparc64 - little endian\n");
+        printf("        sparc64be: Sparc64 - big endian\n");
+    }
+
+    if (ks_arch_supported(KS_ARCH_SYSTEMZ)) {
+        printf("        systemz:   SystemZ (S390x)\n");
+    }
 }
 
 int main(int argc, char **argv)
