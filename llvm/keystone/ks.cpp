@@ -115,7 +115,7 @@ static const Target *GetTarget(std::string TripleName)
 }
 
 
-static ks_err InitKs(ks_engine *ks, std::string TripleName)
+static ks_err InitKs(int arch, ks_engine *ks, std::string TripleName)
 {
     static bool initialized = false;
     std::string MCPU = "";
@@ -160,6 +160,7 @@ static ks_err InitKs(ks_engine *ks, std::string TripleName)
     ks->MCII = ks->TheTarget->createMCInstrInfo();
     ks->STI = ks->TheTarget->createMCSubtargetInfo(ks->TripleName, MCPU, ks->FeaturesStr);
     ks->MAB = ks->TheTarget->createMCAsmBackend(*ks->MRI, ks->TripleName, MCPU);
+    ks->MAB->setArch(arch);
     ks->MCOptions = InitMCTargetOptionsFromFlags();
 
     return KS_ERR_OK;
@@ -206,7 +207,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
                         TripleName = "armv7";
                 }
 
-                InitKs(ks, TripleName);
+                InitKs(arch, ks, TripleName);
 
                 //ks->init_arch = arm_ks_init;
                 break;
@@ -220,7 +221,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
                 }
 
                 TripleName = "aarch64";
-                InitKs(ks, TripleName);
+                InitKs(arch, ks, TripleName);
 
                 //ks->init_arch = arm64_ks_init;
                 break;
@@ -235,7 +236,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
 
                 TripleName = "hexagon";
 
-                InitKs(ks, TripleName);
+                InitKs(arch, ks, TripleName);
 
                 //ks->init_arch = arm_ks_init;
                 break;
@@ -250,7 +251,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
 
                 TripleName = "s390x";
 
-                InitKs(ks, TripleName);
+                InitKs(arch, ks, TripleName);
 
                 //ks->init_arch = arm_ks_init;
                 break;
@@ -280,7 +281,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
                         TripleName = "sparcel";
                 }
 
-                InitKs(ks, TripleName);
+                InitKs(arch, ks, TripleName);
 
                 break;
 #endif
@@ -305,7 +306,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
                         TripleName = "mips64el";
                 }
 
-                InitKs(ks, TripleName);
+                InitKs(arch, ks, TripleName);
 
                 break;
 #endif
@@ -333,7 +334,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
                         TripleName = "ppc64le";
                 }
 
-                InitKs(ks, TripleName);
+                InitKs(arch, ks, TripleName);
 
                 //ks->init_arch = ppc_ks_init;
                 break;
@@ -364,7 +365,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
                         break;
                 }
 
-                InitKs(ks, TripleName);
+                InitKs(arch, ks, TripleName);
 
                 //ks->init_arch = x86_ks_init;
                 break;

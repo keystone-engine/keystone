@@ -40,6 +40,7 @@ protected: // Can only create subclasses.
   MCAsmBackend();
 
   unsigned HasDataInCodeSupport : 1;
+  int KsArch;   // Keystone arch
 
 public:
   virtual ~MCAsmBackend();
@@ -140,6 +141,9 @@ public:
       generateCompactUnwindEncoding(ArrayRef<MCCFIInstruction>) const {
     return 0;
   }
+
+  void setArch(int arch) { KsArch = arch; }
+  int getArch() { return KsArch; }
 };
 
 } // End llvm namespace
