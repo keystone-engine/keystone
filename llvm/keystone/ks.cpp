@@ -167,7 +167,7 @@ static ks_err InitKs(ks_engine *ks, std::string TripleName)
 
 
 KEYSTONE_EXPORT
-ks_err ks_open(ks_arch arch, ks_mode mode, ks_engine **result)
+ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
 {
     struct ks_struct *ks;
     std::string TripleName = "";

@@ -196,7 +196,7 @@ bool ks_arch_supported(ks_arch arch);
    for detailed error).
 */
 KEYSTONE_EXPORT
-ks_err ks_open(ks_arch arch, ks_mode mode, ks_engine **ks);
+ks_err ks_open(ks_arch arch, int mode, ks_engine **ks);
 
 
 /*
