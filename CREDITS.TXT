@@ -25,6 +25,7 @@ Vitaly Osipov
 Dang Hoang Vu
 Paul Rascagneres
 postmodern
+Fotis Loukos
 
 
 Contributors (in no particular order)
