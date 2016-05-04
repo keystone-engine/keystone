@@ -698,9 +698,9 @@ private:
                             std::unique_ptr<llvm::MCParsedAsmOperand> &&Dst);
   bool VerifyAndAdjustOperands(OperandVector &OrigOperands,
                                OperandVector &FinalOperands);
-  std::unique_ptr<X86Operand> ParseOperand();
+  std::unique_ptr<X86Operand> ParseOperand(StringRef Mnem);
   std::unique_ptr<X86Operand> ParseATTOperand();
-  std::unique_ptr<X86Operand> ParseIntelOperand();
+  std::unique_ptr<X86Operand> ParseIntelOperand(StringRef Mnem);
   std::unique_ptr<X86Operand> ParseIntelOffsetOfOperator();
   bool ParseIntelDotOperator(const MCExpr *Disp, const MCExpr *&NewDisp);
   std::unique_ptr<X86Operand> ParseIntelOperator(unsigned OpKind);
@@ -1138,9 +1138,9 @@ bool X86AsmParser::VerifyAndAdjustOperands(OperandVector &OrigOperands,
   return false;
 }
 
-std::unique_ptr<X86Operand> X86AsmParser::ParseOperand() {
+std::unique_ptr<X86Operand> X86AsmParser::ParseOperand(StringRef Mnem) {
   if (isParsingIntelSyntax())
-    return ParseIntelOperand();
+    return ParseIntelOperand(Mnem);
   return ParseATTOperand();
 }
 
@@ -1611,7 +1611,8 @@ X86AsmParser::ParseRoundingModeOp(SMLoc Start, SMLoc End) {
 /// ParseIntelMemOperand - Parse intel style memory operand.
 std::unique_ptr<X86Operand> X86AsmParser::ParseIntelMemOperand(int64_t ImmDisp,
                                                                SMLoc Start,
-                                                               unsigned Size) {
+                                                               unsigned Size)
+{
   MCAsmParser &Parser = getParser();
   const AsmToken &Tok = Parser.getTok();
   SMLoc End;
@@ -1624,7 +1625,7 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelMemOperand(int64_t ImmDisp,
   const MCExpr *Val;
   if (!isParsingInlineAsm()) {
     if (getParser().parsePrimaryExpr(Val, End))
-      return ErrorOperand(Tok.getLoc(), "unknown token in expression"); // qq: hack ErrorOperand
+      return ErrorOperand(Tok.getLoc(), "unknown token in expression");
 
     return X86Operand::CreateMem(getPointerWidth(), Val, Start, End, Size);
   }
@@ -1787,7 +1788,8 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperator(unsigned OpKind) {
   return X86Operand::CreateImm(Imm, Start, End);
 }
 
-std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand() {
+std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand(StringRef Mnem)
+{
   MCAsmParser &Parser = getParser();
   const AsmToken &Tok = Parser.getTok();
   SMLoc Start, End;
@@ -1852,6 +1854,13 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand() {
         return X86Operand::CreateMem(getPointerWidth(), SM.getSym(), Start, End,
                                      Size);
 
+      if (Mnem.str().c_str()[0] == 'j') {
+          // JMP <immediate>
+          const MCExpr *Disp = MCConstantExpr::create(Imm, Parser.getContext());
+          return X86Operand::CreateMem(getPointerWidth(), 0, Disp, 0, 0, 1,
+                  Start, End);
+      }
+
       const MCExpr *ImmExpr = MCConstantExpr::create(Imm, getContext());
       return X86Operand::CreateImm(ImmExpr, Start, End);
     }
@@ -1893,7 +1902,8 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand() {
   return ParseIntelMemOperand(/*Disp=*/0, Start, Size);
 }
 
-std::unique_ptr<X86Operand> X86AsmParser::ParseATTOperand() {
+std::unique_ptr<X86Operand> X86AsmParser::ParseATTOperand()
+{
   MCAsmParser &Parser = getParser();
   switch (getLexer().getKind()) {
   default:
@@ -1982,7 +1992,7 @@ bool X86AsmParser::HandleAVX512Operand(OperandVector &Operands,
       } else {
         // Parse mask register {%k1}
         Operands.push_back(X86Operand::CreateToken("{", consumedToken));
-        if (std::unique_ptr<X86Operand> Op = ParseOperand()) {
+        if (std::unique_ptr<X86Operand> Op = ParseOperand("")) {
           Operands.push_back(std::move(Op));
           if (!getLexer().is(AsmToken::RCurly))
             return !ErrorAndEatStatement(getLexer().getLoc(),
@@ -2013,7 +2023,8 @@ bool X86AsmParser::HandleAVX512Operand(OperandVector &Operands,
 /// ParseMemOperand: segment: disp(basereg, indexreg, scale).  The '%ds:' prefix
 /// has already been parsed if present.
 std::unique_ptr<X86Operand> X86AsmParser::ParseMemOperand(unsigned SegReg,
-                                                          SMLoc MemStart) {
+                                                          SMLoc MemStart)
+{
 
   unsigned int ErrorCode;
   MCAsmParser &Parser = getParser();
@@ -2186,7 +2197,8 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseMemOperand(unsigned SegReg,
 
 // TODO: this also output error??
 bool X86AsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
-                                    SMLoc NameLoc, OperandVector &Operands, unsigned int &ErrorCode) {
+                                    SMLoc NameLoc, OperandVector &Operands, unsigned int &ErrorCode)
+{
   MCAsmParser &Parser = getParser();
   InstInfo = &Info;
   StringRef PatchedName = Name;
@@ -2340,7 +2352,7 @@ bool X86AsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
 
     // Read the operands.
     while(1) {
-      if (std::unique_ptr<X86Operand> Op = ParseOperand()) {
+      if (std::unique_ptr<X86Operand> Op = ParseOperand(Name)) {
         Operands.push_back(std::move(Op));
         if (!HandleAVX512Operand(Operands, *Operands.back()))
           return true;
@@ -2600,9 +2612,9 @@ bool X86AsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
                                            bool MatchingInlineAsm, unsigned int &ErrorCode, uint64_t &Address) {
   if (isParsingIntelSyntax())
     return MatchAndEmitIntelInstruction(IDLoc, Opcode, Operands, Out, ErrorInfo,
-                                        MatchingInlineAsm, ErrorCode);  // qq
+                                        MatchingInlineAsm, ErrorCode);
   return MatchAndEmitATTInstruction(IDLoc, Opcode, Operands, Out, ErrorInfo,
-                                    MatchingInlineAsm, ErrorCode);  // qq
+                                    MatchingInlineAsm, ErrorCode);
 }
 
 void X86AsmParser::MatchFPUWaitAlias(SMLoc IDLoc, X86Operand &Op,
