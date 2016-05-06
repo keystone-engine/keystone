@@ -364,6 +364,10 @@ public:
     : MCTargetAsmParser(Options, STI), MII(MII), UC(Parser) {
     MCAsmParserExtension::Initialize(Parser);
 
+    MCStreamer &S = getParser().getStreamer();
+    if (S.getTargetStreamer() == nullptr)
+      new ARMTargetStreamer(S);
+
     // Cache the MCRegisterInfo.
     MRI = getContext().getRegisterInfo();
 
@@ -5242,11 +5246,9 @@ bool ARMAsmParser::parseOperand(OperandVector &Operands, StringRef Mnemonic, uns
       return true;
     E = SMLoc::getFromPointer(Parser.getTok().getLoc().getPointer() - 1);
 
-#if 0   // FIXME
     const MCExpr *CPLoc =
         getTargetStreamer().addConstantPoolEntry(SubExprVal, S);
     Operands.push_back(ARMOperand::CreateImm(CPLoc, S, E));
-#endif
     return false;
   }
   }
@@ -9663,7 +9665,7 @@ bool ARMAsmParser::parseDirectiveInst(SMLoc Loc, char Suffix) {
 /// parseDirectiveLtorg
 ///  ::= .ltorg | .pool
 bool ARMAsmParser::parseDirectiveLtorg(SMLoc L) {
-//  getTargetStreamer().emitCurrentConstantPool();
+  getTargetStreamer().emitCurrentConstantPool();
   return false;
 }
 
