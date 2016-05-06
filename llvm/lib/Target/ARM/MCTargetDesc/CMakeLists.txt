@@ -7,4 +7,5 @@ add_llvm_library(LLVMARMDesc
   ARMMCExpr.cpp
   ARMMCTargetDesc.cpp
   ARMWinCOFFObjectWriter.cpp
+  ARMTargetStreamer.cpp
   )
