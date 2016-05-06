@@ -90,10 +90,6 @@ kstool ppc32be "add 1, 2, 3"
 #encoding: [0x7c,0x22,0x1a,0x14]
 echo
 
-#echo "::PPC LE"
-#kstool ppc "add 1, 2, 3" 
-#echo
-
 echo "::PPC64 LE"
 kstool ppc64 "add 1, 2, 3"
 #encoding: [0x14,0x1a,0x22,0x7c]
@@ -103,9 +99,3 @@ echo "::PPC64 BE"
 kstool ppc64be "add 1, 2, 3"
 #encoding: [0x7c,0x22,0x1a,0x14]
 echo
-
-
-#kstool arm64be "ldr w1, [spx, #0x8]"
-#error: invalid operand for instruction
-#ldr w1, [spx, #0x8]
-
