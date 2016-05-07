@@ -452,6 +452,7 @@ public:
   unsigned getCommentColumn() const { return 40; }
 
   const char *getCommentString() const { return CommentString; }
+  void setCommentString(const char *str) { CommentString = str; }
   const char *getLabelSuffix() const { return LabelSuffix; }
 
   bool useAssignmentForEHBegin() const { return UseAssignmentForEHBegin; }

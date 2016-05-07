@@ -22,6 +22,10 @@ class TestX86(regress.RegressTest):
         encoding, count = ks.asm("mov dword [eax], 0x42424242")
         # Assert the result
         self.assertEqual(encoding, [ 0xc7, 0x00, 0x42, 0x42, 0x42, 0x42 ])
+        # instructions separated by \n, and use # for full line commenter
+        encoding, count = ks.asm("add eax, ebx ;inc ecx this is ignored\ninc edx")
+        # Assert the result
+        self.assertEqual(encoding, [ 0x01, 0xd8, 0x42 ])
 
 if __name__ == '__main__':
     regress.main()
