@@ -1409,7 +1409,7 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
     // Treat '}' as a valid identifier in this context.
     Lex();
     IDVal = "}";
-  } else if (ID.getString().str() == "db") {
+  } else if (ID.getString().str() == "db" || ID.getString().str() == "dw" || ID.getString().str() == "dd" | ID.getString().str() == "dq") {
       Lex();
       IDVal = ID.getString();
   } else if (parseIdentifier(IDVal)) {
