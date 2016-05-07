@@ -508,6 +508,7 @@ private:
   // ".warning"
   bool parseDirectiveWarning(SMLoc DirectiveLoc);
 
+  bool isNasmDirective(StringRef str);  // is this str a NASM directive?
   bool isDirective(StringRef str);  // is this str a directive?
 };
 }
@@ -1344,11 +1345,16 @@ bool AsmParser::parseBinOpRHS(unsigned Precedence, const MCExpr *&Res,
   }
 }
 
+bool AsmParser::isNasmDirective(StringRef IDVal)
+{
+    return (DirectiveKindMap.find(IDVal) != DirectiveKindMap.end());
+}
+
 bool AsmParser::isDirective(StringRef IDVal)
 {
-    if (KsSyntax == KS_OPT_SYNTAX_NASM) {
-        return (DirectiveKindMap.find(IDVal) != DirectiveKindMap.end());
-    } else // Directives start with "."
+    if (KsSyntax == KS_OPT_SYNTAX_NASM)
+        return isNasmDirective(IDVal);
+    else // Directives start with "."
         return (IDVal[0] == '.' && IDVal != ".");
 }
 
@@ -1409,7 +1415,7 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
     // Treat '}' as a valid identifier in this context.
     Lex();
     IDVal = "}";
-  } else if (ID.getString().str() == "db" || ID.getString().str() == "dw" || ID.getString().str() == "dd" | ID.getString().str() == "dq") {
+  } else if (isNasmDirective(ID.getString())) {
       Lex();
       IDVal = ID.getString();
   } else if (parseIdentifier(IDVal)) {
