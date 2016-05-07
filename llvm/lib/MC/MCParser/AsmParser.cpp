@@ -182,6 +182,9 @@ private:
   /// \brief Are we parsing ms-style inline assembly?
   bool ParsingInlineAsm;
 
+  // Keystone syntax support
+  int KsSyntax;
+
 public:
   AsmParser(SourceMgr &SM, MCContext &Ctx, MCStreamer &Out,
             const MCAsmInfo &MAI);
@@ -250,6 +253,8 @@ public:
   void eatToEndOfStatement() override;
 
   void checkForValidSection() override;
+
+  void initializeDirectiveKindMap(int syntax) override;    // Keystone NASM support
   /// }
 
 private:
@@ -503,7 +508,7 @@ private:
   // ".warning"
   bool parseDirectiveWarning(SMLoc DirectiveLoc);
 
-  void initializeDirectiveKindMap();
+  bool isDirective(StringRef str);  // is this str a directive?
 };
 }
 
@@ -549,7 +554,7 @@ AsmParser::AsmParser(SourceMgr &SM, MCContext &Ctx, MCStreamer &Out,
 #endif
 
   PlatformParser->Initialize(*this);
-  initializeDirectiveKindMap();
+  initializeDirectiveKindMap(0);
 
   NumOfMacroInstantiations = 0;
 }
@@ -1339,6 +1344,14 @@ bool AsmParser::parseBinOpRHS(unsigned Precedence, const MCExpr *&Res,
   }
 }
 
+bool AsmParser::isDirective(StringRef IDVal)
+{
+    if (KsSyntax == KS_OPT_SYNTAX_NASM) {
+        return (DirectiveKindMap.find(IDVal) != DirectiveKindMap.end());
+    } else // Directives start with "."
+        return (IDVal[0] == '.' && IDVal != ".");
+}
+
 /// ParseStatement:
 ///   ::= EndOfStatement
 ///   ::= Label* Directive ...Operands... EndOfStatement
@@ -1360,7 +1373,7 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
   int64_t LocalLabelVal = -1;
   // A full line comment is a '#' as the first token.
   if (Lexer.is(AsmToken::Hash))
-    return parseCppHashLineFilenameComment(IDLoc);
+    return parseCppHashLineFilenameComment(IDLoc);  // qq
 
   // Allow an integer followed by a ':' as a directional local label.
   if (Lexer.is(AsmToken::Integer)) {
@@ -1396,6 +1409,9 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
     // Treat '}' as a valid identifier in this context.
     Lex();
     IDVal = "}";
+  } else if (ID.getString().str() == "db") {
+      Lex();
+      IDVal = ID.getString();
   } else if (parseIdentifier(IDVal)) {
     if (!TheCondState.Ignore) {
       // return TokError("unexpected token at start of statement");
@@ -1534,8 +1550,7 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
 
   // Otherwise, we have a normal instruction or directive.
 
-  // Directives start with "."
-  if (IDVal[0] == '.' && IDVal != ".") {
+  if (isDirective(IDVal)) {
     // There are several entities interested in parsing directives:
     //
     // 1. The target-specific assembly parser. Some directives are target
@@ -1764,6 +1779,8 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
     }
 
     return Error(IDLoc, "unknown directive");
+    // KsError = KS_ERR_ASM_DIRECTIVE_UNKNOWN;
+    // return true;
   }
 
   // __asm _emit or __asm __emit
@@ -4644,129 +4661,256 @@ bool AsmParser::parseDirectiveEndIf(SMLoc DirectiveLoc) {
   return false;
 }
 
-void AsmParser::initializeDirectiveKindMap() {
-  DirectiveKindMap[".set"] = DK_SET;
-  DirectiveKindMap[".equ"] = DK_EQU;
-  DirectiveKindMap[".equiv"] = DK_EQUIV;
-  DirectiveKindMap[".ascii"] = DK_ASCII;
-  DirectiveKindMap[".asciz"] = DK_ASCIZ;
-  DirectiveKindMap[".string"] = DK_STRING;
-  DirectiveKindMap[".byte"] = DK_BYTE;
-  DirectiveKindMap[".short"] = DK_SHORT;
-  DirectiveKindMap[".value"] = DK_VALUE;
-  DirectiveKindMap[".2byte"] = DK_2BYTE;
-  DirectiveKindMap[".long"] = DK_LONG;
-  DirectiveKindMap[".int"] = DK_INT;
-  DirectiveKindMap[".4byte"] = DK_4BYTE;
-  DirectiveKindMap[".quad"] = DK_QUAD;
-  DirectiveKindMap[".8byte"] = DK_8BYTE;
-  DirectiveKindMap[".octa"] = DK_OCTA;
-  DirectiveKindMap[".single"] = DK_SINGLE;
-  DirectiveKindMap[".float"] = DK_FLOAT;
-  DirectiveKindMap[".double"] = DK_DOUBLE;
-  DirectiveKindMap[".align"] = DK_ALIGN;
-  DirectiveKindMap[".align32"] = DK_ALIGN32;
-  DirectiveKindMap[".balign"] = DK_BALIGN;
-  DirectiveKindMap[".balignw"] = DK_BALIGNW;
-  DirectiveKindMap[".balignl"] = DK_BALIGNL;
-  DirectiveKindMap[".p2align"] = DK_P2ALIGN;
-  DirectiveKindMap[".p2alignw"] = DK_P2ALIGNW;
-  DirectiveKindMap[".p2alignl"] = DK_P2ALIGNL;
-  DirectiveKindMap[".org"] = DK_ORG;
-  DirectiveKindMap[".fill"] = DK_FILL;
-  DirectiveKindMap[".zero"] = DK_ZERO;
-  DirectiveKindMap[".extern"] = DK_EXTERN;
-  DirectiveKindMap[".globl"] = DK_GLOBL;
-  DirectiveKindMap[".global"] = DK_GLOBAL;
-  DirectiveKindMap[".lazy_reference"] = DK_LAZY_REFERENCE;
-  DirectiveKindMap[".no_dead_strip"] = DK_NO_DEAD_STRIP;
-  DirectiveKindMap[".symbol_resolver"] = DK_SYMBOL_RESOLVER;
-  DirectiveKindMap[".private_extern"] = DK_PRIVATE_EXTERN;
-  DirectiveKindMap[".reference"] = DK_REFERENCE;
-  DirectiveKindMap[".weak_definition"] = DK_WEAK_DEFINITION;
-  DirectiveKindMap[".weak_reference"] = DK_WEAK_REFERENCE;
-  DirectiveKindMap[".weak_def_can_be_hidden"] = DK_WEAK_DEF_CAN_BE_HIDDEN;
-  DirectiveKindMap[".comm"] = DK_COMM;
-  DirectiveKindMap[".common"] = DK_COMMON;
-  DirectiveKindMap[".lcomm"] = DK_LCOMM;
-  DirectiveKindMap[".abort"] = DK_ABORT;
-  DirectiveKindMap[".include"] = DK_INCLUDE;
-  DirectiveKindMap[".incbin"] = DK_INCBIN;
-  DirectiveKindMap[".code16"] = DK_CODE16;
-  DirectiveKindMap[".code16gcc"] = DK_CODE16GCC;
-  DirectiveKindMap[".rept"] = DK_REPT;
-  DirectiveKindMap[".rep"] = DK_REPT;
-  DirectiveKindMap[".irp"] = DK_IRP;
-  DirectiveKindMap[".irpc"] = DK_IRPC;
-  DirectiveKindMap[".endr"] = DK_ENDR;
-  DirectiveKindMap[".bundle_align_mode"] = DK_BUNDLE_ALIGN_MODE;
-  DirectiveKindMap[".bundle_lock"] = DK_BUNDLE_LOCK;
-  DirectiveKindMap[".bundle_unlock"] = DK_BUNDLE_UNLOCK;
-  DirectiveKindMap[".if"] = DK_IF;
-  DirectiveKindMap[".ifeq"] = DK_IFEQ;
-  DirectiveKindMap[".ifge"] = DK_IFGE;
-  DirectiveKindMap[".ifgt"] = DK_IFGT;
-  DirectiveKindMap[".ifle"] = DK_IFLE;
-  DirectiveKindMap[".iflt"] = DK_IFLT;
-  DirectiveKindMap[".ifne"] = DK_IFNE;
-  DirectiveKindMap[".ifb"] = DK_IFB;
-  DirectiveKindMap[".ifnb"] = DK_IFNB;
-  DirectiveKindMap[".ifc"] = DK_IFC;
-  DirectiveKindMap[".ifeqs"] = DK_IFEQS;
-  DirectiveKindMap[".ifnc"] = DK_IFNC;
-  DirectiveKindMap[".ifnes"] = DK_IFNES;
-  DirectiveKindMap[".ifdef"] = DK_IFDEF;
-  DirectiveKindMap[".ifndef"] = DK_IFNDEF;
-  DirectiveKindMap[".ifnotdef"] = DK_IFNOTDEF;
-  DirectiveKindMap[".elseif"] = DK_ELSEIF;
-  DirectiveKindMap[".else"] = DK_ELSE;
-  DirectiveKindMap[".end"] = DK_END;
-  DirectiveKindMap[".endif"] = DK_ENDIF;
-  DirectiveKindMap[".skip"] = DK_SKIP;
-  DirectiveKindMap[".space"] = DK_SPACE;
-  DirectiveKindMap[".file"] = DK_FILE;
-  DirectiveKindMap[".line"] = DK_LINE;
-  DirectiveKindMap[".loc"] = DK_LOC;
-  DirectiveKindMap[".stabs"] = DK_STABS;
-  DirectiveKindMap[".cv_file"] = DK_CV_FILE;
-  DirectiveKindMap[".cv_loc"] = DK_CV_LOC;
-  DirectiveKindMap[".cv_linetable"] = DK_CV_LINETABLE;
-  DirectiveKindMap[".cv_inline_linetable"] = DK_CV_INLINE_LINETABLE;
-  DirectiveKindMap[".cv_stringtable"] = DK_CV_STRINGTABLE;
-  DirectiveKindMap[".cv_filechecksums"] = DK_CV_FILECHECKSUMS;
-  DirectiveKindMap[".sleb128"] = DK_SLEB128;
-  DirectiveKindMap[".uleb128"] = DK_ULEB128;
-  DirectiveKindMap[".cfi_sections"] = DK_CFI_SECTIONS;
-  DirectiveKindMap[".cfi_startproc"] = DK_CFI_STARTPROC;
-  DirectiveKindMap[".cfi_endproc"] = DK_CFI_ENDPROC;
-  DirectiveKindMap[".cfi_def_cfa"] = DK_CFI_DEF_CFA;
-  DirectiveKindMap[".cfi_def_cfa_offset"] = DK_CFI_DEF_CFA_OFFSET;
-  DirectiveKindMap[".cfi_adjust_cfa_offset"] = DK_CFI_ADJUST_CFA_OFFSET;
-  DirectiveKindMap[".cfi_def_cfa_register"] = DK_CFI_DEF_CFA_REGISTER;
-  DirectiveKindMap[".cfi_offset"] = DK_CFI_OFFSET;
-  DirectiveKindMap[".cfi_rel_offset"] = DK_CFI_REL_OFFSET;
-  DirectiveKindMap[".cfi_personality"] = DK_CFI_PERSONALITY;
-  DirectiveKindMap[".cfi_lsda"] = DK_CFI_LSDA;
-  DirectiveKindMap[".cfi_remember_state"] = DK_CFI_REMEMBER_STATE;
-  DirectiveKindMap[".cfi_restore_state"] = DK_CFI_RESTORE_STATE;
-  DirectiveKindMap[".cfi_same_value"] = DK_CFI_SAME_VALUE;
-  DirectiveKindMap[".cfi_restore"] = DK_CFI_RESTORE;
-  DirectiveKindMap[".cfi_escape"] = DK_CFI_ESCAPE;
-  DirectiveKindMap[".cfi_signal_frame"] = DK_CFI_SIGNAL_FRAME;
-  DirectiveKindMap[".cfi_undefined"] = DK_CFI_UNDEFINED;
-  DirectiveKindMap[".cfi_register"] = DK_CFI_REGISTER;
-  DirectiveKindMap[".cfi_window_save"] = DK_CFI_WINDOW_SAVE;
-  DirectiveKindMap[".macros_on"] = DK_MACROS_ON;
-  DirectiveKindMap[".macros_off"] = DK_MACROS_OFF;
-  DirectiveKindMap[".macro"] = DK_MACRO;
-  DirectiveKindMap[".exitm"] = DK_EXITM;
-  DirectiveKindMap[".endm"] = DK_ENDM;
-  DirectiveKindMap[".endmacro"] = DK_ENDMACRO;
-  DirectiveKindMap[".purgem"] = DK_PURGEM;
-  DirectiveKindMap[".err"] = DK_ERR;
-  DirectiveKindMap[".error"] = DK_ERROR;
-  DirectiveKindMap[".warning"] = DK_WARNING;
-  DirectiveKindMap[".reloc"] = DK_RELOC;
+void AsmParser::initializeDirectiveKindMap(int syntax)
+{
+    KsSyntax = syntax;
+    if (syntax == KS_OPT_SYNTAX_NASM) {
+        DirectiveKindMap.clear();
+        DirectiveKindMap["db"] = DK_BYTE;
+        DirectiveKindMap["dw"] = DK_SHORT;
+        DirectiveKindMap["dd"] = DK_INT;
+        DirectiveKindMap["dq"] = DK_QUAD;
+        DirectiveKindMap["use16"] = DK_CODE16;
+#if 0
+        DirectiveKindMap[".set"] = DK_SET;
+        DirectiveKindMap[".equ"] = DK_EQU;
+        DirectiveKindMap[".equiv"] = DK_EQUIV;
+        DirectiveKindMap[".ascii"] = DK_ASCII;
+        DirectiveKindMap[".asciz"] = DK_ASCIZ;
+        DirectiveKindMap[".string"] = DK_STRING;
+        DirectiveKindMap[".octa"] = DK_OCTA;
+        DirectiveKindMap[".single"] = DK_SINGLE;
+        DirectiveKindMap[".float"] = DK_FLOAT;
+        DirectiveKindMap[".double"] = DK_DOUBLE;
+        DirectiveKindMap[".align"] = DK_ALIGN;
+        DirectiveKindMap[".align32"] = DK_ALIGN32;
+        DirectiveKindMap[".balign"] = DK_BALIGN;
+        DirectiveKindMap[".balignw"] = DK_BALIGNW;
+        DirectiveKindMap[".balignl"] = DK_BALIGNL;
+        DirectiveKindMap[".p2align"] = DK_P2ALIGN;
+        DirectiveKindMap[".p2alignw"] = DK_P2ALIGNW;
+        DirectiveKindMap[".p2alignl"] = DK_P2ALIGNL;
+        DirectiveKindMap[".org"] = DK_ORG;
+        DirectiveKindMap[".fill"] = DK_FILL;
+        DirectiveKindMap[".zero"] = DK_ZERO;
+        DirectiveKindMap[".extern"] = DK_EXTERN;
+        DirectiveKindMap[".globl"] = DK_GLOBL;
+        DirectiveKindMap[".global"] = DK_GLOBAL;
+        DirectiveKindMap[".lazy_reference"] = DK_LAZY_REFERENCE;
+        DirectiveKindMap[".no_dead_strip"] = DK_NO_DEAD_STRIP;
+        DirectiveKindMap[".symbol_resolver"] = DK_SYMBOL_RESOLVER;
+        DirectiveKindMap[".private_extern"] = DK_PRIVATE_EXTERN;
+        DirectiveKindMap[".reference"] = DK_REFERENCE;
+        DirectiveKindMap[".weak_definition"] = DK_WEAK_DEFINITION;
+        DirectiveKindMap[".weak_reference"] = DK_WEAK_REFERENCE;
+        DirectiveKindMap[".weak_def_can_be_hidden"] = DK_WEAK_DEF_CAN_BE_HIDDEN;
+        DirectiveKindMap[".comm"] = DK_COMM;
+        DirectiveKindMap[".common"] = DK_COMMON;
+        DirectiveKindMap[".lcomm"] = DK_LCOMM;
+        DirectiveKindMap[".abort"] = DK_ABORT;
+        DirectiveKindMap[".include"] = DK_INCLUDE;
+        DirectiveKindMap[".incbin"] = DK_INCBIN;
+        DirectiveKindMap[".code16gcc"] = DK_CODE16GCC;
+        DirectiveKindMap[".rept"] = DK_REPT;
+        DirectiveKindMap[".rep"] = DK_REPT;
+        DirectiveKindMap[".irp"] = DK_IRP;
+        DirectiveKindMap[".irpc"] = DK_IRPC;
+        DirectiveKindMap[".endr"] = DK_ENDR;
+        DirectiveKindMap[".bundle_align_mode"] = DK_BUNDLE_ALIGN_MODE;
+        DirectiveKindMap[".bundle_lock"] = DK_BUNDLE_LOCK;
+        DirectiveKindMap[".bundle_unlock"] = DK_BUNDLE_UNLOCK;
+        DirectiveKindMap[".if"] = DK_IF;
+        DirectiveKindMap[".ifeq"] = DK_IFEQ;
+        DirectiveKindMap[".ifge"] = DK_IFGE;
+        DirectiveKindMap[".ifgt"] = DK_IFGT;
+        DirectiveKindMap[".ifle"] = DK_IFLE;
+        DirectiveKindMap[".iflt"] = DK_IFLT;
+        DirectiveKindMap[".ifne"] = DK_IFNE;
+        DirectiveKindMap[".ifb"] = DK_IFB;
+        DirectiveKindMap[".ifnb"] = DK_IFNB;
+        DirectiveKindMap[".ifc"] = DK_IFC;
+        DirectiveKindMap[".ifeqs"] = DK_IFEQS;
+        DirectiveKindMap[".ifnc"] = DK_IFNC;
+        DirectiveKindMap[".ifnes"] = DK_IFNES;
+        DirectiveKindMap[".ifdef"] = DK_IFDEF;
+        DirectiveKindMap[".ifndef"] = DK_IFNDEF;
+        DirectiveKindMap[".ifnotdef"] = DK_IFNOTDEF;
+        DirectiveKindMap[".elseif"] = DK_ELSEIF;
+        DirectiveKindMap[".else"] = DK_ELSE;
+        DirectiveKindMap[".end"] = DK_END;
+        DirectiveKindMap[".endif"] = DK_ENDIF;
+        DirectiveKindMap[".skip"] = DK_SKIP;
+        DirectiveKindMap[".space"] = DK_SPACE;
+        DirectiveKindMap[".file"] = DK_FILE;
+        DirectiveKindMap[".line"] = DK_LINE;
+        DirectiveKindMap[".loc"] = DK_LOC;
+        DirectiveKindMap[".stabs"] = DK_STABS;
+        DirectiveKindMap[".cv_file"] = DK_CV_FILE;
+        DirectiveKindMap[".cv_loc"] = DK_CV_LOC;
+        DirectiveKindMap[".cv_linetable"] = DK_CV_LINETABLE;
+        DirectiveKindMap[".cv_inline_linetable"] = DK_CV_INLINE_LINETABLE;
+        DirectiveKindMap[".cv_stringtable"] = DK_CV_STRINGTABLE;
+        DirectiveKindMap[".cv_filechecksums"] = DK_CV_FILECHECKSUMS;
+        DirectiveKindMap[".sleb128"] = DK_SLEB128;
+        DirectiveKindMap[".uleb128"] = DK_ULEB128;
+        DirectiveKindMap[".cfi_sections"] = DK_CFI_SECTIONS;
+        DirectiveKindMap[".cfi_startproc"] = DK_CFI_STARTPROC;
+        DirectiveKindMap[".cfi_endproc"] = DK_CFI_ENDPROC;
+        DirectiveKindMap[".cfi_def_cfa"] = DK_CFI_DEF_CFA;
+        DirectiveKindMap[".cfi_def_cfa_offset"] = DK_CFI_DEF_CFA_OFFSET;
+        DirectiveKindMap[".cfi_adjust_cfa_offset"] = DK_CFI_ADJUST_CFA_OFFSET;
+        DirectiveKindMap[".cfi_def_cfa_register"] = DK_CFI_DEF_CFA_REGISTER;
+        DirectiveKindMap[".cfi_offset"] = DK_CFI_OFFSET;
+        DirectiveKindMap[".cfi_rel_offset"] = DK_CFI_REL_OFFSET;
+        DirectiveKindMap[".cfi_personality"] = DK_CFI_PERSONALITY;
+        DirectiveKindMap[".cfi_lsda"] = DK_CFI_LSDA;
+        DirectiveKindMap[".cfi_remember_state"] = DK_CFI_REMEMBER_STATE;
+        DirectiveKindMap[".cfi_restore_state"] = DK_CFI_RESTORE_STATE;
+        DirectiveKindMap[".cfi_same_value"] = DK_CFI_SAME_VALUE;
+        DirectiveKindMap[".cfi_restore"] = DK_CFI_RESTORE;
+        DirectiveKindMap[".cfi_escape"] = DK_CFI_ESCAPE;
+        DirectiveKindMap[".cfi_signal_frame"] = DK_CFI_SIGNAL_FRAME;
+        DirectiveKindMap[".cfi_undefined"] = DK_CFI_UNDEFINED;
+        DirectiveKindMap[".cfi_register"] = DK_CFI_REGISTER;
+        DirectiveKindMap[".cfi_window_save"] = DK_CFI_WINDOW_SAVE;
+        DirectiveKindMap[".macros_on"] = DK_MACROS_ON;
+        DirectiveKindMap[".macros_off"] = DK_MACROS_OFF;
+        DirectiveKindMap[".macro"] = DK_MACRO;
+        DirectiveKindMap[".exitm"] = DK_EXITM;
+        DirectiveKindMap[".endm"] = DK_ENDM;
+        DirectiveKindMap[".endmacro"] = DK_ENDMACRO;
+        DirectiveKindMap[".purgem"] = DK_PURGEM;
+        DirectiveKindMap[".err"] = DK_ERR;
+        DirectiveKindMap[".error"] = DK_ERROR;
+        DirectiveKindMap[".warning"] = DK_WARNING;
+        DirectiveKindMap[".reloc"] = DK_RELOC;
+#endif
+    } else {
+        // default LLVM syntax
+        DirectiveKindMap.clear();
+        DirectiveKindMap[".set"] = DK_SET;
+        DirectiveKindMap[".equ"] = DK_EQU;
+        DirectiveKindMap[".equiv"] = DK_EQUIV;
+        DirectiveKindMap[".ascii"] = DK_ASCII;
+        DirectiveKindMap[".asciz"] = DK_ASCIZ;
+        DirectiveKindMap[".string"] = DK_STRING;
+        DirectiveKindMap[".byte"] = DK_BYTE;
+        DirectiveKindMap[".short"] = DK_SHORT;
+        DirectiveKindMap[".value"] = DK_VALUE;
+        DirectiveKindMap[".2byte"] = DK_2BYTE;
+        DirectiveKindMap[".long"] = DK_LONG;
+        DirectiveKindMap[".int"] = DK_INT;
+        DirectiveKindMap[".4byte"] = DK_4BYTE;
+        DirectiveKindMap[".quad"] = DK_QUAD;
+        DirectiveKindMap[".8byte"] = DK_8BYTE;
+        DirectiveKindMap[".octa"] = DK_OCTA;
+        DirectiveKindMap[".single"] = DK_SINGLE;
+        DirectiveKindMap[".float"] = DK_FLOAT;
+        DirectiveKindMap[".double"] = DK_DOUBLE;
+        DirectiveKindMap[".align"] = DK_ALIGN;
+        DirectiveKindMap[".align32"] = DK_ALIGN32;
+        DirectiveKindMap[".balign"] = DK_BALIGN;
+        DirectiveKindMap[".balignw"] = DK_BALIGNW;
+        DirectiveKindMap[".balignl"] = DK_BALIGNL;
+        DirectiveKindMap[".p2align"] = DK_P2ALIGN;
+        DirectiveKindMap[".p2alignw"] = DK_P2ALIGNW;
+        DirectiveKindMap[".p2alignl"] = DK_P2ALIGNL;
+        DirectiveKindMap[".org"] = DK_ORG;
+        DirectiveKindMap[".fill"] = DK_FILL;
+        DirectiveKindMap[".zero"] = DK_ZERO;
+        DirectiveKindMap[".extern"] = DK_EXTERN;
+        DirectiveKindMap[".globl"] = DK_GLOBL;
+        DirectiveKindMap[".global"] = DK_GLOBAL;
+        DirectiveKindMap[".lazy_reference"] = DK_LAZY_REFERENCE;
+        DirectiveKindMap[".no_dead_strip"] = DK_NO_DEAD_STRIP;
+        DirectiveKindMap[".symbol_resolver"] = DK_SYMBOL_RESOLVER;
+        DirectiveKindMap[".private_extern"] = DK_PRIVATE_EXTERN;
+        DirectiveKindMap[".reference"] = DK_REFERENCE;
+        DirectiveKindMap[".weak_definition"] = DK_WEAK_DEFINITION;
+        DirectiveKindMap[".weak_reference"] = DK_WEAK_REFERENCE;
+        DirectiveKindMap[".weak_def_can_be_hidden"] = DK_WEAK_DEF_CAN_BE_HIDDEN;
+        DirectiveKindMap[".comm"] = DK_COMM;
+        DirectiveKindMap[".common"] = DK_COMMON;
+        DirectiveKindMap[".lcomm"] = DK_LCOMM;
+        DirectiveKindMap[".abort"] = DK_ABORT;
+        DirectiveKindMap[".include"] = DK_INCLUDE;
+        DirectiveKindMap[".incbin"] = DK_INCBIN;
+        DirectiveKindMap[".code16"] = DK_CODE16;
+        DirectiveKindMap[".code16gcc"] = DK_CODE16GCC;
+        DirectiveKindMap[".rept"] = DK_REPT;
+        DirectiveKindMap[".rep"] = DK_REPT;
+        DirectiveKindMap[".irp"] = DK_IRP;
+        DirectiveKindMap[".irpc"] = DK_IRPC;
+        DirectiveKindMap[".endr"] = DK_ENDR;
+        DirectiveKindMap[".bundle_align_mode"] = DK_BUNDLE_ALIGN_MODE;
+        DirectiveKindMap[".bundle_lock"] = DK_BUNDLE_LOCK;
+        DirectiveKindMap[".bundle_unlock"] = DK_BUNDLE_UNLOCK;
+        DirectiveKindMap[".if"] = DK_IF;
+        DirectiveKindMap[".ifeq"] = DK_IFEQ;
+        DirectiveKindMap[".ifge"] = DK_IFGE;
+        DirectiveKindMap[".ifgt"] = DK_IFGT;
+        DirectiveKindMap[".ifle"] = DK_IFLE;
+        DirectiveKindMap[".iflt"] = DK_IFLT;
+        DirectiveKindMap[".ifne"] = DK_IFNE;
+        DirectiveKindMap[".ifb"] = DK_IFB;
+        DirectiveKindMap[".ifnb"] = DK_IFNB;
+        DirectiveKindMap[".ifc"] = DK_IFC;
+        DirectiveKindMap[".ifeqs"] = DK_IFEQS;
+        DirectiveKindMap[".ifnc"] = DK_IFNC;
+        DirectiveKindMap[".ifnes"] = DK_IFNES;
+        DirectiveKindMap[".ifdef"] = DK_IFDEF;
+        DirectiveKindMap[".ifndef"] = DK_IFNDEF;
+        DirectiveKindMap[".ifnotdef"] = DK_IFNOTDEF;
+        DirectiveKindMap[".elseif"] = DK_ELSEIF;
+        DirectiveKindMap[".else"] = DK_ELSE;
+        DirectiveKindMap[".end"] = DK_END;
+        DirectiveKindMap[".endif"] = DK_ENDIF;
+        DirectiveKindMap[".skip"] = DK_SKIP;
+        DirectiveKindMap[".space"] = DK_SPACE;
+        DirectiveKindMap[".file"] = DK_FILE;
+        DirectiveKindMap[".line"] = DK_LINE;
+        DirectiveKindMap[".loc"] = DK_LOC;
+        DirectiveKindMap[".stabs"] = DK_STABS;
+        DirectiveKindMap[".cv_file"] = DK_CV_FILE;
+        DirectiveKindMap[".cv_loc"] = DK_CV_LOC;
+        DirectiveKindMap[".cv_linetable"] = DK_CV_LINETABLE;
+        DirectiveKindMap[".cv_inline_linetable"] = DK_CV_INLINE_LINETABLE;
+        DirectiveKindMap[".cv_stringtable"] = DK_CV_STRINGTABLE;
+        DirectiveKindMap[".cv_filechecksums"] = DK_CV_FILECHECKSUMS;
+        DirectiveKindMap[".sleb128"] = DK_SLEB128;
+        DirectiveKindMap[".uleb128"] = DK_ULEB128;
+        DirectiveKindMap[".cfi_sections"] = DK_CFI_SECTIONS;
+        DirectiveKindMap[".cfi_startproc"] = DK_CFI_STARTPROC;
+        DirectiveKindMap[".cfi_endproc"] = DK_CFI_ENDPROC;
+        DirectiveKindMap[".cfi_def_cfa"] = DK_CFI_DEF_CFA;
+        DirectiveKindMap[".cfi_def_cfa_offset"] = DK_CFI_DEF_CFA_OFFSET;
+        DirectiveKindMap[".cfi_adjust_cfa_offset"] = DK_CFI_ADJUST_CFA_OFFSET;
+        DirectiveKindMap[".cfi_def_cfa_register"] = DK_CFI_DEF_CFA_REGISTER;
+        DirectiveKindMap[".cfi_offset"] = DK_CFI_OFFSET;
+        DirectiveKindMap[".cfi_rel_offset"] = DK_CFI_REL_OFFSET;
+        DirectiveKindMap[".cfi_personality"] = DK_CFI_PERSONALITY;
+        DirectiveKindMap[".cfi_lsda"] = DK_CFI_LSDA;
+        DirectiveKindMap[".cfi_remember_state"] = DK_CFI_REMEMBER_STATE;
+        DirectiveKindMap[".cfi_restore_state"] = DK_CFI_RESTORE_STATE;
+        DirectiveKindMap[".cfi_same_value"] = DK_CFI_SAME_VALUE;
+        DirectiveKindMap[".cfi_restore"] = DK_CFI_RESTORE;
+        DirectiveKindMap[".cfi_escape"] = DK_CFI_ESCAPE;
+        DirectiveKindMap[".cfi_signal_frame"] = DK_CFI_SIGNAL_FRAME;
+        DirectiveKindMap[".cfi_undefined"] = DK_CFI_UNDEFINED;
+        DirectiveKindMap[".cfi_register"] = DK_CFI_REGISTER;
+        DirectiveKindMap[".cfi_window_save"] = DK_CFI_WINDOW_SAVE;
+        DirectiveKindMap[".macros_on"] = DK_MACROS_ON;
+        DirectiveKindMap[".macros_off"] = DK_MACROS_OFF;
+        DirectiveKindMap[".macro"] = DK_MACRO;
+        DirectiveKindMap[".exitm"] = DK_EXITM;
+        DirectiveKindMap[".endm"] = DK_ENDM;
+        DirectiveKindMap[".endmacro"] = DK_ENDMACRO;
+        DirectiveKindMap[".purgem"] = DK_PURGEM;
+        DirectiveKindMap[".err"] = DK_ERR;
+        DirectiveKindMap[".error"] = DK_ERROR;
+        DirectiveKindMap[".warning"] = DK_WARNING;
+        DirectiveKindMap[".reloc"] = DK_RELOC;
+    }
 }
 
 MCAsmMacro *AsmParser::parseMacroLikeBody(SMLoc DirectiveLoc) {

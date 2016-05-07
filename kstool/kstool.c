@@ -20,6 +20,9 @@ static void usage(char *prog)
         printf("        x16att:    X86 16bit, AT&T syntax\n");
         printf("        x32att:    X86 32bit, AT&T syntax\n");
         printf("        x64att:    X86 64bit, AT&T syntax\n");
+        printf("        x16nasm:   X86 16bit, NASM syntax\n");
+        printf("        x32nasm:   X86 32bit, NASM syntax\n");
+        printf("        x64nasm:   X86 64bit, NASM syntax\n");
     }
 
     if (ks_arch_supported(KS_ARCH_ARM)) {
@@ -88,6 +91,7 @@ int main(int argc, char **argv)
     if (!strcmp(mode, "x64")) {
         err = ks_open(KS_ARCH_X86, KS_MODE_64, &ks);
     }
+
     if (!strcmp(mode, "x16att")) {
         err = ks_open(KS_ARCH_X86, KS_MODE_16, &ks);
         if (!err) {
@@ -106,57 +110,94 @@ int main(int argc, char **argv)
             ks_option(ks, KS_OPT_SYNTAX, KS_OPT_SYNTAX_ATT);
         }
     }
+
+    if (!strcmp(mode, "x16nasm")) {
+        err = ks_open(KS_ARCH_X86, KS_MODE_16, &ks);
+        if (!err) {
+            ks_option(ks, KS_OPT_SYNTAX, KS_OPT_SYNTAX_NASM);
+        }
+    }
+    if (!strcmp(mode, "x32nasm")) {
+        err = ks_open(KS_ARCH_X86, KS_MODE_32, &ks);
+        if (!err) {
+            ks_option(ks, KS_OPT_SYNTAX, KS_OPT_SYNTAX_NASM);
+        }
+    }
+    if (!strcmp(mode, "x64nasm")) {
+        err = ks_open(KS_ARCH_X86, KS_MODE_64, &ks);
+        if (!err) {
+            ks_option(ks, KS_OPT_SYNTAX, KS_OPT_SYNTAX_NASM);
+        }
+    }
+
     if (!strcmp(mode, "arm")) {
         err = ks_open(KS_ARCH_ARM, KS_MODE_ARM+KS_MODE_LITTLE_ENDIAN, &ks);
     }
+
     if (!strcmp(mode, "armbe")) {
         err = ks_open(KS_ARCH_ARM, KS_MODE_ARM+KS_MODE_BIG_ENDIAN, &ks);
     }
+
     if (!strcmp(mode, "thumb")) {
         err = ks_open(KS_ARCH_ARM, KS_MODE_THUMB+KS_MODE_LITTLE_ENDIAN, &ks);
     }
+
     if (!strcmp(mode, "thumbbe")) {
         err = ks_open(KS_ARCH_ARM, KS_MODE_THUMB+KS_MODE_BIG_ENDIAN, &ks);
     }
+
     if (!strcmp(mode, "arm64be") || !strcmp(mode, "arm64")) {
         err = ks_open(KS_ARCH_ARM64, KS_MODE_BIG_ENDIAN, &ks);
     }
+
     if (!strcmp(mode, "hex") || !strcmp(mode, "hexagon")) {
         err = ks_open(KS_ARCH_HEXAGON, KS_MODE_BIG_ENDIAN, &ks);
     }
+
     if (!strcmp(mode, "mips")) {
         err = ks_open(KS_ARCH_MIPS, KS_MODE_MIPS32+KS_MODE_LITTLE_ENDIAN, &ks);
     }
+
     if (!strcmp(mode, "mipsbe")) {
         err = ks_open(KS_ARCH_MIPS, KS_MODE_MIPS32+KS_MODE_BIG_ENDIAN, &ks);
     }
+
     if (!strcmp(mode, "mips64")) {
         err = ks_open(KS_ARCH_MIPS, KS_MODE_MIPS64+KS_MODE_LITTLE_ENDIAN, &ks);
     }
+
     if (!strcmp(mode, "mips64be")) {
         err = ks_open(KS_ARCH_MIPS, KS_MODE_MIPS64+KS_MODE_BIG_ENDIAN, &ks);
     }
+
     if (!strcmp(mode, "ppc32be")) {
         err = ks_open(KS_ARCH_PPC, KS_MODE_PPC32+KS_MODE_BIG_ENDIAN, &ks);
     }
+
     if (!strcmp(mode, "ppc64")) {
         err = ks_open(KS_ARCH_PPC, KS_MODE_PPC64+KS_MODE_LITTLE_ENDIAN, &ks);
     }
+
     if (!strcmp(mode, "ppc64be")) {
         err = ks_open(KS_ARCH_PPC, KS_MODE_PPC64+KS_MODE_BIG_ENDIAN, &ks);
     }
+
     if (!strcmp(mode, "sparc")) {
         err = ks_open(KS_ARCH_SPARC, KS_MODE_SPARC32+KS_MODE_LITTLE_ENDIAN, &ks);
     }
+
     if (!strcmp(mode, "sparcbe")) {
         err = ks_open(KS_ARCH_SPARC, KS_MODE_SPARC32+KS_MODE_BIG_ENDIAN, &ks);
     }
+
     if (!strcmp(mode, "sparc64")) {
         err = ks_open(KS_ARCH_SPARC, KS_MODE_SPARC64+KS_MODE_LITTLE_ENDIAN, &ks);
     }
+
     if (!strcmp(mode, "sparc64be")) {
         err = ks_open(KS_ARCH_SPARC, KS_MODE_SPARC64+KS_MODE_BIG_ENDIAN, &ks);
     }
+
     if (!strcmp(mode, "systemz") || !strcmp(mode, "sysz") || !strcmp(mode, "s390x")) {
         err = ks_open(KS_ARCH_SYSTEMZ, KS_MODE_BIG_ENDIAN, &ks);
     }
