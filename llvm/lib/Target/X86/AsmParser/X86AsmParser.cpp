@@ -2367,7 +2367,7 @@ bool X86AsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
         break;
      }
 
-    if (getLexer().isNot(AsmToken::EndOfStatement))
+    if (getLexer().isNot(AsmToken::EndOfStatement) && getLexer().isNot(AsmToken::Eof))
       return ErrorAndEatStatement(getLexer().getLoc(),
                                   "unexpected token in argument list");
    }

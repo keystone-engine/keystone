@@ -1381,6 +1381,8 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
   if (Lexer.is(AsmToken::Hash))
     return parseCppHashLineFilenameComment(IDLoc);  // qq
 
+  // printf(">> TokenID = %s\n", ID.getString().str().c_str());
+
   // Allow an integer followed by a ':' as a directional local label.
   if (Lexer.is(AsmToken::Integer)) {
     LocalLabelVal = getTok().getIntVal();
