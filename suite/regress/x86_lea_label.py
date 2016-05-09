@@ -19,11 +19,11 @@ class TestX86Nasm(regress.RegressTest):
         ks.syntax = KS_OPT_SYNTAX_NASM
 
         # nasm uses abs for explicit absolute addressing
-        encoding, count = ks.asm("lea eax, [__data]\n__data:")
+        encoding, count = ks.asm(b"lea eax, [__data]\n__data:")
         self.assertEqual(encoding, [ 0x8d, 0x05, 0x06, 0x00, 0x00, 0x00 ])
 
         # verify that explicit absolute addressing is indeed absolute
-        encoding, count = ks.asm("nop\nnop\nlea eax, [__data]\n__data:")
+        encoding, count = ks.asm(b"nop\nnop\nlea eax, [__data]\n__data:")
         self.assertEqual(encoding, [ 0x90, 0x90, 0x8d, 0x05, 0x08, 0x00, 0x00, 0x00 ])
 
 
@@ -35,11 +35,11 @@ class TestX86Att(regress.RegressTest):
         ks.syntax = KS_OPT_SYNTAX_ATT
 
         # nasm uses abs for explicit absolute addressing
-        encoding, count = ks.asm("lea __data, %eax\n__data:")
+        encoding, count = ks.asm(b"lea __data, %eax\n__data:")
         self.assertEqual(encoding, [ 0x8d, 0x05, 0x06, 0x00, 0x00, 0x00 ])
 
         # verify that explicit absolute addressing is indeed absolute
-        encoding, count = ks.asm("nop\nnop\nlea __data, %eax\n__data:")
+        encoding, count = ks.asm(b"nop\nnop\nlea __data, %eax\n__data:")
         self.assertEqual(encoding, [ 0x90, 0x90, 0x8d, 0x05, 0x08, 0x00, 0x00, 0x00 ])
 
 
@@ -51,11 +51,11 @@ class TestX64Intel(regress.RegressTest):
         ks.syntax = KS_OPT_SYNTAX_INTEL
 
         # nasm uses abs for explicit absolute addressing
-        encoding, count = ks.asm("lea eax, [__data]\n__data:")
+        encoding, count = ks.asm(b"lea eax, [__data]\n__data:")
         self.assertEqual(encoding, [ 0x8d, 0x05, 0x06, 0x00, 0x00, 0x00 ])
 
         # verify that explicit absolute addressing is indeed absolute
-        encoding, count = ks.asm("nop\nnop\nlea eax, [__data]\n__data:")
+        encoding, count = ks.asm(b"nop\nnop\nlea eax, [__data]\n__data:")
         self.assertEqual(encoding, [ 0x90, 0x90, 0x8d, 0x05, 0x08, 0x00, 0x00, 0x00 ])
 
 

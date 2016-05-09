@@ -15,7 +15,7 @@ class TestX86(regress.RegressTest):
         # Initialize Keystone engine
         ks = Ks(KS_ARCH_X86, KS_MODE_32)
         # Assemble to get back insn encoding & statement count
-        encoding, count = ks.asm("int 3")
+        encoding, count = ks.asm(b"int 3")
         # Assert the result
         self.assertEqual(encoding, [ 0xcd, 0x03 ])
 

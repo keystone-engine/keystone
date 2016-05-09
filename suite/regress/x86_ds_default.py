@@ -15,7 +15,7 @@ class TestX86(regress.RegressTest):
         # Initialize Keystone engine
         ks = Ks(KS_ARCH_X86, KS_MODE_32)
         # Assemble to get back insn encoding & statement count
-        encoding, count = ks.asm("JMP DWORD PTR DS:[100]")
+        encoding, count = ks.asm(b"JMP DWORD PTR DS:[100]")
         # Assert the result
         self.assertEqual(encoding, [ 0xFF, 0x25, 0x64, 0x00, 0x00, 0x00 ])
 

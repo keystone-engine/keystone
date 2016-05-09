@@ -16,7 +16,7 @@ class TestX86(regress.RegressTest):
         # Initialize Keystone engine
         ks = Ks(KS_ARCH_X86, KS_MODE_32)
         # Assemble to get back insn encoding & statement count
-        encoding, count = ks.asm("add eax, ebx")
+        encoding, count = ks.asm(b"add eax, ebx")
         # Assert the result
         self.assertEqual(encoding, [ 0x01, 0xd8 ])
 

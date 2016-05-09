@@ -17,13 +17,13 @@ class TestX86(regress.RegressTest):
 
         ks.syntax = KS_OPT_SYNTAX_ATT
         # Assemble to get back insn encoding & statement count
-        encoding, count = ks.asm("jmp 0")
+        encoding, count = ks.asm(b"jmp 0")
         # Assert the result
         self.assertEqual(encoding, [ 0xeb, 0xfe ])
 
         ks.syntax = KS_OPT_SYNTAX_INTEL
         # Assemble to get back insn encoding & statement count
-        encoding, count = ks.asm("jmp 0")
+        encoding, count = ks.asm(b"jmp 0")
         # Assert the result
         self.assertEqual(encoding, [ 0xeb, 0xfe ])
 

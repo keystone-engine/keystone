@@ -20,12 +20,12 @@ class TestX86(regress.RegressTest):
         ks.syntax = KS_OPT_SYNTAX_NASM
 
         # compile an instruction in NASM syntax
-        encoding, count = ks.asm("mov dword [eax], 0x42424242")
+        encoding, count = ks.asm(b"mov dword [eax], 0x42424242")
         # Assert the result
         self.assertEqual(encoding, [ 0xc7, 0x00, 0x42, 0x42, 0x42, 0x42 ])
 
         # instructions separated by \n, and use ; for full line commenter
-        encoding, count = ks.asm("add eax, ebx;inc ecx this comment is ignored\ninc edx")
+        encoding, count = ks.asm(b"add eax, ebx;inc ecx this comment is ignored\ninc edx")
         # Assert the result
         self.assertEqual(encoding, [ 0x01, 0xd8, 0x42 ])
 
