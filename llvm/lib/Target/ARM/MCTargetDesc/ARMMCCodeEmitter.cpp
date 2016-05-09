@@ -631,7 +631,7 @@ getThumbBLTargetOpValue(const MCInst &MI, unsigned OpIdx,
   if (MO.isExpr())
     return ::getBranchTargetOpValue(MI, OpIdx, ARM::fixup_arm_thumb_bl,
                                     Fixups, STI);
-  return encodeThumbBLOffset(MO.getImm());
+  return encodeThumbBLOffset(MO.getImm() - MI.getAddress() - 4);
 }
 
 /// getThumbBLXTargetOpValue - Return encoding info for Thumb immediate
@@ -644,7 +644,7 @@ getThumbBLXTargetOpValue(const MCInst &MI, unsigned OpIdx,
   if (MO.isExpr())
     return ::getBranchTargetOpValue(MI, OpIdx, ARM::fixup_arm_thumb_blx,
                                     Fixups, STI);
-  return encodeThumbBLOffset(MO.getImm());
+  return encodeThumbBLOffset(MO.getImm() - MI.getAddress() - 4);
 }
 
 /// getThumbBRTargetOpValue - Return encoding info for Thumb branch target.
