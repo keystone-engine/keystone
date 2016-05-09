@@ -379,6 +379,7 @@ private:
     DK_MACRO, DK_EXITM, DK_ENDM, DK_ENDMACRO, DK_PURGEM,
     DK_SLEB128, DK_ULEB128,
     DK_ERR, DK_ERROR, DK_WARNING,
+    DK_BITS,    // NASM directive 'bits'
     DK_END
   };
 
@@ -507,6 +508,9 @@ private:
 
   // ".warning"
   bool parseDirectiveWarning(SMLoc DirectiveLoc);
+
+  // "bits"
+  bool parseDirectiveBits();
 
   bool isNasmDirective(StringRef str);  // is this str a NASM directive?
   bool isDirective(StringRef str);  // is this str a directive?
@@ -683,7 +687,6 @@ size_t AsmParser::Run(bool NoInitialTextSection, uint64_t Address, bool NoFinali
   // While we have input, parse each statement.
   while (Lexer.isNot(AsmToken::Eof)) {
     ParseStatementInfo Info;
-    //printf(">> error = %u\n", Info.KsError);
     if (!parseStatement(Info, nullptr, Address)) {
       count++;
       continue;
@@ -1379,9 +1382,7 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
   int64_t LocalLabelVal = -1;
   // A full line comment is a '#' as the first token.
   if (Lexer.is(AsmToken::Hash))
-    return parseCppHashLineFilenameComment(IDLoc);  // qq
-
-  // printf(">> TokenID = %s\n", ID.getString().str().c_str());
+    return parseCppHashLineFilenameComment(IDLoc);
 
   // Allow an integer followed by a ':' as a directional local label.
   if (Lexer.is(AsmToken::Integer)) {
@@ -1389,7 +1390,7 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
     if (LocalLabelVal < 0) {
       if (!TheCondState.Ignore) {
         // return TokError("unexpected token at start of statement");
-        KsError = KS_ERR_ASM_STAT_TOKEN;
+        Info.KsError = KS_ERR_ASM_STAT_TOKEN;
         return true;
       }
       IDVal = "";
@@ -1399,7 +1400,7 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
       if (Lexer.getKind() != AsmToken::Colon) {
         if (!TheCondState.Ignore) {
           // return TokError("unexpected token at start of statement");
-          KsError = KS_ERR_ASM_STAT_TOKEN;
+          Info.KsError = KS_ERR_ASM_STAT_TOKEN;
           return true;
         }
       }
@@ -1417,13 +1418,13 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
     // Treat '}' as a valid identifier in this context.
     Lex();
     IDVal = "}";
-  } else if (isNasmDirective(ID.getString())) {
+  } else if (KsSyntax == KS_OPT_SYNTAX_NASM && isNasmDirective(ID.getString())) {
       Lex();
       IDVal = ID.getString();
   } else if (parseIdentifier(IDVal)) {
     if (!TheCondState.Ignore) {
       // return TokError("unexpected token at start of statement");
-      KsError = KS_ERR_ASM_STAT_TOKEN;
+      Info.KsError = KS_ERR_ASM_STAT_TOKEN;
       return true;
     }
     IDVal = "";
@@ -1432,6 +1433,7 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
   // Handle conditional assembly here before checking for skipping.  We
   // have to do this so that .endif isn't skipped in a ".if 0" block for
   // example.
+
   StringMap<DirectiveKind>::const_iterator DirKindIt =
       DirectiveKindMap.find(IDVal);
   DirectiveKind DirKind = (DirKindIt == DirectiveKindMap.end())
@@ -1679,7 +1681,7 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
     case DK_CODE16:
     case DK_CODE16GCC:
       // return TokError(Twine(IDVal) + " not supported yet");
-      KsError = KS_ERR_ASM_UNSUPPORTED;
+      Info.KsError = KS_ERR_ASM_UNSUPPORTED;
       return true;
     case DK_REPT:
       return parseDirectiveRept(IDLoc, IDVal);
@@ -1784,6 +1786,13 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
       return parseDirectiveWarning(IDLoc);
     case DK_RELOC:
       return parseDirectiveReloc(IDLoc);
+    case DK_BITS:
+      if (parseDirectiveBits()) {
+          Info.KsError = KS_ERR_ASM_DIRECTIVE_ID;
+          return true;
+      } else {
+          return false;
+      }
     }
 
     return Error(IDLoc, "unknown directive");
@@ -4650,6 +4659,38 @@ bool AsmParser::parseDirectiveWarning(SMLoc L) {
   return false;
 }
 
+/// parseDirectiveCFIDefCfaOffset
+/// ::= .cfi_def_cfa_offset offset
+bool AsmParser::parseDirectiveBits()
+{
+  int64_t bits = 0;
+
+  if (parseAbsoluteExpression(bits))
+    return true;
+
+  switch(bits) {
+      default:  // invalid parameter
+          return true;
+      case 16: {
+          AsmToken bits(AsmToken::Identifier, StringRef(".code16"), 0);
+          getTargetParser().ParseDirective(bits);
+          break;
+      }
+      case 32: {
+          AsmToken bits(AsmToken::Identifier, StringRef(".code32"), 0);
+          getTargetParser().ParseDirective(bits);
+          break;
+      }
+      case 64: {
+          AsmToken bits(AsmToken::Identifier, StringRef(".code64"), 0);
+          getTargetParser().ParseDirective(bits);
+          break;
+      }
+  }
+
+  return false;
+}
+
 /// parseDirectiveEndIf
 /// ::= .endif
 bool AsmParser::parseDirectiveEndIf(SMLoc DirectiveLoc) {
@@ -4679,6 +4720,7 @@ void AsmParser::initializeDirectiveKindMap(int syntax)
         DirectiveKindMap["dd"] = DK_INT;
         DirectiveKindMap["dq"] = DK_QUAD;
         DirectiveKindMap["use16"] = DK_CODE16;
+        DirectiveKindMap["bits"] = DK_BITS;
 #if 0
         DirectiveKindMap[".set"] = DK_SET;
         DirectiveKindMap[".equ"] = DK_EQU;
