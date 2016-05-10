@@ -1361,10 +1361,6 @@ bool AsmParser::isDirective(StringRef IDVal)
         return (IDVal[0] == '.' && IDVal != ".");
 }
 
-#if defined(_WIN32) || defined(_WIN64)
-#define strcasecmp _stricmp
-#endif
-
 /// ParseStatement:
 ///   ::= EndOfStatement
 ///   ::= Label* Directive ...Operands... EndOfStatement
@@ -1425,7 +1421,7 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
     // [bits xx]
     Lex();
     ID = Lexer.getTok();
-    if (strcasecmp(ID.getString().str().c_str(), "bits") == 0) {
+    if (ID.getString().lower() == "bits") {
         Lex();
         if (parseDirectiveBits()) {
             Info.KsError = KS_ERR_ASM_DIRECTIVE_ID;

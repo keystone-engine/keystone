@@ -1273,10 +1273,6 @@ RewriteIntelBracExpression(SmallVectorImpl<AsmRewrite> &AsmRewrites,
   }
 }
 
-#if defined(_WIN32) || defined(_WIN64)
-#define strcasecmp _stricmp
-#endif
-
 bool X86AsmParser::ParseIntelExpression(IntelExprStateMachine &SM, SMLoc &End)
 {
   unsigned int ErrorCode;
@@ -1836,11 +1832,11 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand(StringRef Mnem)
     Parser.Lex(); // Eat operand size (e.g., byte, word).
     if (KsSyntax == KS_OPT_SYNTAX_NASM) {
         // Nasm do not accept 'PTR' in memory operands
-        if (strcasecmp(Tok.getString().str().c_str(), "ptr") == 0)
+        if (Tok.getString().lower() == "ptr")
             return ErrorOperand(Tok.getLoc(), "Do not expected 'PTR' or 'ptr' token!");
     } else {
         // LLVM requires 'PTR' in memory operand
-        if (strcasecmp(Tok.getString().str().c_str(), "ptr") != 0)
+        if (Tok.getString().lower() != "ptr")
             return ErrorOperand(Tok.getLoc(), "Expected 'PTR' or 'ptr' token!");
         Parser.Lex(); // Eat ptr.
     }
