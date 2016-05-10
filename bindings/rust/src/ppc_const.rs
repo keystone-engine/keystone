@@ -1,0 +1,4 @@
+// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [ppc_const.rs]
+pub const KS_ERR_ASM_PPC_INVALIDOPERAND : u32 = 512;
+pub const KS_ERR_ASM_PPC_MISSINGFEATURE : u32 = 513;
+pub const KS_ERR_ASM_PPC_MNEMONICFAIL : u32 = 514;
