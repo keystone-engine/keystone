@@ -1,0 +1,4 @@
+// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [hexagon_const.js]
+module.exports.ERR_ASM_HEXAGON_INVALIDOPERAND = 512
+module.exports.ERR_ASM_HEXAGON_MISSINGFEATURE = 513
+module.exports.ERR_ASM_HEXAGON_MNEMONICFAIL = 514

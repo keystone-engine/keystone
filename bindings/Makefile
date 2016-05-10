@@ -15,6 +15,7 @@ SAMPLE_X86 = $(TMPDIR)/sample_x86
 
 all:
 	cd python && $(MAKE) gen_const
+	python const_generator.py nodejs
 
 samples: expected python
 

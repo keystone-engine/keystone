@@ -1,0 +1,4 @@
+// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [arm64_const.js]
+module.exports.ERR_ASM_ARM64_INVALIDOPERAND = 512
+module.exports.ERR_ASM_ARM64_MISSINGFEATURE = 513
+module.exports.ERR_ASM_ARM64_MNEMONICFAIL = 514
