@@ -270,7 +270,7 @@ private:
     int64_t Imm;
     const MCExpr *Sym;
     StringRef SymName;
-    bool StopOnLBrac, AddImmPrefix;
+    bool StopOnLBrac, AddImmPrefix, Rel, Abs;
     InfixCalculator IC;
     InlineAsmIdentifierInfo Info;
 
@@ -278,9 +278,9 @@ private:
     IntelExprStateMachine(int64_t imm, bool stoponlbrac, bool addimmprefix) :
       State(IES_PLUS), PrevState(IES_ERROR), BaseReg(0), IndexReg(0), TmpReg(0),
       Scale(1), Imm(imm), Sym(nullptr), StopOnLBrac(stoponlbrac),
-      AddImmPrefix(addimmprefix) { Info.clear(); }
+      AddImmPrefix(addimmprefix), Rel(false), Abs(false) { Info.clear(); }
 
-    unsigned getBaseReg() { return BaseReg; }
+    unsigned getBaseReg() { return (Rel && !Abs && BaseReg == 0 && IndexReg == 0) ? X86::RIP : BaseReg; }
     unsigned getIndexReg() { return IndexReg; }
     unsigned getScale() { return Scale; }
     const MCExpr *getSym() { return Sym; }
@@ -447,6 +447,12 @@ private:
         break;
       }
       PrevState = CurrState;
+    }
+    void onRel() {
+      Rel = true;
+    }
+    void onAbs() {
+      Abs = true;
     }
     void onRegister(unsigned Reg) {
       IntelExprState CurrState = State;
@@ -1276,6 +1282,23 @@ bool X86AsmParser::ParseIntelExpression(IntelExprStateMachine &SM, SMLoc &End)
   unsigned int ErrorCode;
   MCAsmParser &Parser = getParser();
   const AsmToken &Tok = Parser.getTok();
+
+  // nasm tokens rel / abs are only valid at the beginning of the expression.
+  if (KsSyntax == KS_OPT_SYNTAX_NASM) {
+    while (getLexer().getKind() == AsmToken::Identifier) {
+      StringRef Identifier = Tok.getString().lower();
+      if (Identifier == "rel") {
+        SM.onRel();
+        consumeToken();
+        continue;
+      } else if (Identifier == "abs") {
+        SM.onAbs();
+        consumeToken();
+        continue;
+      }
+      break;
+    }
+  }
 
   AsmToken::TokenKind PrevTK = AsmToken::Error;
   bool Done = false;

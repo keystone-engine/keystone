@@ -28,6 +28,8 @@ postmodern
 Fotis Loukos
 Peter Geissler
 Ingmar Steen (CED)
+Matteo Favaro
+Julien Legras
 
 
 Contributors (in no particular order)
