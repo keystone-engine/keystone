@@ -1,0 +1,4 @@
+// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [sparc_const.rs]
+pub const KS_ERR_ASM_SPARC_INVALIDOPERAND : u32 = 512;
+pub const KS_ERR_ASM_SPARC_MISSINGFEATURE : u32 = 513;
+pub const KS_ERR_ASM_SPARC_MNEMONICFAIL : u32 = 514;
