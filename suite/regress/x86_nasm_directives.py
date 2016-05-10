@@ -28,5 +28,9 @@ class TestX86(regress.RegressTest):
         # Assert the result
         self.assertEqual(encoding, [ 0x01, 0xd8, 0x66, 0x01, 0xd8 ])
 
+        encoding, count = ks.asm(b"[Bits 32]\n add eax, ebx\n[bits 16]\nadd eax, ebx")
+        # Assert the result
+        self.assertEqual(encoding, [ 0x01, 0xd8, 0x66, 0x01, 0xd8 ])
+
 if __name__ == '__main__':
     regress.main()
