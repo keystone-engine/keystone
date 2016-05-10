@@ -1361,6 +1361,10 @@ bool AsmParser::isDirective(StringRef IDVal)
         return (IDVal[0] == '.' && IDVal != ".");
 }
 
+#if defined(_WIN32) || defined(_WIN64)
+#define strcasecmp _stricmp
+#endif
+
 /// ParseStatement:
 ///   ::= EndOfStatement
 ///   ::= Label* Directive ...Operands... EndOfStatement
