@@ -11,6 +11,42 @@ ks_err_val = { 'KS_ERR_ASM': '128', 'KS_ERR_ASM_ARCH': '512' }
 include = [ 'arm.h', 'arm64.h', 'mips.h', 'x86.h', 'sparc.h', 'ppc.h', 'systemz.h', 'hexagon.h', 'keystone.h' ]
 
 template = {
+    'rust': {
+            'header': "// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [%s_const.rs]\n",
+            'footer': "",
+            'line_format': 'pub const KS_%s : u32 = %s;\n',
+            'out_file': './rust/src/%s_const.rs',
+            # prefixes for constant filenames of all archs - case sensitive
+            'arm.h': 'arm',
+            'arm64.h': 'arm64',
+            'mips.h': 'mips',
+            'x86.h': 'x86',
+            'sparc.h': 'sparc',
+            'systemz.h': 'systemz',
+            'ppc.h': 'ppc',
+            'hexagon.h': 'hexagon',
+            'keystone.h': 'keystone',
+            'comment_open': '/*',
+            'comment_close': '*/',
+    },
+    'go': {
+            'header': "package keystone\n// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [keystone_constants_%s.go]\n",
+            'footer': "",
+            'line_format': 'const KS_%s = %s\n',
+            'out_file': './go/keystone/keystone_constants_%s.go',
+            # prefixes for constant filenames of all archs - case sensitive
+            'arm.h': 'arm',
+            'arm64.h': 'arm64',
+            'mips.h': 'mips',
+            'x86.h': 'x86',
+            'sparc.h': 'sparc',
+            'systemz.h': 'systemz',
+            'ppc.h': 'ppc',
+            'hexagon.h': 'hexagon',
+            'keystone.h': 'keystone',
+            'comment_open': '/*',
+            'comment_close': '*/',
+    },
     'python': {
             'header': "# For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [%s_const.py]\n",
             'footer': "",
@@ -28,7 +64,7 @@ template = {
             'keystone.h': 'keystone',
             'comment_open': '#',
             'comment_close': '',
-        },
+    },
 }
 
 # markup for comments to be added to autogen files
