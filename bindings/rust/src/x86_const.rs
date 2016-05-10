@@ -1,0 +1,4 @@
+// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [x86_const.rs]
+pub const KS_ERR_ASM_X86_INVALIDOPERAND : u32 = 512;
+pub const KS_ERR_ASM_X86_MISSINGFEATURE : u32 = 513;
+pub const KS_ERR_ASM_X86_MNEMONICFAIL : u32 = 514;
