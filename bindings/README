@@ -1,3 +1,6 @@
-This directory contains all the bindings for Keystone.
+This directory contains bindings & test code Keystone.
+See <language>/README or <language>/README.TXT for how to install each binding.
 
-See python/README.md for how to install the Python binding.
+Except Python, all other bindings are contributed by community.
+
+- NodeJS binding: by Ingmar Steen

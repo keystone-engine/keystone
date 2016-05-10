@@ -34,5 +34,5 @@ Julien Legras
 
 Contributors (in no particular order)
 =====================================
-(Please let us know if you want to have your name here)
 
+Ingmar Steen: NodeJS binding.
