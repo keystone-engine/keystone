@@ -1,5 +1,5 @@
-This directory contains bindings & test code Keystone.
-See <language>/README or <language>/README.TXT for how to install each binding.
+This directory contains bindings for Keystone.
+See <language>/README* for how to install each binding.
 
 Except Python, all other bindings are contributed by community.
 
