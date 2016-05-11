@@ -65,6 +65,54 @@ const char *ks_strerror(ks_err code)
             return "Missing CPU feature (KS_ERR_ASM_MISSINGFEATURE)";
         case KS_ERR_ASM_MNEMONICFAIL:
             return "Invalid mnemonic (KS_ERR_ASM_MNEMONICFAIL)";
+
+        // generic input assembly errors - parser specific
+        case KS_ERR_ASM_EXPR_TOKEN:    // unknown token in expression
+            return "Unknown token in expression (KS_ERR_ASM_EXPR_TOKEN)";
+        case KS_ERR_ASM_DIRECTIVE_VALUE_RANGE:   // literal value out of range for directive
+            return "Literal value out of range for directive (KS_ERR_ASM_DIRECTIVE_VALUE_RANGE)";
+        case KS_ERR_ASM_DIRECTIVE_ID:    // expected identifier in directive
+            return "Expected identifier in directive (KS_ERR_ASM_DIRECTIVE_ID)";
+        case KS_ERR_ASM_DIRECTIVE_TOKEN: // unexpected token in directive
+            return "Unexpected token in directive (KS_ERR_ASM_DIRECTIVE_TOKEN)";
+        case KS_ERR_ASM_DIRECTIVE_STR:   // expected string in directive
+            return "Expected string in directive (KS_ERR_ASM_DIRECTIVE_STR)";
+        case KS_ERR_ASM_DIRECTIVE_COMMA: // expected comma in directive
+            return "Expected comma in directive (KS_ERR_ASM_DIRECTIVE_COMMA)";
+        //case KS_ERR_ASM_DIRECTIVE_RELOC_NAME: // expected relocation name in directive
+        //    return "Expected relocation name in directive (KS_ERR_ASM_DIRECTIVE_RELOC_NAME)";
+        //case KS_ERR_ASM_DIRECTIVE_RELOC_TOKEN: // unexpected token in .reloc directive
+        //    return "Unexpected token in .reloc directive (KS_ERR_ASM_DIRECTIVE_RELOC_TOKEN)";
+        case KS_ERR_ASM_DIRECTIVE_FPOINT:    // invalid floating point in directive
+            return "Invalid floating point in directive (KS_ERR_ASM_DIRECTIVE_FPOINT)";
+        case KS_ERR_ASM_VARIANT_INVALID: // invalid variant
+            return "Invalid variant (KS_ERR_ASM_VARIANT_INVALID)";
+        case KS_ERR_ASM_EXPR_BRACKET:    // brackets expression not supported on this target
+            return "Brackets expression not supported (KS_ERR_ASM_EXPR_BRACKET)";
+        case KS_ERR_ASM_SYMBOL_MODIFIER: // unexpected symbol modifier following '@'
+            return "Unexpected symbol modifier following '@' (KS_ERR_ASM_SYMBOL_MODIFIER)";
+        case KS_ERR_ASM_RPAREN:          // expected ')' in parentheses expression
+            return "Expected ')' (KS_ERR_ASM_RPAREN)";
+        case KS_ERR_ASM_STAT_TOKEN:      // unexpected token at start of statement
+            return "Unexpected token at start of statement (KS_ERR_ASM_STAT_TOKEN)";
+        case KS_ERR_ASM_UNSUPPORTED:     // unsupported token yet
+            return "Unsupported token yet (KS_ERR_ASM_UNSUPPORTED)";
+        case KS_ERR_ASM_MACRO_TOKEN:     // unexpected token in macro instantiation
+            return "Unexpected token in macro instantiation (KS_ERR_ASM_MACRO_TOKEN)";
+        case KS_ERR_ASM_MACRO_PAREN:     // unbalanced parentheses in macro argument
+            return "Unbalanced parentheses in macro argument (KS_ERR_ASM_MACRO_PAREN)";
+        case KS_ERR_ASM_MACRO_EQU:       // expected '=' after formal parameter identifier
+            return "Expected '=' after formal parameter identifier (KS_ERR_ASM_MACRO_EQU)";
+        case KS_ERR_ASM_MACRO_ARGS:      // too many positional arguments
+            return "Too many positional arguments (KS_ERR_ASM_MACRO_ARGS)";
+        case KS_ERR_ASM_MACRO_LEVELS_EXCEED: // macros cannot be nested more than 20 levels deep
+            return "Macros cannot be nested more than 20 levels deep (KS_ERR_ASM_MACRO_LEVELS_EXCEED)";
+        case KS_ERR_ASM_ESC_BACKSLASH:   // unexpected backslash at end of escaped string
+            return "Unexpected backslash at end of escaped string (KS_ERR_ASM_ESC_BACKSLASH)";
+        case KS_ERR_ASM_ESC_OCTAL:       // invalid octal escape sequence (out of range)
+            return "Invalid octal escape sequence (KS_ERR_ASM_ESC_OCTAL)";
+        case KS_ERR_ASM_ESC_SEQUENCE:         // invalid escape sequence (unrecognized character)
+            return "Invalid escape sequence (KS_ERR_ASM_ESC_SEQUENCE)";
     }
 }
 
