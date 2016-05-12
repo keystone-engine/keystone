@@ -390,8 +390,8 @@ private:
   // ".ascii", ".asciz", ".string"
   bool parseDirectiveAscii(StringRef IDVal, bool ZeroTerminated);
   bool parseDirectiveReloc(SMLoc DirectiveLoc); // ".reloc"
-  bool parseDirectiveValue(unsigned Size); // ".byte", ".long", ...
-  bool parseDirectiveOctaValue(); // ".octa"
+  bool parseDirectiveValue(unsigned Size, unsigned int &KsError); // ".byte", ".long", ...
+  bool parseDirectiveOctaValue(unsigned int &KsError); // ".octa"
   bool parseDirectiveRealValue(const fltSemantics &); // ".single", ...
   bool parseDirectiveFill(); // ".fill"
   bool parseDirectiveZero(); // ".zero"
@@ -810,7 +810,8 @@ bool AsmParser::parseBracketExpr(const MCExpr *&Res, SMLoc &EndLoc) {
 ///  primaryexpr ::= number
 ///  primaryexpr ::= '.'
 ///  primaryexpr ::= ~,+,- primaryexpr
-bool AsmParser::parsePrimaryExpr(const MCExpr *&Res, SMLoc &EndLoc) {
+bool AsmParser::parsePrimaryExpr(const MCExpr *&Res, SMLoc &EndLoc)
+{
   SMLoc FirstTokenLoc = getLexer().getLoc();
   AsmToken::TokenKind FirstTokenKind = Lexer.getKind();
   switch (FirstTokenKind) {
@@ -1614,20 +1615,20 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
     case DK_STRING:
       return parseDirectiveAscii(IDVal, true);
     case DK_BYTE:
-      return parseDirectiveValue(1);
+      return parseDirectiveValue(1, Info.KsError);
     case DK_SHORT:
     case DK_VALUE:
     case DK_2BYTE:
-      return parseDirectiveValue(2);
+      return parseDirectiveValue(2, Info.KsError);
     case DK_LONG:
     case DK_INT:
     case DK_4BYTE:
-      return parseDirectiveValue(4);
+      return parseDirectiveValue(4, Info.KsError);
     case DK_QUAD:
     case DK_8BYTE:
-      return parseDirectiveValue(8);
+      return parseDirectiveValue(8, Info.KsError);
     case DK_OCTA:
-      return parseDirectiveOctaValue();
+      return parseDirectiveOctaValue(Info.KsError);
     case DK_SINGLE:
     case DK_FLOAT:
       return parseDirectiveRealValue(APFloat::IEEEsingle);
@@ -2671,7 +2672,8 @@ bool AsmParser::parseDirectiveReloc(SMLoc DirectiveLoc) {
 
 /// parseDirectiveValue
 ///  ::= (.byte | .short | ... ) [ expression (, expression)* ]
-bool AsmParser::parseDirectiveValue(unsigned Size) {
+bool AsmParser::parseDirectiveValue(unsigned Size, unsigned int &KsError)
+{
   if (getLexer().isNot(AsmToken::EndOfStatement)) {
     checkForValidSection();
 
@@ -2685,8 +2687,11 @@ bool AsmParser::parseDirectiveValue(unsigned Size) {
       if (const MCConstantExpr *MCE = dyn_cast<MCConstantExpr>(Value)) {
         assert(Size <= 8 && "Invalid size");
         uint64_t IntValue = MCE->getValue();
-        if (!isUIntN(8 * Size, IntValue) && !isIntN(8 * Size, IntValue))
-          return Error(ExprLoc, "literal value out of range for directive");
+        if (!isUIntN(8 * Size, IntValue) && !isIntN(8 * Size, IntValue)) {
+            // return Error(ExprLoc, "literal value out of range for directive");
+            KsError = KS_ERR_ASM_DIRECTIVE_VALUE_RANGE;
+            return true;
+        }
         getStreamer().EmitIntValue(IntValue, Size);
       } else
         getStreamer().EmitValue(Value, Size, ExprLoc);
@@ -2710,7 +2715,8 @@ bool AsmParser::parseDirectiveValue(unsigned Size) {
 
 /// ParseDirectiveOctaValue
 ///  ::= .octa [ hexconstant (, hexconstant)* ]
-bool AsmParser::parseDirectiveOctaValue() {
+bool AsmParser::parseDirectiveOctaValue(unsigned int &KsError)
+{
   if (getLexer().isNot(AsmToken::EndOfStatement)) {
     checkForValidSection();
 
@@ -2724,7 +2730,7 @@ bool AsmParser::parseDirectiveOctaValue() {
         return true;
       }
 
-      SMLoc ExprLoc = getLexer().getLoc();
+      // SMLoc ExprLoc = getLexer().getLoc();
       APInt IntValue = getTok().getAPIntVal();
       Lex();
 
@@ -2736,8 +2742,11 @@ bool AsmParser::parseDirectiveOctaValue() {
         // It might actually have more than 128 bits, but the top ones are zero.
         hi = IntValue.getHiBits(IntValue.getBitWidth() - 64).getZExtValue();
         lo = IntValue.getLoBits(64).getZExtValue();
-      } else
-        return Error(ExprLoc, "literal value out of range for directive");
+      } else {
+        // return Error(ExprLoc, "literal value out of range for directive");
+        KsError = KS_ERR_ASM_DIRECTIVE_VALUE_RANGE;
+        return true;
+      }
 
       if (MAI.isLittleEndian()) {
         getStreamer().EmitIntValue(lo, 8);
