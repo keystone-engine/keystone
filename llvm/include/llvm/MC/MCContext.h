@@ -220,6 +220,8 @@ namespace llvm {
 
     bool HadError;
 
+    uint64_t BaseAddress;
+
     MCSymbol *createSymbolImpl(const StringMapEntry<bool> *Name,
                                bool CanBeUnnamed);
     MCSymbol *createSymbol(StringRef Name, bool AlwaysAddSuffix,
@@ -231,7 +233,8 @@ namespace llvm {
   public:
     explicit MCContext(const MCAsmInfo *MAI, const MCRegisterInfo *MRI,
                        const MCObjectFileInfo *MOFI,
-                       const SourceMgr *Mgr = nullptr, bool DoAutoReset = true);
+                       const SourceMgr *Mgr = nullptr, bool DoAutoReset = true,
+                       uint64_t BaseAddress = 0);
     ~MCContext();
 
     const SourceMgr *getSourceManager() const { return SrcMgr; }
@@ -244,6 +247,8 @@ namespace llvm {
 
     void setAllowTemporaryLabels(bool Value) { AllowTemporaryLabels = Value; }
     void setUseNamesOnTempLabels(bool Value) { UseNamesOnTempLabels = Value; }
+
+    uint64_t getBaseAddress() { return BaseAddress; }
 
     /// \name Module Lifetime Management
     /// @{
