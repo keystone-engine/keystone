@@ -16,7 +16,7 @@
 *.github.io
 _*.diff
 
-build
+build*/
 docs/sample/sample
 _sample*.txt
 tmp
