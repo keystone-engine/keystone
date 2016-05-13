@@ -303,7 +303,7 @@ void MCAsmLayout::layoutFragment(MCFragment *F) {
   if (Prev)
     F->Offset = Prev->Offset + getAssembler().computeFragmentSize(*this, *Prev);
   else
-    F->Offset = 0;
+    F->Offset = getAssembler().getContext().getBaseAddress();
   LastValidFragment[F->getParent()] = F;
 
   // If bundling is enabled and this fragment has instructions in it, it has to

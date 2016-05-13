@@ -504,7 +504,7 @@ int ks_asm(ks_engine *ks,
     *insn = NULL;
     *insn_size = 0;
 
-    Ctx = new MCContext(ks->MAI, ks->MRI, &ks->MOFI, &ks->SrcMgr);
+    Ctx = new MCContext(ks->MAI, ks->MRI, &ks->MOFI, &ks->SrcMgr, true, address);
     ks->MOFI.InitMCObjectFileInfo(Triple(ks->TripleName), *Ctx);
     CE = ks->TheTarget->createMCCodeEmitter(*ks->MCII, *ks->MRI, *Ctx);
 
