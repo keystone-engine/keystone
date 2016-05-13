@@ -130,14 +130,15 @@ void MCObjectStreamer::EmitValueImpl(const MCExpr *Value, unsigned Size,
   MCDataFragment *DF = getOrCreateDataFragment();
   flushPendingLabels(DF, DF->getContents().size());
 
-  if (Value->getKind() == MCExpr::SymbolRef) {
-      // Keystone: record data in the same section
-      const MCSymbolRefExpr &SRE = cast<MCSymbolRefExpr>(*Value);
-      const StringRef Sym = SRE.getSymbol().getName();
-      DF->getContents().append(Sym.begin(), Sym.end());
-
-      return;
-  }
+  // This makes the symbol's name (label) end up literally in the output stream
+  //if (Value->getKind() == MCExpr::SymbolRef) {
+  //    // Keystone: record data in the same section
+  //    const MCSymbolRefExpr &SRE = cast<MCSymbolRefExpr>(*Value);
+  //    const StringRef Sym = SRE.getSymbol().getName();
+  //    DF->getContents().append(Sym.begin(), Sym.end());
+  //
+  //    return;
+  //}
 
   //MCCVLineEntry::Make(this);
   //MCDwarfLineEntry::Make(this, getCurrentSection().first);
