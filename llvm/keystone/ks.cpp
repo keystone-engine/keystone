@@ -375,7 +375,8 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
                         TripleName = "ppc64";
                 } else {    // little endian
                     if (mode & KS_MODE_PPC32) {
-                        // do not suppor this mode
+                        // do not support this mode
+                        free(ks);
                         return KS_ERR_MODE;
                     }
                     if (mode & KS_MODE_MIPS64)
@@ -423,6 +424,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
 
         if (TripleName.empty()) {
             // this arch is not supported
+            free(ks);
             return KS_ERR_ARCH;
         }
 
