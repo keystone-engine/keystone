@@ -111,6 +111,9 @@ public:
   virtual void setParsingInlineAsm(bool V) = 0;
   virtual bool isParsingInlineAsm() = 0;
 
+  virtual void setNasmDefaultRel(bool V) = 0;
+  virtual bool isNasmDefaultRel() = 0;
+
   /// \brief Parse MS-style inline assembly.
   virtual bool parseMSInlineAsm(
       void *AsmLoc, std::string &AsmString, unsigned &NumOutputs,

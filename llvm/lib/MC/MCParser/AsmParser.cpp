@@ -182,6 +182,9 @@ private:
   /// \brief Are we parsing ms-style inline assembly?
   bool ParsingInlineAsm;
 
+  /// \brief Should we use PC relative offsets by default?
+  bool NasmDefaultRel;
+
   // Keystone syntax support
   int KsSyntax;
 
@@ -230,6 +233,9 @@ public:
 
   void setParsingInlineAsm(bool V) override { ParsingInlineAsm = V; }
   bool isParsingInlineAsm() override { return ParsingInlineAsm; }
+
+  void setNasmDefaultRel(bool V) override { NasmDefaultRel = V; }
+  bool isNasmDefaultRel() override { return NasmDefaultRel; }
 
   bool parseMSInlineAsm(void *AsmLoc, std::string &AsmString,
                         unsigned &NumOutputs, unsigned &NumInputs,
@@ -380,6 +386,7 @@ private:
     DK_SLEB128, DK_ULEB128,
     DK_ERR, DK_ERROR, DK_WARNING,
     DK_NASM_BITS,    // NASM directive 'bits'
+    DK_NASM_DEFAULT, // NASM directory 'default'
     DK_END
   };
 
@@ -512,6 +519,9 @@ private:
   // "bits" (Nasm)
   bool parseNasmDirectiveBits();
 
+  // "default" (Nasm)
+  bool parseNasmDirectiveDefault();
+
   bool isNasmDirective(StringRef str);  // is this str a NASM directive?
   bool isDirective(StringRef str);  // is this str a directive?
 };
@@ -532,7 +542,8 @@ AsmParser::AsmParser(SourceMgr &SM, MCContext &Ctx, MCStreamer &Out,
     : Lexer(MAI), Ctx(Ctx), Out(Out), MAI(MAI), SrcMgr(SM),
       PlatformParser(nullptr), CurBuffer(SM.getMainFileID()),
       MacrosEnabledFlag(true), HadError(false), CppHashLineNumber(0),
-      AssemblerDialect(~0U), IsDarwin(false), ParsingInlineAsm(false) {
+      AssemblerDialect(~0U), IsDarwin(false), ParsingInlineAsm(false),
+      NasmDefaultRel(false) {
   // Save the old handler.
   SavedDiagHandler = SrcMgr.getDiagHandler();
   SavedDiagContext = SrcMgr.getDiagContext();
@@ -1807,6 +1818,13 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
           return true;
       } else {
           return false;
+      }
+    case DK_NASM_DEFAULT:
+      if (parseNasmDirectiveDefault()) {
+        Info.KsError = KS_ERR_ASM_DIRECTIVE_ID;
+        return true;
+      } else {
+        return false;
       }
     }
 
@@ -4712,6 +4730,19 @@ bool AsmParser::parseNasmDirectiveBits()
   return false;
 }
 
+bool AsmParser::parseNasmDirectiveDefault()
+{
+  StringRef flag = parseStringToEndOfStatement().lower();
+  if (flag == "rel") {
+    setNasmDefaultRel(true);
+    return false;
+  } else if (flag == "abs") {
+    setNasmDefaultRel(false);
+    return false;
+  }
+  return true;
+}
+
 /// parseDirectiveEndIf
 /// ::= .endif
 bool AsmParser::parseDirectiveEndIf(SMLoc DirectiveLoc) {
@@ -4743,6 +4774,7 @@ void AsmParser::initializeDirectiveKindMap(int syntax)
         DirectiveKindMap["dq"] = DK_QUAD;
         DirectiveKindMap["use16"] = DK_CODE16;
         DirectiveKindMap["bits"] = DK_NASM_BITS;
+        DirectiveKindMap["default"] = DK_NASM_DEFAULT;
     } else {
         // default LLVM syntax
         DirectiveKindMap.clear();

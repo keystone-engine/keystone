@@ -275,10 +275,10 @@ private:
     InlineAsmIdentifierInfo Info;
 
   public:
-    IntelExprStateMachine(int64_t imm, bool stoponlbrac, bool addimmprefix) :
+    IntelExprStateMachine(int64_t imm, bool stoponlbrac, bool addimmprefix, bool isrel=false) :
       State(IES_PLUS), PrevState(IES_ERROR), BaseReg(0), IndexReg(0), TmpReg(0),
       Scale(1), Imm(imm), Sym(nullptr), StopOnLBrac(stoponlbrac),
-      AddImmPrefix(addimmprefix), Rel(false), Abs(false) { Info.clear(); }
+      AddImmPrefix(addimmprefix), Rel(isrel), Abs(false) { Info.clear(); }
 
     unsigned getBaseReg() { return (Rel && !Abs && BaseReg == 0 && IndexReg == 0) ? (unsigned)X86::RIP : BaseReg; }
     unsigned getIndexReg() { return IndexReg; }
@@ -1427,10 +1427,21 @@ X86AsmParser::ParseIntelBracExpression(unsigned SegReg, SMLoc Start,
   Parser.Lex(); // Eat '['
 
   SMLoc StartInBrac = Tok.getLoc();
+  bool IsRel;
+  switch(SegReg) {
+    default:
+      IsRel = false;
+      break;
+    case 0:
+    case X86::CS:
+    case X86::DS:
+      IsRel = getParser().isNasmDefaultRel();
+  }
   // Parse [ Symbol + ImmDisp ] and [ BaseReg + Scale*IndexReg + ImmDisp ].  We
   // may have already parsed an immediate displacement before the bracketed
   // expression.
-  IntelExprStateMachine SM(ImmDisp, /*StopOnLBrac=*/false, /*AddImmPrefix=*/true);
+  IntelExprStateMachine SM(ImmDisp, /*StopOnLBrac=*/false, /*AddImmPrefix=*/true,
+                           /*IsRel*/IsRel);
   if (ParseIntelExpression(SM, End))
     return nullptr;
 
