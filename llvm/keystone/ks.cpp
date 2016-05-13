@@ -222,8 +222,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
     std::string TripleName = "";
 
     if (arch < KS_ARCH_MAX) {
-        ks = (struct ks_struct *)calloc(1, sizeof(*ks));
-        ks = new(ks) ks_struct;
+        ks = new (std::nothrow) ks_struct();
         if (!ks) {
             // memory insufficient
             return KS_ERR_NOMEM;
@@ -239,7 +238,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
 #ifdef LLVM_ENABLE_ARCH_ARM
             case KS_ARCH_ARM:
                 if (mode & ~KS_MODE_ARM_MASK) {
-                    free(ks);
+                    delete ks;
                     return KS_ERR_MODE;
                 }
 
@@ -264,7 +263,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
 #ifdef LLVM_ENABLE_ARCH_AArch64
             case KS_ARCH_ARM64:
                 if (mode != KS_MODE_BIG_ENDIAN) {
-                    free(ks);
+                    delete ks;
                     return KS_ERR_MODE;
                 }
 
@@ -278,7 +277,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
 #ifdef LLVM_ENABLE_ARCH_Hexagon
             case KS_ARCH_HEXAGON:
                 if (mode & ~KS_MODE_HEXAGON_MASK) {
-                    free(ks);
+                    delete ks;
                     return KS_ERR_MODE;
                 }
 
@@ -293,7 +292,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
 #ifdef LLVM_ENABLE_ARCH_SystemZ
             case KS_ARCH_SYSTEMZ:
                 if (mode & ~KS_MODE_SYSTEMZ_MASK) {
-                    free(ks);
+                    delete ks;
                     return KS_ERR_MODE;
                 }
 
@@ -309,7 +308,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
             case KS_ARCH_SPARC:
                 if ((mode & ~KS_MODE_SPARC_MASK) ||
                         !(mode & (KS_MODE_SPARC32|KS_MODE_SPARC64))) {
-                    free(ks);
+                    delete ks;
                     return KS_ERR_MODE;
                 }
                 if (mode & KS_MODE_BIG_ENDIAN) {
@@ -323,7 +322,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
                     if (mode & KS_MODE_SPARC64) {
                         // TripleName = "sparc64el";
                         // FIXME
-                        free(ks);
+                        delete ks;
                         return KS_ERR_MODE;
                     } else
                         TripleName = "sparcel";
@@ -338,7 +337,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
             case KS_ARCH_MIPS:
                 if ((mode & ~KS_MODE_MIPS_MASK) ||
                         !(mode & (KS_MODE_MIPS32|KS_MODE_MIPS64))) {
-                    free(ks);
+                    delete ks;
                     return KS_ERR_MODE;
                 }
                 if (mode & KS_MODE_BIG_ENDIAN) {
@@ -363,7 +362,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
             case KS_ARCH_PPC:
                 if ((mode & ~KS_MODE_PPC_MASK) ||
                         !(mode & (KS_MODE_PPC32|KS_MODE_PPC64))) {
-                    free(ks);
+                    delete ks;
                     return KS_ERR_MODE;
                 }
 
@@ -376,7 +375,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
                 } else {    // little endian
                     if (mode & KS_MODE_PPC32) {
                         // do not support this mode
-                        free(ks);
+                        delete ks;
                         return KS_ERR_MODE;
                     }
                     if (mode & KS_MODE_MIPS64)
@@ -394,7 +393,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
                 if ((mode & ~KS_MODE_X86_MASK) ||
                         (mode & KS_MODE_BIG_ENDIAN) ||
                         !(mode & (KS_MODE_16|KS_MODE_32|KS_MODE_64))) {
-                    free(ks);
+                    delete ks;
                     return KS_ERR_MODE;
                 }
 
@@ -424,7 +423,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
 
         if (TripleName.empty()) {
             // this arch is not supported
-            free(ks);
+            delete ks;
             return KS_ERR_ARCH;
         }
 
@@ -447,8 +446,7 @@ ks_err ks_close(ks_engine *ks)
 #endif
 
     // finally, free ks itself.
-    memset(ks, 0, sizeof(*ks));
-    free(ks);
+    delete ks;
 
     return KS_ERR_OK;
 }
