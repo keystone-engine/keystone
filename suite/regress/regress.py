@@ -24,7 +24,7 @@ if __name__ == '__main__':
     count = 1
     for module in __all__:
         if module != "regress":
-            print("#%u - Going to test %s" %(count, module))
+            print("#%u - Adding %s" %(count, module))
             count += 1
         else:
             continue
