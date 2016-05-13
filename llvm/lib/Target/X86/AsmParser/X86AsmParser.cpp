@@ -1815,14 +1815,14 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand(StringRef Mnem)
 
   // Offset, length, type and size operators.
   if (isParsingInlineAsm()) {
-    StringRef AsmTokStr = Tok.getString();
-    if (AsmTokStr == "offset" || AsmTokStr == "OFFSET")
+    StringRef AsmTokStr = Tok.getString().lower();
+    if (AsmTokStr == "offset")
       return ParseIntelOffsetOfOperator();
-    if (AsmTokStr == "length" || AsmTokStr == "LENGTH")
+    if (AsmTokStr == "length")
       return ParseIntelOperator(IOK_LENGTH);
-    if (AsmTokStr == "size" || AsmTokStr == "SIZE")
+    if (AsmTokStr == "size")
       return ParseIntelOperator(IOK_SIZE);
-    if (AsmTokStr == "type" || AsmTokStr == "TYPE")
+    if (AsmTokStr == "type")
       return ParseIntelOperator(IOK_TYPE);
   }
 
@@ -1874,10 +1874,10 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand(StringRef Mnem)
                                      Size);
 
       if (Mnem.str().c_str()[0] == 'j') {
-          // JMP <immediate>
+          // JMP/Jxx <immediate> (Keystone)
           const MCExpr *Disp = MCConstantExpr::create(Imm, Parser.getContext());
-          return X86Operand::CreateMem(getPointerWidth(), 0, Disp, 0, 0, 1,
-                  Start, End);
+          return X86Operand::CreateMem(0, 0, Disp, 0, 0, 1,
+                  Start, End, 0);
       }
 
       const MCExpr *ImmExpr = MCConstantExpr::create(Imm, getContext());

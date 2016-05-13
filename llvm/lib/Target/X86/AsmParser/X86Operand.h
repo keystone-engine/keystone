@@ -276,8 +276,8 @@ struct X86Operand : public MCParsedAsmOperand {
   }
 
   bool isAbsMem() const {
-    return Kind == Memory && !getMemSegReg() && !getMemBaseReg() &&
-      !getMemIndexReg() && getMemScale() == 1;
+    return (Kind == Memory) && !getMemSegReg() && !getMemBaseReg() &&
+      !getMemIndexReg() && (getMemScale() == 1) && (Mem.ModeSize == 0 || Mem.Size == 0);
   }
   bool isAVX512RC() const{
       return isImm();
