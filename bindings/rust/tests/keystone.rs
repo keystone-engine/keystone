@@ -16,7 +16,7 @@ fn arch_supported() {
 
 #[test]
 fn asm() {
-    let asm = String::from("mov ah, 0x80; nop; mov al, 0x81;");
+    let asm = String::from("mov ah, 0x80\n nop\n mov al, 0x81\n");
 
     let engine = Keystone::new(Arch::X86, Mode::Mode32)
         .expect("Could not initialize Keystone engine");
