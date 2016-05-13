@@ -1873,8 +1873,8 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand(StringRef Mnem)
         return X86Operand::CreateMem(getPointerWidth(), SM.getSym(), Start, End,
                                      Size);
 
-      if (Mnem.str().c_str()[0] == 'j') {
-          // JMP/Jxx <immediate> (Keystone)
+      if (Mnem.str() == "call" || Mnem.str().c_str()[0] == 'j') {
+          // CALL/JMP/Jxx <immediate> (Keystone)
           const MCExpr *Disp = MCConstantExpr::create(Imm, Parser.getContext());
           return X86Operand::CreateMem(0, 0, Disp, 0, 0, 1,
                   Start, End, 0);
