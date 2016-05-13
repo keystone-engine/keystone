@@ -223,6 +223,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
 
     if (arch < KS_ARCH_MAX) {
         ks = new (std::nothrow) ks_struct();
+        memset(ks, 0, sizeof(*ks));
         if (!ks) {
             // memory insufficient
             return KS_ERR_NOMEM;
@@ -446,6 +447,7 @@ ks_err ks_close(ks_engine *ks)
 #endif
 
     // finally, free ks itself.
+    memset(ks, 0, sizeof(*ks));
     delete ks;
 
     return KS_ERR_OK;
