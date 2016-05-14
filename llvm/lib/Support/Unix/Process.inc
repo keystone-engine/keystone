@@ -255,18 +255,6 @@ std::error_code Process::SafelyCloseFileDescriptor(int FD) {
   return std::error_code(EC, std::generic_category());
 }
 
-bool Process::StandardInIsUserInput() {
-  return FileDescriptorIsDisplayed(STDIN_FILENO);
-}
-
-bool Process::StandardOutIsDisplayed() {
-  return FileDescriptorIsDisplayed(STDOUT_FILENO);
-}
-
-bool Process::StandardErrIsDisplayed() {
-  return FileDescriptorIsDisplayed(STDERR_FILENO);
-}
-
 bool Process::FileDescriptorIsDisplayed(int fd) {
 #if HAVE_ISATTY
   return isatty(fd);
@@ -274,40 +262,6 @@ bool Process::FileDescriptorIsDisplayed(int fd) {
   // If we don't have isatty, just return false.
   return false;
 #endif
-}
-
-static unsigned getColumns(int FileID) {
-  // If COLUMNS is defined in the environment, wrap to that many columns.
-  if (const char *ColumnsStr = std::getenv("COLUMNS")) {
-    int Columns = std::atoi(ColumnsStr);
-    if (Columns > 0)
-      return Columns;
-  }
-
-  unsigned Columns = 0;
-
-#if defined(HAVE_SYS_IOCTL_H) && defined(HAVE_TERMIOS_H)
-  // Try to determine the width of the terminal.
-  struct winsize ws;
-  if (ioctl(FileID, TIOCGWINSZ, &ws) == 0)
-    Columns = ws.ws_col;
-#endif
-
-  return Columns;
-}
-
-unsigned Process::StandardOutColumns() {
-  if (!StandardOutIsDisplayed())
-    return 0;
-
-  return getColumns(1);
-}
-
-unsigned Process::StandardErrColumns() {
-  if (!StandardErrIsDisplayed())
-    return 0;
-
-  return getColumns(2);
 }
 
 #ifdef HAVE_TERMINFO

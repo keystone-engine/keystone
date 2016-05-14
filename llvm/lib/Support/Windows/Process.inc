@@ -257,37 +257,9 @@ std::error_code Process::SafelyCloseFileDescriptor(int FD) {
   return std::error_code();
 }
 
-bool Process::StandardInIsUserInput() {
-  return FileDescriptorIsDisplayed(0);
-}
-
-bool Process::StandardOutIsDisplayed() {
-  return FileDescriptorIsDisplayed(1);
-}
-
-bool Process::StandardErrIsDisplayed() {
-  return FileDescriptorIsDisplayed(2);
-}
-
 bool Process::FileDescriptorIsDisplayed(int fd) {
   DWORD Mode;  // Unused
   return (GetConsoleMode((HANDLE)_get_osfhandle(fd), &Mode) != 0);
-}
-
-unsigned Process::StandardOutColumns() {
-  unsigned Columns = 0;
-  CONSOLE_SCREEN_BUFFER_INFO csbi;
-  if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi))
-    Columns = csbi.dwSize.X;
-  return Columns;
-}
-
-unsigned Process::StandardErrColumns() {
-  unsigned Columns = 0;
-  CONSOLE_SCREEN_BUFFER_INFO csbi;
-  if (GetConsoleScreenBufferInfo(GetStdHandle(STD_ERROR_HANDLE), &csbi))
-    Columns = csbi.dwSize.X;
-  return Columns;
 }
 
 // The terminal always has colors.
