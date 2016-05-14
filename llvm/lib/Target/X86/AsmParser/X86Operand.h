@@ -518,7 +518,7 @@ struct X86Operand : public MCParsedAsmOperand {
             void *OpDecl = nullptr) {
     // We should never just have a displacement, that should be parsed as an
     // absolute memory operand.
-    assert((SegReg || BaseReg || IndexReg) && "Invalid memory operand!");
+    // assert((SegReg || BaseReg || IndexReg) && "Invalid memory operand!");
 
     // The scale should always be one of {1,2,4,8}.
     assert(((Scale == 1 || Scale == 2 || Scale == 4 || Scale == 8)) &&
