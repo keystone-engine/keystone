@@ -280,7 +280,7 @@ private:
       Scale(1), Imm(imm), Sym(nullptr), StopOnLBrac(stoponlbrac),
       AddImmPrefix(addimmprefix), Rel(false), Abs(false) { Info.clear(); }
 
-    unsigned getBaseReg() { return (Rel && !Abs && BaseReg == 0 && IndexReg == 0) ? X86::RIP : BaseReg; }
+    unsigned getBaseReg() { return (Rel && !Abs && BaseReg == 0 && IndexReg == 0) ? (unsigned)X86::RIP : BaseReg; }
     unsigned getIndexReg() { return IndexReg; }
     unsigned getScale() { return Scale; }
     const MCExpr *getSym() { return Sym; }
