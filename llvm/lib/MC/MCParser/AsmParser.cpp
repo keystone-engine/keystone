@@ -379,7 +379,7 @@ private:
     DK_MACRO, DK_EXITM, DK_ENDM, DK_ENDMACRO, DK_PURGEM,
     DK_SLEB128, DK_ULEB128,
     DK_ERR, DK_ERROR, DK_WARNING,
-    DK_BITS,    // NASM directive 'bits'
+    DK_NASM_BITS,    // NASM directive 'bits'
     DK_END
   };
 
@@ -509,8 +509,8 @@ private:
   // ".warning"
   bool parseDirectiveWarning(SMLoc DirectiveLoc);
 
-  // "bits"
-  bool parseDirectiveBits();
+  // "bits" (Nasm)
+  bool parseNasmDirectiveBits();
 
   bool isNasmDirective(StringRef str);  // is this str a NASM directive?
   bool isDirective(StringRef str);  // is this str a directive?
@@ -1424,7 +1424,7 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
     ID = Lexer.getTok();
     if (ID.getString().lower() == "bits") {
         Lex();
-        if (parseDirectiveBits()) {
+        if (parseNasmDirectiveBits()) {
             Info.KsError = KS_ERR_ASM_DIRECTIVE_ID;
             return true;
         } else {
@@ -1801,8 +1801,8 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
       return parseDirectiveWarning(IDLoc);
     case DK_RELOC:
       return parseDirectiveReloc(IDLoc);
-    case DK_BITS:
-      if (parseDirectiveBits()) {
+    case DK_NASM_BITS:
+      if (parseNasmDirectiveBits()) {
           Info.KsError = KS_ERR_ASM_DIRECTIVE_ID;
           return true;
       } else {
@@ -4682,7 +4682,7 @@ bool AsmParser::parseDirectiveWarning(SMLoc L) {
   return false;
 }
 
-bool AsmParser::parseDirectiveBits()
+bool AsmParser::parseNasmDirectiveBits()
 {
   int64_t bits = 0;
 
@@ -4742,7 +4742,7 @@ void AsmParser::initializeDirectiveKindMap(int syntax)
         DirectiveKindMap["dd"] = DK_INT;
         DirectiveKindMap["dq"] = DK_QUAD;
         DirectiveKindMap["use16"] = DK_CODE16;
-        DirectiveKindMap["bits"] = DK_BITS;
+        DirectiveKindMap["bits"] = DK_NASM_BITS;
     } else {
         // default LLVM syntax
         DirectiveKindMap.clear();
