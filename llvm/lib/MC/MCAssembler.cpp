@@ -567,8 +567,8 @@ void MCAssembler::writeSectionData(const MCSection *Sec,
   for (const MCFragment &F : *Sec)
     writeFragment(*this, Layout, F);
 
-  assert(getWriter().getStream().tell() - Start ==
-         Layout.getSectionAddressSize(Sec));
+  //assert(getWriter().getStream().tell() - Start ==
+  //       Layout.getSectionAddressSize(Sec));
 }
 
 std::pair<uint64_t, bool> MCAssembler::handleFixup(const MCAsmLayout &Layout,
