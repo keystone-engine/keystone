@@ -4732,7 +4732,7 @@ bool AsmParser::parseNasmDirectiveBits()
 
 bool AsmParser::parseNasmDirectiveDefault()
 {
-  StringRef flag = parseStringToEndOfStatement().lower();
+  std::string flag = parseStringToEndOfStatement().lower();
   if (flag == "rel") {
     setNasmDefaultRel(true);
     return false;
