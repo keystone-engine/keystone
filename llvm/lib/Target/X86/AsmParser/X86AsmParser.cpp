@@ -1282,7 +1282,7 @@ bool X86AsmParser::ParseIntelExpression(IntelExprStateMachine &SM, SMLoc &End)
   // nasm tokens rel / abs are only valid at the beginning of the expression.
   if (KsSyntax == KS_OPT_SYNTAX_NASM) {
     while (getLexer().getKind() == AsmToken::Identifier) {
-      StringRef Identifier = Tok.getString().lower();
+      std::string Identifier = Tok.getString().lower();
       if (Identifier == "rel") {
         SM.onRel();
         consumeToken();
@@ -1826,7 +1826,7 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand(StringRef Mnem)
 
   // Offset, length, type and size operators.
   if (isParsingInlineAsm()) {
-    StringRef AsmTokStr = Tok.getString().lower();
+    std::string AsmTokStr = Tok.getString().lower();
     if (AsmTokStr == "offset")
       return ParseIntelOffsetOfOperator();
     if (AsmTokStr == "length")
