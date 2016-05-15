@@ -11,6 +11,7 @@
 #endif
 
 #include "llvm/MC/MCObjectFileInfo.h"
+#include "llvm/MC/MCCodeEmitter.h"
 
 // DEBUG
 //#include <iostream>
@@ -222,8 +223,14 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
     std::string TripleName = "";
 
     if (arch < KS_ARCH_MAX) {
-        ks = (struct ks_struct *)calloc(1, sizeof(*ks));
-        ks = new(ks) ks_struct;
+        ks = new (std::nothrow) ks_struct();
+        ks->TheTarget = NULL;
+        ks->MAB = NULL;
+        ks->MRI = NULL;
+        ks->MAI = NULL;
+        ks->MCII = NULL;
+        ks->STI = NULL;
+
         if (!ks) {
             // memory insufficient
             return KS_ERR_NOMEM;
@@ -239,7 +246,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
 #ifdef LLVM_ENABLE_ARCH_ARM
             case KS_ARCH_ARM:
                 if (mode & ~KS_MODE_ARM_MASK) {
-                    free(ks);
+                    delete ks;
                     return KS_ERR_MODE;
                 }
 
@@ -264,7 +271,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
 #ifdef LLVM_ENABLE_ARCH_AArch64
             case KS_ARCH_ARM64:
                 if (mode != KS_MODE_BIG_ENDIAN) {
-                    free(ks);
+                    delete ks;
                     return KS_ERR_MODE;
                 }
 
@@ -278,7 +285,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
 #ifdef LLVM_ENABLE_ARCH_Hexagon
             case KS_ARCH_HEXAGON:
                 if (mode & ~KS_MODE_HEXAGON_MASK) {
-                    free(ks);
+                    delete ks;
                     return KS_ERR_MODE;
                 }
 
@@ -293,7 +300,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
 #ifdef LLVM_ENABLE_ARCH_SystemZ
             case KS_ARCH_SYSTEMZ:
                 if (mode & ~KS_MODE_SYSTEMZ_MASK) {
-                    free(ks);
+                    delete ks;
                     return KS_ERR_MODE;
                 }
 
@@ -309,7 +316,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
             case KS_ARCH_SPARC:
                 if ((mode & ~KS_MODE_SPARC_MASK) ||
                         !(mode & (KS_MODE_SPARC32|KS_MODE_SPARC64))) {
-                    free(ks);
+                    delete ks;
                     return KS_ERR_MODE;
                 }
                 if (mode & KS_MODE_BIG_ENDIAN) {
@@ -323,7 +330,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
                     if (mode & KS_MODE_SPARC64) {
                         // TripleName = "sparc64el";
                         // FIXME
-                        free(ks);
+                        delete ks;
                         return KS_ERR_MODE;
                     } else
                         TripleName = "sparcel";
@@ -338,7 +345,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
             case KS_ARCH_MIPS:
                 if ((mode & ~KS_MODE_MIPS_MASK) ||
                         !(mode & (KS_MODE_MIPS32|KS_MODE_MIPS64))) {
-                    free(ks);
+                    delete ks;
                     return KS_ERR_MODE;
                 }
                 if (mode & KS_MODE_BIG_ENDIAN) {
@@ -363,7 +370,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
             case KS_ARCH_PPC:
                 if ((mode & ~KS_MODE_PPC_MASK) ||
                         !(mode & (KS_MODE_PPC32|KS_MODE_PPC64))) {
-                    free(ks);
+                    delete ks;
                     return KS_ERR_MODE;
                 }
 
@@ -376,7 +383,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
                 } else {    // little endian
                     if (mode & KS_MODE_PPC32) {
                         // do not support this mode
-                        free(ks);
+                        delete ks;
                         return KS_ERR_MODE;
                     }
                     if (mode & KS_MODE_MIPS64)
@@ -394,7 +401,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
                 if ((mode & ~KS_MODE_X86_MASK) ||
                         (mode & KS_MODE_BIG_ENDIAN) ||
                         !(mode & (KS_MODE_16|KS_MODE_32|KS_MODE_64))) {
-                    free(ks);
+                    delete ks;
                     return KS_ERR_MODE;
                 }
 
@@ -424,7 +431,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
 
         if (TripleName.empty()) {
             // this arch is not supported
-            free(ks);
+            delete ks;
             return KS_ERR_ARCH;
         }
 
@@ -442,13 +449,11 @@ ks_err ks_close(ks_engine *ks)
     delete ks->STI;
     delete ks->MCII;
     delete ks->MAI;
-#if 0   // FIXME
+    delete ks->MRI;
     delete ks->MAB;
-#endif
 
     // finally, free ks itself.
-    memset(ks, 0, sizeof(*ks));
-    free(ks);
+    delete ks;
 
     return KS_ERR_OK;
 }
@@ -496,7 +501,6 @@ int ks_asm(ks_engine *ks,
         unsigned char **insn, size_t *insn_size,
         size_t *stat_count)
 {
-    MCContext *Ctx;
     MCCodeEmitter *CE;
     MCStreamer *Streamer;
     unsigned char *encoding;
@@ -506,12 +510,12 @@ int ks_asm(ks_engine *ks,
     *insn = NULL;
     *insn_size = 0;
 
-    Ctx = new MCContext(ks->MAI, ks->MRI, &ks->MOFI, &ks->SrcMgr, true, address);
-    ks->MOFI.InitMCObjectFileInfo(Triple(ks->TripleName), *Ctx);
-    CE = ks->TheTarget->createMCCodeEmitter(*ks->MCII, *ks->MRI, *Ctx);
+    MCContext Ctx(ks->MAI, ks->MRI, &ks->MOFI, &ks->SrcMgr, true, address);
+    ks->MOFI.InitMCObjectFileInfo(Triple(ks->TripleName), Ctx);
+    CE = ks->TheTarget->createMCCodeEmitter(*ks->MCII, *ks->MRI, Ctx);
 
     Streamer = ks->TheTarget->createMCObjectStreamer(
-            Triple(ks->TripleName), *Ctx, *ks->MAB, OS, CE, *ks->STI, ks->MCOptions.MCRelaxAll,
+            Triple(ks->TripleName), Ctx, *ks->MAB, OS, CE, *ks->STI, ks->MCOptions.MCRelaxAll,
             /*DWARFMustBeAtTheEnd*/ false);
 
     // Tell SrcMgr about this buffer, which is what the parser will pick up.
@@ -524,7 +528,7 @@ int ks_asm(ks_engine *ks,
     ks->SrcMgr.clearBuffers();
     ks->SrcMgr.AddNewSourceBuffer(std::move(*BufferPtr), SMLoc());
 
-    MCAsmParser *Parser = createMCAsmParser(ks->SrcMgr, *Ctx, *Streamer, *ks->MAI);
+    MCAsmParser *Parser = createMCAsmParser(ks->SrcMgr, Ctx, *Streamer, *ks->MAI);
     MCTargetAsmParser *TAP = ks->TheTarget->createMCAsmParser(*ks->STI, *Parser, *ks->MCII, ks->MCOptions);
     TAP->KsSyntax = ks->syntax;
 
@@ -543,6 +547,12 @@ int ks_asm(ks_engine *ks,
         *stat_count = *stat_count / 2;
 
     ks->errnum = Parser->KsError;
+
+    delete TAP;
+    delete Parser;
+    delete CE;
+    delete Streamer;
+
     if (ks->errnum >= KS_ERR_ASM)
         return -1;
     else {
