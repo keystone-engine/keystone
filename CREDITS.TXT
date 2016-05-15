@@ -30,6 +30,7 @@ Peter Geissler
 Ingmar Steen (CED)
 Matteo Favaro
 Julien Legras
+Anton Kochkov
 
 
 Contributors (in no particular order)
