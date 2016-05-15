@@ -36,3 +36,4 @@ Contributors (in no particular order)
 =====================================
 
 Ingmar Steen: NodeJS binding.
+Sascha Schirra: Ruby binding.
