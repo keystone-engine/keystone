@@ -15,7 +15,7 @@ class TestX86Nasm(regress.RegressTest):
     def runTest(self):
         ks = Ks(KS_ARCH_X86, KS_MODE_32)
         ks.syntax = KS_OPT_SYNTAX_NASM
-        encoding, count = ks.asm(b"call label; label:")
+        encoding, count = ks.asm(b"call label\n label:")
         self.assertEqual(encoding, [ 0xe8, 0x00, 0x00, 0x00, 0x00 ])
 
 
