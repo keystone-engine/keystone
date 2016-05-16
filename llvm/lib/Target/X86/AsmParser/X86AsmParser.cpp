@@ -1657,7 +1657,7 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelMemOperand(int64_t ImmDisp,
     if (getParser().parsePrimaryExpr(Val, End))
       return ErrorOperand(Tok.getLoc(), "unknown token in expression");
 
-    return X86Operand::CreateMem(getPointerWidth(), Val, Start, End, Size);
+    return X86Operand::CreateMem(0, Val, Start, End, Size);
   }
 
   InlineAsmIdentifierInfo Info;
