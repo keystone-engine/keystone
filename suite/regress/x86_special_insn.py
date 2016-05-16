@@ -2,7 +2,7 @@
 
 # Test some special instructions unsupported by LLVM
 
-# Github issue: #987654321
+# Github issue: #58
 # Author: Nguyen Anh Quynh
 
 from keystone import *
