@@ -1362,7 +1362,7 @@ bool AsmParser::parseBinOpRHS(unsigned Precedence, const MCExpr *&Res,
 
 bool AsmParser::isNasmDirective(StringRef IDVal)
 {
-    return (DirectiveKindMap.find(IDVal) != DirectiveKindMap.end());
+    return (DirectiveKindMap.find(IDVal.lower()) != DirectiveKindMap.end());
 }
 
 bool AsmParser::isDirective(StringRef IDVal)
@@ -1462,7 +1462,7 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
   // example.
 
   StringMap<DirectiveKind>::const_iterator DirKindIt =
-      DirectiveKindMap.find(IDVal);
+      DirectiveKindMap.find(IDVal.lower());
   DirectiveKind DirKind = (DirKindIt == DirectiveKindMap.end())
                               ? DK_NO_DIRECTIVE
                               : DirKindIt->getValue();
