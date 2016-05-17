@@ -195,7 +195,7 @@ bool MCAssembler::evaluateFixup(const MCAsmLayout &Layout,
     if (Sym.isDefined())
       Value += Layout.getSymbolOffset(Sym);
     else {
-        KsError = KS_ERR_ASM_SYMBOL_NOTFOUND;
+        KsError = KS_ERR_ASM_SYMBOL_MISSING;
         return false;
     }
   }
