@@ -31,6 +31,7 @@ Ingmar Steen (CED)
 Matteo Favaro
 Julien Legras
 Anton Kochkov
+Francisco Alonso
 
 
 Contributors (in no particular order)
