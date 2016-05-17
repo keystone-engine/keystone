@@ -17,6 +17,6 @@
 _*.diff
 
 build*/
-docs/sample/sample
+samples/sample
 _sample*.txt
 tmp
