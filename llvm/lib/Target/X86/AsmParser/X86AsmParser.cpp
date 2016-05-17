@@ -713,7 +713,7 @@ private:
   std::unique_ptr<X86Operand>
   ParseIntelSegmentOverride(unsigned SegReg, SMLoc Start, unsigned Size);
   std::unique_ptr<X86Operand>
-  ParseIntelMemOperand(int64_t ImmDisp, SMLoc StartLoc, unsigned Size);
+  ParseIntelMemOperand(StringRef Mnem, int64_t ImmDisp, SMLoc StartLoc, unsigned Size);
   std::unique_ptr<X86Operand> ParseRoundingModeOp(SMLoc Start, SMLoc End);
   bool ParseIntelExpression(IntelExprStateMachine &SM, SMLoc &End);
   std::unique_ptr<X86Operand> ParseIntelBracExpression(unsigned SegReg,
@@ -1639,7 +1639,8 @@ X86AsmParser::ParseRoundingModeOp(SMLoc Start, SMLoc End) {
   return ErrorOperand(Tok.getLoc(), "unknown token in expression");
 }
 /// ParseIntelMemOperand - Parse intel style memory operand.
-std::unique_ptr<X86Operand> X86AsmParser::ParseIntelMemOperand(int64_t ImmDisp,
+std::unique_ptr<X86Operand> X86AsmParser::ParseIntelMemOperand(StringRef Mnem,
+                                                               int64_t ImmDisp,
                                                                SMLoc Start,
                                                                unsigned Size)
 {
@@ -1653,51 +1654,17 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelMemOperand(int64_t ImmDisp,
   assert(ImmDisp == 0);
 
   const MCExpr *Val;
-  if (!isParsingInlineAsm()) {
-    if (getParser().parsePrimaryExpr(Val, End))
-      return ErrorOperand(Tok.getLoc(), "unknown token in expression");
+  if (Mnem.str() == "call" || Mnem.str().c_str()[0] == 'j') {
+      // CALL/JMP/Jxx <immediate> (Keystone)
+      if (getParser().parsePrimaryExpr(Val, End))
+          return ErrorOperand(Tok.getLoc(), "unknown token in expression");
 
-    return X86Operand::CreateMem(0, Val, Start, End, Size);
+      return X86Operand::CreateMem(0, Val, Start, End, Size);
+  } else {
+    if (getParser().parseExpression(Val, End))
+      return nullptr;
+    return X86Operand::CreateImm(Val, Start, End);
   }
-
-  InlineAsmIdentifierInfo Info;
-  StringRef Identifier = Tok.getString();
-  if (ParseIntelIdentifier(Val, Identifier, Info,
-                           /*Unevaluated=*/false, End))
-    return nullptr;
-
-  if (!getLexer().is(AsmToken::LBrac))
-    return CreateMemForInlineAsm(/*SegReg=*/0, Val, /*BaseReg=*/0, /*IndexReg=*/0,
-                                 /*Scale=*/1, Start, End, Size, Identifier, Info);
-
-  Parser.Lex(); // Eat '['
-
-  // Parse Identifier [ ImmDisp ]
-  IntelExprStateMachine SM(/*ImmDisp=*/0, /*StopOnLBrac=*/true,
-                           /*AddImmPrefix=*/false);
-  if (ParseIntelExpression(SM, End))
-    return nullptr;
-
-  if (SM.getSym()) {
-    Error(Start, "cannot use more than one symbol in memory operand");
-    return nullptr;
-  }
-  if (SM.getBaseReg()) {
-    Error(Start, "cannot use base register with variable reference");
-    return nullptr;
-  }
-  if (SM.getIndexReg()) {
-    Error(Start, "cannot use index register with variable reference");
-    return nullptr;
-  }
-
-  const MCExpr *Disp = MCConstantExpr::create(SM.getImm(), getContext());
-  // BaseReg is non-zero to avoid assertions.  In the context of inline asm,
-  // we're pointing to a local variable in memory, so the base register is
-  // really the frame or stack pointer.
-  return X86Operand::CreateMem(getPointerWidth(), /*SegReg=*/0, Disp,
-                               /*BaseReg=*/1, /*IndexReg=*/0, /*Scale=*/1,
-                               Start, End, Size, Identifier, Info.OpDecl);
 }
 
 /// Parse the '.' operator.
@@ -1824,6 +1791,8 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand(StringRef Mnem)
   const AsmToken &Tok = Parser.getTok();
   SMLoc Start, End;
 
+  //printf(">> ParseIntelOperand::Tok = %s\n", Tok.getString().str().c_str());
+
   // Offset, length, type and size operators.
   if (isParsingInlineAsm()) {
     std::string AsmTokStr = Tok.getString().lower();
@@ -1901,7 +1870,7 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand(StringRef Mnem)
                           "before bracketed expr.");
 
     // Parse ImmDisp [ BaseReg + Scale*IndexReg + Disp ].
-    return ParseIntelMemOperand(Imm, Start, Size);
+    return ParseIntelMemOperand(Mnem, Imm, Start, Size);
   }
 
   // rounding mode token
@@ -1929,7 +1898,7 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand(StringRef Mnem)
   }
 
   // Memory operand.
-  return ParseIntelMemOperand(/*Disp=*/0, Start, Size);
+  return ParseIntelMemOperand(Mnem, /*Disp=*/0, Start, Size);
 }
 
 std::unique_ptr<X86Operand> X86AsmParser::ParseATTOperand()
