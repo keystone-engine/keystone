@@ -742,9 +742,9 @@ public:
   void EmitRawText(const Twine &String);
 
   /// \brief Streamer specific finalization.
-  virtual void FinishImpl();
+  virtual unsigned int FinishImpl();
   /// \brief Finish emission of machine code.
-  void Finish();
+  unsigned int Finish();
 
   virtual bool mayHaveInstructions(MCSection &Sec) const { return true; }
 };

@@ -742,8 +742,8 @@ size_t AsmParser::Run(bool NoInitialTextSection, uint64_t Address, bool NoFinali
 
   // Finalize the output stream if there are no errors and if the client wants
   // us to.
-  if (!HadError && !NoFinalize)
-    Out.Finish();
+  if (!KsError && !HadError && !NoFinalize)
+    KsError = Out.Finish();
 
   //return HadError || getContext().hadError();
   return count;
@@ -1393,6 +1393,7 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
 
   // Statements always start with an identifier or are a full line comment.
   AsmToken ID = getTok();
+  //printf(">>> parseStatement:ID = %s\n", ID.getString().str().c_str());
   SMLoc IDLoc = ID.getLoc();
   StringRef IDVal;
   int64_t LocalLabelVal = -1;

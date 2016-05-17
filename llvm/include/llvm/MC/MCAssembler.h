@@ -163,7 +163,7 @@ private:
   /// relocation.
   bool evaluateFixup(const MCAsmLayout &Layout, const MCFixup &Fixup,
                      const MCFragment *DF, MCValue &Target,
-                     uint64_t &Value) const;
+                     uint64_t &Value, unsigned int &KsError) const;
 
   /// Check whether a fixup can be satisfied, or whether it needs to be relaxed
   /// (increased in size, in order to hold its value correctly).
@@ -194,7 +194,7 @@ private:
   void finishLayout(MCAsmLayout &Layout);
 
   std::pair<uint64_t, bool> handleFixup(const MCAsmLayout &Layout,
-                                        MCFragment &F, const MCFixup &Fixup);
+                                        MCFragment &F, const MCFixup &Fixup, unsigned int &KsError);
 
 public:
   /// Compute the effective fragment size assuming it is laid out at the given
@@ -265,10 +265,10 @@ public:
   /// Finish - Do final processing and write the object to the output stream.
   /// \p Writer is used for custom object writer (as the MCJIT does),
   /// if not specified it is automatically created from backend.
-  void Finish();
+  void Finish(unsigned int &KsError);
 
   // Layout all section and prepare them for emission.
-  void layout(MCAsmLayout &Layout);
+  void layout(MCAsmLayout &Layout, unsigned int &KsError);
 
   // FIXME: This does not belong here.
   bool getSubsectionsViaSymbols() const { return SubsectionsViaSymbols; }

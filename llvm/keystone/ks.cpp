@@ -94,6 +94,8 @@ const char *ks_strerror(ks_err code)
             return "Unexpected symbol modifier following '@' (KS_ERR_ASM_SYMBOL_MODIFIER)";
         case KS_ERR_ASM_SYMBOL_REDEFINED:
             return "Invalid symbol redefined (KS_ERR_ASM_SYMBOL_REDEFINED)";
+        case KS_ERR_ASM_SYMBOL_NOTFOUND:
+            return "Cannot find a symbol (KS_ERR_ASM_SYMBOL_NOTFOUND)";
         case KS_ERR_ASM_RPAREN:          // expected ')' in parentheses expression
             return "Expected ')' (KS_ERR_ASM_RPAREN)";
         case KS_ERR_ASM_STAT_TOKEN:      // unexpected token at start of statement

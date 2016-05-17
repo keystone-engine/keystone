@@ -137,7 +137,7 @@ public:
   bool EmitRelocDirective(const MCExpr &Offset, StringRef Name,
                           const MCExpr *Expr, SMLoc Loc) override;
   void EmitFill(uint64_t NumBytes, uint8_t FillValue) override;
-  void FinishImpl() override;
+  unsigned int FinishImpl() override;
 
   /// Emit the absolute difference between two symbols if possible.
   ///
