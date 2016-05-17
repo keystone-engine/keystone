@@ -386,7 +386,8 @@ private:
     DK_SLEB128, DK_ULEB128,
     DK_ERR, DK_ERROR, DK_WARNING,
     DK_NASM_BITS,    // NASM directive 'bits'
-    DK_NASM_DEFAULT, // NASM directory 'default'
+    DK_NASM_DEFAULT, // NASM directive 'default'
+    DK_NASM_USE32,   // NASM directive 'use32'
     DK_END
   };
 
@@ -518,6 +519,9 @@ private:
 
   // "bits" (Nasm)
   bool parseNasmDirectiveBits();
+
+  // "use32" (Nasm)
+  bool parseNasmDirectiveUse32();
 
   // "default" (Nasm)
   bool parseNasmDirectiveDefault();
@@ -1819,6 +1823,8 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
       } else {
           return false;
       }
+    case DK_NASM_USE32:
+      return parseNasmDirectiveUse32();
     case DK_NASM_DEFAULT:
       if (parseNasmDirectiveDefault()) {
         Info.KsError = KS_ERR_ASM_DIRECTIVE_ID;
@@ -4730,6 +4736,12 @@ bool AsmParser::parseNasmDirectiveBits()
   return false;
 }
 
+bool AsmParser::parseNasmDirectiveUse32()
+{
+  AsmToken bits(AsmToken::Identifier, StringRef(".code32"), 0);
+  return getTargetParser().ParseDirective(bits);
+}
+
 bool AsmParser::parseNasmDirectiveDefault()
 {
   std::string flag = parseStringToEndOfStatement().lower();
@@ -4773,6 +4785,8 @@ void AsmParser::initializeDirectiveKindMap(int syntax)
         DirectiveKindMap["dd"] = DK_INT;
         DirectiveKindMap["dq"] = DK_QUAD;
         DirectiveKindMap["use16"] = DK_CODE16;
+        DirectiveKindMap["use32"] = DK_NASM_USE32;
+        DirectiveKindMap["global"] = DK_GLOBAL;
         DirectiveKindMap["bits"] = DK_NASM_BITS;
         DirectiveKindMap["default"] = DK_NASM_DEFAULT;
     } else {
