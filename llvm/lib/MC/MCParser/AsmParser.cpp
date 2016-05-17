@@ -1551,8 +1551,11 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
 
     Sym->redefineIfPossible();
 
-    if (!Sym->isUndefined() || Sym->isVariable())
-      return Error(IDLoc, "invalid symbol redefinition");
+    if (!Sym->isUndefined() || Sym->isVariable()) {
+      //return Error(IDLoc, "invalid symbol redefinition");
+      Info.KsError = KS_ERR_ASM_SYMBOL_REDEFINED;
+      return true;
+    }
 
     // Emit the label.
     if (!ParsingInlineAsm)

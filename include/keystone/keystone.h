@@ -109,6 +109,7 @@ typedef enum ks_err {
     KS_ERR_ASM_VARIANT_INVALID, // invalid variant
     KS_ERR_ASM_EXPR_BRACKET,    // brackets expression not supported on this target
     KS_ERR_ASM_SYMBOL_MODIFIER, // unexpected symbol modifier following '@'
+    KS_ERR_ASM_SYMBOL_REDEFINED, // invalid symbol redefinition
     KS_ERR_ASM_RPAREN,          // expected ')' in parentheses expression
     KS_ERR_ASM_STAT_TOKEN,      // unexpected token at start of statement
     KS_ERR_ASM_UNSUPPORTED,     // unsupported token yet
