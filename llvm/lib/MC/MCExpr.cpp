@@ -439,7 +439,8 @@ bool MCExpr::evaluateAsAbsolute(int64_t &Res, const MCAssembler *Asm,
 
 bool MCExpr::evaluateAsAbsolute(int64_t &Res, const MCAssembler *Asm,
                                 const MCAsmLayout *Layout,
-                                const SectionAddrMap *Addrs, bool InSet) const {
+                                const SectionAddrMap *Addrs, bool InSet) const
+{
   MCValue Value;
 
   // Fast path constants.
@@ -587,13 +588,15 @@ EvaluateSymbolicAdd(const MCAssembler *Asm, const MCAsmLayout *Layout,
 
 bool MCExpr::evaluateAsRelocatable(MCValue &Res,
                                    const MCAsmLayout *Layout,
-                                   const MCFixup *Fixup) const {
+                                   const MCFixup *Fixup) const
+{
   MCAssembler *Assembler = Layout ? &Layout->getAssembler() : nullptr;
   return evaluateAsRelocatableImpl(Res, Assembler, Layout, Fixup, nullptr,
                                    false);
 }
 
-bool MCExpr::evaluateAsValue(MCValue &Res, const MCAsmLayout &Layout) const {
+bool MCExpr::evaluateAsValue(MCValue &Res, const MCAsmLayout &Layout) const
+{
   MCAssembler *Assembler = &Layout.getAssembler();
   return evaluateAsRelocatableImpl(Res, Assembler, &Layout, nullptr, nullptr,
                                    true);
@@ -616,7 +619,8 @@ bool MCExpr::evaluateAsRelocatableImpl(MCValue &Res, const MCAssembler *Asm,
                                        const MCAsmLayout *Layout,
                                        const MCFixup *Fixup,
                                        const SectionAddrMap *Addrs,
-                                       bool InSet) const {
+                                       bool InSet) const
+{
   switch (getKind()) {
   case Target:
     return cast<MCTargetExpr>(this)->evaluateAsRelocatableImpl(Res, Layout,

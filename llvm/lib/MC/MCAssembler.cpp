@@ -155,11 +155,13 @@ bool MCAssembler::evaluateFixup(const MCAsmLayout &Layout,
   // fixup and records a relocation if one is needed.
   const MCExpr *Expr = Fixup.getValue();
   if (!Expr->evaluateAsRelocatable(Target, &Layout, &Fixup)) {
-    getContext().reportError(Fixup.getLoc(), "expected relocatable expression");
+    // getContext().reportError(Fixup.getLoc(), "expected relocatable expression");
     // Claim to have completely evaluated the fixup, to prevent any further
     // processing from being done.
+    // return true;
     Value = 0;
-    return true;
+    KsError = KS_ERR_ASM_INVALIDOPERAND;
+    return false;
   }
 
   bool IsPCRel = Backend.getFixupKindInfo(
