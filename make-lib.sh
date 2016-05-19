@@ -1,5 +1,6 @@
 #!/bin/sh -ex
 
+# Run this with "debug" option to compile Keystone with debug info
 if [ -n "$1" ]
 then
 # compile with DEBUG option
