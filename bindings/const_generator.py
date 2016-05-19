@@ -47,6 +47,24 @@ template = {
             'comment_open': '//',
             'comment_close': '',
     },
+    'ruby': {
+            'header': "# For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [%s_const.rb]\n\nmodule Keystone\n",
+            'footer': "end",
+            'line_format': '\tKS_%s = %s\n',
+            'out_file': './ruby/keystone_gem/lib/keystone/%s_const.rb',
+            # prefixes for constant filenames of all archs - case sensitive
+            'arm.h': 'arm',
+            'arm64.h': 'arm64',
+            'mips.h': 'mips',
+            'x86.h': 'x86',
+            'sparc.h': 'sparc',
+            'systemz.h': 'systemz',
+            'ppc.h': 'ppc',
+            'hexagon.h': 'hexagon',
+            'keystone.h': 'keystone',
+            'comment_open': '#',
+            'comment_close': '',
+        },
 }
 
 # markup for comments to be added to autogen files

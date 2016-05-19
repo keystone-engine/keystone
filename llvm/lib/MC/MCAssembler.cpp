@@ -146,18 +146,22 @@ const MCSymbol *MCAssembler::getAtom(const MCSymbol &S) const {
 
 bool MCAssembler::evaluateFixup(const MCAsmLayout &Layout,
                                 const MCFixup &Fixup, const MCFragment *DF,
-                                MCValue &Target, uint64_t &Value) const
+                                MCValue &Target, uint64_t &Value, unsigned int &KsError) const
 {
+  KsError = 0;
+
   // FIXME: This code has some duplication with recordRelocation. We should
   // probably merge the two into a single callback that tries to evaluate a
   // fixup and records a relocation if one is needed.
   const MCExpr *Expr = Fixup.getValue();
   if (!Expr->evaluateAsRelocatable(Target, &Layout, &Fixup)) {
-    getContext().reportError(Fixup.getLoc(), "expected relocatable expression");
+    // getContext().reportError(Fixup.getLoc(), "expected relocatable expression");
     // Claim to have completely evaluated the fixup, to prevent any further
     // processing from being done.
+    // return true;
     Value = 0;
-    return true;
+    KsError = KS_ERR_ASM_INVALIDOPERAND;
+    return false;
   }
 
   bool IsPCRel = Backend.getFixupKindInfo(
@@ -192,6 +196,10 @@ bool MCAssembler::evaluateFixup(const MCAsmLayout &Layout,
     const MCSymbol &Sym = A->getSymbol();
     if (Sym.isDefined())
       Value += Layout.getSymbolOffset(Sym);
+    else {
+        KsError = KS_ERR_ASM_SYMBOL_MISSING;
+        return false;
+    }
   }
   if (const MCSymbolRefExpr *B = Target.getSymB()) {
     const MCSymbol &Sym = B->getSymbol();
@@ -218,7 +226,6 @@ bool MCAssembler::evaluateFixup(const MCAsmLayout &Layout,
   // we need a relocation.
   Backend.processFixupValue(*this, Layout, Fixup, DF, Target, Value,
                             IsResolved);
-
 
   return IsResolved;
 }
@@ -573,13 +580,17 @@ void MCAssembler::writeSectionData(const MCSection *Sec,
 
 std::pair<uint64_t, bool> MCAssembler::handleFixup(const MCAsmLayout &Layout,
                                                    MCFragment &F,
-                                                   const MCFixup &Fixup) {
+                                                   const MCFixup &Fixup, unsigned int &KsError) {
   // Evaluate the fixup.
   MCValue Target;
   uint64_t FixedValue;
   bool IsPCRel = Backend.getFixupKindInfo(Fixup.getKind()).Flags &
                  MCFixupKindInfo::FKF_IsPCRel;
-  if (!evaluateFixup(Layout, Fixup, &F, Target, FixedValue)) {
+  if (!evaluateFixup(Layout, Fixup, &F, Target, FixedValue, KsError)) {
+    if (KsError) {
+        // return a dummy value
+        return std::make_pair(0, false);
+    }
     // The fixup was unresolved, we need a relocation. Inform the object
     // writer of the relocation, and give it an opportunity to adjust the
     // fixup value if need be.
@@ -589,7 +600,8 @@ std::pair<uint64_t, bool> MCAssembler::handleFixup(const MCAsmLayout &Layout,
   return std::make_pair(FixedValue, IsPCRel);
 }
 
-void MCAssembler::layout(MCAsmLayout &Layout) {
+void MCAssembler::layout(MCAsmLayout &Layout, unsigned int &KsError)
+{
   DEBUG_WITH_TYPE("mc-dump", {
       llvm::errs() << "assembler backend - pre-layout\n--\n";
       dump(); });
@@ -657,7 +669,9 @@ void MCAssembler::layout(MCAsmLayout &Layout) {
       for (const MCFixup &Fixup : Fixups) {
         uint64_t FixedValue;
         bool IsPCRel;
-        std::tie(FixedValue, IsPCRel) = handleFixup(Layout, *F, Fixup);
+        std::tie(FixedValue, IsPCRel) = handleFixup(Layout, *F, Fixup, KsError);
+        if (KsError)
+            return;
         getBackend().applyFixup(Fixup, Contents.data(),
                                 Contents.size(), FixedValue, IsPCRel);
       }
@@ -665,13 +679,14 @@ void MCAssembler::layout(MCAsmLayout &Layout) {
   }
 }
 
-void MCAssembler::Finish() {
+void MCAssembler::Finish(unsigned int &KsError) {
   // Create the layout object.
   MCAsmLayout Layout(*this);
-  layout(Layout);
+  layout(Layout, KsError);
 
   // Write the object file.
-  getWriter().writeObject(*this, Layout);
+  if (!KsError)
+      getWriter().writeObject(*this, Layout);
 }
 
 bool MCAssembler::fixupNeedsRelaxation(const MCFixup &Fixup,
@@ -679,7 +694,8 @@ bool MCAssembler::fixupNeedsRelaxation(const MCFixup &Fixup,
                                        const MCAsmLayout &Layout) const {
   MCValue Target;
   uint64_t Value;
-  bool Resolved = evaluateFixup(Layout, Fixup, DF, Target, Value);
+  unsigned int KsError;
+  bool Resolved = evaluateFixup(Layout, Fixup, DF, Target, Value, KsError);
   return getBackend().fixupNeedsRelaxationAdvanced(Fixup, Resolved, Value, DF,
                                                    Layout);
 }

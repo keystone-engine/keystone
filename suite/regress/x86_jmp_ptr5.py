@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# Nguyen Anh Quynh, 2016
 
 # Test 'jmp dword ptr [5]' with both X86 Intel & ATT syntax
 

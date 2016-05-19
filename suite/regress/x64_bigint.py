@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# Nguyen Anh Quynh, 2016
 
 # This tests alias instructions of MOV RDI, <big-int-numbers>
 

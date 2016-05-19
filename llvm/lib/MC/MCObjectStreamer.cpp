@@ -35,8 +35,6 @@ MCObjectStreamer::MCObjectStreamer(MCContext &Context, MCAsmBackend &TAB,
       EmitEHFrame(true), EmitDebugFrame(false) {}
 
 MCObjectStreamer::~MCObjectStreamer() {
-  delete &Assembler->getBackend();
-  delete &Assembler->getEmitter();
   delete &Assembler->getWriter();
   delete Assembler;
 }
@@ -503,7 +501,8 @@ void MCObjectStreamer::EmitFill(uint64_t NumBytes, uint8_t FillValue) {
   insert(new MCFillFragment(FillValue, NumBytes));
 }
 
-void MCObjectStreamer::FinishImpl() {
+unsigned int MCObjectStreamer::FinishImpl() {
+  unsigned int KsError = 0;
   // If we are generating dwarf for assembly source files dump out the sections.
   //if (getContext().getGenDwarfForAssembly())
   //  MCGenDwarfInfo::Emit(this);
@@ -512,5 +511,7 @@ void MCObjectStreamer::FinishImpl() {
   //MCDwarfLineTable::Emit(this, getAssembler().getDWARFLinetableParams());
 
   flushPendingLabels(nullptr);
-  getAssembler().Finish();
+  getAssembler().Finish(KsError);
+
+  return KsError;
 }

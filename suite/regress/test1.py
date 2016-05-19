@@ -1,6 +1,4 @@
 #!/usr/bin/python
-# example on how to code a Keystone regression in Python
-# Nguyen Anh Quynh, 2016
 
 # Fill in the information in the form below when you create a new regression
 

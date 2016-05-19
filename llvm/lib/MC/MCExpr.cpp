@@ -439,7 +439,8 @@ bool MCExpr::evaluateAsAbsolute(int64_t &Res, const MCAssembler *Asm,
 
 bool MCExpr::evaluateAsAbsolute(int64_t &Res, const MCAssembler *Asm,
                                 const MCAsmLayout *Layout,
-                                const SectionAddrMap *Addrs, bool InSet) const {
+                                const SectionAddrMap *Addrs, bool InSet) const
+{
   MCValue Value;
 
   // Fast path constants.
@@ -587,13 +588,15 @@ EvaluateSymbolicAdd(const MCAssembler *Asm, const MCAsmLayout *Layout,
 
 bool MCExpr::evaluateAsRelocatable(MCValue &Res,
                                    const MCAsmLayout *Layout,
-                                   const MCFixup *Fixup) const {
+                                   const MCFixup *Fixup) const
+{
   MCAssembler *Assembler = Layout ? &Layout->getAssembler() : nullptr;
   return evaluateAsRelocatableImpl(Res, Assembler, Layout, Fixup, nullptr,
                                    false);
 }
 
-bool MCExpr::evaluateAsValue(MCValue &Res, const MCAsmLayout &Layout) const {
+bool MCExpr::evaluateAsValue(MCValue &Res, const MCAsmLayout &Layout) const
+{
   MCAssembler *Assembler = &Layout.getAssembler();
   return evaluateAsRelocatableImpl(Res, Assembler, &Layout, nullptr, nullptr,
                                    true);
@@ -616,7 +619,8 @@ bool MCExpr::evaluateAsRelocatableImpl(MCValue &Res, const MCAssembler *Asm,
                                        const MCAsmLayout *Layout,
                                        const MCFixup *Fixup,
                                        const SectionAddrMap *Addrs,
-                                       bool InSet) const {
+                                       bool InSet) const
+{
   switch (getKind()) {
   case Target:
     return cast<MCTargetExpr>(this)->evaluateAsRelocatableImpl(Res, Layout,
@@ -747,7 +751,17 @@ bool MCExpr::evaluateAsRelocatableImpl(MCValue &Res, const MCAssembler *Asm,
     case MCBinaryExpr::LShr: Result = uint64_t(LHS) >> uint64_t(RHS); break;
     case MCBinaryExpr::LT:   Result = LHS < RHS; break;
     case MCBinaryExpr::LTE:  Result = LHS <= RHS; break;
-    case MCBinaryExpr::Mod:  Result = LHS % RHS; break;
+    case MCBinaryExpr::Mod:
+      // Handle division by zero. gas just emits a warning and keeps going,
+      // we try to be stricter.
+      // FIXME: Currently the caller of this function has no way to understand
+      // we're bailing out because of 'division by zero'. Therefore, it will
+      // emit a 'expected relocatable expression' error. It would be nice to
+      // change this code to emit a better diagnostic.
+      if (RHS == 0)
+        return false;
+      Result = LHS % RHS;
+      break;
     case MCBinaryExpr::Mul:  Result = LHS * RHS; break;
     case MCBinaryExpr::NE:   Result = LHS != RHS; break;
     case MCBinaryExpr::Or:   Result = LHS | RHS; break;
