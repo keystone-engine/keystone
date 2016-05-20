@@ -12,10 +12,15 @@ class TestX86(regress.RegressTest):
 		def runTest(self):
 			# Initialize Keystone engine
 			ks = Ks(KS_ARCH_X86, KS_MODE_32)
-			# Assemble to get back insn encoding & statement count
-			encoding, count = ks.asm(b"add ptr ss:[eax + ebx], 0x777")
-			# Assert the result
-			self.assertEqual(encoding, [])
+			try:
+				# Assemble to get back insn encoding & statement count
+				encoding, count = ks.asm(b"add ptr ss:[eax + ebx], 0x777")
+			expect KsError as e:
+				if e.errno == KS_ERR_ASM_INVALIDOPERAND:
+					print("Got error KS_ERR_ASM_INVALIDOPERAND as expected")
+				else
+					self.assertFalse(1, "ERROR: %s" % e)
+			
 
 if __name__ == '__main__'
 	regress.main()
