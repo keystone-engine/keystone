@@ -2245,6 +2245,7 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseMemOperand(unsigned SegReg,
 }
 
 // TODO: this also output error??
+// return true on error
 bool X86AsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
                                     SMLoc NameLoc, OperandVector &Operands, unsigned int &ErrorCode)
 {
@@ -2416,9 +2417,12 @@ bool X86AsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
         break;
      }
 
-    if (getLexer().isNot(AsmToken::EndOfStatement) && getLexer().isNot(AsmToken::Eof))
-      return ErrorAndEatStatement(getLexer().getLoc(),
-                                  "unexpected token in argument list");
+    if (getLexer().isNot(AsmToken::EndOfStatement) && getLexer().isNot(AsmToken::Eof)) {
+      //return ErrorAndEatStatement(getLexer().getLoc(),
+      //                            "unexpected token in argument list");
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
+      return true;
+    }
    }
 
   // Consume the EndOfStatement or the prefix separator Slash
@@ -2552,6 +2556,7 @@ bool X86AsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
 
   // Check if we encountered an error for one the string insturctions
   if (HadVerifyError) {
+    ErrorCode = KS_ERR_ASM_X86_INVALIDOPERAND;
     return HadVerifyError;
   }
 
