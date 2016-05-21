@@ -33,6 +33,7 @@ Julien Legras
 Anton Kochkov
 Francisco Alonso
 rdmz
+practicalswift
 
 
 Contributors (in no particular order)
