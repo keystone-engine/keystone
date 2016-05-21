@@ -1244,13 +1244,15 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
     need_address_override = !Is16BitMemOperand(MI, MemoryOperand, STI);
   }
 
-  if (need_address_override)
-    EmitByte(0x67, CurByte, OS);
+  if ((TSFlags & X86II::FormMask) != X86II::MRMSrcMem) {
+      if (need_address_override)
+          EmitByte(0x67, CurByte, OS);
 
-  if (Encoding == 0)
-    EmitOpcodePrefix(TSFlags, CurByte, MemoryOperand, MI, Desc, STI, OS);
-  else
-    EmitVEXOpcodePrefix(TSFlags, CurByte, MemoryOperand, MI, Desc, OS);
+      if (Encoding == 0)
+          EmitOpcodePrefix(TSFlags, CurByte, MemoryOperand, MI, Desc, STI, OS);
+      else
+          EmitVEXOpcodePrefix(TSFlags, CurByte, MemoryOperand, MI, Desc, OS);
+  }
 
   unsigned char BaseOpcode = X86II::getBaseOpcodeFor(TSFlags);
 
@@ -1424,6 +1426,14 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
     unsigned BaseReg = Base.getReg();
     EmitSegmentOverridePrefix(CurByte, MemoryOperand+X86::AddrSegmentReg,
             MI, OS, BaseReg);
+
+    if (need_address_override)
+        EmitByte(0x67, CurByte, OS);
+
+    if (Encoding == 0)
+        EmitOpcodePrefix(TSFlags, CurByte, MemoryOperand, MI, Desc, STI, OS);
+    else
+        EmitVEXOpcodePrefix(TSFlags, CurByte, MemoryOperand, MI, Desc, OS);
 
     EmitByte(BaseOpcode, CurByte, OS);
 
