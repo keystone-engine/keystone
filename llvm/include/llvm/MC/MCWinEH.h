@@ -73,7 +73,7 @@ public:
   virtual ~UnwindEmitter() { }
 
   //
-  // This emits the unwind info sections (.pdata and .xdata in PE/COFF).
+  // This emits the unwind info sections (.pdata and .xdata in PE).
   //
   virtual void Emit(MCStreamer &Streamer) const = 0;
   virtual void EmitUnwindInfo(MCStreamer &Streamer, FrameInfo *FI) const = 0;

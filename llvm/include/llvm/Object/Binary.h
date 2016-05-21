@@ -41,13 +41,11 @@ protected:
   enum {
     ID_Archive,
     ID_MachOUniversalBinary,
-    ID_COFFImportFile,
     ID_IR,            // LLVM IR
     ID_FunctionIndex, // Function summary index
 
     // Object and children.
     ID_StartObjects,
-    ID_COFF,
 
     ID_ELF32L, // ELF 32-bit, little endian
     ID_ELF32B, // ELF 32-bit, big endian
@@ -109,14 +107,6 @@ public:
 
   bool isMachO() const {
     return TypeID >= ID_MachO32L && TypeID <= ID_MachO64B;
-  }
-
-  bool isCOFF() const {
-    return TypeID == ID_COFF;
-  }
-
-  bool isCOFFImportFile() const {
-    return TypeID == ID_COFFImportFile;
   }
 
   bool isIR() const {

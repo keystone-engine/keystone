@@ -74,14 +74,6 @@ MCAsmBackend *createX86_32AsmBackend(const Target &T, const MCRegisterInfo &MRI,
 MCAsmBackend *createX86_64AsmBackend(const Target &T, const MCRegisterInfo &MRI,
                                      const Triple &TT, StringRef CPU);
 
-/// Construct an X86 Windows COFF machine code streamer which will generate
-/// PE/COFF format object files.
-///
-/// Takes ownership of \p AB and \p CE.
-MCStreamer *createX86WinCOFFStreamer(MCContext &C, MCAsmBackend &AB,
-                                     raw_pwrite_stream &OS, MCCodeEmitter *CE,
-                                     bool RelaxAll, bool IncrementalLinkerCompatible);
-
 /// Construct an X86 Mach-O object writer.
 MCObjectWriter *createX86MachObjectWriter(raw_pwrite_stream &OS, bool Is64Bit,
                                           uint32_t CPUType,

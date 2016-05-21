@@ -27,7 +27,6 @@ namespace llvm {
 namespace object {
 
 class ObjectFile;
-class COFFObjectFile;
 class MachOObjectFile;
 
 class SymbolRef;
@@ -286,9 +285,6 @@ public:
   static inline bool classof(const Binary *v) {
     return v->isObject();
   }
-
-  static ErrorOr<std::unique_ptr<COFFObjectFile>>
-  createCOFFObjectFile(MemoryBufferRef Object);
 
   static ErrorOr<std::unique_ptr<ObjectFile>>
   createELFObjectFile(MemoryBufferRef Object);

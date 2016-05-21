@@ -186,7 +186,6 @@ public:
   enum ObjectFormatType {
     UnknownObjectFormat,
 
-    COFF,
     ELF,
     MachO,
   };
@@ -522,11 +521,6 @@ public:
   /// Tests whether the OS uses the ELF binary format.
   bool isOSBinFormatELF() const {
     return getObjectFormat() == Triple::ELF;
-  }
-
-  /// Tests whether the OS uses the COFF binary format.
-  bool isOSBinFormatCOFF() const {
-    return getObjectFormat() == Triple::COFF;
   }
 
   /// Tests whether the environment is MachO.

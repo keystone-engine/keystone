@@ -278,8 +278,6 @@ public:
     VK_Mips_PCREL_HI16,
     VK_Mips_PCREL_LO16,
 
-    VK_COFF_IMGREL32, // symbol@imgrel (image-relative)
-
     VK_Hexagon_PCREL,
     VK_Hexagon_LO16,
     VK_Hexagon_HI16,

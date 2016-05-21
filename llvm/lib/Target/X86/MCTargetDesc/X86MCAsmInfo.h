@@ -15,7 +15,6 @@
 #define LLVM_LIB_TARGET_X86_MCTARGETDESC_X86MCASMINFO_H
 
 #include "llvm/MC/MCAsmInfo.h"
-#include "llvm/MC/MCAsmInfoCOFF.h"
 #include "llvm/MC/MCAsmInfoDarwin.h"
 #include "llvm/MC/MCAsmInfoELF.h"
 
@@ -37,16 +36,6 @@ struct X86_64MCAsmInfoDarwin : public X86MCAsmInfoDarwin {
 class X86ELFMCAsmInfo : public MCAsmInfoELF {
 public:
   explicit X86ELFMCAsmInfo(const Triple &Triple);
-};
-
-class X86MCAsmInfoMicrosoft : public MCAsmInfoMicrosoft {
-public:
-  explicit X86MCAsmInfoMicrosoft(const Triple &Triple);
-};
-
-class X86MCAsmInfoGNUCOFF : public MCAsmInfoGNUCOFF {
-public:
-  explicit X86MCAsmInfoGNUCOFF(const Triple &Triple);
 };
 } // namespace llvm
 

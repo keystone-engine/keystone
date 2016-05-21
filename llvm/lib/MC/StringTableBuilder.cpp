@@ -9,7 +9,6 @@
 
 #include "llvm/MC/StringTableBuilder.h"
 #include "llvm/ADT/STLExtras.h"
-#include "llvm/Support/COFF.h"
 #include "llvm/Support/Endian.h"
 
 #include <vector>
@@ -26,9 +25,6 @@ StringTableBuilder::StringTableBuilder(Kind K) : K(K) {
   case MachO:
   case ELF:
     Size = 1;
-    break;
-  case WinCOFF:
-    Size = 4;
     break;
   }
 }
@@ -112,18 +108,11 @@ void StringTableBuilder::finalizeStringTable(bool Optimize) {
     // Start the table with a NUL byte.
     StringTable += '\x00';
     break;
-  case WinCOFF:
-    // Make room to write the table size later.
-    StringTable.append(4, '\x00');
-    break;
   }
 
   StringRef Previous;
   for (StringOffsetPair *P : Strings) {
     StringRef S = P->first;
-    if (K == WinCOFF)
-      assert(S.size() > COFF::NameSize && "Short string in COFF string table!");
-
     if (Optimize && Previous.endswith(S)) {
       P->second = StringTable.size() - S.size() - (K != RAW);
       continue;
@@ -149,13 +138,6 @@ void StringTableBuilder::finalizeStringTable(bool Optimize) {
     // Pad to multiple of 4.
     while (StringTable.size() % 4)
       StringTable += '\x00';
-    break;
-  case WinCOFF:
-    // Write the table size in the first word.
-    assert(StringTable.size() <= std::numeric_limits<uint32_t>::max());
-    uint32_t Size = static_cast<uint32_t>(StringTable.size());
-    support::endian::write<uint32_t, support::little, support::unaligned>(
-        StringTable.data(), Size);
     break;
   }
 

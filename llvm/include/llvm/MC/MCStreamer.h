@@ -425,36 +425,6 @@ public:
   /// \param DescValue - The value to set into the n_desc field.
   virtual void EmitSymbolDesc(MCSymbol *Symbol, unsigned DescValue);
 
-  /// \brief Start emitting COFF symbol definition
-  ///
-  /// \param Symbol - The symbol to have its External & Type fields set.
-  virtual void BeginCOFFSymbolDef(const MCSymbol *Symbol);
-
-  /// \brief Emit the storage class of the symbol.
-  ///
-  /// \param StorageClass - The storage class the symbol should have.
-  virtual void EmitCOFFSymbolStorageClass(int StorageClass);
-
-  /// \brief Emit the type of the symbol.
-  ///
-  /// \param Type - A COFF type identifier (see COFF::SymbolType in X86COFF.h)
-  virtual void EmitCOFFSymbolType(int Type);
-
-  /// \brief Marks the end of the symbol definition.
-  virtual void EndCOFFSymbolDef();
-
-  virtual void EmitCOFFSafeSEH(MCSymbol const *Symbol);
-
-  /// \brief Emits a COFF section index.
-  ///
-  /// \param Symbol - Symbol the section number relocation should point to.
-  virtual void EmitCOFFSectionIndex(MCSymbol const *Symbol);
-
-  /// \brief Emits a COFF section relative relocation.
-  ///
-  /// \param Symbol - Symbol the section relative relocation should point to.
-  virtual void EmitCOFFSecRel32(MCSymbol const *Symbol);
-
   /// \brief Emit an ELF .size directive.
   ///
   /// This corresponds to an assembler statement such as:

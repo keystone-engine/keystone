@@ -125,16 +125,13 @@ protected:
   /// Section for newer gnu pubtypes.
   MCSection *DwarfGnuPubTypesSection;
 
-  MCSection *COFFDebugSymbolsSection;
-  MCSection *COFFDebugTypesSection;
-
   /// Extra TLS Variable Data section.
   ///
   /// If the target needs to put additional information for a TLS variable,
   /// it'll go here.
   MCSection *TLSExtraDataSection;
 
-  /// Section directive for Thread Local data. ELF, MachO and COFF.
+  /// Section directive for Thread Local data. ELF and MachO.
   MCSection *TLSDataSection; // Defaults to ".tdata".
 
   /// Section directive for Thread Local uninitialized data.
@@ -183,12 +180,6 @@ protected:
   MCSection *SixteenByteConstantSection;
   MCSection *LazySymbolPointerSection;
   MCSection *NonLazySymbolPointerSection;
-
-  /// COFF specific sections.
-  MCSection *DrectveSection;
-  MCSection *PDataSection;
-  MCSection *XDataSection;
-  MCSection *SXDataSection;
 
 public:
   void InitMCObjectFileInfo(const Triple &TT, MCContext &ctx);
@@ -266,13 +257,6 @@ public:
   MCSection *getDwarfCUIndexSection() const { return DwarfCUIndexSection; }
   MCSection *getDwarfTUIndexSection() const { return DwarfTUIndexSection; }
 
-  MCSection *getCOFFDebugSymbolsSection() const {
-    return COFFDebugSymbolsSection;
-  }
-  MCSection *getCOFFDebugTypesSection() const {
-    return COFFDebugTypesSection;
-  }
-
 
   MCSection *getTLSExtraDataSection() const { return TLSExtraDataSection; }
   const MCSection *getTLSDataSection() const { return TLSDataSection; }
@@ -324,17 +308,11 @@ public:
     return NonLazySymbolPointerSection;
   }
 
-  // COFF specific sections.
-  MCSection *getDrectveSection() const { return DrectveSection; }
-  MCSection *getPDataSection() const { return PDataSection; }
-  MCSection *getXDataSection() const { return XDataSection; }
-  MCSection *getSXDataSection() const { return SXDataSection; }
-
   MCSection *getEHFrameSection() {
     return EHFrameSection;
   }
 
-  enum Environment { IsMachO, IsELF, IsCOFF };
+  enum Environment { IsMachO, IsELF };
   Environment getObjectFileType() const { return Env; }
 
 private:
@@ -344,7 +322,6 @@ private:
 
   void initMachOMCObjectFileInfo(Triple T);
   void initELFMCObjectFileInfo(Triple T);
-  void initCOFFMCObjectFileInfo(Triple T);
 
 public:
   const Triple &getTargetTriple() const { return TT; }

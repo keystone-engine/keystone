@@ -464,7 +464,6 @@ static Triple::EnvironmentType parseEnvironment(StringRef EnvironmentName) {
 
 static Triple::ObjectFormatType parseFormat(StringRef EnvironmentName) {
   return StringSwitch<Triple::ObjectFormatType>(EnvironmentName)
-    .EndsWith("coff", Triple::COFF)
     .EndsWith("elf", Triple::ELF)
     .EndsWith("macho", Triple::MachO)
     .Default(Triple::UnknownObjectFormat);
@@ -533,7 +532,6 @@ static Triple::SubArchType parseSubArch(StringRef SubArchName) {
 static const char *getObjectFormatTypeName(Triple::ObjectFormatType Kind) {
   switch (Kind) {
   case Triple::UnknownObjectFormat: return "";
-  case Triple::COFF: return "coff";
   case Triple::ELF: return "elf";
   case Triple::MachO: return "macho";
   }
@@ -550,8 +548,6 @@ static Triple::ObjectFormatType getDefaultFormat(const Triple &T) {
   case Triple::x86_64:
     if (T.isOSDarwin())
       return Triple::MachO;
-    else if (T.isOSWindows())
-      return Triple::COFF;
     return Triple::ELF;
 
   case Triple::aarch64_be:
@@ -818,7 +814,7 @@ std::string Triple::normalize(StringRef Str) {
     Components.resize(4);
     Components[2] = "windows";
     if (Environment == UnknownEnvironment) {
-      if (ObjectFormat == UnknownObjectFormat || ObjectFormat == Triple::COFF)
+      if (ObjectFormat == UnknownObjectFormat)
         Components[3] = "msvc";
       else
         Components[3] = getObjectFormatTypeName(ObjectFormat);
@@ -834,7 +830,7 @@ std::string Triple::normalize(StringRef Str) {
   }
   if (IsMinGW32 || IsCygwin ||
       (OS == Triple::Win32 && Environment != UnknownEnvironment)) {
-    if (ObjectFormat != UnknownObjectFormat && ObjectFormat != Triple::COFF) {
+    if (ObjectFormat != UnknownObjectFormat) {
       Components.resize(5);
       Components[4] = getObjectFormatTypeName(ObjectFormat);
     }

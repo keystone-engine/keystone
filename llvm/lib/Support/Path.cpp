@@ -11,7 +11,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include "llvm/Support/COFF.h"
 #include "llvm/Support/MachO.h"
 #include "llvm/Support/Endian.h"
 #include "llvm/Support/Errc.h"
@@ -955,34 +954,6 @@ file_magic identify_magic(StringRef Magic) {
   if (Magic.size() < 4)
     return file_magic::unknown;
   switch ((unsigned char)Magic[0]) {
-    case 0x00: {
-      // COFF bigobj or short import library file
-      if (Magic[1] == (char)0x00 && Magic[2] == (char)0xff &&
-          Magic[3] == (char)0xff) {
-        size_t MinSize = offsetof(COFF::BigObjHeader, UUID) + sizeof(COFF::BigObjMagic);
-        if (Magic.size() < MinSize)
-          return file_magic::coff_import_library;
-
-        int BigObjVersion = read16le(
-            Magic.data() + offsetof(COFF::BigObjHeader, Version));
-        if (BigObjVersion < COFF::BigObjHeader::MinBigObjectVersion)
-          return file_magic::coff_import_library;
-
-        const char *Start = Magic.data() + offsetof(COFF::BigObjHeader, UUID);
-        if (memcmp(Start, COFF::BigObjMagic, sizeof(COFF::BigObjMagic)) != 0)
-          return file_magic::coff_import_library;
-        return file_magic::coff_object;
-      }
-      // Windows resource file
-      const char Expected[] = { 0, 0, 0, 0, '\x20', 0, 0, 0, '\xff' };
-      if (Magic.size() >= sizeof(Expected) &&
-          memcmp(Magic.data(), Expected, sizeof(Expected)) == 0)
-        return file_magic::windows_resource;
-      // 0x0000 = COFF unknown machine type
-      if (Magic[1] == 0)
-        return file_magic::coff_object;
-      break;
-    }
     case 0xDE:  // 0x0B17C0DE = BC wraper
       if (Magic[1] == (char)0xC0 && Magic[2] == (char)0x17 &&
           Magic[3] == (char)0x0B)
@@ -1075,37 +1046,6 @@ file_magic identify_magic(StringRef Magic) {
       }
       break;
     }
-    case 0xF0: // PowerPC Windows
-    case 0x83: // Alpha 32-bit
-    case 0x84: // Alpha 64-bit
-    case 0x66: // MPS R4000 Windows
-    case 0x50: // mc68K
-    case 0x4c: // 80386 Windows
-    case 0xc4: // ARMNT Windows
-      if (Magic[1] == 0x01)
-        return file_magic::coff_object;
-
-    case 0x90: // PA-RISC Windows
-    case 0x68: // mc68K Windows
-      if (Magic[1] == 0x02)
-        return file_magic::coff_object;
-      break;
-
-    case 'M': // Possible MS-DOS stub on Windows PE file
-      if (Magic[1] == 'Z') {
-        uint32_t off = read32le(Magic.data() + 0x3c);
-        // PE/COFF file, either EXE or DLL.
-        if (off < Magic.size() &&
-            memcmp(Magic.data()+off, COFF::PEMagic, sizeof(COFF::PEMagic)) == 0)
-          return file_magic::pecoff_executable;
-      }
-      break;
-
-    case 0x64: // x86-64 Windows.
-      if (Magic[1] == char(0x86))
-        return file_magic::coff_object;
-      break;
-
     default:
       break;
   }

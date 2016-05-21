@@ -535,7 +535,6 @@ namespace llvm {
 
 extern MCAsmParserExtension *createDarwinAsmParser();
 extern MCAsmParserExtension *createELFAsmParser();
-extern MCAsmParserExtension *createCOFFAsmParser();
 
 }
 
@@ -560,9 +559,6 @@ AsmParser::AsmParser(SourceMgr &SM, MCContext &Ctx, MCStreamer &Out,
   IsDarwin = true;
 #if 0
   switch (Ctx.getObjectFileInfo()->getObjectFileType()) {
-  case MCObjectFileInfo::IsCOFF:
-    PlatformParser.reset(createCOFFAsmParser());
-    break;
   case MCObjectFileInfo::IsMachO:
     PlatformParser.reset(createDarwinAsmParser());
     IsDarwin = true;

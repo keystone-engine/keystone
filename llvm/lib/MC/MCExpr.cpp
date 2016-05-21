@@ -281,7 +281,6 @@ StringRef MCSymbolRefExpr::getVariantKindName(VariantKind Kind) {
   case VK_Mips_CALL_LO16: return "CALL_LO16";
   case VK_Mips_PCREL_HI16: return "PCREL_HI16";
   case VK_Mips_PCREL_LO16: return "PCREL_LO16";
-  case VK_COFF_IMGREL32: return "IMGREL";
   case VK_Hexagon_PCREL: return "PCREL";
   case VK_Hexagon_LO16: return "LO16";
   case VK_Hexagon_HI16: return "HI16";
@@ -322,7 +321,6 @@ MCSymbolRefExpr::getVariantKindForName(StringRef Name) {
     .Case("pageoff", VK_PAGEOFF)
     .Case("gotpage", VK_GOTPAGE)
     .Case("gotpageoff", VK_GOTPAGEOFF)
-    .Case("imgrel", VK_COFF_IMGREL32)
     .Case("secrel32", VK_SECREL)
     .Case("size", VK_SIZE)
     .Case("l", VK_PPC_LO)
