@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
-# Tests if the SS segment override prefix is not explicitly produced when unnecessary
+# Test some x32 issues report in #9
 
 # Github issue: #9
-# Author: Duncan (mrexodia)
+# Author: Nguyen Anh Quynh
 
 from keystone import *
 
