@@ -20,5 +20,7 @@ class TestX86(regress.RegressTest):
         self.assertEqual(encoding1, [ 0x8B, 0x44, 0x24, 0x08 ])
         self.assertEqual(encoding2, [ 0x8B, 0x45, 0x08 ])
 
+        encoding, _ = ks.asm(b"MOV DWORD PTR SS:[EBP-0xC],0x1994000")
+        self.assertEqual(encoding, [ 0xC7, 0x45, 0xF4, 0x00, 0x40, 0x99, 0x01 ])
 if __name__ == '__main__':
     regress.main()

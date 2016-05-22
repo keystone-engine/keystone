@@ -1238,6 +1238,8 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
   bool HasVEX_4VOp3 = TSFlags & X86II::VEX_4VOp3;
   bool HasMemOp4 = TSFlags & X86II::MemOp4;
   const unsigned MemOp4_I8IMMOperand = 2;
+  unsigned BaseReg = 0;
+  unsigned SegReg = 0;
 
   // It uses the EVEX.aaa field?
   bool HasEVEX_K = TSFlags & X86II::EVEX_K;
@@ -1249,7 +1251,12 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
 
   // Emit segment override opcode prefix as needed.
   if (MemoryOperand >= 0) {
-    if ((TSFlags & X86II::FormMask) != X86II::MRMSrcMem) {
+    const MCOperand &Base = MI.getOperand(MemoryOperand + X86::AddrBaseReg);
+    BaseReg = Base.getReg();
+    const MCOperand &Seg = MI.getOperand(MemoryOperand + X86::AddrSegmentReg);
+    SegReg = Seg.getReg();
+
+    if ((SegReg != X86::SS) || (BaseReg != X86::ESP && BaseReg != X86::EBP)) {
         EmitSegmentOverridePrefix(CurByte, MemoryOperand+X86::AddrSegmentReg,
                 MI, OS);
     }
@@ -1280,7 +1287,7 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
     need_address_override = !Is16BitMemOperand(MI, MemoryOperand, STI);
   }
 
-  if ((TSFlags & X86II::FormMask) != X86II::MRMSrcMem) {
+  if ((SegReg != X86::SS) || (BaseReg != X86::ESP && BaseReg != X86::EBP)) {
       if (need_address_override)
           EmitByte(0x67, CurByte, OS);
 
@@ -1459,7 +1466,7 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
       ++FirstMemOp;
 
     const MCOperand &Base = MI.getOperand(FirstMemOp + X86::AddrBaseReg);
-    unsigned BaseReg = Base.getReg();
+    BaseReg = Base.getReg();
     EmitSegmentOverridePrefix(CurByte, MemoryOperand+X86::AddrSegmentReg,
             MI, OS, BaseReg);
 
