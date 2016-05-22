@@ -356,7 +356,8 @@ bool ELFAsmParser::ParseDirectiveSection(StringRef, SMLoc loc) {
   return ParseSectionArguments(/*IsPush=*/false, loc);
 }
 
-bool ELFAsmParser::ParseSectionArguments(bool IsPush, SMLoc loc) {
+bool ELFAsmParser::ParseSectionArguments(bool IsPush, SMLoc loc)
+{
   StringRef SectionName;
 
   if (ParseSectionName(SectionName))
@@ -397,7 +398,10 @@ bool ELFAsmParser::ParseSectionArguments(bool IsPush, SMLoc loc) {
         return TokError("expected string in directive");
       extraFlags = parseSunStyleSectionFlags();
     } else {
-      StringRef FlagsStr = getTok().getStringContents();
+      bool valid;
+      StringRef FlagsStr = getTok().getStringContents(valid);
+      if (!valid)
+          return true;
       Lex();
       extraFlags = parseSectionFlags(FlagsStr, &UseLastGroup);
     }

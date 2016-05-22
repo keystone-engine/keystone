@@ -2044,7 +2044,8 @@ static bool isIdentifierChar(char c) {
 bool AsmParser::expandMacro(raw_svector_ostream &OS, StringRef Body,
                             ArrayRef<MCAsmMacroParameter> Parameters,
                             ArrayRef<MCAsmMacroArgument> A,
-                            bool EnableAtPseudoVariable, SMLoc L) {
+                            bool EnableAtPseudoVariable, SMLoc L)
+{
   unsigned NParameters = Parameters.size();
   bool HasVararg = NParameters ? Parameters.back().Vararg : false;
   if ((!IsDarwin || NParameters != 0) && NParameters != A.size())
@@ -2142,8 +2143,14 @@ bool AsmParser::expandMacro(raw_svector_ostream &OS, StringRef Body,
             // parsing for varargs.
             if (Token.getKind() != AsmToken::String || VarargParameter)
               OS << Token.getString();
-            else
-              OS << Token.getStringContents();
+            else {
+              bool valid;
+              OS << Token.getStringContents(valid);
+              if (!valid) {
+                  KsError = KS_ERR_ASM_DIRECTIVE_MACRO;
+                  return true;
+              }
+            }
 
           Pos += 1 + Argument.size();
         }
@@ -2536,11 +2543,21 @@ bool AsmParser::parseDirectiveSet(StringRef IDVal, bool allow_redef) {
   return parseAssignment(Name, allow_redef, true);
 }
 
-bool AsmParser::parseEscapedString(std::string &Data) {
-  assert(getLexer().is(AsmToken::String) && "Unexpected current token!");
+bool AsmParser::parseEscapedString(std::string &Data)
+{
+  if (!getLexer().is(AsmToken::String)) {
+      KsError = KS_ERR_ASM_ESC_STR;
+      return true;
+  }
 
   Data = "";
-  StringRef Str = getTok().getStringContents();
+  bool valid;
+  StringRef Str = getTok().getStringContents(valid);
+  if (!valid) {
+      KsError = KS_ERR_ASM_ESC_STR;
+      return true;
+  }
+
   for (unsigned i = 0, e = Str.size(); i != e; ++i) {
     if (Str[i] != '\\') {
       Data += Str[i];
@@ -4514,7 +4531,8 @@ bool AsmParser::parseDirectiveIfc(SMLoc DirectiveLoc, bool ExpectEqual) {
 
 /// parseDirectiveIfeqs
 ///   ::= .ifeqs string1, string2
-bool AsmParser::parseDirectiveIfeqs(SMLoc DirectiveLoc, bool ExpectEqual) {
+bool AsmParser::parseDirectiveIfeqs(SMLoc DirectiveLoc, bool ExpectEqual)
+{
   if (Lexer.isNot(AsmToken::String)) {
     if (ExpectEqual)
       TokError("expected string parameter for '.ifeqs' directive");
@@ -4524,7 +4542,13 @@ bool AsmParser::parseDirectiveIfeqs(SMLoc DirectiveLoc, bool ExpectEqual) {
     return true;
   }
 
-  StringRef String1 = getTok().getStringContents();
+  bool valid;
+  StringRef String1 = getTok().getStringContents(valid);
+  if (!valid) {
+      KsError = KS_ERR_ASM_DIRECTIVE_STR;
+      return true;
+  }
+
   Lex();
 
   if (Lexer.isNot(AsmToken::Comma)) {
@@ -4547,7 +4571,12 @@ bool AsmParser::parseDirectiveIfeqs(SMLoc DirectiveLoc, bool ExpectEqual) {
     return true;
   }
 
-  StringRef String2 = getTok().getStringContents();
+  StringRef String2 = getTok().getStringContents(valid);
+  if (!valid) {
+      KsError = KS_ERR_ASM_ESC_BACKSLASH;
+      return true;
+  }
+
   Lex();
 
   TheCondStack.push_back(TheCondState);
@@ -4657,7 +4686,8 @@ bool AsmParser::parseDirectiveEnd(SMLoc DirectiveLoc) {
 /// parseDirectiveError
 ///   ::= .err
 ///   ::= .error [string]
-bool AsmParser::parseDirectiveError(SMLoc L, bool WithMessage) {
+bool AsmParser::parseDirectiveError(SMLoc L, bool WithMessage)
+{
   if (!TheCondStack.empty()) {
     if (TheCondStack.back().Ignore) {
       eatToEndOfStatement();
@@ -4676,7 +4706,12 @@ bool AsmParser::parseDirectiveError(SMLoc L, bool WithMessage) {
       return true;
     }
 
-    Message = getTok().getStringContents();
+    bool valid;
+    Message = getTok().getStringContents(valid);
+    if (!valid) {
+        KsError = KS_ERR_ASM_DIRECTIVE_STR;
+        return true;
+    }
     Lex();
   }
 
@@ -4686,7 +4721,8 @@ bool AsmParser::parseDirectiveError(SMLoc L, bool WithMessage) {
 
 /// parseDirectiveWarning
 ///   ::= .warning [string]
-bool AsmParser::parseDirectiveWarning(SMLoc L) {
+bool AsmParser::parseDirectiveWarning(SMLoc L)
+{
   if (!TheCondStack.empty()) {
     if (TheCondStack.back().Ignore) {
       eatToEndOfStatement();
@@ -4702,7 +4738,12 @@ bool AsmParser::parseDirectiveWarning(SMLoc L) {
       return true;
     }
 
-    Message = getTok().getStringContents();
+    bool valid;
+    Message = getTok().getStringContents(valid);
+    if (!valid) {
+        KsError = KS_ERR_ASM_DIRECTIVE_STR;
+        return true;
+    }
     Lex();
   }
 

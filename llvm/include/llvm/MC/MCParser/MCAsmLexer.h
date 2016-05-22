@@ -77,8 +77,13 @@ public:
   SMRange getLocRange() const;
 
   /// Get the contents of a string token (without quotes).
-  StringRef getStringContents() const {
-    assert(Kind == String && "This token isn't a string!");
+  StringRef getStringContents(bool &valid) const {
+    //assert(Kind == String && "This token isn't a string!");
+    if (Kind != String) {
+        valid = false;
+        return nullptr;
+    }
+    valid = true;
     return Str.slice(1, Str.size() - 1);
   }
 
@@ -89,7 +94,8 @@ public:
   StringRef getIdentifier() const {
     if (Kind == Identifier)
       return getString();
-    return getStringContents();
+    bool valid;
+    return getStringContents(valid);
   }
 
   /// Get the string for the current token, this includes all characters (for

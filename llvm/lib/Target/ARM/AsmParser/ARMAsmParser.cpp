@@ -9152,7 +9152,8 @@ bool ARMAsmParser::parseDirectiveArch(SMLoc L) {
 /// parseDirectiveEabiAttr
 ///  ::= .eabi_attribute int, int [, "str"]
 ///  ::= .eabi_attribute Tag_name, int [, "str"]
-bool ARMAsmParser::parseDirectiveEabiAttr(SMLoc L) {
+bool ARMAsmParser::parseDirectiveEabiAttr(SMLoc L)
+{
   MCAsmParser &Parser = getParser();
   int64_t Tag;
   SMLoc TagLoc;
@@ -9247,7 +9248,12 @@ bool ARMAsmParser::parseDirectiveEabiAttr(SMLoc L) {
       return false;
     }
 
-    StringValue = Parser.getTok().getStringContents();
+    bool valid;
+    StringValue = Parser.getTok().getStringContents(valid);
+    if (!valid) {
+        //KsError = KS_ERR_ASM_DIRECTIVE_STR;
+        return true;
+    }
     Parser.Lex();
   }
 
