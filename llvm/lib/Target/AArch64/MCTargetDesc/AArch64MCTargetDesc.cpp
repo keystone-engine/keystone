@@ -56,12 +56,8 @@ static MCRegisterInfo *createAArch64MCRegisterInfo(const Triple &Triple) {
 static MCAsmInfo *createAArch64MCAsmInfo(const MCRegisterInfo &MRI,
                                          const Triple &TheTriple) {
   MCAsmInfo *MAI;
-  if (TheTriple.isOSBinFormatMachO())
-    MAI = new AArch64MCAsmInfoDarwin();
-  else {
-    assert(TheTriple.isOSBinFormatELF() && "Only expect Darwin or ELF");
-    MAI = new AArch64MCAsmInfoELF(TheTriple);
-  }
+  assert(TheTriple.isOSBinFormatELF() && "Only expect ELF");
+  MAI = new AArch64MCAsmInfoELF(TheTriple);
 
   // Initial state of the frame pointer is SP.
   unsigned Reg = MRI.getDwarfRegNum(AArch64::SP, true);

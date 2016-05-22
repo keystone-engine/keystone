@@ -182,13 +182,7 @@ static MCRegisterInfo *createARMMCRegisterInfo(const Triple &Triple) {
 
 static MCAsmInfo *createARMMCAsmInfo(const MCRegisterInfo &MRI,
                                      const Triple &TheTriple) {
-  MCAsmInfo *MAI;
-  if (TheTriple.isOSDarwin() || TheTriple.isOSBinFormatMachO())
-    MAI = new ARMMCAsmInfoDarwin(TheTriple);
-  else
-    MAI = new ARMELFMCAsmInfo(TheTriple);
-
-  return MAI;
+  return new ARMELFMCAsmInfo(TheTriple);
 }
 
 // Force static initialization.

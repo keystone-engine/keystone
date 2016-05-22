@@ -18,10 +18,8 @@
 #include "llvm/MC/MCFixupKindInfo.h"
 #include "llvm/MC/MCObjectWriter.h"
 #include "llvm/MC/MCSectionELF.h"
-#include "llvm/MC/MCSectionMachO.h"
 #include "llvm/MC/MCValue.h"
 #include "llvm/Support/ErrorHandling.h"
-#include "llvm/Support/MachO.h"
 using namespace llvm;
 
 namespace {
@@ -402,7 +400,7 @@ MCAsmBackend *llvm::createAArch64leAsmBackend(const Target &T,
                                               const MCRegisterInfo &MRI,
                                               const Triple &TheTriple,
                                               StringRef CPU) {
-  assert(TheTriple.isOSBinFormatELF() && "Expect either MachO or ELF target");
+  assert(TheTriple.isOSBinFormatELF() && "Expect ELF target");
   uint8_t OSABI = MCELFObjectTargetWriter::getOSABI(TheTriple.getOS());
   return new ELFAArch64AsmBackend(T, OSABI, /*IsLittleEndian=*/true);
 }

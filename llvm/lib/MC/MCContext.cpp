@@ -18,10 +18,8 @@
 #include "llvm/MC/MCObjectFileInfo.h"
 #include "llvm/MC/MCRegisterInfo.h"
 #include "llvm/MC/MCSectionELF.h"
-#include "llvm/MC/MCSectionMachO.h"
 #include "llvm/MC/MCStreamer.h"
 #include "llvm/MC/MCSymbolELF.h"
-#include "llvm/MC/MCSymbolMachO.h"
 #include "llvm/Support/ELF.h"
 #include "llvm/Support/ErrorHandling.h"
 #include "llvm/Support/FileSystem.h"
@@ -69,7 +67,6 @@ MCContext::~MCContext() {
 void MCContext::reset() {
   // Call the destructors so the fragments are freed
   ELFAllocator.DestroyAll();
-  MachOAllocator.DestroyAll();
 
   MCSubtargetAllocator.DestroyAll();
   UsedNames.clear();
@@ -86,7 +83,6 @@ void MCContext::reset() {
   DwarfCompileUnitID = 0;
   CurrentDwarfLoc = MCDwarfLoc(0, 0, 0, DWARF2_FLAG_IS_STMT, 0, 0);
 
-  MachOUniquingMap.clear();
   ELFUniquingMap.clear();
 
   NextID.clear();
@@ -159,8 +155,6 @@ MCSymbol *MCContext::createSymbolImpl(const StringMapEntry<bool> *Name,
     switch (MOFI->getObjectFileType()) {
     case MCObjectFileInfo::IsELF:
       return new (Name, *this) MCSymbolELF(Name, IsTemporary);
-    case MCObjectFileInfo::IsMachO:
-      return new (Name, *this) MCSymbolMachO(Name, IsTemporary);
     }
   }
   return new (Name, *this) MCSymbol(MCSymbol::SymbolKindUnset, Name,
@@ -259,35 +253,6 @@ MCSymbol *MCContext::lookupSymbol(const Twine &Name) const {
 //===----------------------------------------------------------------------===//
 // Section Management
 //===----------------------------------------------------------------------===//
-
-MCSectionMachO *MCContext::getMachOSection(StringRef Segment, StringRef Section,
-                                           unsigned TypeAndAttributes,
-                                           unsigned Reserved2, SectionKind Kind,
-                                           const char *BeginSymName) {
-
-  // We unique sections by their segment/section pair.  The returned section
-  // may not have the same flags as the requested section, if so this should be
-  // diagnosed by the client as an error.
-
-  // Form the name to look up.
-  SmallString<64> Name;
-  Name += Segment;
-  Name.push_back(',');
-  Name += Section;
-
-  // Do the lookup, if we have a hit, return it.
-  MCSectionMachO *&Entry = MachOUniquingMap[Name];
-  if (Entry)
-    return Entry;
-
-  MCSymbol *Begin = nullptr;
-  if (BeginSymName)
-    Begin = createTempSymbol(BeginSymName, false);
-
-  // Otherwise, return a new section.
-  return Entry = new (MachOAllocator.Allocate()) MCSectionMachO(
-             Segment, Section, TypeAndAttributes, Reserved2, Kind, Begin);
-}
 
 void MCContext::renameELFSection(MCSectionELF *Section, StringRef Name) {
   StringRef GroupName;

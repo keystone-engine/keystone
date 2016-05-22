@@ -109,19 +109,7 @@ static MCAsmInfo *createX86MCAsmInfo(const MCRegisterInfo &MRI,
                                      const Triple &TheTriple) {
   bool is64Bit = TheTriple.getArch() == Triple::x86_64;
 
-  MCAsmInfo *MAI;
-  if (TheTriple.isOSBinFormatMachO()) {
-    if (is64Bit)
-      MAI = new X86_64MCAsmInfoDarwin(TheTriple);
-    else
-      MAI = new X86MCAsmInfoDarwin(TheTriple);
-  } else if (TheTriple.isOSBinFormatELF()) {
-    // Force the use of an ELF container.
-    MAI = new X86ELFMCAsmInfo(TheTriple);
-  } else {
-    // The default is ELF.
-    MAI = new X86ELFMCAsmInfo(TheTriple);
-  }
+  MCAsmInfo *MAI = new X86ELFMCAsmInfo(TheTriple);
 
   // Initialize initial frame state.
   // Calculate amount of bytes used for return address storing

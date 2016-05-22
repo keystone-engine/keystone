@@ -465,7 +465,6 @@ static Triple::EnvironmentType parseEnvironment(StringRef EnvironmentName) {
 static Triple::ObjectFormatType parseFormat(StringRef EnvironmentName) {
   return StringSwitch<Triple::ObjectFormatType>(EnvironmentName)
     .EndsWith("elf", Triple::ELF)
-    .EndsWith("macho", Triple::MachO)
     .Default(Triple::UnknownObjectFormat);
 }
 
@@ -533,7 +532,6 @@ static const char *getObjectFormatTypeName(Triple::ObjectFormatType Kind) {
   switch (Kind) {
   case Triple::UnknownObjectFormat: return "";
   case Triple::ELF: return "elf";
-  case Triple::MachO: return "macho";
   }
   llvm_unreachable("unknown object format type");
 }
@@ -546,10 +544,6 @@ static Triple::ObjectFormatType getDefaultFormat(const Triple &T) {
   case Triple::thumb:
   case Triple::x86:
   case Triple::x86_64:
-    if (T.isOSDarwin())
-      return Triple::MachO;
-    return Triple::ELF;
-
   case Triple::aarch64_be:
   case Triple::amdgcn:
   case Triple::amdil:
@@ -585,12 +579,8 @@ static Triple::ObjectFormatType getDefaultFormat(const Triple &T) {
   case Triple::wasm32:
   case Triple::wasm64:
   case Triple::xcore:
-    return Triple::ELF;
-
   case Triple::ppc:
   case Triple::ppc64:
-    if (T.isOSDarwin())
-      return Triple::MachO;
     return Triple::ELF;
   }
   llvm_unreachable("unknown architecture");

@@ -131,12 +131,12 @@ protected:
   /// it'll go here.
   MCSection *TLSExtraDataSection;
 
-  /// Section directive for Thread Local data. ELF and MachO.
+  /// Section directive for Thread Local data. ELF.
   MCSection *TLSDataSection; // Defaults to ".tdata".
 
   /// Section directive for Thread Local uninitialized data.
   ///
-  /// Null if this target doesn't support a BSS section. ELF and MachO only.
+  /// Null if this target doesn't support a BSS section. ELF only.
   MCSection *TLSBSSSection; // Defaults to ".tbss".
 
   /// StackMap section.
@@ -312,7 +312,7 @@ public:
     return EHFrameSection;
   }
 
-  enum Environment { IsMachO, IsELF };
+  enum Environment { IsELF };
   Environment getObjectFileType() const { return Env; }
 
 private:
@@ -320,7 +320,6 @@ private:
   MCContext *Ctx;
   Triple TT;
 
-  void initMachOMCObjectFileInfo(Triple T);
   void initELFMCObjectFileInfo(Triple T);
 
 public:

@@ -302,9 +302,6 @@ private:
   /// Specifies how the variant kind should be printed.
   const unsigned UseParensForSymbolVariant : 1;
 
-  // FIXME: Remove this bit.
-  const unsigned HasSubsectionsViaSymbols : 1;
-
   /// The symbol being referenced.
   const MCSymbol *Symbol;
 
@@ -333,8 +330,6 @@ public:
   VariantKind getKind() const { return Kind; }
 
   void printVariantKind(raw_ostream &OS) const;
-
-  bool hasSubsectionsViaSymbols() const { return HasSubsectionsViaSymbols; }
 
   /// @}
   /// \name Static Utility Functions

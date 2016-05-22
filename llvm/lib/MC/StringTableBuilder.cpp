@@ -22,7 +22,6 @@ StringTableBuilder::StringTableBuilder(Kind K) : K(K) {
   case RAW:
     Size = 0;
     break;
-  case MachO:
   case ELF:
     Size = 1;
     break;
@@ -104,7 +103,6 @@ void StringTableBuilder::finalizeStringTable(bool Optimize) {
   case RAW:
     break;
   case ELF:
-  case MachO:
     // Start the table with a NUL byte.
     StringTable += '\x00';
     break;
@@ -134,7 +132,6 @@ void StringTableBuilder::finalizeStringTable(bool Optimize) {
   case RAW:
   case ELF:
     break;
-  case MachO:
     // Pad to multiple of 4.
     while (StringTable.size() % 4)
       StringTable += '\x00';

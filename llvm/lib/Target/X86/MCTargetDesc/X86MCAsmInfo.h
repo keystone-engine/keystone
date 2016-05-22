@@ -15,23 +15,10 @@
 #define LLVM_LIB_TARGET_X86_MCTARGETDESC_X86MCASMINFO_H
 
 #include "llvm/MC/MCAsmInfo.h"
-#include "llvm/MC/MCAsmInfoDarwin.h"
 #include "llvm/MC/MCAsmInfoELF.h"
 
 namespace llvm {
 class Triple;
-
-class X86MCAsmInfoDarwin : public MCAsmInfoDarwin {
-public:
-  explicit X86MCAsmInfoDarwin(const Triple &Triple);
-};
-
-struct X86_64MCAsmInfoDarwin : public X86MCAsmInfoDarwin {
-  explicit X86_64MCAsmInfoDarwin(const Triple &Triple);
-  const MCExpr *
-  getExprForPersonalitySymbol(const MCSymbol *Sym, unsigned Encoding,
-                              MCStreamer &Streamer) const override;
-};
 
 class X86ELFMCAsmInfo : public MCAsmInfoELF {
 public:

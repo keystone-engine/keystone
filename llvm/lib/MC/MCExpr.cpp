@@ -149,7 +149,6 @@ MCSymbolRefExpr::MCSymbolRefExpr(const MCSymbol *Symbol, VariantKind Kind,
                                  const MCAsmInfo *MAI)
     : MCExpr(MCExpr::SymbolRef), Kind(Kind),
       UseParensForSymbolVariant(MAI->useParensForSymbolVariant()),
-      HasSubsectionsViaSymbols(MAI->hasSubsectionsViaSymbols()),
       Symbol(Symbol) {
   assert(Symbol);
 }
@@ -635,22 +634,9 @@ bool MCExpr::evaluateAsRelocatableImpl(MCValue &Res, const MCAssembler *Asm,
     // Evaluate recursively if this is a variable.
     if (Sym.isVariable() && SRE->getKind() == MCSymbolRefExpr::VK_None &&
         canExpand(Sym, InSet)) {
-      bool IsMachO = SRE->hasSubsectionsViaSymbols();
       if (Sym.getVariableValue()->evaluateAsRelocatableImpl(
-              Res, Asm, Layout, Fixup, Addrs, InSet || IsMachO)) {
-        if (!IsMachO)
-          return true;
-
-        const MCSymbolRefExpr *A = Res.getSymA();
-        const MCSymbolRefExpr *B = Res.getSymB();
-        // FIXME: This is small hack. Given
-        // a = b + 4
-        // .long a
-        // the OS X assembler will completely drop the 4. We should probably
-        // include it in the relocation or produce an error if that is not
-        // possible.
-        if (!A && !B)
-          return true;
+              Res, Asm, Layout, Fixup, Addrs, InSet)) {
+        return true;
       }
     }
 

@@ -186,8 +186,7 @@ public:
   enum ObjectFormatType {
     UnknownObjectFormat,
 
-    ELF,
-    MachO,
+    ELF
   };
 
 private:
@@ -521,11 +520,6 @@ public:
   /// Tests whether the OS uses the ELF binary format.
   bool isOSBinFormatELF() const {
     return getObjectFormat() == Triple::ELF;
-  }
-
-  /// Tests whether the environment is MachO.
-  bool isOSBinFormatMachO() const {
-    return getObjectFormat() == Triple::MachO;
   }
 
   /// Tests whether the target is the PS4 CPU

@@ -40,7 +40,6 @@ namespace llvm {
   class MCRegisterInfo;
   class MCLineSection;
   class SMLoc;
-  class MCSectionMachO;
   class MCSectionELF;
 
   /// Context object for machine code objects.  This class owns all of the
@@ -73,7 +72,6 @@ namespace llvm {
     BumpPtrAllocator Allocator;
 
     SpecificBumpPtrAllocator<MCSectionELF> ELFAllocator;
-    SpecificBumpPtrAllocator<MCSectionMachO> MachOAllocator;
 
     /// Bindings of names to symbols.
     SymbolTable Symbols;
@@ -189,7 +187,6 @@ namespace llvm {
       }
     };
 
-    StringMap<MCSectionMachO *> MachOUniquingMap;
     std::map<ELFSectionKey, MCSectionELF *> ELFUniquingMap;
     StringMap<bool> ELFRelSecNames;
 
@@ -292,20 +289,6 @@ namespace llvm {
 
     /// \name Section Management
     /// @{
-
-    /// Return the MCSection for the specified mach-o section.  This requires
-    /// the operands to be valid.
-    MCSectionMachO *getMachOSection(StringRef Segment, StringRef Section,
-                                    unsigned TypeAndAttributes,
-                                    unsigned Reserved2, SectionKind K,
-                                    const char *BeginSymName = nullptr);
-
-    MCSectionMachO *getMachOSection(StringRef Segment, StringRef Section,
-                                    unsigned TypeAndAttributes, SectionKind K,
-                                    const char *BeginSymName = nullptr) {
-      return getMachOSection(Segment, Section, TypeAndAttributes, 0, K,
-                             BeginSymName);
-    }
 
     MCSectionELF *getELFSection(StringRef Section, unsigned Type,
                                 unsigned Flags) {

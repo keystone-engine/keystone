@@ -27,7 +27,6 @@ namespace llvm {
 namespace object {
 
 class ObjectFile;
-class MachOObjectFile;
 
 class SymbolRef;
 class symbol_iterator;
@@ -288,9 +287,6 @@ public:
 
   static ErrorOr<std::unique_ptr<ObjectFile>>
   createELFObjectFile(MemoryBufferRef Object);
-
-  static ErrorOr<std::unique_ptr<MachOObjectFile>>
-  createMachOObjectFile(MemoryBufferRef Object);
 };
 
 // Inline function definitions.

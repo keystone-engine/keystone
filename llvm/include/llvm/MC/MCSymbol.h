@@ -43,7 +43,6 @@ protected:
   enum SymbolKind {
     SymbolKindUnset,
     SymbolKindELF,
-    SymbolKindMachO,
   };
 
   /// A symbol can contain an Offset, or Value, or be Common, but never more
@@ -275,8 +274,6 @@ public:
   void setUndefined() { FragmentAndHasName.setPointer(nullptr); }
 
   bool isELF() const { return Kind == SymbolKindELF; }
-
-  bool isMachO() const { return Kind == SymbolKindMachO; }
 
   /// @}
   /// \name Variable Symbols

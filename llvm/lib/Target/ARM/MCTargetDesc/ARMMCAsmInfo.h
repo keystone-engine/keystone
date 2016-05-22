@@ -14,16 +14,10 @@
 #ifndef LLVM_LIB_TARGET_ARM_MCTARGETDESC_ARMMCASMINFO_H
 #define LLVM_LIB_TARGET_ARM_MCTARGETDESC_ARMMCASMINFO_H
 
-#include "llvm/MC/MCAsmInfoDarwin.h"
 #include "llvm/MC/MCAsmInfoELF.h"
 
 namespace llvm {
 class Triple;
-
-class ARMMCAsmInfoDarwin : public MCAsmInfoDarwin {
-public:
-  explicit ARMMCAsmInfoDarwin(const Triple &TheTriple);
-};
 
 class ARMELFMCAsmInfo : public MCAsmInfoELF {
 public:

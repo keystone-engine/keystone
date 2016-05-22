@@ -16,27 +16,6 @@
 
 using namespace llvm;
 
-ARMMCAsmInfoDarwin::ARMMCAsmInfoDarwin(const Triple &TheTriple) {
-  if ((TheTriple.getArch() == Triple::armeb) ||
-      (TheTriple.getArch() == Triple::thumbeb))
-    IsLittleEndian = false;
-
-  Data64bitsDirective = nullptr;
-  CommentString = "@";
-  Code16Directive = ".code\t16";
-  Code32Directive = ".code\t32";
-  UseDataRegionDirectives = true;
-
-  SupportsDebugInformation = true;
-
-  // Exceptions handling
-  ExceptionsType = (TheTriple.isOSDarwin() && !TheTriple.isWatchABI())
-                       ? ExceptionHandling::SjLj
-                       : ExceptionHandling::DwarfCFI;
-
-  UseIntegratedAssembler = true;
-}
-
 ARMELFMCAsmInfo::ARMELFMCAsmInfo(const Triple &TheTriple) {
   if ((TheTriple.getArch() == Triple::armeb) ||
       (TheTriple.getArch() == Triple::thumbeb))

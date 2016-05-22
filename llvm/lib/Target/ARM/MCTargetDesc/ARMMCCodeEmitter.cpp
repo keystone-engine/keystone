@@ -53,10 +53,6 @@ public:
   bool isThumb2(const MCSubtargetInfo &STI) const {
     return isThumb(STI) && STI.getFeatureBits()[ARM::FeatureThumb2];
   }
-  bool isTargetMachO(const MCSubtargetInfo &STI) const {
-    const Triple &TT = STI.getTargetTriple();
-    return TT.isOSBinFormatMachO();
-  }
 
   unsigned getMachineSoImmOpValue(unsigned SoImm) const;
 

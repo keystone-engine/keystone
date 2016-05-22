@@ -104,11 +104,6 @@ public:
                                            raw_pwrite_stream &OS,
                                            MCCodeEmitter *Emitter,
                                            bool RelaxAll);
-  typedef MCStreamer *(*MachOStreamerCtorTy)(MCContext &Ctx, MCAsmBackend &TAB,
-                                             raw_pwrite_stream &OS,
-                                             MCCodeEmitter *Emitter,
-                                             bool RelaxAll,
-                                             bool DWARFMustBeAtTheEnd);
   typedef MCTargetStreamer *(*NullTargetStreamerCtorTy)(MCStreamer &S);
   typedef MCTargetStreamer *(*AsmTargetStreamerCtorTy)(
       MCStreamer &S, formatted_raw_ostream &OS);
