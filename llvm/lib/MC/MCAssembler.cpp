@@ -694,7 +694,7 @@ bool MCAssembler::fixupNeedsRelaxation(const MCFixup &Fixup,
                                        const MCAsmLayout &Layout) const {
   MCValue Target;
   uint64_t Value;
-  unsigned int KsError;
+  unsigned int KsError = 0;
   bool Resolved = evaluateFixup(Layout, Fixup, DF, Target, Value, KsError);
   return getBackend().fixupNeedsRelaxationAdvanced(Fixup, Resolved, Value, DF,
                                                    Layout);
@@ -736,7 +736,7 @@ bool MCAssembler::relaxInstruction(MCAsmLayout &Layout,
   SmallVector<MCFixup, 4> Fixups;
   SmallString<256> Code;
   raw_svector_ostream VecOS(Code);
-  unsigned int KsError;
+  unsigned int KsError = 0;
   getEmitter().encodeInstruction(Relaxed, VecOS, Fixups, F.getSubtargetInfo(), KsError);
 
   // Update the fragment.

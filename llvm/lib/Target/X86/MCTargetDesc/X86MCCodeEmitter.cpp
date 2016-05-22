@@ -297,6 +297,7 @@ static bool HasSecRelSymbolRef(const MCExpr *Expr) {
 // return false if Imm value is invalid for a given size
 static bool validImmRange(uint64_t Imm, unsigned int Size)
 {
+    return true;
     switch(Size) {
         default:
             return true;
