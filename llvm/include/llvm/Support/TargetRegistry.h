@@ -340,16 +340,10 @@ public:
                                      const MCSubtargetInfo &STI, bool RelaxAll,
                                      bool DWARFMustBeAtTheEnd) const {
     MCStreamer *S;
-    switch (T.getObjectFormat()) {
-    default:
-      llvm_unreachable("Unknown object format");
-    case Triple::ELF:
-      if (ELFStreamerCtorFn)
-        S = ELFStreamerCtorFn(T, Ctx, TAB, OS, Emitter, RelaxAll);
-      else
-        S = createELFStreamer(Ctx, TAB, OS, Emitter, RelaxAll);
-      break;
-    }
+    if (ELFStreamerCtorFn)
+      S = ELFStreamerCtorFn(T, Ctx, TAB, OS, Emitter, RelaxAll);
+    else
+      S = createELFStreamer(Ctx, TAB, OS, Emitter, RelaxAll);
     if (ObjectTargetStreamerCtorFn)
       ObjectTargetStreamerCtorFn(*S, STI);
     return S;

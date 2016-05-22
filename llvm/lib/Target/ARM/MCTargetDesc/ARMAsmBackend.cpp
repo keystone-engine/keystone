@@ -870,14 +870,8 @@ MCAsmBackend *llvm::createARMAsmBackend(const Target &T,
                                         const MCRegisterInfo &MRI,
                                         const Triple &TheTriple, StringRef CPU,
                                         bool isLittle) {
-  switch (TheTriple.getObjectFormat()) {
-  default:
-    llvm_unreachable("unsupported object format");
-  case Triple::ELF:
-    assert(TheTriple.isOSBinFormatELF() && "using ELF for non-ELF target");
-    uint8_t OSABI = MCELFObjectTargetWriter::getOSABI(TheTriple.getOS());
-    return new ARMAsmBackendELF(T, TheTriple, OSABI, isLittle);
-  }
+  uint8_t OSABI = MCELFObjectTargetWriter::getOSABI(TheTriple.getOS());
+  return new ARMAsmBackendELF(T, TheTriple, OSABI, isLittle);
 }
 
 MCAsmBackend *llvm::createARMLEAsmBackend(const Target &T,
