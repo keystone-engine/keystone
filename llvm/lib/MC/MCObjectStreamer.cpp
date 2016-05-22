@@ -238,8 +238,10 @@ bool MCObjectStreamer::mayHaveInstructions(MCSection &Sec) const {
 }
 
 void MCObjectStreamer::EmitInstruction(MCInst &Inst,
-                                       const MCSubtargetInfo &STI) {    // qq
-  MCStreamer::EmitInstruction(Inst, STI);
+                                       const MCSubtargetInfo &STI,
+                                       unsigned int &KsError)
+{
+  MCStreamer::EmitInstruction(Inst, STI, KsError);
 
   MCSection *Sec = getCurrentSectionOnly();
   Sec->setHasInstructions(true);
@@ -252,7 +254,7 @@ void MCObjectStreamer::EmitInstruction(MCInst &Inst,
   // If this instruction doesn't need relaxation, just emit it as data.
   MCAssembler &Assembler = getAssembler();
   if (!Assembler.getBackend().mayNeedRelaxation(Inst)) {
-    EmitInstToData(Inst, STI);
+    EmitInstToData(Inst, STI, KsError);
     return;
   }
 
@@ -267,7 +269,7 @@ void MCObjectStreamer::EmitInstruction(MCInst &Inst,
     getAssembler().getBackend().relaxInstruction(Inst, Relaxed);
     while (getAssembler().getBackend().mayNeedRelaxation(Relaxed))
       getAssembler().getBackend().relaxInstruction(Relaxed, Relaxed);
-    EmitInstToData(Relaxed, STI);
+    EmitInstToData(Relaxed, STI, KsError);
     return;
   }
 
@@ -287,8 +289,9 @@ void MCObjectStreamer::EmitInstToFragment(MCInst &Inst,
 
   SmallString<128> Code;
   raw_svector_ostream VecOS(Code);
+  unsigned int KsError;
   getAssembler().getEmitter().encodeInstruction(Inst, VecOS, IF->getFixups(),
-                                                STI);
+                                                STI, KsError);
   IF->getContents().append(Code.begin(), Code.end());
 }
 

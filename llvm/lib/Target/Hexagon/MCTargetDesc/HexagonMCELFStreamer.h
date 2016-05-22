@@ -28,7 +28,7 @@ public:
         MCII(createHexagonMCInstrInfo()) {}
 
   virtual void EmitInstruction(MCInst &Inst,
-                               const MCSubtargetInfo &STI) override;
+                               const MCSubtargetInfo &STI, unsigned int &KsError) override;
   void EmitSymbol(const MCInst &Inst);
   void HexagonMCEmitLocalCommonSymbol(MCSymbol *Symbol, uint64_t Size,
                                       unsigned ByteAlignment,

@@ -40,7 +40,7 @@ class MCObjectStreamer : public MCStreamer {
   bool EmitDebugFrame;
   SmallVector<MCSymbol *, 2> PendingLabels;
 
-  virtual void EmitInstToData(MCInst &Inst, const MCSubtargetInfo&) = 0;
+  virtual void EmitInstToData(MCInst &Inst, const MCSubtargetInfo&, unsigned int &KsError) = 0;
   void EmitCFIStartProcImpl(MCDwarfFrameInfo &Frame) override;
   void EmitCFIEndProcImpl(MCDwarfFrameInfo &Frame) override;
 
@@ -97,7 +97,7 @@ public:
   void EmitSLEB128Value(const MCExpr *Value) override;
   void EmitWeakReference(MCSymbol *Alias, const MCSymbol *Symbol) override;
   void ChangeSection(MCSection *Section, const MCExpr *Subsection) override;
-  void EmitInstruction(MCInst &Inst, const MCSubtargetInfo& STI) override;
+  void EmitInstruction(MCInst &Inst, const MCSubtargetInfo& STI, unsigned int &KsError) override;
 
   /// \brief Emit an instruction to a special fragment, because this instruction
   /// can change its size during relaxation.

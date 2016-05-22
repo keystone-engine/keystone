@@ -472,12 +472,16 @@ void MCELFStreamer::EmitInstToFragment(MCInst &Inst,
 }
 
 void MCELFStreamer::EmitInstToData(MCInst &Inst,
-                                   const MCSubtargetInfo &STI) {
+                                   const MCSubtargetInfo &STI,
+                                   unsigned int &KsError)
+{
   MCAssembler &Assembler = getAssembler();
   SmallVector<MCFixup, 4> Fixups;
   SmallString<256> Code;
   raw_svector_ostream VecOS(Code);
-  Assembler.getEmitter().encodeInstruction(Inst, VecOS, Fixups, STI);
+  Assembler.getEmitter().encodeInstruction(Inst, VecOS, Fixups, STI, KsError);
+  if (KsError)
+      return;
 
   for (unsigned i = 0, e = Fixups.size(); i != e; ++i)
     fixSymbolsInTLSFixups(Fixups[i].getValue());

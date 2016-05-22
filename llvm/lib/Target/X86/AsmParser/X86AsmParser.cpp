@@ -785,7 +785,8 @@ private:
 
   /// Wrapper around MCStreamer::EmitInstruction(). Possibly adds
   /// instrumentation around Inst.
-  void EmitInstruction(MCInst &Inst, OperandVector &Operands, MCStreamer &Out);
+  void EmitInstruction(MCInst &Inst, OperandVector &Operands, MCStreamer &Out,
+          unsigned int &KsError);
 
   bool MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
                                OperandVector &Operands, MCStreamer &Out,
@@ -1853,6 +1854,7 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand(StringRef Mnem, unsi
 
   bool PtrInOperand = false;
   unsigned Size = getIntelMemOperandSize(Tok.getString());
+  //printf(">> Intel Op Size = %u\n", Size);
   if (Size) {
     Parser.Lex(); // Eat operand size (e.g., byte, word).
     if (KsSyntax == KS_OPT_SYNTAX_NASM) {
@@ -2655,9 +2657,9 @@ bool X86AsmParser::processInstruction(MCInst &Inst, const OperandVector &Ops) {
 static const char *getSubtargetFeatureName(uint64_t Val);
 
 void X86AsmParser::EmitInstruction(MCInst &Inst, OperandVector &Operands,
-                                   MCStreamer &Out) {
+                                   MCStreamer &Out, unsigned int &KsError) {
   Instrumentation->InstrumentAndEmitInstruction(Inst, Operands, getContext(),
-                                                MII, Out);
+                                                MII, Out, KsError);
 }
 
 bool X86AsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
@@ -2691,8 +2693,9 @@ void X86AsmParser::MatchFPUWaitAlias(SMLoc IDLoc, X86Operand &Op,
     MCInst Inst;
     Inst.setOpcode(X86::WAIT);
     Inst.setLoc(IDLoc);
+    unsigned int KsError = 0;
     if (!MatchingInlineAsm)
-      EmitInstruction(Inst, Operands, Out);
+      EmitInstruction(Inst, Operands, Out, KsError);
     Operands[0] = X86Operand::CreateToken(Repl, IDLoc);
   }
 }
@@ -2744,8 +2747,11 @@ bool X86AsmParser::MatchAndEmitATTInstruction(SMLoc IDLoc, unsigned &Opcode,
         ;
 
     Inst.setLoc(IDLoc);
-    if (!MatchingInlineAsm)
-      EmitInstruction(Inst, Operands, Out);
+    if (!MatchingInlineAsm) {
+      EmitInstruction(Inst, Operands, Out, ErrorCode);
+      if (ErrorCode)
+          return true;
+    }
     Opcode = Inst.getOpcode();
     return false;
   case Match_MissingFeature:
@@ -2801,8 +2807,11 @@ bool X86AsmParser::MatchAndEmitATTInstruction(SMLoc IDLoc, unsigned &Opcode,
       std::count(std::begin(Match), std::end(Match), Match_Success);
   if (NumSuccessfulMatches == 1) {
     Inst.setLoc(IDLoc);
-    if (!MatchingInlineAsm)
-      EmitInstruction(Inst, Operands, Out);
+    if (!MatchingInlineAsm) {
+      EmitInstruction(Inst, Operands, Out, ErrorCode);
+      if (ErrorCode)
+          return true;
+    }
     Opcode = Inst.getOpcode();
     return false;
   }
@@ -3008,8 +3017,11 @@ bool X86AsmParser::MatchAndEmitIntelInstruction(SMLoc IDLoc, unsigned &Opcode,
       while (processInstruction(Inst, Operands))
         ;
     Inst.setLoc(IDLoc);
-    if (!MatchingInlineAsm)
-      EmitInstruction(Inst, Operands, Out);
+    if (!MatchingInlineAsm) {
+      EmitInstruction(Inst, Operands, Out, ErrorCode);
+      if (ErrorCode)
+          return true;
+    }
     Opcode = Inst.getOpcode();
     return false;
   } else if (NumSuccessfulMatches > 1) {

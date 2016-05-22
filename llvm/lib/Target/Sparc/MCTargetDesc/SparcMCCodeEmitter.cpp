@@ -42,7 +42,8 @@ public:
 
   void encodeInstruction(MCInst &MI, raw_ostream &OS,
                          SmallVectorImpl<MCFixup> &Fixups,
-                         const MCSubtargetInfo &STI) const override;
+                         const MCSubtargetInfo &STI,
+                         unsigned int &KsError) const override;
 
   // getBinaryCodeForInstr - TableGen'erated function for getting the
   // binary encoding for an instruction.
@@ -80,8 +81,12 @@ MCCodeEmitter *llvm::createSparcMCCodeEmitter(const MCInstrInfo &MCII,
 
 void SparcMCCodeEmitter::encodeInstruction(MCInst &MI, raw_ostream &OS,
                                            SmallVectorImpl<MCFixup> &Fixups,
-                                           const MCSubtargetInfo &STI) const {
+                                           const MCSubtargetInfo &STI,
+                                           unsigned int &KsError) const
+{
   unsigned Bits = getBinaryCodeForInstr(MI, Fixups, STI);
+
+  KsError = 0;
 
   if (Ctx.getAsmInfo()->isLittleEndian()) {
     // Output the bits in little-endian byte order.

@@ -85,7 +85,7 @@ public:
 private:
   bool isBundleLocked() const;
   void EmitInstToFragment(MCInst &Inst, const MCSubtargetInfo &) override;
-  void EmitInstToData(MCInst &Inst, const MCSubtargetInfo &) override;
+  void EmitInstToData(MCInst &Inst, const MCSubtargetInfo &, unsigned int &KsError) override;
 
   void fixSymbolsInTLSFixups(const MCExpr *expr);
 

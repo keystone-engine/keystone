@@ -700,7 +700,8 @@ bool HexagonAsmParser::finishBundle(SMLoc IDLoc, MCStreamer &Out) {
       // Empty packets are valid yet aren't emitted
       return false;
     }
-    Out.EmitInstruction(MCB, getSTI());
+    unsigned int KsError;
+    Out.EmitInstruction(MCB, getSTI(), KsError);
   } else {
     // If compounding and duplexing didn't reduce the size below
     // 4 or less we have a packet that is too big.

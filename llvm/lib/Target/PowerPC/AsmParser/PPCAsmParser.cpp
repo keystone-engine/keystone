@@ -1206,8 +1206,8 @@ bool PPCAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
     // Post-process instructions (typically extended mnemonics)
     ProcessInstruction(Inst, Operands);
     Inst.setLoc(IDLoc);
-    Out.EmitInstruction(Inst, getSTI());
-    return false;
+    Out.EmitInstruction(Inst, getSTI(), ErrorCode);
+    return (ErrorCode != 0);
   case Match_MissingFeature:
     // return Error(IDLoc, "instruction use requires an option to be enabled");
     ErrorCode = KS_ERR_ASM_PPC_MISSINGFEATURE;

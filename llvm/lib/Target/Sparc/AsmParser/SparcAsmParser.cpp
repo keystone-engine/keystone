@@ -530,9 +530,9 @@ bool SparcAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
     }
 
     for (MCInst &I : Instructions) {
-      Out.EmitInstruction(I, getSTI());
+      Out.EmitInstruction(I, getSTI(), ErrorCode);
     }
-    return false;
+    return (ErrorCode != 0);
   }
 
   case Match_MissingFeature:

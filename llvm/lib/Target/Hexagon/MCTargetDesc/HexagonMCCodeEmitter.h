@@ -46,7 +46,8 @@ public:
 
   void encodeInstruction(MCInst &MI, raw_ostream &OS,
                          SmallVectorImpl<MCFixup> &Fixups,
-                         MCSubtargetInfo const &STI) const override;
+                         MCSubtargetInfo const &STI,
+                         unsigned int &KsError) const override;
 
   void EncodeSingleInstruction(const MCInst &MI, raw_ostream &OS,
                                SmallVectorImpl<MCFixup> &Fixups,

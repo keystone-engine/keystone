@@ -46,7 +46,7 @@ public:
   /// \p Inst is actually emitted. For example, we can inspect the operands and
   /// gather sufficient information that allows us to reason about the register
   /// usage for the translation unit.
-  void EmitInstruction(MCInst &Inst, const MCSubtargetInfo &STI) override;
+  void EmitInstruction(MCInst &Inst, const MCSubtargetInfo &STI, unsigned int &KsError) override;
 
   /// Overriding this function allows us to record all labels that should be
   /// marked as microMIPS. Based on this data marking is done in

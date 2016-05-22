@@ -716,7 +716,8 @@ bool MCAssembler::fragmentNeedsRelaxation(const MCRelaxableFragment *F,
 }
 
 bool MCAssembler::relaxInstruction(MCAsmLayout &Layout,
-                                   MCRelaxableFragment &F) {
+                                   MCRelaxableFragment &F)
+{
   if (!fragmentNeedsRelaxation(&F, Layout))
     return false;
 
@@ -735,7 +736,8 @@ bool MCAssembler::relaxInstruction(MCAsmLayout &Layout,
   SmallVector<MCFixup, 4> Fixups;
   SmallString<256> Code;
   raw_svector_ostream VecOS(Code);
-  getEmitter().encodeInstruction(Relaxed, VecOS, Fixups, F.getSubtargetInfo());
+  unsigned int KsError;
+  getEmitter().encodeInstruction(Relaxed, VecOS, Fixups, F.getSubtargetInfo(), KsError);
 
   // Update the fragment.
   F.setInst(Relaxed);

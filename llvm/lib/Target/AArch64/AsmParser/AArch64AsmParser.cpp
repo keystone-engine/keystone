@@ -4103,8 +4103,8 @@ bool AArch64AsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
       return true;
 
     Inst.setLoc(IDLoc);
-    Out.EmitInstruction(Inst, getSTI());
-    return false;
+    Out.EmitInstruction(Inst, getSTI(), ErrorCode);
+    return (ErrorCode != 0);
   }
   case Match_MissingFeature: {
     assert(ErrorInfo && "Unknown missing feature!");
@@ -4316,7 +4316,8 @@ bool AArch64AsmParser::parseDirectiveTLSDescCall(SMLoc L) {
   Inst.setOpcode(AArch64::TLSDESCCALL);
   Inst.addOperand(MCOperand::createExpr(Expr));
 
-  getParser().getStreamer().EmitInstruction(Inst, getSTI());
+  unsigned int KsError;
+  getParser().getStreamer().EmitInstruction(Inst, getSTI(), KsError);
   return false;
 }
 

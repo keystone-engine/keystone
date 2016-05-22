@@ -147,9 +147,10 @@ void MipsMCCodeEmitter::EmitInstruction(uint64_t Val, unsigned Size,
 void MipsMCCodeEmitter::
 encodeInstruction(MCInst &MI, raw_ostream &OS,
                   SmallVectorImpl<MCFixup> &Fixups,
-                  const MCSubtargetInfo &STI) const
+                  const MCSubtargetInfo &STI,
+                  unsigned int &KsError) const
 {
-
+  KsError = 0;
   // Non-pseudo instructions that get changed for direct object
   // only based on operand values.
   // If this list of instructions get much longer we will move
