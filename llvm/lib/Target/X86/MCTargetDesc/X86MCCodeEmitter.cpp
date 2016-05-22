@@ -326,7 +326,7 @@ EmitImmediate(const MCOperand &DispOp, SMLoc Loc, unsigned Size,
     if (FixupKind != FK_PCRel_1 &&
         FixupKind != FK_PCRel_2 &&
         FixupKind != FK_PCRel_4) {
-      EmitConstant(DispOp.getImm()+ImmOffset, Size, CurByte, OS);
+      EmitConstant(DispOp.getImm(), Size, CurByte, OS);
       return;
     }
     Expr = MCConstantExpr::create(DispOp.getImm(), Ctx);
