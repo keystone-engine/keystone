@@ -126,6 +126,7 @@ public:
                      unsigned &CurByte, raw_ostream &OS,
                      SmallVectorImpl<MCFixup> &Fixups,
                      unsigned int &KsError,
+                     bool is64bit,
                      int ImmOffset = 0) const;
 
   inline static unsigned char ModRMByte(unsigned Mod, unsigned RegOpcode,
@@ -306,18 +307,20 @@ static bool validImmRange(uint64_t Imm, unsigned int Size)
         case 4:
             return (Imm <= 0xffffffff);
     }
-
 }
 
 void X86MCCodeEmitter::
 EmitImmediate(const MCOperand &DispOp, SMLoc Loc, unsigned Size,
               MCFixupKind FixupKind, unsigned &CurByte, raw_ostream &OS,
-              SmallVectorImpl<MCFixup> &Fixups, unsigned int &KsError, int ImmOffset) const
+              SmallVectorImpl<MCFixup> &Fixups,
+              unsigned int &KsError, bool is64bit,
+              int ImmOffset) const
 {
   KsError = 0;
   const MCExpr *Expr = nullptr;
   if (DispOp.isImm()) {
-    if (!validImmRange(DispOp.getImm(), Size)) {
+    //printf(">>> size = %u, imm = %llx\n", Size, DispOp.getImm());
+    if (!is64bit && !validImmRange(DispOp.getImm(), Size)) {
         KsError = KS_ERR_ASM_INVALIDOPERAND;
         return;
     }
@@ -421,7 +424,7 @@ void X86MCCodeEmitter::EmitMemModRMByte(const MCInst &MI, unsigned Op,
     int ImmSize = X86II::hasImm(TSFlags) ? X86II::getSizeOfImm(TSFlags) : 0;
 
     EmitImmediate(Disp, MI.getLoc(), 4, MCFixupKind(FixupKind),
-                  CurByte, OS, Fixups, KsError, -ImmSize);
+                  CurByte, OS, Fixups, KsError, is64BitMode(STI), -ImmSize);
     return;
   }
 
@@ -474,7 +477,8 @@ void X86MCCodeEmitter::EmitMemModRMByte(const MCInst &MI, unsigned Op,
         }
         // Use the [REG]+disp8 form, including for [BP] which cannot be encoded.
         EmitByte(ModRMByte(1, RegOpcodeField, RMfield), CurByte, OS);
-        EmitImmediate(Disp, MI.getLoc(), 1, FK_Data_1, CurByte, OS, Fixups, KsError);
+        EmitImmediate(Disp, MI.getLoc(), 1, FK_Data_1, CurByte, OS, Fixups, KsError,
+                is64BitMode(STI));
         return;
       }
       // This is the [REG]+disp16 case.
@@ -485,7 +489,8 @@ void X86MCCodeEmitter::EmitMemModRMByte(const MCInst &MI, unsigned Op,
     }
 
     // Emit 16-bit displacement for plain disp16 or [REG]+disp16 cases.
-    EmitImmediate(Disp, MI.getLoc(), 2, FK_Data_2, CurByte, OS, Fixups, KsError);
+    EmitImmediate(Disp, MI.getLoc(), 2, FK_Data_2, CurByte, OS, Fixups, KsError,
+                is64BitMode(STI));
     return;
   }
 
@@ -506,7 +511,8 @@ void X86MCCodeEmitter::EmitMemModRMByte(const MCInst &MI, unsigned Op,
 
     if (BaseReg == 0) {          // [disp32]     in X86-32 mode
       EmitByte(ModRMByte(0, RegOpcodeField, 5), CurByte, OS);
-      EmitImmediate(Disp, MI.getLoc(), 4, FK_Data_4, CurByte, OS, Fixups, KsError);
+      EmitImmediate(Disp, MI.getLoc(), 4, FK_Data_4, CurByte, OS, Fixups, KsError,
+                is64BitMode(STI));
       return;
     }
 
@@ -523,7 +529,8 @@ void X86MCCodeEmitter::EmitMemModRMByte(const MCInst &MI, unsigned Op,
     if (Disp.isImm()) {
       if (!HasEVEX && isDisp8(Disp.getImm())) {
         EmitByte(ModRMByte(1, RegOpcodeField, BaseRegNo), CurByte, OS);
-        EmitImmediate(Disp, MI.getLoc(), 1, FK_Data_1, CurByte, OS, Fixups, KsError);
+        EmitImmediate(Disp, MI.getLoc(), 1, FK_Data_1, CurByte, OS, Fixups, KsError,
+                is64BitMode(STI));
         return;
       }
       // Try EVEX compressed 8-bit displacement first; if failed, fall back to
@@ -532,7 +539,7 @@ void X86MCCodeEmitter::EmitMemModRMByte(const MCInst &MI, unsigned Op,
       if (HasEVEX && isCDisp8(TSFlags, Disp.getImm(), CDisp8)) {
         EmitByte(ModRMByte(1, RegOpcodeField, BaseRegNo), CurByte, OS);
         EmitImmediate(Disp, MI.getLoc(), 1, FK_Data_1, CurByte, OS, Fixups,
-                      KsError, CDisp8 - Disp.getImm());
+                      KsError, is64BitMode(STI), CDisp8 - Disp.getImm());
         return;
       }
     }
@@ -540,7 +547,7 @@ void X86MCCodeEmitter::EmitMemModRMByte(const MCInst &MI, unsigned Op,
     // Otherwise, emit the most general non-SIB encoding: [REG+disp32]
     EmitByte(ModRMByte(2, RegOpcodeField, BaseRegNo), CurByte, OS);
     EmitImmediate(Disp, MI.getLoc(), 4, MCFixupKind(X86::reloc_signed_4byte),
-                  CurByte, OS, Fixups, KsError);
+                  CurByte, OS, Fixups, KsError, is64BitMode(STI));
     return;
   }
 
@@ -614,10 +621,10 @@ void X86MCCodeEmitter::EmitMemModRMByte(const MCInst &MI, unsigned Op,
 
   // Do we need to output a displacement?
   if (ForceDisp8)
-    EmitImmediate(Disp, MI.getLoc(), 1, FK_Data_1, CurByte, OS, Fixups, KsError, ImmOffset);
+    EmitImmediate(Disp, MI.getLoc(), 1, FK_Data_1, CurByte, OS, Fixups, KsError, is64BitMode(STI), ImmOffset);
   else if (ForceDisp32 || Disp.getImm() != 0)
     EmitImmediate(Disp, MI.getLoc(), 4, MCFixupKind(X86::reloc_signed_4byte),
-                  CurByte, OS, Fixups, KsError);
+                  CurByte, OS, Fixups, KsError, is64BitMode(STI));
 }
 
 /// EmitVEXOpcodePrefix - AVX instructions are encoded using a opcode prefix
@@ -1347,7 +1354,7 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
     EmitByte(BaseOpcode, CurByte, OS);
     EmitImmediate(MI.getOperand(CurOp++), MI.getLoc(),
                   X86II::getSizeOfImm(TSFlags), getImmFixupKind(TSFlags),
-                  CurByte, OS, Fixups, KsError);
+                  CurByte, OS, Fixups, KsError, is64BitMode(STI));
     ++CurOp; // skip segment operand
     break;
   case X86II::RawFrmImm8:
@@ -1355,18 +1362,18 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
     EmitByte(BaseOpcode, CurByte, OS);
     EmitImmediate(MI.getOperand(CurOp++), MI.getLoc(),
                   X86II::getSizeOfImm(TSFlags), getImmFixupKind(TSFlags),
-                  CurByte, OS, Fixups, KsError);
+                  CurByte, OS, Fixups, KsError, is64BitMode(STI));
     EmitImmediate(MI.getOperand(CurOp++), MI.getLoc(), 1, FK_Data_1, CurByte,
-                  OS, Fixups, KsError);
+                  OS, Fixups, KsError, is64BitMode(STI));
     break;
   case X86II::RawFrmImm16:
     //printf(">> gg\n");
     EmitByte(BaseOpcode, CurByte, OS);
     EmitImmediate(MI.getOperand(CurOp++), MI.getLoc(),
                   X86II::getSizeOfImm(TSFlags), getImmFixupKind(TSFlags),
-                  CurByte, OS, Fixups, KsError);
+                  CurByte, OS, Fixups, KsError, is64BitMode(STI));
     EmitImmediate(MI.getOperand(CurOp++), MI.getLoc(), 2, FK_Data_2, CurByte,
-                  OS, Fixups, KsError);
+                  OS, Fixups, KsError, is64BitMode(STI));
     break;
 
   case X86II::AddRegFrm:
@@ -1564,12 +1571,12 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
       }
       //printf(">> uu\n");
       EmitImmediate(MCOperand::createImm(RegNum), MI.getLoc(), 1, FK_Data_1,
-                    CurByte, OS, Fixups, KsError);
+                    CurByte, OS, Fixups, KsError, is64BitMode(STI));
     } else {
-      //printf(">> vv\n");
+      //printf(">> vv BaseOpcode = %u, Opcode = %u\n", BaseOpcode, Opcode);
       EmitImmediate(MI.getOperand(CurOp++), MI.getLoc(),
-                    X86II::getSizeOfImm(TSFlags), getImmFixupKind(TSFlags),
-                    CurByte, OS, Fixups, KsError);
+                X86II::getSizeOfImm(TSFlags), getImmFixupKind(TSFlags),
+                CurByte, OS, Fixups, KsError, is64BitMode(STI));
       if (KsError)
           break;
     }
