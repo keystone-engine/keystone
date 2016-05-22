@@ -54,8 +54,6 @@ unsigned X86_MC::getDwarfRegFlavour(const Triple &TT, bool isEH) {
   if (TT.getArch() == Triple::x86_64)
     return DWARFFlavour::X86_64;
 
-  if (TT.isOSDarwin())
-    return isEH ? DWARFFlavour::X86_32_DarwinEH : DWARFFlavour::X86_32_Generic;
   if (TT.isOSCygMing())
     // Unsupported by now, just quick fallback
     return DWARFFlavour::X86_32_Generic;
