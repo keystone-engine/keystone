@@ -17,7 +17,8 @@ class TestX86(regress.RegressTest):
             encoding, count = ks.asm(b"add ptr ss:[eax + ebx], 0x777")
         except KsError as e:
             if e.errno == KS_ERR_ASM_INVALIDOPERAND:
-                print("Got error KS_ERR_ASM_INVALIDOPERAND as expected")
+                #print("Got error KS_ERR_ASM_INVALIDOPERAND as expected")
+                pass
             else:
                 self.assertFalse(1, "ERROR: %s" % e)
 

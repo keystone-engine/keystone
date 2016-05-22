@@ -17,10 +17,10 @@ class TestAll(regress.RegressTest):
         if syntax != 0:
             ks.syntax = syntax
         encoding, count = ks.asm(code)
-        print("%s = [ " % code, end='')
-        for i in encoding:
-            print("0x%02x, " % i, end='')
-        print("]")
+        #print("%s = [ " % code, end='')
+        #for i in encoding:
+        #    print("0x%02x, " % i, end='')
+        #print("]")
         self.assertEqual(encoding, expect)
 
     def runTest(self):

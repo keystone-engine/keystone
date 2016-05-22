@@ -21,7 +21,8 @@ class TestX86(regress.RegressTest):
             encoding, count = ks.asm(CODE1)
         except KsError as e:
             if e.errno == KS_ERR_ASM_INVALIDOPERAND:
-                print("Got error KS_ERR_ASM_INVALIDOPERAND as expected")
+                #print("Got error KS_ERR_ASM_INVALIDOPERAND as expected")
+                pass
             else:
                 self.assertFalse(1, "ERROR: %s" % e)
 
@@ -29,7 +30,8 @@ class TestX86(regress.RegressTest):
             encoding, count = ks.asm(CODE2)
         except KsError as e:
             if e.errno == KS_ERR_ASM_INVALIDOPERAND:
-                print("Got error KS_ERR_ASM_INVALIDOPERAND as expected")
+                #print("Got error KS_ERR_ASM_INVALIDOPERAND as expected")
+                pass
             else:
                 self.assertFalse(1, "ERROR: %s" % e)
 

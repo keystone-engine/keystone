@@ -2,8 +2,6 @@
 
 # This tests the relative BLX instruction for Thumb-mode
 
-# Fill in the information in the form below when you create a new regression
-
 # Github issue: #36
 # Author: Edgar Barbosa
 

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# Fill in the information in the form below when you create a new regression
+# Test int3 instruction
 
 # Github issue: #7
 # Author: Nguyen Anh Quynh
