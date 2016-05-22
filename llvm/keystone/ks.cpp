@@ -112,12 +112,16 @@ const char *ks_strerror(ks_err code)
             return "Too many positional arguments (KS_ERR_ASM_MACRO_ARGS)";
         case KS_ERR_ASM_MACRO_LEVELS_EXCEED: // macros cannot be nested more than 20 levels deep
             return "Macros cannot be nested more than 20 levels deep (KS_ERR_ASM_MACRO_LEVELS_EXCEED)";
+        case KS_ERR_ASM_MACRO_STR:         // invalid macro string
+            return "Invalid macro string (KS_ERR_ASM_MACRO_STR)";
         case KS_ERR_ASM_ESC_BACKSLASH:   // unexpected backslash at end of escaped string
             return "Unexpected backslash at end of escaped string (KS_ERR_ASM_ESC_BACKSLASH)";
         case KS_ERR_ASM_ESC_OCTAL:       // invalid octal escape sequence (out of range)
             return "Invalid octal escape sequence (KS_ERR_ASM_ESC_OCTAL)";
         case KS_ERR_ASM_ESC_SEQUENCE:         // invalid escape sequence (unrecognized character)
             return "Invalid escape sequence (KS_ERR_ASM_ESC_SEQUENCE)";
+        case KS_ERR_ASM_ESC_STR:         // broken escape string
+            return "Invalid escape string (KS_ERR_ASM_ESC_STR)";
     }
 }
 

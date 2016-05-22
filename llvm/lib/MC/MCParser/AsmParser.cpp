@@ -2147,7 +2147,7 @@ bool AsmParser::expandMacro(raw_svector_ostream &OS, StringRef Body,
               bool valid;
               OS << Token.getStringContents(valid);
               if (!valid) {
-                  KsError = KS_ERR_ASM_DIRECTIVE_MACRO;
+                  KsError = KS_ERR_ASM_MACRO_STR;
                   return true;
               }
             }
