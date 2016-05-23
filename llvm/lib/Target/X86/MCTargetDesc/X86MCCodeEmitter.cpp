@@ -1252,8 +1252,9 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
   // Emit segment override opcode prefix as needed.
   if (MemoryOperand >= 0) {
     const MCOperand &Base = MI.getOperand(MemoryOperand + X86::AddrBaseReg);
-    BaseReg = Base.getReg();
     const MCOperand &Seg = MI.getOperand(MemoryOperand + X86::AddrSegmentReg);
+
+    BaseReg = Base.getReg();
     SegReg = Seg.getReg();
 
     if ((SegReg != X86::SS) || (BaseReg != X86::ESP && BaseReg != X86::EBP)) {
@@ -1287,15 +1288,13 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
     need_address_override = !Is16BitMemOperand(MI, MemoryOperand, STI);
   }
 
-  if ((SegReg != X86::SS) || (BaseReg != X86::ESP && BaseReg != X86::EBP)) {
-      if (need_address_override)
-          EmitByte(0x67, CurByte, OS);
+  if (need_address_override)
+      EmitByte(0x67, CurByte, OS);
 
-      if (Encoding == 0)
-          EmitOpcodePrefix(TSFlags, CurByte, MemoryOperand, MI, Desc, STI, OS);
-      else
-          EmitVEXOpcodePrefix(TSFlags, CurByte, MemoryOperand, MI, Desc, OS);
-  }
+  if (Encoding == 0)
+      EmitOpcodePrefix(TSFlags, CurByte, MemoryOperand, MI, Desc, STI, OS);
+  else
+      EmitVEXOpcodePrefix(TSFlags, CurByte, MemoryOperand, MI, Desc, OS);
 
   unsigned char BaseOpcode = X86II::getBaseOpcodeFor(TSFlags);
 
@@ -1464,19 +1463,6 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
     }
     if (HasMemOp4) // Skip second register source (encoded in I8IMM)
       ++FirstMemOp;
-
-    const MCOperand &Base = MI.getOperand(FirstMemOp + X86::AddrBaseReg);
-    BaseReg = Base.getReg();
-    EmitSegmentOverridePrefix(CurByte, MemoryOperand+X86::AddrSegmentReg,
-            MI, OS, BaseReg);
-
-    if (need_address_override)
-        EmitByte(0x67, CurByte, OS);
-
-    if (Encoding == 0)
-        EmitOpcodePrefix(TSFlags, CurByte, MemoryOperand, MI, Desc, STI, OS);
-    else
-        EmitVEXOpcodePrefix(TSFlags, CurByte, MemoryOperand, MI, Desc, OS);
 
     EmitByte(BaseOpcode, CurByte, OS);
 
