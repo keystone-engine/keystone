@@ -601,6 +601,7 @@ private:
       PrevState = CurrState;
       return false;
     }
+
     void onStar() {
       PrevState = State;
       switch (State) {
@@ -802,12 +803,12 @@ private:
   bool MatchAndEmitATTInstruction(SMLoc IDLoc, unsigned &Opcode,
                                   OperandVector &Operands, MCStreamer &Out,
                                   uint64_t &ErrorInfo,
-                                  bool MatchingInlineAsm, unsigned int &ErrorCode);
+                                  bool MatchingInlineAsm, unsigned int &ErrorCode, uint64_t &Address);
 
   bool MatchAndEmitIntelInstruction(SMLoc IDLoc, unsigned &Opcode,
                                     OperandVector &Operands, MCStreamer &Out,
                                     uint64_t &ErrorInfo,
-                                    bool MatchingInlineAsm, unsigned int &ErrorCode);
+                                    bool MatchingInlineAsm, unsigned int &ErrorCode, uint64_t &Address);
 
   bool OmitRegisterFromClobberLists(unsigned RegNo) override;
 
@@ -1464,7 +1465,8 @@ bool X86AsmParser::ParseIntelExpression(IntelExprStateMachine &SM, SMLoc &End)
 
 std::unique_ptr<X86Operand>
 X86AsmParser::ParseIntelBracExpression(unsigned SegReg, SMLoc Start,
-                                       int64_t ImmDisp, unsigned Size, unsigned int &KsError) {
+                                       int64_t ImmDisp, unsigned Size, unsigned int &KsError)
+{
   MCAsmParser &Parser = getParser();
   const AsmToken &Tok = Parser.getTok();
   SMLoc BracLoc = Tok.getLoc(), End = Tok.getEndLoc();
@@ -1524,6 +1526,7 @@ X86AsmParser::ParseIntelBracExpression(unsigned SegReg, SMLoc Start,
 
   int BaseReg = SM.getBaseReg();
   int IndexReg = SM.getIndexReg();
+  //printf("--- BaseReg = %u, IndexReg = %u, SegReg = %u\n", BaseReg, IndexReg, SegReg);
   int Scale = SM.getScale();
   if (!isParsingInlineAsm()) {
     // handle [-42]
@@ -1599,7 +1602,8 @@ bool X86AsmParser::ParseIntelIdentifier(const MCExpr *&Val,
 /// \brief Parse intel style segment override.
 std::unique_ptr<X86Operand>
 X86AsmParser::ParseIntelSegmentOverride(unsigned SegReg, SMLoc Start,
-                                        unsigned Size, unsigned int &KsError) {
+                                        unsigned Size, unsigned int &KsError)
+{
   MCAsmParser &Parser = getParser();
   assert(SegReg != 0 && "Tried to parse a segment override without a segment!");
   const AsmToken &Tok = Parser.getTok(); // Eat colon.
@@ -2668,9 +2672,9 @@ bool X86AsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
                                            bool MatchingInlineAsm, unsigned int &ErrorCode, uint64_t &Address) {
   if (isParsingIntelSyntax())
     return MatchAndEmitIntelInstruction(IDLoc, Opcode, Operands, Out, ErrorInfo,
-                                        MatchingInlineAsm, ErrorCode);
+                                        MatchingInlineAsm, ErrorCode, Address);
   return MatchAndEmitATTInstruction(IDLoc, Opcode, Operands, Out, ErrorInfo,
-                                    MatchingInlineAsm, ErrorCode);
+                                    MatchingInlineAsm, ErrorCode, Address);
 }
 
 void X86AsmParser::MatchFPUWaitAlias(SMLoc IDLoc, X86Operand &Op,
@@ -2720,7 +2724,7 @@ bool X86AsmParser::MatchAndEmitATTInstruction(SMLoc IDLoc, unsigned &Opcode,
                                               OperandVector &Operands,
                                               MCStreamer &Out,
                                               uint64_t &ErrorInfo,
-                                              bool MatchingInlineAsm, unsigned int &ErrorCode)
+                                              bool MatchingInlineAsm, unsigned int &ErrorCode, uint64_t &Address)
 {
   assert(!Operands.empty() && "Unexpect empty operand list!");
   X86Operand &Op = static_cast<X86Operand &>(*Operands[0]);
@@ -2918,7 +2922,7 @@ bool X86AsmParser::MatchAndEmitIntelInstruction(SMLoc IDLoc, unsigned &Opcode,
                                                 OperandVector &Operands,
                                                 MCStreamer &Out,
                                                 uint64_t &ErrorInfo,
-                                                bool MatchingInlineAsm, unsigned int &ErrorCode)
+                                                bool MatchingInlineAsm, unsigned int &ErrorCode, uint64_t &Address)
 {
   assert(!Operands.empty() && "Unexpect empty operand list!");
   X86Operand &Op = static_cast<X86Operand &>(*Operands[0]);
@@ -2929,7 +2933,7 @@ bool X86AsmParser::MatchAndEmitIntelInstruction(SMLoc IDLoc, unsigned &Opcode,
   // First, handle aliases that expand to multiple instructions.
   MatchFPUWaitAlias(IDLoc, Op, Operands, Out, MatchingInlineAsm);
 
-  MCInst Inst;
+  MCInst Inst(Address);
 
   // Find one unsized memory operand, if present.
   X86Operand *UnsizedMemOp = nullptr;
@@ -3023,6 +3027,7 @@ bool X86AsmParser::MatchAndEmitIntelInstruction(SMLoc IDLoc, unsigned &Opcode,
           return true;
     }
     Opcode = Inst.getOpcode();
+    Address = Inst.getAddress(); // Keystone update address
     return false;
   } else if (NumSuccessfulMatches > 1) {
     assert(UnsizedMemOp &&

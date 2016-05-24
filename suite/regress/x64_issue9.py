@@ -20,6 +20,12 @@ class TestX86(regress.RegressTest):
         encoding, _ = ks.asm(b"LEA RDX, [RAX]")
         self.assertEqual(encoding, [ 0x48, 0x8D, 0x10 ])
 
+        encoding, _ = ks.asm(b"ADD QWORD PTR [0x7FF68481C8ED], 0x1", 0x7FF6845CB982)
+        self.assertEqual(encoding, [ 0x48, 0x83, 0x05, 0x63, 0x0F, 0x25, 0x00, 0x01 ])
+
+        encoding, _ = ks.asm(b"MOV RAX, QWORD PTR DS:[0x1234567890]", 0x7FFCA9FF1977)
+        self.assertEqual(encoding, [ 0x48, 0xA1, 0x90, 0x78, 0x56, 0x34, 0x12, 0x00, 0x00, 0x00 ])
+
 
 if __name__ == '__main__':
     regress.main()
