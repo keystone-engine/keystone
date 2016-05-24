@@ -36,7 +36,7 @@ test_ks(KS_ARCH_ARM, KS_MODE_THUMB, "movs r4, #0xf0")
 test_ks(KS_ARCH_ARM, KS_MODE_THUMB + KS_MODE_BIG_ENDIAN, "movs r4, #0xf0")
 
 # ARM64
-test_ks(KS_ARCH_ARM64, KS_MODE_BIG_ENDIAN, "ldr w1, [sp, #0x8]")
+test_ks(KS_ARCH_ARM64, KS_MODE_LITTLE_ENDIAN, "ldr w1, [sp, #0x8]")
 
 # Hexagon
 test_ks(KS_ARCH_HEXAGON, KS_MODE_BIG_ENDIAN, "v23.w=vavg(v11.w,v2.w):rnd")

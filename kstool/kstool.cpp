@@ -146,8 +146,8 @@ int main(int argc, char **argv)
         err = ks_open(KS_ARCH_ARM, KS_MODE_THUMB+KS_MODE_BIG_ENDIAN, &ks);
     }
 
-    if (!strcmp(mode, "arm64be") || !strcmp(mode, "arm64")) {
-        err = ks_open(KS_ARCH_ARM64, KS_MODE_BIG_ENDIAN, &ks);
+    if (!strcmp(mode, "arm64")) {
+        err = ks_open(KS_ARCH_ARM64, KS_MODE_LITTLE_ENDIAN, &ks);
     }
 
     if (!strcmp(mode, "hex") || !strcmp(mode, "hexagon")) {
