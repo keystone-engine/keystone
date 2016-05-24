@@ -87,11 +87,16 @@ int main(int argc, char **argv)
 
         fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
 
-        unsigned int index = 0;
+        size_t index = 0;
 
         char buf[1024];
         while( fgets(buf, sizeof(buf), stdin) ) {
             input = (char*)realloc(assembly, index + strlen(buf));
+            if (!input) {
+                printf("Failed to allocate memory.");
+                return 1;
+            }
+
             memcpy(&input[index], buf, strlen(buf));
             index += strlen(buf);
         }
@@ -253,8 +258,7 @@ int main(int argc, char **argv)
     // close Keystone instance when done
     ks_close(ks);
 
-    if (input) 
-        free(input);
+    free(input);
 
     return 0;
 }
