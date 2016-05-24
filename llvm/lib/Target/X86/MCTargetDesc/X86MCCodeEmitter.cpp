@@ -1170,8 +1170,8 @@ void X86MCCodeEmitter::EmitOpcodePrefix(uint64_t TSFlags, unsigned &CurByte,
                                         int MemOperand, const MCInst &MI,
                                         const MCInstrDesc &Desc,
                                         const MCSubtargetInfo &STI,
-                                        raw_ostream &OS) const {
-
+                                        raw_ostream &OS) const
+{
   // Emit the operand size opcode prefix as needed.
   if ((TSFlags & X86II::OpSizeMask) == (is16BitMode(STI) ? X86II::OpSize32
                                                          : X86II::OpSize16))

@@ -66,6 +66,10 @@ class X86AsmParser : public MCTargetAsmParser {
   std::unique_ptr<X86AsmInstrumentation> Instrumentation;
 
 private:
+  // PUSH i8  --> PUSH32i8
+  // PUSH word i8 --> PUSH16i8
+  bool push32;
+  bool push16;
   SMLoc consumeToken() {
     MCAsmParser &Parser = getParser();
     SMLoc Result = Parser.getTok().getLoc();
@@ -1858,7 +1862,6 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand(StringRef Mnem, unsi
 
   bool PtrInOperand = false;
   unsigned Size = getIntelMemOperandSize(Tok.getString());
-  //printf(">> Intel Op Size = %u\n", Size);
   if (Size) {
     Parser.Lex(); // Eat operand size (e.g., byte, word).
     if (KsSyntax == KS_OPT_SYNTAX_NASM) {
@@ -1867,12 +1870,15 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand(StringRef Mnem, unsi
             return ErrorOperand(Tok.getLoc(), "Do not expected 'PTR' or 'ptr' token!");
     } else {
         // LLVM requires 'PTR' in memory operand
-        if (Tok.getString().lower() != "ptr")
+        // except in the case of "push"
+        if (Tok.getString().lower() == "ptr") {
+            Parser.Lex(); // Eat ptr.
+        } else if (Mnem != "push")
             return ErrorOperand(Tok.getLoc(), "Expected 'PTR' or 'ptr' token!");
-        Parser.Lex(); // Eat ptr.
     }
     PtrInOperand = true;
   }
+
   Start = Tok.getLoc();
 
   // Immediate.
@@ -1913,6 +1919,14 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand(StringRef Mnem, unsi
           const MCExpr *Disp = MCConstantExpr::create(Imm, Parser.getContext());
           return X86Operand::CreateMem(0, 0, Disp, 0, 0, 1,
                   Start, End, 0);
+      }
+
+      // dirty hacky way to deal with PUSH 0xd/PUSH word 0xd
+      if (Mnem == "push") {
+          if (Size == 0)
+              push32 = true;
+          else if (Size == 2)
+              push16 = true;
       }
 
       const MCExpr *ImmExpr = MCConstantExpr::create(Imm, getContext());
@@ -2405,6 +2419,9 @@ bool X86AsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
     // Parse '*' modifier.
     if (getLexer().is(AsmToken::Star))
       Operands.push_back(X86Operand::CreateToken("*", consumeToken()));
+
+    push32 = false;
+    push16 = false;
 
     // Read the operands.
     while(1) {
@@ -2993,6 +3010,9 @@ bool X86AsmParser::MatchAndEmitIntelInstruction(SMLoc IDLoc, unsigned &Opcode,
     if (Match.back() == Match_MissingFeature)
       ErrorInfoMissingFeature = ErrorInfo;
   }
+
+  if (push32 && Inst.getOpcode() == X86::PUSH16i8)
+      Inst.setOpcode(X86::PUSH32i8);
 
   // Restore the size of the unsized memory operand if we modified it.
   if (UnsizedMemOp)
