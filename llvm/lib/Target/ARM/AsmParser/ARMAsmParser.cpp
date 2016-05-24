@@ -364,6 +364,10 @@ public:
     : MCTargetAsmParser(Options, STI), MII(MII), UC(Parser) {
     MCAsmParserExtension::Initialize(Parser);
 
+    MCStreamer &S = getParser().getStreamer();
+    if (S.getTargetStreamer() == nullptr)
+      new ARMTargetStreamer(S);
+
     // Cache the MCRegisterInfo.
     MRI = getContext().getRegisterInfo();
 
@@ -5242,11 +5246,9 @@ bool ARMAsmParser::parseOperand(OperandVector &Operands, StringRef Mnemonic, uns
       return true;
     E = SMLoc::getFromPointer(Parser.getTok().getLoc().getPointer() - 1);
 
-#if 0   // FIXME
     const MCExpr *CPLoc =
         getTargetStreamer().addConstantPoolEntry(SubExprVal, S);
     Operands.push_back(ARMOperand::CreateImm(CPLoc, S, E));
-#endif
     return false;
   }
   }
@@ -8661,7 +8663,6 @@ template <> inline bool IsCPSRDead<MCInst>(MCInst *Instr) {
 }
 }
 
-static const char *getSubtargetFeatureName(uint64_t Val);
 bool ARMAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
                                            OperandVector &Operands,
                                            MCStreamer &Out, uint64_t &ErrorInfo,
@@ -8715,21 +8716,11 @@ bool ARMAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
     Address = Inst.getAddress(); // keystone update address
     return false;
   case Match_MissingFeature: {
-    assert(ErrorInfo && "Unknown missing feature!");
-    // Special case the error message for the very common case where only
-    // a single subtarget feature is missing (Thumb vs. ARM, e.g.).
-    std::string Msg = "instruction requires:";
-    uint64_t Mask = 1;
-    for (unsigned i = 0; i < (sizeof(ErrorInfo)*8-1); ++i) {
-      if (ErrorInfo & Mask) {
-        Msg += " ";
-        Msg += getSubtargetFeatureName(ErrorInfo & Mask);
-      }
-      Mask <<= 1;
-    }
-    return Error(IDLoc, Msg);
+    ErrorCode = KS_ERR_ASM_ARM_MISSINGFEATURE;
+    return true;
   }
   case Match_InvalidOperand: {
+#if 0
     SMLoc ErrorLoc = IDLoc;
     if (ErrorInfo != ~0ULL) {
       if (ErrorInfo >= Operands.size())
@@ -8738,6 +8729,7 @@ bool ARMAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
       ErrorLoc = ((ARMOperand &)*Operands[ErrorInfo]).getStartLoc();
       if (ErrorLoc == SMLoc()) ErrorLoc = IDLoc;
     }
+#endif
 
     // return Error(ErrorLoc, "invalid operand for instruction");
     ErrorCode = KS_ERR_ASM_ARM_INVALIDOPERAND;
@@ -9673,7 +9665,7 @@ bool ARMAsmParser::parseDirectiveInst(SMLoc Loc, char Suffix) {
 /// parseDirectiveLtorg
 ///  ::= .ltorg | .pool
 bool ARMAsmParser::parseDirectiveLtorg(SMLoc L) {
-//  getTargetStreamer().emitCurrentConstantPool();
+  getTargetStreamer().emitCurrentConstantPool();
   return false;
 }
 

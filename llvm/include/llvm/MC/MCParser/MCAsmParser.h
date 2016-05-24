@@ -206,6 +206,8 @@ public:
   /// \return - False on success.
   virtual bool parseParenExprOfDepth(unsigned ParenDepth, const MCExpr *&Res,
                                      SMLoc &EndLoc) = 0;
+
+  virtual void initializeDirectiveKindMap(int syntax) = 0;
 };
 
 /// \brief Create an MCAsmParser instance.

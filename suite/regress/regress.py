@@ -21,7 +21,13 @@ if __name__ == '__main__':
     __all__ = [ basename(f)[:-3] for f in modules if isfile(f)]
     suite = unittest.TestSuite()
 
+    count = 1
     for module in __all__:
+        if module != "regress":
+            print("#%u - Going to test %s" %(count, module))
+            count += 1
+        else:
+            continue
         m = __import__(module)
         for cl in dir(m):
             try:

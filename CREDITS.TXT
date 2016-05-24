@@ -25,9 +25,14 @@ Vitaly Osipov
 Dang Hoang Vu
 Paul Rascagneres
 postmodern
+Fotis Loukos
+Peter Geissler
+Ingmar Steen (CED)
+Matteo Favaro
+Julien Legras
 
 
 Contributors (in no particular order)
 =====================================
-(Please let us know if you want to have your name here)
 
+Ingmar Steen: NodeJS binding.

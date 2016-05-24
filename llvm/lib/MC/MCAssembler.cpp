@@ -29,7 +29,9 @@
 #include "llvm/Support/TargetRegistry.h"
 #include "llvm/Support/raw_ostream.h"
 #include <tuple>
-//#include <iostream>
+
+#include "keystone/keystone.h"
+
 using namespace llvm;
 
 #define DEBUG_TYPE "assembler"
@@ -144,7 +146,8 @@ const MCSymbol *MCAssembler::getAtom(const MCSymbol &S) const {
 
 bool MCAssembler::evaluateFixup(const MCAsmLayout &Layout,
                                 const MCFixup &Fixup, const MCFragment *DF,
-                                MCValue &Target, uint64_t &Value) const {
+                                MCValue &Target, uint64_t &Value) const
+{
   // FIXME: This code has some duplication with recordRelocation. We should
   // probably merge the two into a single callback that tries to evaluate a
   // fixup and records a relocation if one is needed.
@@ -165,7 +168,10 @@ bool MCAssembler::evaluateFixup(const MCAsmLayout &Layout,
     if (Target.getSymB()) {
       IsResolved = false;
     } else if (!Target.getSymA()) {
-      IsResolved = false;
+      if (getBackend().getArch() == KS_ARCH_X86)
+          IsResolved = true;
+      else
+          IsResolved = false;
     } else {
       const MCSymbolRefExpr *A = Target.getSymA();
       const MCSymbol &SA = A->getSymbol();
@@ -212,6 +218,7 @@ bool MCAssembler::evaluateFixup(const MCAsmLayout &Layout,
   // we need a relocation.
   Backend.processFixupValue(*this, Layout, Fixup, DF, Target, Value,
                             IsResolved);
+
 
   return IsResolved;
 }

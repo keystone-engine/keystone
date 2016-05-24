@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # Nguyen Anh Quynh, 2016
 
-# This is to test NASM syntax
+# This is to test NASM directives
 
 # Fill in the information in the form below when you create a new regression
 
@@ -20,14 +20,17 @@ class TestX86(regress.RegressTest):
         ks.syntax = KS_OPT_SYNTAX_NASM
 
         # compile an instruction in NASM syntax
-        encoding, count = ks.asm(b"mov dword [eax], 0x42424242")
+        encoding, count = ks.asm(b"db 12, 13\ndw 14, 15")
         # Assert the result
-        self.assertEqual(encoding, [ 0xc7, 0x00, 0x42, 0x42, 0x42, 0x42 ])
+        self.assertEqual(encoding, [ 0x0c, 0x0d, 0x0e, 0x00, 0x0f, 0x00 ])
 
-        # instructions separated by \n, and use ; for full line commenter
-        encoding, count = ks.asm(b"add eax, ebx;inc ecx this comment is ignored\ninc edx")
+        encoding, count = ks.asm(b"bits 32\n add eax, ebx\nbits 16\nadd eax, ebx")
         # Assert the result
-        self.assertEqual(encoding, [ 0x01, 0xd8, 0x42 ])
+        self.assertEqual(encoding, [ 0x01, 0xd8, 0x66, 0x01, 0xd8 ])
+
+        encoding, count = ks.asm(b"[Bits 32]\n add eax, ebx\n[bits 16]\nadd eax, ebx")
+        # Assert the result
+        self.assertEqual(encoding, [ 0x01, 0xd8, 0x66, 0x01, 0xd8 ])
 
 if __name__ == '__main__':
     regress.main()

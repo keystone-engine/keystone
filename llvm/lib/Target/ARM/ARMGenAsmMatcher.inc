@@ -480,61 +480,6 @@ static unsigned MatchRegisterName(StringRef Name) {
 #endif // GET_REGISTER_MATCHER
 
 
-#ifdef GET_SUBTARGET_FEATURE_NAME
-#undef GET_SUBTARGET_FEATURE_NAME
-
-// User-level names for subtarget features that participate in
-// instruction matching.
-static const char *getSubtargetFeatureName(uint64_t Val) {
-  switch(Val) {
-  case Feature_HasV4T: return "armv4t";
-  case Feature_HasV5T: return "armv5t";
-  case Feature_HasV5TE: return "armv5te";
-  case Feature_HasV6: return "armv6";
-  case Feature_HasV6M: return "armv6m or armv6t2";
-  case Feature_HasV8MBaseline: return "armv8m.base";
-  case Feature_HasV8MMainline: return "armv8m.main";
-  case Feature_HasV6T2: return "armv6t2";
-  case Feature_HasV6K: return "armv6k";
-  case Feature_HasV7: return "armv7";
-  case Feature_HasV8: return "armv8";
-  case Feature_PreV8: return "armv7 or earlier";
-  case Feature_HasV8_1a: return "armv8.1a";
-  case Feature_HasV8_2a: return "armv8.2a";
-  case Feature_HasVFP2: return "VFP2";
-  case Feature_HasVFP3: return "VFP3";
-  case Feature_HasVFP4: return "VFP4";
-  case Feature_HasDPVFP: return "double precision VFP";
-  case Feature_HasFPARMv8: return "FPARMv8";
-  case Feature_HasNEON: return "NEON";
-  case Feature_HasCrypto: return "crypto";
-  case Feature_HasCRC: return "crc";
-  case Feature_HasFP16: return "half-float conversions";
-  case Feature_HasFullFP16: return "full half-float";
-  case Feature_HasDivide: return "divide in THUMB";
-  case Feature_HasDivideInARM: return "divide in ARM";
-  case Feature_HasT2ExtractPack: return "pack/extract";
-  case Feature_HasDSP: return "dsp";
-  case Feature_HasDB: return "data-barriers";
-  case Feature_HasV7Clrex: return "v7 clrex";
-  case Feature_HasAcquireRelease: return "acquire/release";
-  case Feature_HasMP: return "mp-extensions";
-  case Feature_HasVirtualization: return "virtualization-extensions";
-  case Feature_HasTrustZone: return "TrustZone";
-  case Feature_Has8MSecExt: return "ARMv8-M Security Extensions";
-  case Feature_IsThumb: return "thumb";
-  case Feature_IsThumb2: return "thumb2";
-  case Feature_IsMClass: return "armv*m";
-  case Feature_IsNotMClass: return "!armv*m";
-  case Feature_IsARM: return "arm-mode";
-  case Feature_UseNaClTrap: return "NaCl";
-  default: return "(unknown)";
-  }
-}
-
-#endif // GET_SUBTARGET_FEATURE_NAME
-
-
 #ifdef GET_MATCHER_IMPLEMENTATION
 #undef GET_MATCHER_IMPLEMENTATION
 

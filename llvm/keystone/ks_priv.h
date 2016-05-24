@@ -8,6 +8,7 @@
 
 #include "../../include/keystone/keystone.h"
 
+#include "llvm/MC/MCAsmBackend.h"
 #include "llvm/MC/MCAsmInfo.h"
 #include "llvm/MC/MCContext.h"
 #include "llvm/MC/MCInstrInfo.h"
@@ -38,7 +39,7 @@ typedef void (*ks_args_ks_t)(struct ks_struct*);
 
 struct ks_struct {
     ks_arch arch;
-    ks_mode mode;
+    int mode;
     unsigned int errnum;
     ks_opt_value syntax;
 

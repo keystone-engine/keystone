@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # Nguyen Anh Quynh, 2016
 
-# Test 'jmp 0' with both X86 Intel & ATT syntax
+# Test 'jmp dword ptr [5]' with both X86 Intel & ATT syntax
 
 # Github issue: #5
 # Author: Nguyen Anh Quynh
@@ -17,15 +17,15 @@ class TestX86(regress.RegressTest):
 
         ks.syntax = KS_OPT_SYNTAX_ATT
         # Assemble to get back insn encoding & statement count
-        encoding, count = ks.asm(b"jmp 0")
+        encoding, count = ks.asm(b"jmpl *5")
         # Assert the result
-        self.assertEqual(encoding, [ 0xeb, 0xfe ])
+        self.assertEqual(encoding, [ 0xff, 0x25, 0x05, 0x00, 0x00, 0x00 ])
 
         ks.syntax = KS_OPT_SYNTAX_INTEL
         # Assemble to get back insn encoding & statement count
-        encoding, count = ks.asm(b"jmp 0")
+        encoding, count = ks.asm(b"jmp dword ptr [5]")
         # Assert the result
-        self.assertEqual(encoding, [ 0xeb, 0xfe ])
+        self.assertEqual(encoding, [ 0xff, 0x25, 0x05, 0x00, 0x00, 0x00 ])
 
 if __name__ == '__main__':
     regress.main()

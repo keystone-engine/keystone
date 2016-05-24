@@ -126,7 +126,9 @@ class ELFObjectWriter : public MCObjectWriter {
     // TargetObjectWriter wrappers.
     bool is64Bit() const { return TargetObjectWriter->is64Bit(); }
     bool hasRelocationAddend() const {
-      return TargetObjectWriter->hasRelocationAddend();
+      // Keystone doesn't want relocation addends.
+      /* return TargetObjectWriter->hasRelocationAddend(); */
+      return false;
     }
     unsigned getRelocType(MCContext &Ctx, const MCValue &Target,
                           const MCFixup &Fixup, bool IsPCRel) const {

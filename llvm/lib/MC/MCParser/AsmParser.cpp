@@ -182,6 +182,9 @@ private:
   /// \brief Are we parsing ms-style inline assembly?
   bool ParsingInlineAsm;
 
+  // Keystone syntax support
+  int KsSyntax;
+
 public:
   AsmParser(SourceMgr &SM, MCContext &Ctx, MCStreamer &Out,
             const MCAsmInfo &MAI);
@@ -250,6 +253,8 @@ public:
   void eatToEndOfStatement() override;
 
   void checkForValidSection() override;
+
+  void initializeDirectiveKindMap(int syntax) override;    // Keystone NASM support
   /// }
 
 private:
@@ -374,6 +379,7 @@ private:
     DK_MACRO, DK_EXITM, DK_ENDM, DK_ENDMACRO, DK_PURGEM,
     DK_SLEB128, DK_ULEB128,
     DK_ERR, DK_ERROR, DK_WARNING,
+    DK_BITS,    // NASM directive 'bits'
     DK_END
   };
 
@@ -384,8 +390,8 @@ private:
   // ".ascii", ".asciz", ".string"
   bool parseDirectiveAscii(StringRef IDVal, bool ZeroTerminated);
   bool parseDirectiveReloc(SMLoc DirectiveLoc); // ".reloc"
-  bool parseDirectiveValue(unsigned Size); // ".byte", ".long", ...
-  bool parseDirectiveOctaValue(); // ".octa"
+  bool parseDirectiveValue(unsigned Size, unsigned int &KsError); // ".byte", ".long", ...
+  bool parseDirectiveOctaValue(unsigned int &KsError); // ".octa"
   bool parseDirectiveRealValue(const fltSemantics &); // ".single", ...
   bool parseDirectiveFill(); // ".fill"
   bool parseDirectiveZero(); // ".zero"
@@ -503,7 +509,11 @@ private:
   // ".warning"
   bool parseDirectiveWarning(SMLoc DirectiveLoc);
 
-  void initializeDirectiveKindMap();
+  // "bits"
+  bool parseDirectiveBits();
+
+  bool isNasmDirective(StringRef str);  // is this str a NASM directive?
+  bool isDirective(StringRef str);  // is this str a directive?
 };
 }
 
@@ -549,7 +559,7 @@ AsmParser::AsmParser(SourceMgr &SM, MCContext &Ctx, MCStreamer &Out,
 #endif
 
   PlatformParser->Initialize(*this);
-  initializeDirectiveKindMap();
+  initializeDirectiveKindMap(0);
 
   NumOfMacroInstantiations = 0;
 }
@@ -677,7 +687,6 @@ size_t AsmParser::Run(bool NoInitialTextSection, uint64_t Address, bool NoFinali
   // While we have input, parse each statement.
   while (Lexer.isNot(AsmToken::Eof)) {
     ParseStatementInfo Info;
-    //printf(">> error = %u\n", Info.KsError);
     if (!parseStatement(Info, nullptr, Address)) {
       count++;
       continue;
@@ -801,7 +810,8 @@ bool AsmParser::parseBracketExpr(const MCExpr *&Res, SMLoc &EndLoc) {
 ///  primaryexpr ::= number
 ///  primaryexpr ::= '.'
 ///  primaryexpr ::= ~,+,- primaryexpr
-bool AsmParser::parsePrimaryExpr(const MCExpr *&Res, SMLoc &EndLoc) {
+bool AsmParser::parsePrimaryExpr(const MCExpr *&Res, SMLoc &EndLoc)
+{
   SMLoc FirstTokenLoc = getLexer().getLoc();
   AsmToken::TokenKind FirstTokenKind = Lexer.getKind();
   switch (FirstTokenKind) {
@@ -1339,6 +1349,19 @@ bool AsmParser::parseBinOpRHS(unsigned Precedence, const MCExpr *&Res,
   }
 }
 
+bool AsmParser::isNasmDirective(StringRef IDVal)
+{
+    return (DirectiveKindMap.find(IDVal) != DirectiveKindMap.end());
+}
+
+bool AsmParser::isDirective(StringRef IDVal)
+{
+    if (KsSyntax == KS_OPT_SYNTAX_NASM)
+        return isNasmDirective(IDVal);
+    else // Directives start with "."
+        return (IDVal[0] == '.' && IDVal != ".");
+}
+
 /// ParseStatement:
 ///   ::= EndOfStatement
 ///   ::= Label* Directive ...Operands... EndOfStatement
@@ -1368,7 +1391,7 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
     if (LocalLabelVal < 0) {
       if (!TheCondState.Ignore) {
         // return TokError("unexpected token at start of statement");
-        KsError = KS_ERR_ASM_STAT_TOKEN;
+        Info.KsError = KS_ERR_ASM_STAT_TOKEN;
         return true;
       }
       IDVal = "";
@@ -1378,7 +1401,7 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
       if (Lexer.getKind() != AsmToken::Colon) {
         if (!TheCondState.Ignore) {
           // return TokError("unexpected token at start of statement");
-          KsError = KS_ERR_ASM_STAT_TOKEN;
+          Info.KsError = KS_ERR_ASM_STAT_TOKEN;
           return true;
         }
       }
@@ -1391,15 +1414,33 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
     // Treat '{' as a valid identifier in this context.
     Lex();
     IDVal = "{";
-
   } else if (Lexer.is(AsmToken::RCurly)) {
     // Treat '}' as a valid identifier in this context.
     Lex();
     IDVal = "}";
+  } else if (KsSyntax == KS_OPT_SYNTAX_NASM && Lexer.is(AsmToken::LBrac)) {
+    // [bits xx]
+    Lex();
+    ID = Lexer.getTok();
+    if (ID.getString().lower() == "bits") {
+        Lex();
+        if (parseDirectiveBits()) {
+            Info.KsError = KS_ERR_ASM_DIRECTIVE_ID;
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        Info.KsError = KS_ERR_ASM_DIRECTIVE_ID;
+        return true;
+    }
+  } else if (KsSyntax == KS_OPT_SYNTAX_NASM && isNasmDirective(ID.getString())) {
+      Lex();
+      IDVal = ID.getString();
   } else if (parseIdentifier(IDVal)) {
     if (!TheCondState.Ignore) {
       // return TokError("unexpected token at start of statement");
-      KsError = KS_ERR_ASM_STAT_TOKEN;
+      Info.KsError = KS_ERR_ASM_STAT_TOKEN;
       return true;
     }
     IDVal = "";
@@ -1408,6 +1449,7 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
   // Handle conditional assembly here before checking for skipping.  We
   // have to do this so that .endif isn't skipped in a ".if 0" block for
   // example.
+
   StringMap<DirectiveKind>::const_iterator DirKindIt =
       DirectiveKindMap.find(IDVal);
   DirectiveKind DirKind = (DirKindIt == DirectiveKindMap.end())
@@ -1533,9 +1575,7 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
     }
 
   // Otherwise, we have a normal instruction or directive.
-
-  // Directives start with "."
-  if (IDVal[0] == '.' && IDVal != ".") {
+  if (isDirective(IDVal)) {
     // There are several entities interested in parsing directives:
     //
     // 1. The target-specific assembly parser. Some directives are target
@@ -1575,20 +1615,20 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
     case DK_STRING:
       return parseDirectiveAscii(IDVal, true);
     case DK_BYTE:
-      return parseDirectiveValue(1);
+      return parseDirectiveValue(1, Info.KsError);
     case DK_SHORT:
     case DK_VALUE:
     case DK_2BYTE:
-      return parseDirectiveValue(2);
+      return parseDirectiveValue(2, Info.KsError);
     case DK_LONG:
     case DK_INT:
     case DK_4BYTE:
-      return parseDirectiveValue(4);
+      return parseDirectiveValue(4, Info.KsError);
     case DK_QUAD:
     case DK_8BYTE:
-      return parseDirectiveValue(8);
+      return parseDirectiveValue(8, Info.KsError);
     case DK_OCTA:
-      return parseDirectiveOctaValue();
+      return parseDirectiveOctaValue(Info.KsError);
     case DK_SINGLE:
     case DK_FLOAT:
       return parseDirectiveRealValue(APFloat::IEEEsingle);
@@ -1656,7 +1696,7 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
     case DK_CODE16:
     case DK_CODE16GCC:
       // return TokError(Twine(IDVal) + " not supported yet");
-      KsError = KS_ERR_ASM_UNSUPPORTED;
+      Info.KsError = KS_ERR_ASM_UNSUPPORTED;
       return true;
     case DK_REPT:
       return parseDirectiveRept(IDLoc, IDVal);
@@ -1761,9 +1801,18 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
       return parseDirectiveWarning(IDLoc);
     case DK_RELOC:
       return parseDirectiveReloc(IDLoc);
+    case DK_BITS:
+      if (parseDirectiveBits()) {
+          Info.KsError = KS_ERR_ASM_DIRECTIVE_ID;
+          return true;
+      } else {
+          return false;
+      }
     }
 
     return Error(IDLoc, "unknown directive");
+    // KsError = KS_ERR_ASM_DIRECTIVE_UNKNOWN;
+    // return true;
   }
 
   // __asm _emit or __asm __emit
@@ -2623,7 +2672,8 @@ bool AsmParser::parseDirectiveReloc(SMLoc DirectiveLoc) {
 
 /// parseDirectiveValue
 ///  ::= (.byte | .short | ... ) [ expression (, expression)* ]
-bool AsmParser::parseDirectiveValue(unsigned Size) {
+bool AsmParser::parseDirectiveValue(unsigned Size, unsigned int &KsError)
+{
   if (getLexer().isNot(AsmToken::EndOfStatement)) {
     checkForValidSection();
 
@@ -2637,8 +2687,11 @@ bool AsmParser::parseDirectiveValue(unsigned Size) {
       if (const MCConstantExpr *MCE = dyn_cast<MCConstantExpr>(Value)) {
         assert(Size <= 8 && "Invalid size");
         uint64_t IntValue = MCE->getValue();
-        if (!isUIntN(8 * Size, IntValue) && !isIntN(8 * Size, IntValue))
-          return Error(ExprLoc, "literal value out of range for directive");
+        if (!isUIntN(8 * Size, IntValue) && !isIntN(8 * Size, IntValue)) {
+            // return Error(ExprLoc, "literal value out of range for directive");
+            KsError = KS_ERR_ASM_DIRECTIVE_VALUE_RANGE;
+            return true;
+        }
         getStreamer().EmitIntValue(IntValue, Size);
       } else
         getStreamer().EmitValue(Value, Size, ExprLoc);
@@ -2662,7 +2715,8 @@ bool AsmParser::parseDirectiveValue(unsigned Size) {
 
 /// ParseDirectiveOctaValue
 ///  ::= .octa [ hexconstant (, hexconstant)* ]
-bool AsmParser::parseDirectiveOctaValue() {
+bool AsmParser::parseDirectiveOctaValue(unsigned int &KsError)
+{
   if (getLexer().isNot(AsmToken::EndOfStatement)) {
     checkForValidSection();
 
@@ -2676,7 +2730,7 @@ bool AsmParser::parseDirectiveOctaValue() {
         return true;
       }
 
-      SMLoc ExprLoc = getLexer().getLoc();
+      // SMLoc ExprLoc = getLexer().getLoc();
       APInt IntValue = getTok().getAPIntVal();
       Lex();
 
@@ -2688,8 +2742,11 @@ bool AsmParser::parseDirectiveOctaValue() {
         // It might actually have more than 128 bits, but the top ones are zero.
         hi = IntValue.getHiBits(IntValue.getBitWidth() - 64).getZExtValue();
         lo = IntValue.getLoBits(64).getZExtValue();
-      } else
-        return Error(ExprLoc, "literal value out of range for directive");
+      } else {
+        // return Error(ExprLoc, "literal value out of range for directive");
+        KsError = KS_ERR_ASM_DIRECTIVE_VALUE_RANGE;
+        return true;
+      }
 
       if (MAI.isLittleEndian()) {
         getStreamer().EmitIntValue(lo, 8);
@@ -4625,6 +4682,36 @@ bool AsmParser::parseDirectiveWarning(SMLoc L) {
   return false;
 }
 
+bool AsmParser::parseDirectiveBits()
+{
+  int64_t bits = 0;
+
+  if (parseAbsoluteExpression(bits))
+    return true;
+
+  switch(bits) {
+      default:  // invalid parameter
+          return true;
+      case 16: {
+          AsmToken bits(AsmToken::Identifier, StringRef(".code16"), 0);
+          getTargetParser().ParseDirective(bits);
+          break;
+      }
+      case 32: {
+          AsmToken bits(AsmToken::Identifier, StringRef(".code32"), 0);
+          getTargetParser().ParseDirective(bits);
+          break;
+      }
+      case 64: {
+          AsmToken bits(AsmToken::Identifier, StringRef(".code64"), 0);
+          getTargetParser().ParseDirective(bits);
+          break;
+      }
+  }
+
+  return false;
+}
+
 /// parseDirectiveEndIf
 /// ::= .endif
 bool AsmParser::parseDirectiveEndIf(SMLoc DirectiveLoc) {
@@ -4644,129 +4731,144 @@ bool AsmParser::parseDirectiveEndIf(SMLoc DirectiveLoc) {
   return false;
 }
 
-void AsmParser::initializeDirectiveKindMap() {
-  DirectiveKindMap[".set"] = DK_SET;
-  DirectiveKindMap[".equ"] = DK_EQU;
-  DirectiveKindMap[".equiv"] = DK_EQUIV;
-  DirectiveKindMap[".ascii"] = DK_ASCII;
-  DirectiveKindMap[".asciz"] = DK_ASCIZ;
-  DirectiveKindMap[".string"] = DK_STRING;
-  DirectiveKindMap[".byte"] = DK_BYTE;
-  DirectiveKindMap[".short"] = DK_SHORT;
-  DirectiveKindMap[".value"] = DK_VALUE;
-  DirectiveKindMap[".2byte"] = DK_2BYTE;
-  DirectiveKindMap[".long"] = DK_LONG;
-  DirectiveKindMap[".int"] = DK_INT;
-  DirectiveKindMap[".4byte"] = DK_4BYTE;
-  DirectiveKindMap[".quad"] = DK_QUAD;
-  DirectiveKindMap[".8byte"] = DK_8BYTE;
-  DirectiveKindMap[".octa"] = DK_OCTA;
-  DirectiveKindMap[".single"] = DK_SINGLE;
-  DirectiveKindMap[".float"] = DK_FLOAT;
-  DirectiveKindMap[".double"] = DK_DOUBLE;
-  DirectiveKindMap[".align"] = DK_ALIGN;
-  DirectiveKindMap[".align32"] = DK_ALIGN32;
-  DirectiveKindMap[".balign"] = DK_BALIGN;
-  DirectiveKindMap[".balignw"] = DK_BALIGNW;
-  DirectiveKindMap[".balignl"] = DK_BALIGNL;
-  DirectiveKindMap[".p2align"] = DK_P2ALIGN;
-  DirectiveKindMap[".p2alignw"] = DK_P2ALIGNW;
-  DirectiveKindMap[".p2alignl"] = DK_P2ALIGNL;
-  DirectiveKindMap[".org"] = DK_ORG;
-  DirectiveKindMap[".fill"] = DK_FILL;
-  DirectiveKindMap[".zero"] = DK_ZERO;
-  DirectiveKindMap[".extern"] = DK_EXTERN;
-  DirectiveKindMap[".globl"] = DK_GLOBL;
-  DirectiveKindMap[".global"] = DK_GLOBAL;
-  DirectiveKindMap[".lazy_reference"] = DK_LAZY_REFERENCE;
-  DirectiveKindMap[".no_dead_strip"] = DK_NO_DEAD_STRIP;
-  DirectiveKindMap[".symbol_resolver"] = DK_SYMBOL_RESOLVER;
-  DirectiveKindMap[".private_extern"] = DK_PRIVATE_EXTERN;
-  DirectiveKindMap[".reference"] = DK_REFERENCE;
-  DirectiveKindMap[".weak_definition"] = DK_WEAK_DEFINITION;
-  DirectiveKindMap[".weak_reference"] = DK_WEAK_REFERENCE;
-  DirectiveKindMap[".weak_def_can_be_hidden"] = DK_WEAK_DEF_CAN_BE_HIDDEN;
-  DirectiveKindMap[".comm"] = DK_COMM;
-  DirectiveKindMap[".common"] = DK_COMMON;
-  DirectiveKindMap[".lcomm"] = DK_LCOMM;
-  DirectiveKindMap[".abort"] = DK_ABORT;
-  DirectiveKindMap[".include"] = DK_INCLUDE;
-  DirectiveKindMap[".incbin"] = DK_INCBIN;
-  DirectiveKindMap[".code16"] = DK_CODE16;
-  DirectiveKindMap[".code16gcc"] = DK_CODE16GCC;
-  DirectiveKindMap[".rept"] = DK_REPT;
-  DirectiveKindMap[".rep"] = DK_REPT;
-  DirectiveKindMap[".irp"] = DK_IRP;
-  DirectiveKindMap[".irpc"] = DK_IRPC;
-  DirectiveKindMap[".endr"] = DK_ENDR;
-  DirectiveKindMap[".bundle_align_mode"] = DK_BUNDLE_ALIGN_MODE;
-  DirectiveKindMap[".bundle_lock"] = DK_BUNDLE_LOCK;
-  DirectiveKindMap[".bundle_unlock"] = DK_BUNDLE_UNLOCK;
-  DirectiveKindMap[".if"] = DK_IF;
-  DirectiveKindMap[".ifeq"] = DK_IFEQ;
-  DirectiveKindMap[".ifge"] = DK_IFGE;
-  DirectiveKindMap[".ifgt"] = DK_IFGT;
-  DirectiveKindMap[".ifle"] = DK_IFLE;
-  DirectiveKindMap[".iflt"] = DK_IFLT;
-  DirectiveKindMap[".ifne"] = DK_IFNE;
-  DirectiveKindMap[".ifb"] = DK_IFB;
-  DirectiveKindMap[".ifnb"] = DK_IFNB;
-  DirectiveKindMap[".ifc"] = DK_IFC;
-  DirectiveKindMap[".ifeqs"] = DK_IFEQS;
-  DirectiveKindMap[".ifnc"] = DK_IFNC;
-  DirectiveKindMap[".ifnes"] = DK_IFNES;
-  DirectiveKindMap[".ifdef"] = DK_IFDEF;
-  DirectiveKindMap[".ifndef"] = DK_IFNDEF;
-  DirectiveKindMap[".ifnotdef"] = DK_IFNOTDEF;
-  DirectiveKindMap[".elseif"] = DK_ELSEIF;
-  DirectiveKindMap[".else"] = DK_ELSE;
-  DirectiveKindMap[".end"] = DK_END;
-  DirectiveKindMap[".endif"] = DK_ENDIF;
-  DirectiveKindMap[".skip"] = DK_SKIP;
-  DirectiveKindMap[".space"] = DK_SPACE;
-  DirectiveKindMap[".file"] = DK_FILE;
-  DirectiveKindMap[".line"] = DK_LINE;
-  DirectiveKindMap[".loc"] = DK_LOC;
-  DirectiveKindMap[".stabs"] = DK_STABS;
-  DirectiveKindMap[".cv_file"] = DK_CV_FILE;
-  DirectiveKindMap[".cv_loc"] = DK_CV_LOC;
-  DirectiveKindMap[".cv_linetable"] = DK_CV_LINETABLE;
-  DirectiveKindMap[".cv_inline_linetable"] = DK_CV_INLINE_LINETABLE;
-  DirectiveKindMap[".cv_stringtable"] = DK_CV_STRINGTABLE;
-  DirectiveKindMap[".cv_filechecksums"] = DK_CV_FILECHECKSUMS;
-  DirectiveKindMap[".sleb128"] = DK_SLEB128;
-  DirectiveKindMap[".uleb128"] = DK_ULEB128;
-  DirectiveKindMap[".cfi_sections"] = DK_CFI_SECTIONS;
-  DirectiveKindMap[".cfi_startproc"] = DK_CFI_STARTPROC;
-  DirectiveKindMap[".cfi_endproc"] = DK_CFI_ENDPROC;
-  DirectiveKindMap[".cfi_def_cfa"] = DK_CFI_DEF_CFA;
-  DirectiveKindMap[".cfi_def_cfa_offset"] = DK_CFI_DEF_CFA_OFFSET;
-  DirectiveKindMap[".cfi_adjust_cfa_offset"] = DK_CFI_ADJUST_CFA_OFFSET;
-  DirectiveKindMap[".cfi_def_cfa_register"] = DK_CFI_DEF_CFA_REGISTER;
-  DirectiveKindMap[".cfi_offset"] = DK_CFI_OFFSET;
-  DirectiveKindMap[".cfi_rel_offset"] = DK_CFI_REL_OFFSET;
-  DirectiveKindMap[".cfi_personality"] = DK_CFI_PERSONALITY;
-  DirectiveKindMap[".cfi_lsda"] = DK_CFI_LSDA;
-  DirectiveKindMap[".cfi_remember_state"] = DK_CFI_REMEMBER_STATE;
-  DirectiveKindMap[".cfi_restore_state"] = DK_CFI_RESTORE_STATE;
-  DirectiveKindMap[".cfi_same_value"] = DK_CFI_SAME_VALUE;
-  DirectiveKindMap[".cfi_restore"] = DK_CFI_RESTORE;
-  DirectiveKindMap[".cfi_escape"] = DK_CFI_ESCAPE;
-  DirectiveKindMap[".cfi_signal_frame"] = DK_CFI_SIGNAL_FRAME;
-  DirectiveKindMap[".cfi_undefined"] = DK_CFI_UNDEFINED;
-  DirectiveKindMap[".cfi_register"] = DK_CFI_REGISTER;
-  DirectiveKindMap[".cfi_window_save"] = DK_CFI_WINDOW_SAVE;
-  DirectiveKindMap[".macros_on"] = DK_MACROS_ON;
-  DirectiveKindMap[".macros_off"] = DK_MACROS_OFF;
-  DirectiveKindMap[".macro"] = DK_MACRO;
-  DirectiveKindMap[".exitm"] = DK_EXITM;
-  DirectiveKindMap[".endm"] = DK_ENDM;
-  DirectiveKindMap[".endmacro"] = DK_ENDMACRO;
-  DirectiveKindMap[".purgem"] = DK_PURGEM;
-  DirectiveKindMap[".err"] = DK_ERR;
-  DirectiveKindMap[".error"] = DK_ERROR;
-  DirectiveKindMap[".warning"] = DK_WARNING;
-  DirectiveKindMap[".reloc"] = DK_RELOC;
+void AsmParser::initializeDirectiveKindMap(int syntax)
+{
+    KsSyntax = syntax;
+    if (syntax == KS_OPT_SYNTAX_NASM) {
+        // NASM syntax
+        DirectiveKindMap.clear();
+        DirectiveKindMap["db"] = DK_BYTE;
+        DirectiveKindMap["dw"] = DK_SHORT;
+        DirectiveKindMap["dd"] = DK_INT;
+        DirectiveKindMap["dq"] = DK_QUAD;
+        DirectiveKindMap["use16"] = DK_CODE16;
+        DirectiveKindMap["bits"] = DK_BITS;
+    } else {
+        // default LLVM syntax
+        DirectiveKindMap.clear();
+        DirectiveKindMap[".set"] = DK_SET;
+        DirectiveKindMap[".equ"] = DK_EQU;
+        DirectiveKindMap[".equiv"] = DK_EQUIV;
+        DirectiveKindMap[".ascii"] = DK_ASCII;
+        DirectiveKindMap[".asciz"] = DK_ASCIZ;
+        DirectiveKindMap[".string"] = DK_STRING;
+        DirectiveKindMap[".byte"] = DK_BYTE;
+        DirectiveKindMap[".short"] = DK_SHORT;
+        DirectiveKindMap[".value"] = DK_VALUE;
+        DirectiveKindMap[".2byte"] = DK_2BYTE;
+        DirectiveKindMap[".long"] = DK_LONG;
+        DirectiveKindMap[".int"] = DK_INT;
+        DirectiveKindMap[".4byte"] = DK_4BYTE;
+        DirectiveKindMap[".quad"] = DK_QUAD;
+        DirectiveKindMap[".8byte"] = DK_8BYTE;
+        DirectiveKindMap[".octa"] = DK_OCTA;
+        DirectiveKindMap[".single"] = DK_SINGLE;
+        DirectiveKindMap[".float"] = DK_FLOAT;
+        DirectiveKindMap[".double"] = DK_DOUBLE;
+        DirectiveKindMap[".align"] = DK_ALIGN;
+        DirectiveKindMap[".align32"] = DK_ALIGN32;
+        DirectiveKindMap[".balign"] = DK_BALIGN;
+        DirectiveKindMap[".balignw"] = DK_BALIGNW;
+        DirectiveKindMap[".balignl"] = DK_BALIGNL;
+        DirectiveKindMap[".p2align"] = DK_P2ALIGN;
+        DirectiveKindMap[".p2alignw"] = DK_P2ALIGNW;
+        DirectiveKindMap[".p2alignl"] = DK_P2ALIGNL;
+        DirectiveKindMap[".org"] = DK_ORG;
+        DirectiveKindMap[".fill"] = DK_FILL;
+        DirectiveKindMap[".zero"] = DK_ZERO;
+        DirectiveKindMap[".extern"] = DK_EXTERN;
+        DirectiveKindMap[".globl"] = DK_GLOBL;
+        DirectiveKindMap[".global"] = DK_GLOBAL;
+        DirectiveKindMap[".lazy_reference"] = DK_LAZY_REFERENCE;
+        DirectiveKindMap[".no_dead_strip"] = DK_NO_DEAD_STRIP;
+        DirectiveKindMap[".symbol_resolver"] = DK_SYMBOL_RESOLVER;
+        DirectiveKindMap[".private_extern"] = DK_PRIVATE_EXTERN;
+        DirectiveKindMap[".reference"] = DK_REFERENCE;
+        DirectiveKindMap[".weak_definition"] = DK_WEAK_DEFINITION;
+        DirectiveKindMap[".weak_reference"] = DK_WEAK_REFERENCE;
+        DirectiveKindMap[".weak_def_can_be_hidden"] = DK_WEAK_DEF_CAN_BE_HIDDEN;
+        DirectiveKindMap[".comm"] = DK_COMM;
+        DirectiveKindMap[".common"] = DK_COMMON;
+        DirectiveKindMap[".lcomm"] = DK_LCOMM;
+        DirectiveKindMap[".abort"] = DK_ABORT;
+        DirectiveKindMap[".include"] = DK_INCLUDE;
+        DirectiveKindMap[".incbin"] = DK_INCBIN;
+        DirectiveKindMap[".code16"] = DK_CODE16;
+        DirectiveKindMap[".code16gcc"] = DK_CODE16GCC;
+        DirectiveKindMap[".rept"] = DK_REPT;
+        DirectiveKindMap[".rep"] = DK_REPT;
+        DirectiveKindMap[".irp"] = DK_IRP;
+        DirectiveKindMap[".irpc"] = DK_IRPC;
+        DirectiveKindMap[".endr"] = DK_ENDR;
+        DirectiveKindMap[".bundle_align_mode"] = DK_BUNDLE_ALIGN_MODE;
+        DirectiveKindMap[".bundle_lock"] = DK_BUNDLE_LOCK;
+        DirectiveKindMap[".bundle_unlock"] = DK_BUNDLE_UNLOCK;
+        DirectiveKindMap[".if"] = DK_IF;
+        DirectiveKindMap[".ifeq"] = DK_IFEQ;
+        DirectiveKindMap[".ifge"] = DK_IFGE;
+        DirectiveKindMap[".ifgt"] = DK_IFGT;
+        DirectiveKindMap[".ifle"] = DK_IFLE;
+        DirectiveKindMap[".iflt"] = DK_IFLT;
+        DirectiveKindMap[".ifne"] = DK_IFNE;
+        DirectiveKindMap[".ifb"] = DK_IFB;
+        DirectiveKindMap[".ifnb"] = DK_IFNB;
+        DirectiveKindMap[".ifc"] = DK_IFC;
+        DirectiveKindMap[".ifeqs"] = DK_IFEQS;
+        DirectiveKindMap[".ifnc"] = DK_IFNC;
+        DirectiveKindMap[".ifnes"] = DK_IFNES;
+        DirectiveKindMap[".ifdef"] = DK_IFDEF;
+        DirectiveKindMap[".ifndef"] = DK_IFNDEF;
+        DirectiveKindMap[".ifnotdef"] = DK_IFNOTDEF;
+        DirectiveKindMap[".elseif"] = DK_ELSEIF;
+        DirectiveKindMap[".else"] = DK_ELSE;
+        DirectiveKindMap[".end"] = DK_END;
+        DirectiveKindMap[".endif"] = DK_ENDIF;
+        DirectiveKindMap[".skip"] = DK_SKIP;
+        DirectiveKindMap[".space"] = DK_SPACE;
+        DirectiveKindMap[".file"] = DK_FILE;
+        DirectiveKindMap[".line"] = DK_LINE;
+        DirectiveKindMap[".loc"] = DK_LOC;
+        DirectiveKindMap[".stabs"] = DK_STABS;
+        DirectiveKindMap[".cv_file"] = DK_CV_FILE;
+        DirectiveKindMap[".cv_loc"] = DK_CV_LOC;
+        DirectiveKindMap[".cv_linetable"] = DK_CV_LINETABLE;
+        DirectiveKindMap[".cv_inline_linetable"] = DK_CV_INLINE_LINETABLE;
+        DirectiveKindMap[".cv_stringtable"] = DK_CV_STRINGTABLE;
+        DirectiveKindMap[".cv_filechecksums"] = DK_CV_FILECHECKSUMS;
+        DirectiveKindMap[".sleb128"] = DK_SLEB128;
+        DirectiveKindMap[".uleb128"] = DK_ULEB128;
+        DirectiveKindMap[".cfi_sections"] = DK_CFI_SECTIONS;
+        DirectiveKindMap[".cfi_startproc"] = DK_CFI_STARTPROC;
+        DirectiveKindMap[".cfi_endproc"] = DK_CFI_ENDPROC;
+        DirectiveKindMap[".cfi_def_cfa"] = DK_CFI_DEF_CFA;
+        DirectiveKindMap[".cfi_def_cfa_offset"] = DK_CFI_DEF_CFA_OFFSET;
+        DirectiveKindMap[".cfi_adjust_cfa_offset"] = DK_CFI_ADJUST_CFA_OFFSET;
+        DirectiveKindMap[".cfi_def_cfa_register"] = DK_CFI_DEF_CFA_REGISTER;
+        DirectiveKindMap[".cfi_offset"] = DK_CFI_OFFSET;
+        DirectiveKindMap[".cfi_rel_offset"] = DK_CFI_REL_OFFSET;
+        DirectiveKindMap[".cfi_personality"] = DK_CFI_PERSONALITY;
+        DirectiveKindMap[".cfi_lsda"] = DK_CFI_LSDA;
+        DirectiveKindMap[".cfi_remember_state"] = DK_CFI_REMEMBER_STATE;
+        DirectiveKindMap[".cfi_restore_state"] = DK_CFI_RESTORE_STATE;
+        DirectiveKindMap[".cfi_same_value"] = DK_CFI_SAME_VALUE;
+        DirectiveKindMap[".cfi_restore"] = DK_CFI_RESTORE;
+        DirectiveKindMap[".cfi_escape"] = DK_CFI_ESCAPE;
+        DirectiveKindMap[".cfi_signal_frame"] = DK_CFI_SIGNAL_FRAME;
+        DirectiveKindMap[".cfi_undefined"] = DK_CFI_UNDEFINED;
+        DirectiveKindMap[".cfi_register"] = DK_CFI_REGISTER;
+        DirectiveKindMap[".cfi_window_save"] = DK_CFI_WINDOW_SAVE;
+        DirectiveKindMap[".macros_on"] = DK_MACROS_ON;
+        DirectiveKindMap[".macros_off"] = DK_MACROS_OFF;
+        DirectiveKindMap[".macro"] = DK_MACRO;
+        DirectiveKindMap[".exitm"] = DK_EXITM;
+        DirectiveKindMap[".endm"] = DK_ENDM;
+        DirectiveKindMap[".endmacro"] = DK_ENDMACRO;
+        DirectiveKindMap[".purgem"] = DK_PURGEM;
+        DirectiveKindMap[".err"] = DK_ERR;
+        DirectiveKindMap[".error"] = DK_ERROR;
+        DirectiveKindMap[".warning"] = DK_WARNING;
+        DirectiveKindMap[".reloc"] = DK_RELOC;
+    }
 }
 
 MCAsmMacro *AsmParser::parseMacroLikeBody(SMLoc DirectiveLoc) {
