@@ -1573,7 +1573,7 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
           RegNum |= Val;
         }
       }
-      printf(">> uu\n");
+      //printf(">> uu\n");
       EmitImmediate(MI, MCOperand::createImm(RegNum), MI.getLoc(), 1, FK_Data_1,
                     CurByte, OS, Fixups, KsError, is64BitMode(STI));
     } else {
