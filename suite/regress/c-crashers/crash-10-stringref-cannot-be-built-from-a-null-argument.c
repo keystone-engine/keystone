@@ -7,6 +7,7 @@ int main(int argc, char **argv) {
     size_t count, size;
     unsigned char *insn;
     ks_asm(ks, 0, 0, &insn, &size, &count);
+    ks_free(insn);
   }
   ks_close(ks);
 }
