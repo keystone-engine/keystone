@@ -1,0 +1,19 @@
+#include <keystone/keystone.h>
+int main(int argc, char **argv) {
+  int ks_arch = KS_ARCH_ARM, ks_mode = KS_MODE_LITTLE_ENDIAN;
+  unsigned char assembly[] = {
+    'b', '&', ';', 'b', ' ', '0', 'b', '&', 'R', 'b',
+    ' ', 0x10, 'b', 0x09, '0', 'b', '&', ';', 'b', ' ',
+    '0', '7', '7', '7', '7', '7', '7', '7', '7', '7',
+    '7', '7', '7', '7', '7', '7', '7', 'b', 0x00,
+  };
+  ks_engine *ks;
+  ks_err err = ks_open(ks_arch, ks_mode, &ks);
+  if (!err) {
+    size_t count, size;
+    unsigned char *insn;
+    ks_asm(ks, (char *)assembly, 0, &insn, &size, &count);
+  }
+  ks_close(ks);
+  return 0;
+}
