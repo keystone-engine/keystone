@@ -1,0 +1,5 @@
+package keystone
+// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [arm_const.py]
+const KS_ERR_ASM_ARM_INVALIDOPERAND = 512
+const KS_ERR_ASM_ARM_MISSINGFEATURE = 513
+const KS_ERR_ASM_ARM_MNEMONICFAIL = 514
