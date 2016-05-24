@@ -2,12 +2,12 @@
 //!
 //! ```rust
 //! extern crate keystone;
-//! use keystone::{Keystone, Arch, Mode, Error, OptionType, OptionValue};
+//! use keystone::{Keystone, Arch, OptionType, OptionValue};
 //!
 //! fn main() {
-//!     let engine = Keystone::new(Arch::X86, Mode::Mode32)
+//!     let engine = Keystone::new(Arch::X86, keystone::KS_MODE_32)
 //!         .expect("Could not initialize Keystone engine");
-//!     engine.option(OptionType::Syntax, OptionValue::SyntaxNASM)
+//!     engine.option(OptionType::SYNTAX, OptionValue::SYNTAX_NASM)
 //!         .expect("Could not set option to nasm syntax");
 //!     let result = engine.asm("mov ah, 0x80".to_string(), 0)
 //!         .expect("Could not assemble");
@@ -17,21 +17,21 @@
 extern crate libc;
 
 pub mod ffi;
-pub mod enums;
+// pub mod enums;
 pub mod keystone_const;
-pub mod arm64_const;
-pub mod arm_const;
-pub mod hexagon_const;
-pub mod mips_const;
-pub mod ppc_const;
-pub mod sparc_const;
-pub mod systemz_const;
-pub mod x86_const;
+// pub mod arm64_const;
+// pub mod arm_const;
+// pub mod hexagon_const;
+// pub mod mips_const;
+// pub mod ppc_const;
+// pub mod sparc_const;
+// pub mod systemz_const;
+// pub mod x86_const;
 
 use std::ffi::CStr;
 use std::ffi::CString;
 
-pub use enums::*;
+pub use keystone_const::*;
 
 #[allow(non_camel_case_types)]
 pub type ks_handle = libc::size_t;
@@ -69,12 +69,12 @@ pub fn version() -> (u32, u32) {
 
 /// Return tuple `(major, minor)` API version numbers.
 pub fn arch_supported(arch: Arch) -> bool {
-    unsafe { ffi::ks_arch_supported(arch) }
+    unsafe { ffi::ks_arch_supported(arch.val()) }
 }
 
 /// Return a string describing given error code.
 pub fn error_msg(error: Error) -> String {
-    unsafe { CStr::from_ptr(ffi::ks_strerror(error)).to_string_lossy().into_owned() }
+    unsafe { CStr::from_ptr(ffi::ks_strerror(error.to_val())).to_string_lossy().into_owned() }
 }
 
 pub struct Keystone {
@@ -83,38 +83,38 @@ pub struct Keystone {
 
 impl Keystone {
     /// Create new instance of Keystone engine.
-    pub fn new(arch: Arch, mode: Mode) -> Result<Keystone, Error> {
+    pub fn new(arch: Arch, mode: u32) -> Result<Keystone, Error> {
         if version() != bindings_version() {
-            return Err(Error::Version);
+            return Err(Error::VERSION);
         }
 
         let mut handle: ks_handle = 0;
 
-        let err = unsafe { ffi::ks_open(arch, mode, &mut handle) };
-        if err == Error::Ok {
+        let err = unsafe { ffi::ks_open(arch.val(), mode, &mut handle) };
+        if err == KS_ERR_OK {
             Ok(Keystone { handle: handle })
         } else {
-            Err(err)
+            Err(Error::from_val(err))
         }
     }
 
     /// Report the last error number when some API function fail.
     pub fn error(&self) -> Result<(), Error> {
         let err = unsafe { ffi::ks_errno(self.handle) };
-        if err == Error::Ok {
+        if err == KS_ERR_OK {
             Ok(())
         } else {
-            Err(err)
+            Err(Error::from_val(err))
         }
     }
 
     /// Set option for Keystone engine at runtime
     pub fn option(&self, type_: OptionType, value: OptionValue) -> Result<(), Error> {
-        let err = unsafe { ffi::ks_option(self.handle, type_ as u32, value as libc::size_t) };
-        if err == Error::Ok {
+        let err = unsafe { ffi::ks_option(self.handle, type_.val(), value.val() as libc::size_t) };
+        if err == KS_ERR_OK {
             Ok(())
         } else {
-            Err(err)
+            Err(Error::from_val(err))
         }
     }
 
@@ -132,7 +132,7 @@ impl Keystone {
 
         let err = unsafe { ffi::ks_asm(self.handle, s.as_ptr(), address, &mut ptr, &mut size, &mut stat_count) };
 
-        if err == Error::Ok {
+        if err == KS_ERR_OK {
             let bytes = unsafe { std::slice::from_raw_parts(ptr, size) };
 
             unsafe{ 
@@ -145,7 +145,8 @@ impl Keystone {
                 bytes: From::from(&bytes[..]),
             })
         } else {
-            Err(unsafe { ffi::ks_errno(self.handle) })
+            let err = unsafe { ffi::ks_errno(self.handle) };
+            Err(Error::from_val(err))
         }
     }
 }

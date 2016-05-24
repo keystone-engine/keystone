@@ -10,12 +10,16 @@ ks_err_val = { 'KS_ERR_ASM': '128', 'KS_ERR_ASM_ARCH': '512' }
 
 include = [ 'arm.h', 'arm64.h', 'mips.h', 'x86.h', 'sparc.h', 'ppc.h', 'systemz.h', 'hexagon.h', 'keystone.h' ]
 
+def CamelCase(s):
+    # return re.sub(r'(\w)+\_?', lambda m:m.group(0).capitalize(), s)
+    return ''.join(''.join([w[0].upper(), w[1:].lower()]) for w in s.split('_'))
+
 template = {
     'rust': {
             'header': "// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [%s_const.rs]\n",
             'footer': "",
-            'line_format': 'pub const KS_%s : u32 = %s;\n',
-            'out_file': './rust/src/%s_const.rs',
+            #'line_format': 'pub const KS_%s : u32 = %s;\n',
+            #'out_file': './rust/src/%s_const.rs',
             # prefixes for constant filenames of all archs - case sensitive
             'arm.h': 'arm',
             'arm64.h': 'arm64',
@@ -28,6 +32,93 @@ template = {
             'keystone.h': 'keystone',
             'comment_open': '/*',
             'comment_close': '*/',
+            'rules': [
+                {
+                    'regex': r'.*',
+                    'pre': '\n',
+                    'line_format': 'pub const KS_{0} : u32 = {1};\n',
+                    'fn': (lambda x: x),
+                    'post': '\n',
+                    #'filename': './rust/src/keystone_const.rs'
+                    'filename': './rust/src/%s_const.rs',
+                },
+                {
+                    'regex': r'ARCH_.*',
+                    'pre': '#[derive(Debug, PartialEq, Clone, Copy)]\n' + 
+                            'pub enum Arch {\n',
+                    'line_format': '\t{0},\n',
+                    'fn': (lambda x: '_'.join(x.split('_')[1:])),
+                    'post': '}\n\n',
+                    'filename': './rust/src/%s_const.rs',
+                },
+                {   'regex': r'ARCH_.*',
+                    'pre': 'impl Arch {\n\t#[inline]\n\tpub fn val(&self) -> u32 {\n\t\tmatch *self {\n',
+                    'line_format': '\t\t\tArch::{0} => {1},\n',
+                    'fn': (lambda x: '_'.join(x.split('_')[1:])),
+                    'post': '\t\t}\n\t}\n}\n',
+                    'filename': './rust/src/%s_const.rs',
+                },
+                {
+                    'regex': r'OPT_([A-Z]+)$',
+                    'pre': '#[derive(Debug, PartialEq, Clone, Copy)]\n' + 
+                            'pub enum OptionType {\n',
+                    'line_format': '\t{0},\n',
+                    'fn': (lambda x: '_'.join(x.split('_')[1:])),
+                    'post': '\tMAX,\n' +
+                            '}\n',
+                    'filename': './rust/src/%s_const.rs',
+                },
+                {   
+                    'regex': r'OPT_([A-Z]+)$',
+                    'pre': 'impl OptionType {\n\t#[inline]\n\tpub fn val(&self) -> u32 {\n\t\tmatch *self {\n',
+                    'line_format': '\t\t\tOptionType::{0} => {1},\n',
+                    'fn': (lambda x: '_'.join(x.split('_')[1:])),
+                    'post': '\t\t\tOptionType::MAX => 99\n' +
+                            '\t\t}\n\t}\n}\n',
+                    'filename': './rust/src/%s_const.rs',
+                },
+                {
+                    'regex': r'OPT_([A-Z]+\_)+[A-Z]+',
+                    'pre': '#[derive(Debug, PartialEq, Clone, Copy)]\n' + 
+                            'pub enum OptionValue {\n',
+                    'line_format': '\t{0},\n',
+                    'fn': (lambda x: '_'.join(x.split('_')[1:])),
+                    'post': '}\n',
+                    'filename': './rust/src/%s_const.rs',
+                },
+                {   
+                    'regex': r'OPT_([A-Z]+\_)+[A-Z]+',
+                    'pre': 'impl OptionValue {\n\t#[inline]\n\tpub fn val(&self) -> u32 {\n\t\tmatch *self {\n',
+                    'line_format': '\t\t\tOptionValue::{0} => {1},\n',
+                    'fn': (lambda x: '_'.join(x.split('_')[1:])),
+                    'post': '\t\t}\n\t}\n}\n',
+                    'filename': './rust/src/%s_const.rs',
+                },
+                {
+                    'regex': r'ERR_.*',
+                    'pre': '#[derive(Debug, PartialEq, Clone, Copy)]\n' + 
+                            'pub enum Error {\n',
+                    'line_format': '\t{0},\n',
+                    'fn': (lambda x: '_'.join(x.split('_')[1:])),
+                    'post': '\tUNKNOWN,\n' +
+                            '}\n',
+                    'filename': './rust/src/%s_const.rs',
+                },
+                {   'regex': r'ERR_.*',
+                    'pre': 'impl Error {\n\t#[inline]\n\tpub fn from_val(v: u32) -> Error {\n\t\tmatch v {\n',
+                    'line_format': '\t\t\t{1} => Error::{0},\n',
+                    'fn': (lambda x: '_'.join(x.split('_')[1:])),
+                    'post': '\t\t\t_ => Error::UNKNOWN,\n\t\t}\n\t}\n}\n',
+                    'filename': './rust/src/%s_const.rs',
+                },
+                {   'regex': r'ERR_.*',
+                    'pre': 'impl Error {\n\t#[inline]\n\tpub fn to_val(&self) -> u32 {\n\t\tmatch *self {\n',
+                    'line_format': '\t\t\tError::{0} => {1},\n',
+                    'fn': (lambda x: '_'.join(x.split('_')[1:])),
+                    'post': '\t\t}\n\t}\n}\n',
+                    'filename': './rust/src/%s_const.rs',
+                },
+            ],
     },
     'go': {
             'header': "package keystone\n// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [keystone_constants_%s.go]\n",
@@ -111,11 +202,11 @@ def gen(lang):
     templ = template[lang]
     for target in include:
         prefix = templ[target]
-        outfile = open(templ['out_file'] %(prefix), 'wb')   # open as binary prevents windows newlines
-        outfile.write((templ['header'] % (prefix)).encode("utf-8"))
         if target == 'keystone.h':
             prefix = ''
         lines = open(os.path.join(INCL_DIR, target)).readlines()
+
+        consts = []
 
         previous = {}
         count = 0
@@ -177,15 +268,37 @@ def gen(lang):
                             rhs = ks_err_val[rhs]
 
                     lhs_strip = re.sub(r'^KS_', '', lhs)
-                    count = int(rhs) + 1
-                    if (count == 1):
-                        outfile.write(("\n").encode("utf-8"))
+                    consts.append((lhs_strip, rhs))
 
-                    outfile.write((templ['line_format'] % (lhs_strip, rhs)).encode("utf-8"))
+                    count = int(rhs) + 1
+
+                    #if (count == 1):
+                    #    outfile.write(("\n").encode("utf-8"))
+                    #print (lhs_strip)
+
+                    #outfile.write((templ['line_format'] % (lhs_strip, rhs)).encode("utf-8"))
                     previous[lhs] = str(rhs)
 
-        outfile.write((templ['footer']).encode("utf-8"))
-        outfile.close()
+        rules = templ['rules']
+
+        for rule in rules:
+            regex = rule['regex']
+
+            outfile = open(rule['filename'] % prefix, 'a+b')   # open as binary prevents windows newlines
+            outfile.write (templ['header'])
+            outfile.write (rule['pre'])
+            for const in consts:
+                if not (re.match(regex, const[0])):
+                    continue
+
+                lhs_strip = const[0]
+                rhs = const[1]
+                outfile.write(rule['line_format'].format(rule['fn'](lhs_strip), rhs, lhs_strip).encode("utf-8"))
+
+            outfile.write (rule['post'])
+            outfile.write ('\n')
+            outfile.write (templ['footer'])
+            outfile.close()
 
 def main():
     lang = sys.argv[1]
