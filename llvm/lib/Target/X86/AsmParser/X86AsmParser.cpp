@@ -69,7 +69,6 @@ private:
   // PUSH i8  --> PUSH32i8
   // PUSH word i8 --> PUSH16i8
   bool push32;
-  bool push16;
   SMLoc consumeToken() {
     MCAsmParser &Parser = getParser();
     SMLoc Result = Parser.getTok().getLoc();
@@ -1925,8 +1924,6 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand(StringRef Mnem, unsi
       if (Mnem == "push") {
           if (Size == 0)
               push32 = true;
-          else if (Size == 2)
-              push16 = true;
       }
 
       const MCExpr *ImmExpr = MCConstantExpr::create(Imm, getContext());
@@ -2421,7 +2418,6 @@ bool X86AsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
       Operands.push_back(X86Operand::CreateToken("*", consumeToken()));
 
     push32 = false;
-    push16 = false;
 
     // Read the operands.
     while(1) {
