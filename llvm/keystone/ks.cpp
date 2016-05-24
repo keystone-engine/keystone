@@ -278,7 +278,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
 
 #ifdef LLVM_ENABLE_ARCH_AArch64
             case KS_ARCH_ARM64:
-                if (mode != KS_MODE_BIG_ENDIAN) {
+                if (mode != KS_MODE_LITTLE_ENDIAN) {
                     delete ks;
                     return KS_ERR_MODE;
                 }

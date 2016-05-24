@@ -38,7 +38,7 @@ class TestAll(regress.RegressTest):
         self.kstest(KS_ARCH_ARM, KS_MODE_THUMB + KS_MODE_BIG_ENDIAN, b"movs r4, #0xf0", [ 0x24, 0xf0 ])
 
         # ARM64
-        self.kstest(KS_ARCH_ARM64, KS_MODE_BIG_ENDIAN, b"ldr w1, [sp, #0x8]", [ 0xe1, 0x0b, 0x40, 0xb9 ])
+        self.kstest(KS_ARCH_ARM64, KS_MODE_LITTLE_ENDIAN, b"ldr w1, [sp, #0x8]", [ 0xe1, 0x0b, 0x40, 0xb9 ])
 
         # Hexagon
         self.kstest(KS_ARCH_HEXAGON, KS_MODE_BIG_ENDIAN, b"v23.w=vavg(v11.w,v2.w):rnd", [ 0xd7, 0xcb, 0xe2, 0x1c ])
