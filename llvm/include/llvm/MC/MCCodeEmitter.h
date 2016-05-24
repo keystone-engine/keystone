@@ -38,7 +38,8 @@ public:
   /// stream \p OS.
   virtual void encodeInstruction(MCInst &Inst, raw_ostream &OS,
                                  SmallVectorImpl<MCFixup> &Fixups,
-                                 const MCSubtargetInfo &STI) const = 0;
+                                 const MCSubtargetInfo &STI,
+                                 unsigned int &KsError) const = 0;
 };
 
 } // End llvm namespace

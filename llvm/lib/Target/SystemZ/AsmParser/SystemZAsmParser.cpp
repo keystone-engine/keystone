@@ -823,8 +823,8 @@ bool SystemZAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
   switch (MatchResult) {
   case Match_Success:
     Inst.setLoc(IDLoc);
-    Out.EmitInstruction(Inst, getSTI());
-    return false;
+    Out.EmitInstruction(Inst, getSTI(), ErrorCode);
+    return (ErrorCode != 0);
 
   case Match_MissingFeature: {
 #if 0

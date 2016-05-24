@@ -1,9 +1,6 @@
 #!/usr/bin/python
-# Nguyen Anh Quynh, 2016
 
 # This is to test NASM directives
-
-# Fill in the information in the form below when you create a new regression
 
 # Github issue: #xxx
 # Author: Nguyen Anh Quynh

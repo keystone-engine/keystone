@@ -1,10 +1,6 @@
 #!/usr/bin/python
-# example on how to code a Keystone regression in Python
-# Nguyen Anh Quynh, 2016
 
 # This tests the relative BLX instruction for Thumb-mode
-
-# Fill in the information in the form below when you create a new regression
 
 # Github issue: #36
 # Author: Edgar Barbosa

@@ -182,6 +182,9 @@ private:
   /// \brief Are we parsing ms-style inline assembly?
   bool ParsingInlineAsm;
 
+  /// \brief Should we use PC relative offsets by default?
+  bool NasmDefaultRel;
+
   // Keystone syntax support
   int KsSyntax;
 
@@ -230,6 +233,9 @@ public:
 
   void setParsingInlineAsm(bool V) override { ParsingInlineAsm = V; }
   bool isParsingInlineAsm() override { return ParsingInlineAsm; }
+
+  void setNasmDefaultRel(bool V) override { NasmDefaultRel = V; }
+  bool isNasmDefaultRel() override { return NasmDefaultRel; }
 
   bool parseMSInlineAsm(void *AsmLoc, std::string &AsmString,
                         unsigned &NumOutputs, unsigned &NumInputs,
@@ -379,7 +385,9 @@ private:
     DK_MACRO, DK_EXITM, DK_ENDM, DK_ENDMACRO, DK_PURGEM,
     DK_SLEB128, DK_ULEB128,
     DK_ERR, DK_ERROR, DK_WARNING,
-    DK_BITS,    // NASM directive 'bits'
+    DK_NASM_BITS,    // NASM directive 'bits'
+    DK_NASM_DEFAULT, // NASM directive 'default'
+    DK_NASM_USE32,   // NASM directive 'use32'
     DK_END
   };
 
@@ -509,8 +517,14 @@ private:
   // ".warning"
   bool parseDirectiveWarning(SMLoc DirectiveLoc);
 
-  // "bits"
-  bool parseDirectiveBits();
+  // "bits" (Nasm)
+  bool parseNasmDirectiveBits();
+
+  // "use32" (Nasm)
+  bool parseNasmDirectiveUse32();
+
+  // "default" (Nasm)
+  bool parseNasmDirectiveDefault();
 
   bool isNasmDirective(StringRef str);  // is this str a NASM directive?
   bool isDirective(StringRef str);  // is this str a directive?
@@ -532,7 +546,8 @@ AsmParser::AsmParser(SourceMgr &SM, MCContext &Ctx, MCStreamer &Out,
     : Lexer(MAI), Ctx(Ctx), Out(Out), MAI(MAI), SrcMgr(SM),
       PlatformParser(nullptr), CurBuffer(SM.getMainFileID()),
       MacrosEnabledFlag(true), HadError(false), CppHashLineNumber(0),
-      AssemblerDialect(~0U), IsDarwin(false), ParsingInlineAsm(false) {
+      AssemblerDialect(~0U), IsDarwin(false), ParsingInlineAsm(false),
+      NasmDefaultRel(false) {
   // Save the old handler.
   SavedDiagHandler = SrcMgr.getDiagHandler();
   SavedDiagContext = SrcMgr.getDiagContext();
@@ -727,8 +742,8 @@ size_t AsmParser::Run(bool NoInitialTextSection, uint64_t Address, bool NoFinali
 
   // Finalize the output stream if there are no errors and if the client wants
   // us to.
-  if (!HadError && !NoFinalize)
-    Out.Finish();
+  if (!KsError && !HadError && !NoFinalize)
+    KsError = Out.Finish();
 
   //return HadError || getContext().hadError();
   return count;
@@ -1351,7 +1366,7 @@ bool AsmParser::parseBinOpRHS(unsigned Precedence, const MCExpr *&Res,
 
 bool AsmParser::isNasmDirective(StringRef IDVal)
 {
-    return (DirectiveKindMap.find(IDVal) != DirectiveKindMap.end());
+    return (DirectiveKindMap.find(IDVal.lower()) != DirectiveKindMap.end());
 }
 
 bool AsmParser::isDirective(StringRef IDVal)
@@ -1378,6 +1393,7 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
 
   // Statements always start with an identifier or are a full line comment.
   AsmToken ID = getTok();
+  //printf(">>> parseStatement:ID = %s\n", ID.getString().str().c_str());
   SMLoc IDLoc = ID.getLoc();
   StringRef IDVal;
   int64_t LocalLabelVal = -1;
@@ -1424,7 +1440,7 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
     ID = Lexer.getTok();
     if (ID.getString().lower() == "bits") {
         Lex();
-        if (parseDirectiveBits()) {
+        if (parseNasmDirectiveBits()) {
             Info.KsError = KS_ERR_ASM_DIRECTIVE_ID;
             return true;
         } else {
@@ -1451,7 +1467,7 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
   // example.
 
   StringMap<DirectiveKind>::const_iterator DirKindIt =
-      DirectiveKindMap.find(IDVal);
+      DirectiveKindMap.find(IDVal.lower());
   DirectiveKind DirKind = (DirKindIt == DirectiveKindMap.end())
                               ? DK_NO_DIRECTIVE
                               : DirKindIt->getValue();
@@ -1536,8 +1552,11 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
 
     Sym->redefineIfPossible();
 
-    if (!Sym->isUndefined() || Sym->isVariable())
-      return Error(IDLoc, "invalid symbol redefinition");
+    if (!Sym->isUndefined() || Sym->isVariable()) {
+      //return Error(IDLoc, "invalid symbol redefinition");
+      Info.KsError = KS_ERR_ASM_SYMBOL_REDEFINED;
+      return true;
+    }
 
     // Emit the label.
     if (!ParsingInlineAsm)
@@ -1801,12 +1820,21 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
       return parseDirectiveWarning(IDLoc);
     case DK_RELOC:
       return parseDirectiveReloc(IDLoc);
-    case DK_BITS:
-      if (parseDirectiveBits()) {
+    case DK_NASM_BITS:
+      if (parseNasmDirectiveBits()) {
           Info.KsError = KS_ERR_ASM_DIRECTIVE_ID;
           return true;
       } else {
           return false;
+      }
+    case DK_NASM_USE32:
+      return parseNasmDirectiveUse32();
+    case DK_NASM_DEFAULT:
+      if (parseNasmDirectiveDefault()) {
+        Info.KsError = KS_ERR_ASM_DIRECTIVE_ID;
+        return true;
+      } else {
+        return false;
       }
     }
 
@@ -2016,7 +2044,8 @@ static bool isIdentifierChar(char c) {
 bool AsmParser::expandMacro(raw_svector_ostream &OS, StringRef Body,
                             ArrayRef<MCAsmMacroParameter> Parameters,
                             ArrayRef<MCAsmMacroArgument> A,
-                            bool EnableAtPseudoVariable, SMLoc L) {
+                            bool EnableAtPseudoVariable, SMLoc L)
+{
   unsigned NParameters = Parameters.size();
   bool HasVararg = NParameters ? Parameters.back().Vararg : false;
   if ((!IsDarwin || NParameters != 0) && NParameters != A.size())
@@ -2114,8 +2143,14 @@ bool AsmParser::expandMacro(raw_svector_ostream &OS, StringRef Body,
             // parsing for varargs.
             if (Token.getKind() != AsmToken::String || VarargParameter)
               OS << Token.getString();
-            else
-              OS << Token.getStringContents();
+            else {
+              bool valid;
+              OS << Token.getStringContents(valid);
+              if (!valid) {
+                  KsError = KS_ERR_ASM_MACRO_STR;
+                  return true;
+              }
+            }
 
           Pos += 1 + Argument.size();
         }
@@ -2508,11 +2543,21 @@ bool AsmParser::parseDirectiveSet(StringRef IDVal, bool allow_redef) {
   return parseAssignment(Name, allow_redef, true);
 }
 
-bool AsmParser::parseEscapedString(std::string &Data) {
-  assert(getLexer().is(AsmToken::String) && "Unexpected current token!");
+bool AsmParser::parseEscapedString(std::string &Data)
+{
+  if (!getLexer().is(AsmToken::String)) {
+      KsError = KS_ERR_ASM_ESC_STR;
+      return true;
+  }
 
   Data = "";
-  StringRef Str = getTok().getStringContents();
+  bool valid;
+  StringRef Str = getTok().getStringContents(valid);
+  if (!valid) {
+      KsError = KS_ERR_ASM_ESC_STR;
+      return true;
+  }
+
   for (unsigned i = 0, e = Str.size(); i != e; ++i) {
     if (Str[i] != '\\') {
       Data += Str[i];
@@ -4486,7 +4531,8 @@ bool AsmParser::parseDirectiveIfc(SMLoc DirectiveLoc, bool ExpectEqual) {
 
 /// parseDirectiveIfeqs
 ///   ::= .ifeqs string1, string2
-bool AsmParser::parseDirectiveIfeqs(SMLoc DirectiveLoc, bool ExpectEqual) {
+bool AsmParser::parseDirectiveIfeqs(SMLoc DirectiveLoc, bool ExpectEqual)
+{
   if (Lexer.isNot(AsmToken::String)) {
     if (ExpectEqual)
       TokError("expected string parameter for '.ifeqs' directive");
@@ -4496,7 +4542,13 @@ bool AsmParser::parseDirectiveIfeqs(SMLoc DirectiveLoc, bool ExpectEqual) {
     return true;
   }
 
-  StringRef String1 = getTok().getStringContents();
+  bool valid;
+  StringRef String1 = getTok().getStringContents(valid);
+  if (!valid) {
+      KsError = KS_ERR_ASM_DIRECTIVE_STR;
+      return true;
+  }
+
   Lex();
 
   if (Lexer.isNot(AsmToken::Comma)) {
@@ -4519,7 +4571,12 @@ bool AsmParser::parseDirectiveIfeqs(SMLoc DirectiveLoc, bool ExpectEqual) {
     return true;
   }
 
-  StringRef String2 = getTok().getStringContents();
+  StringRef String2 = getTok().getStringContents(valid);
+  if (!valid) {
+      KsError = KS_ERR_ASM_ESC_BACKSLASH;
+      return true;
+  }
+
   Lex();
 
   TheCondStack.push_back(TheCondState);
@@ -4629,7 +4686,8 @@ bool AsmParser::parseDirectiveEnd(SMLoc DirectiveLoc) {
 /// parseDirectiveError
 ///   ::= .err
 ///   ::= .error [string]
-bool AsmParser::parseDirectiveError(SMLoc L, bool WithMessage) {
+bool AsmParser::parseDirectiveError(SMLoc L, bool WithMessage)
+{
   if (!TheCondStack.empty()) {
     if (TheCondStack.back().Ignore) {
       eatToEndOfStatement();
@@ -4648,7 +4706,12 @@ bool AsmParser::parseDirectiveError(SMLoc L, bool WithMessage) {
       return true;
     }
 
-    Message = getTok().getStringContents();
+    bool valid;
+    Message = getTok().getStringContents(valid);
+    if (!valid) {
+        KsError = KS_ERR_ASM_DIRECTIVE_STR;
+        return true;
+    }
     Lex();
   }
 
@@ -4658,7 +4721,8 @@ bool AsmParser::parseDirectiveError(SMLoc L, bool WithMessage) {
 
 /// parseDirectiveWarning
 ///   ::= .warning [string]
-bool AsmParser::parseDirectiveWarning(SMLoc L) {
+bool AsmParser::parseDirectiveWarning(SMLoc L)
+{
   if (!TheCondStack.empty()) {
     if (TheCondStack.back().Ignore) {
       eatToEndOfStatement();
@@ -4674,7 +4738,12 @@ bool AsmParser::parseDirectiveWarning(SMLoc L) {
       return true;
     }
 
-    Message = getTok().getStringContents();
+    bool valid;
+    Message = getTok().getStringContents(valid);
+    if (!valid) {
+        KsError = KS_ERR_ASM_DIRECTIVE_STR;
+        return true;
+    }
     Lex();
   }
 
@@ -4682,7 +4751,7 @@ bool AsmParser::parseDirectiveWarning(SMLoc L) {
   return false;
 }
 
-bool AsmParser::parseDirectiveBits()
+bool AsmParser::parseNasmDirectiveBits()
 {
   int64_t bits = 0;
 
@@ -4710,6 +4779,25 @@ bool AsmParser::parseDirectiveBits()
   }
 
   return false;
+}
+
+bool AsmParser::parseNasmDirectiveUse32()
+{
+  AsmToken bits(AsmToken::Identifier, StringRef(".code32"), 0);
+  return getTargetParser().ParseDirective(bits);
+}
+
+bool AsmParser::parseNasmDirectiveDefault()
+{
+  std::string flag = parseStringToEndOfStatement().lower();
+  if (flag == "rel") {
+    setNasmDefaultRel(true);
+    return false;
+  } else if (flag == "abs") {
+    setNasmDefaultRel(false);
+    return false;
+  }
+  return true;
 }
 
 /// parseDirectiveEndIf
@@ -4742,7 +4830,10 @@ void AsmParser::initializeDirectiveKindMap(int syntax)
         DirectiveKindMap["dd"] = DK_INT;
         DirectiveKindMap["dq"] = DK_QUAD;
         DirectiveKindMap["use16"] = DK_CODE16;
-        DirectiveKindMap["bits"] = DK_BITS;
+        DirectiveKindMap["use32"] = DK_NASM_USE32;
+        DirectiveKindMap["global"] = DK_GLOBAL;
+        DirectiveKindMap["bits"] = DK_NASM_BITS;
+        DirectiveKindMap["default"] = DK_NASM_DEFAULT;
     } else {
         // default LLVM syntax
         DirectiveKindMap.clear();

@@ -1,7 +1,6 @@
 #!/usr/bin/python
-# Nguyen Anh Quynh, 2016
 
-# Fill in the information in the form below when you create a new regression
+# Test int3 instruction
 
 # Github issue: #7
 # Author: Nguyen Anh Quynh

@@ -76,7 +76,7 @@ public:
 
   void EmitValueToAlignment(unsigned, int64_t, unsigned, unsigned) override;
 
-  void FinishImpl() override;
+  unsigned int FinishImpl() override;
 
   void EmitBundleAlignMode(unsigned AlignPow2) override;
   void EmitBundleLock(bool AlignToEnd) override;
@@ -85,7 +85,7 @@ public:
 private:
   bool isBundleLocked() const;
   void EmitInstToFragment(MCInst &Inst, const MCSubtargetInfo &) override;
-  void EmitInstToData(MCInst &Inst, const MCSubtargetInfo &) override;
+  void EmitInstToData(MCInst &Inst, const MCSubtargetInfo &, unsigned int &KsError) override;
 
   void fixSymbolsInTLSFixups(const MCExpr *expr);
 

@@ -334,7 +334,8 @@ bool COFFAsmParser::ParseSectionName(StringRef &SectionName) {
 //   y: Not-readable section (clears 'r')
 //
 // Subsections are not supported.
-bool COFFAsmParser::ParseDirectiveSection(StringRef, SMLoc) {
+bool COFFAsmParser::ParseDirectiveSection(StringRef, SMLoc)
+{
   StringRef SectionName;
 
   if (ParseSectionName(SectionName))
@@ -350,7 +351,11 @@ bool COFFAsmParser::ParseDirectiveSection(StringRef, SMLoc) {
     if (getLexer().isNot(AsmToken::String))
       return TokError("expected string in directive");
 
-    StringRef FlagsStr = getTok().getStringContents();
+    bool valid;
+    StringRef FlagsStr = getTok().getStringContents(valid);
+    if (!valid)
+        return true;
+
     Lex();
 
     if (ParseSectionFlags(FlagsStr, &Flags))

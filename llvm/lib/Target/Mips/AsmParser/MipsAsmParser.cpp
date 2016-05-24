@@ -3641,8 +3641,8 @@ bool MipsAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
     if (processInstruction(Inst, IDLoc, Instructions))
       return true;
     for (unsigned i = 0; i < Instructions.size(); i++)
-      Out.EmitInstruction(Instructions[i], getSTI());
-    return false;
+      Out.EmitInstruction(Instructions[i], getSTI(), ErrorCode);
+    return ErrorCode != 0;
   }
   case Match_MissingFeature:
     Error(IDLoc, "instruction requires a CPU feature not currently enabled");

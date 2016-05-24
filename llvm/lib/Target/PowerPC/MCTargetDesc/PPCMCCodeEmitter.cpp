@@ -98,11 +98,14 @@ public:
                                  const MCSubtargetInfo &STI) const;
   void encodeInstruction(MCInst &MI, raw_ostream &OS,
                          SmallVectorImpl<MCFixup> &Fixups,
-                         const MCSubtargetInfo &STI) const override {
+                         const MCSubtargetInfo &STI,
+                         unsigned int &KsError) const override {
     unsigned Opcode = MI.getOpcode();
     const MCInstrDesc &Desc = MCII.get(Opcode);
 
     uint64_t Bits = getBinaryCodeForInstr(MI, Fixups, STI);
+
+    KsError = 0;
 
     // Output the constant in big/little endian byte order.
     unsigned Size = Desc.getSize();

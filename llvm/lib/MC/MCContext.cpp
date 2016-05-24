@@ -36,13 +36,13 @@ using namespace llvm;
 
 MCContext::MCContext(const MCAsmInfo *mai, const MCRegisterInfo *mri,
                      const MCObjectFileInfo *mofi, const SourceMgr *mgr,
-                     bool DoAutoReset)
+                     bool DoAutoReset, uint64_t BaseAddr)
     : SrcMgr(mgr), MAI(mai), MRI(mri), MOFI(mofi), Allocator(),
       Symbols(Allocator), UsedNames(Allocator),
       CurrentDwarfLoc(0, 0, 0, DWARF2_FLAG_IS_STMT, 0, 0), DwarfLocSeen(false),
       GenDwarfForAssembly(false), GenDwarfFileNumber(0), DwarfVersion(4),
       AllowTemporaryLabels(true), DwarfCompileUnitID(0),
-      AutoReset(DoAutoReset), HadError(false) {
+      AutoReset(DoAutoReset), HadError(false), BaseAddress(BaseAddr) {
 
   std::error_code EC = llvm::sys::fs::current_path(CompilationDir);
   if (EC)

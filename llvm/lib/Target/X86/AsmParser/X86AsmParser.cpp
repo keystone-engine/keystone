@@ -159,7 +159,7 @@ private:
       InfixOperatorStack.push_back(Op);
     }
 
-    int64_t execute() {
+    int64_t execute(unsigned int &KsError) { // qq
       // Push any remaining operators onto the postfix stack.
       while (!InfixOperatorStack.empty()) {
         InfixCalculatorTok StackOp = InfixOperatorStack.pop_back_val();
@@ -176,7 +176,12 @@ private:
         if (Op.first == IC_IMM || Op.first == IC_REGISTER) {
           OperandStack.push_back(Op);
         } else {
-          assert (OperandStack.size() > 1 && "Too few operands.");
+          //assert (OperandStack.size() > 1 && "Too few operands.");
+          if (OperandStack.size() <= 1) {
+                KsError = KS_ERR_ASM_INVALIDOPERAND;
+                // return a dummy value
+                return 0;
+          }
           int64_t Val;
           ICToken Op2 = OperandStack.pop_back_val();
           ICToken Op1 = OperandStack.pop_back_val();
@@ -193,52 +198,92 @@ private:
             OperandStack.push_back(std::make_pair(IC_IMM, Val));
             break;
           case IC_MULTIPLY:
-            assert (Op1.first == IC_IMM && Op2.first == IC_IMM &&
-                    "Multiply operation with an immediate and a register!");
+            //assert (Op1.first == IC_IMM && Op2.first == IC_IMM &&
+            //        "Multiply operation with an immediate and a register!");
+            if (!(Op1.first == IC_IMM && Op2.first == IC_IMM)) {
+                KsError = KS_ERR_ASM_INVALIDOPERAND;
+                // return a dummy value
+                return 0;
+            }
             Val = Op1.second * Op2.second;
             OperandStack.push_back(std::make_pair(IC_IMM, Val));
             break;
           case IC_DIVIDE:
-            assert (Op1.first == IC_IMM && Op2.first == IC_IMM &&
-                    "Divide operation with an immediate and a register!");
-            assert (Op2.second != 0 && "Division by zero!");
+            //assert (Op1.first == IC_IMM && Op2.first == IC_IMM &&
+            //        "Divide operation with an immediate and a register!");
+            //assert (Op2.second != 0 && "Division by zero!");
+            if (!(Op1.first == IC_IMM && Op2.first == IC_IMM) || Op2.second == 0) {
+                KsError = KS_ERR_ASM_INVALIDOPERAND;
+                // return a dummy value
+                return 0;
+            }
             Val = Op1.second / Op2.second;
             OperandStack.push_back(std::make_pair(IC_IMM, Val));
             break;
           case IC_OR:
-            assert (Op1.first == IC_IMM && Op2.first == IC_IMM &&
-                    "Or operation with an immediate and a register!");
+            //assert (Op1.first == IC_IMM && Op2.first == IC_IMM &&
+            //        "Or operation with an immediate and a register!");
+            if (!(Op1.first == IC_IMM && Op2.first == IC_IMM)) {
+                KsError = KS_ERR_ASM_INVALIDOPERAND;
+                // return a dummy value
+                return 0;
+            }
             Val = Op1.second | Op2.second;
             OperandStack.push_back(std::make_pair(IC_IMM, Val));
             break;
           case IC_XOR:
-            assert(Op1.first == IC_IMM && Op2.first == IC_IMM &&
-              "Xor operation with an immediate and a register!");
+            //assert(Op1.first == IC_IMM && Op2.first == IC_IMM &&
+            //  "Xor operation with an immediate and a register!");
+            if (!(Op1.first == IC_IMM && Op2.first == IC_IMM)) {
+                KsError = KS_ERR_ASM_INVALIDOPERAND;
+                // return a dummy value
+                return 0;
+            }
             Val = Op1.second ^ Op2.second;
             OperandStack.push_back(std::make_pair(IC_IMM, Val));
             break;
           case IC_AND:
-            assert (Op1.first == IC_IMM && Op2.first == IC_IMM &&
-                    "And operation with an immediate and a register!");
+            //assert (Op1.first == IC_IMM && Op2.first == IC_IMM &&
+            //        "And operation with an immediate and a register!");
+            if (!(Op1.first == IC_IMM && Op2.first == IC_IMM)) {
+                KsError = KS_ERR_ASM_INVALIDOPERAND;
+                // return a dummy value
+                return 0;
+            }
             Val = Op1.second & Op2.second;
             OperandStack.push_back(std::make_pair(IC_IMM, Val));
             break;
           case IC_LSHIFT:
-            assert (Op1.first == IC_IMM && Op2.first == IC_IMM &&
-                    "Left shift operation with an immediate and a register!");
+            //assert (Op1.first == IC_IMM && Op2.first == IC_IMM &&
+            //        "Left shift operation with an immediate and a register!");
+            if (!(Op1.first == IC_IMM && Op2.first == IC_IMM)) {
+                KsError = KS_ERR_ASM_INVALIDOPERAND;
+                // return a dummy value
+                return 0;
+            }
             Val = Op1.second << Op2.second;
             OperandStack.push_back(std::make_pair(IC_IMM, Val));
             break;
           case IC_RSHIFT:
-            assert (Op1.first == IC_IMM && Op2.first == IC_IMM &&
-                    "Right shift operation with an immediate and a register!");
+            //assert (Op1.first == IC_IMM && Op2.first == IC_IMM &&
+            //        "Right shift operation with an immediate and a register!");
+            if (!(Op1.first == IC_IMM && Op2.first == IC_IMM)) {
+                KsError = KS_ERR_ASM_INVALIDOPERAND;
+                // return a dummy value
+                return 0;
+            }
             Val = Op1.second >> Op2.second;
             OperandStack.push_back(std::make_pair(IC_IMM, Val));
             break;
           }
         }
       }
-      assert (OperandStack.size() == 1 && "Expected a single result.");
+      //assert (OperandStack.size() == 1 && "Expected a single result.");
+      if (OperandStack.size() != 1) {
+          KsError = KS_ERR_ASM_INVALIDOPERAND;
+          // return a dummy value
+          return 0;
+      }
       return OperandStack.pop_back_val().second;
     }
   };
@@ -275,17 +320,17 @@ private:
     InlineAsmIdentifierInfo Info;
 
   public:
-    IntelExprStateMachine(int64_t imm, bool stoponlbrac, bool addimmprefix) :
+    IntelExprStateMachine(int64_t imm, bool stoponlbrac, bool addimmprefix, bool isrel=false) :
       State(IES_PLUS), PrevState(IES_ERROR), BaseReg(0), IndexReg(0), TmpReg(0),
       Scale(1), Imm(imm), Sym(nullptr), StopOnLBrac(stoponlbrac),
-      AddImmPrefix(addimmprefix), Rel(false), Abs(false) { Info.clear(); }
+      AddImmPrefix(addimmprefix), Rel(isrel), Abs(false) { Info.clear(); }
 
-    unsigned getBaseReg() { return (Rel && !Abs && BaseReg == 0 && IndexReg == 0) ? X86::RIP : BaseReg; }
+    unsigned getBaseReg() { return (Rel && !Abs && BaseReg == 0 && IndexReg == 0) ? (unsigned)X86::RIP : BaseReg; }
     unsigned getIndexReg() { return IndexReg; }
     unsigned getScale() { return Scale; }
     const MCExpr *getSym() { return Sym; }
     StringRef getSymName() { return SymName; }
-    int64_t getImm() { return Imm + IC.execute(); }
+    int64_t getImm(unsigned int &KsError) { return Imm + IC.execute(KsError); }
     bool isValidEndState() {
       return State == IES_RBRAC || State == IES_INTEGER;
     }
@@ -556,6 +601,7 @@ private:
       PrevState = CurrState;
       return false;
     }
+
     void onStar() {
       PrevState = State;
       switch (State) {
@@ -704,22 +750,22 @@ private:
                             std::unique_ptr<llvm::MCParsedAsmOperand> &&Dst);
   bool VerifyAndAdjustOperands(OperandVector &OrigOperands,
                                OperandVector &FinalOperands);
-  std::unique_ptr<X86Operand> ParseOperand(StringRef Mnem);
+  std::unique_ptr<X86Operand> ParseOperand(StringRef Mnem, unsigned int &KsError);
   std::unique_ptr<X86Operand> ParseATTOperand();
-  std::unique_ptr<X86Operand> ParseIntelOperand(StringRef Mnem);
+  std::unique_ptr<X86Operand> ParseIntelOperand(StringRef Mnem, unsigned int &KsError);
   std::unique_ptr<X86Operand> ParseIntelOffsetOfOperator();
   bool ParseIntelDotOperator(const MCExpr *Disp, const MCExpr *&NewDisp);
   std::unique_ptr<X86Operand> ParseIntelOperator(unsigned OpKind);
   std::unique_ptr<X86Operand>
-  ParseIntelSegmentOverride(unsigned SegReg, SMLoc Start, unsigned Size);
+  ParseIntelSegmentOverride(unsigned SegReg, SMLoc Start, unsigned Size, unsigned int &KsError);
   std::unique_ptr<X86Operand>
-  ParseIntelMemOperand(int64_t ImmDisp, SMLoc StartLoc, unsigned Size);
+  ParseIntelMemOperand(StringRef Mnem, int64_t ImmDisp, SMLoc StartLoc, unsigned Size, unsigned int &KsError);
   std::unique_ptr<X86Operand> ParseRoundingModeOp(SMLoc Start, SMLoc End);
   bool ParseIntelExpression(IntelExprStateMachine &SM, SMLoc &End);
   std::unique_ptr<X86Operand> ParseIntelBracExpression(unsigned SegReg,
                                                        SMLoc Start,
                                                        int64_t ImmDisp,
-                                                       unsigned Size);
+                                                       unsigned Size, unsigned int &KsError);
   bool ParseIntelIdentifier(const MCExpr *&Val, StringRef &Identifier,
                             InlineAsmIdentifierInfo &Info,
                             bool IsUnevaluatedOperand, SMLoc &End);
@@ -740,7 +786,8 @@ private:
 
   /// Wrapper around MCStreamer::EmitInstruction(). Possibly adds
   /// instrumentation around Inst.
-  void EmitInstruction(MCInst &Inst, OperandVector &Operands, MCStreamer &Out);
+  void EmitInstruction(MCInst &Inst, OperandVector &Operands, MCStreamer &Out,
+          unsigned int &KsError);
 
   bool MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
                                OperandVector &Operands, MCStreamer &Out,
@@ -756,12 +803,12 @@ private:
   bool MatchAndEmitATTInstruction(SMLoc IDLoc, unsigned &Opcode,
                                   OperandVector &Operands, MCStreamer &Out,
                                   uint64_t &ErrorInfo,
-                                  bool MatchingInlineAsm, unsigned int &ErrorCode);
+                                  bool MatchingInlineAsm, unsigned int &ErrorCode, uint64_t &Address);
 
   bool MatchAndEmitIntelInstruction(SMLoc IDLoc, unsigned &Opcode,
                                     OperandVector &Operands, MCStreamer &Out,
                                     uint64_t &ErrorInfo,
-                                    bool MatchingInlineAsm, unsigned int &ErrorCode);
+                                    bool MatchingInlineAsm, unsigned int &ErrorCode, uint64_t &Address);
 
   bool OmitRegisterFromClobberLists(unsigned RegNo) override;
 
@@ -1144,9 +1191,9 @@ bool X86AsmParser::VerifyAndAdjustOperands(OperandVector &OrigOperands,
   return false;
 }
 
-std::unique_ptr<X86Operand> X86AsmParser::ParseOperand(StringRef Mnem) {
+std::unique_ptr<X86Operand> X86AsmParser::ParseOperand(StringRef Mnem, unsigned int &KsError) {
   if (isParsingIntelSyntax())
-    return ParseIntelOperand(Mnem);
+    return ParseIntelOperand(Mnem, KsError);
   return ParseATTOperand();
 }
 
@@ -1282,7 +1329,7 @@ bool X86AsmParser::ParseIntelExpression(IntelExprStateMachine &SM, SMLoc &End)
   // nasm tokens rel / abs are only valid at the beginning of the expression.
   if (KsSyntax == KS_OPT_SYNTAX_NASM) {
     while (getLexer().getKind() == AsmToken::Identifier) {
-      StringRef Identifier = Tok.getString().lower();
+      std::string Identifier = Tok.getString().lower();
       if (Identifier == "rel") {
         SM.onRel();
         consumeToken();
@@ -1418,7 +1465,8 @@ bool X86AsmParser::ParseIntelExpression(IntelExprStateMachine &SM, SMLoc &End)
 
 std::unique_ptr<X86Operand>
 X86AsmParser::ParseIntelBracExpression(unsigned SegReg, SMLoc Start,
-                                       int64_t ImmDisp, unsigned Size) {
+                                       int64_t ImmDisp, unsigned Size, unsigned int &KsError)
+{
   MCAsmParser &Parser = getParser();
   const AsmToken &Tok = Parser.getTok();
   SMLoc BracLoc = Tok.getLoc(), End = Tok.getEndLoc();
@@ -1427,10 +1475,21 @@ X86AsmParser::ParseIntelBracExpression(unsigned SegReg, SMLoc Start,
   Parser.Lex(); // Eat '['
 
   SMLoc StartInBrac = Tok.getLoc();
+  bool IsRel;
+  switch(SegReg) {
+    default:
+      IsRel = false;
+      break;
+    case 0:
+    case X86::CS:
+    case X86::DS:
+      IsRel = getParser().isNasmDefaultRel();
+  }
   // Parse [ Symbol + ImmDisp ] and [ BaseReg + Scale*IndexReg + ImmDisp ].  We
   // may have already parsed an immediate displacement before the bracketed
   // expression.
-  IntelExprStateMachine SM(ImmDisp, /*StopOnLBrac=*/false, /*AddImmPrefix=*/true);
+  IntelExprStateMachine SM(ImmDisp, /*StopOnLBrac=*/false, /*AddImmPrefix=*/true,
+                           /*IsRel*/IsRel);
   if (ParseIntelExpression(SM, End))
     return nullptr;
 
@@ -1440,12 +1499,12 @@ X86AsmParser::ParseIntelBracExpression(unsigned SegReg, SMLoc Start,
     Disp = Sym;
     if (isParsingInlineAsm())
       RewriteIntelBracExpression(*InstInfo->AsmRewrites, SM.getSymName(),
-                                 ImmDisp, SM.getImm(), BracLoc, StartInBrac,
+                                 ImmDisp, SM.getImm(KsError), BracLoc, StartInBrac,
                                  End);
   }
 
-  if (SM.getImm() || !Disp) {
-    const MCExpr *Imm = MCConstantExpr::create(SM.getImm(), getContext());
+  if (SM.getImm(KsError) || !Disp) {
+    const MCExpr *Imm = MCConstantExpr::create(SM.getImm(KsError), getContext());
     if (Disp)
       Disp = MCBinaryExpr::createAdd(Disp, Imm, getContext());
     else
@@ -1467,6 +1526,7 @@ X86AsmParser::ParseIntelBracExpression(unsigned SegReg, SMLoc Start,
 
   int BaseReg = SM.getBaseReg();
   int IndexReg = SM.getIndexReg();
+  //printf("--- BaseReg = %u, IndexReg = %u, SegReg = %u\n", BaseReg, IndexReg, SegReg);
   int Scale = SM.getScale();
   if (!isParsingInlineAsm()) {
     // handle [-42]
@@ -1542,7 +1602,8 @@ bool X86AsmParser::ParseIntelIdentifier(const MCExpr *&Val,
 /// \brief Parse intel style segment override.
 std::unique_ptr<X86Operand>
 X86AsmParser::ParseIntelSegmentOverride(unsigned SegReg, SMLoc Start,
-                                        unsigned Size) {
+                                        unsigned Size, unsigned int &KsError)
+{
   MCAsmParser &Parser = getParser();
   assert(SegReg != 0 && "Tried to parse a segment override without a segment!");
   const AsmToken &Tok = Parser.getTok(); // Eat colon.
@@ -1570,7 +1631,7 @@ X86AsmParser::ParseIntelSegmentOverride(unsigned SegReg, SMLoc Start,
   }
 
   if (getLexer().is(AsmToken::LBrac))
-    return ParseIntelBracExpression(SegReg, Start, ImmDisp, Size);
+    return ParseIntelBracExpression(SegReg, Start, ImmDisp, Size, KsError);
 
   const MCExpr *Val;
   SMLoc End;
@@ -1628,9 +1689,10 @@ X86AsmParser::ParseRoundingModeOp(SMLoc Start, SMLoc End) {
   return ErrorOperand(Tok.getLoc(), "unknown token in expression");
 }
 /// ParseIntelMemOperand - Parse intel style memory operand.
-std::unique_ptr<X86Operand> X86AsmParser::ParseIntelMemOperand(int64_t ImmDisp,
+std::unique_ptr<X86Operand> X86AsmParser::ParseIntelMemOperand(StringRef Mnem,
+                                                               int64_t ImmDisp,
                                                                SMLoc Start,
-                                                               unsigned Size)
+                                                               unsigned Size, unsigned int &KsError)
 {
   MCAsmParser &Parser = getParser();
   const AsmToken &Tok = Parser.getTok();
@@ -1638,55 +1700,21 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelMemOperand(int64_t ImmDisp,
 
   // Parse ImmDisp [ BaseReg + Scale*IndexReg + Disp ].
   if (getLexer().is(AsmToken::LBrac))
-    return ParseIntelBracExpression(/*SegReg=*/0, Start, ImmDisp, Size);
+    return ParseIntelBracExpression(/*SegReg=*/0, Start, ImmDisp, Size, KsError);
   assert(ImmDisp == 0);
 
   const MCExpr *Val;
-  if (!isParsingInlineAsm()) {
-    if (getParser().parsePrimaryExpr(Val, End))
-      return ErrorOperand(Tok.getLoc(), "unknown token in expression");
+  if (Mnem.str() == "call" || Mnem.str().c_str()[0] == 'j') {
+      // CALL/JMP/Jxx <immediate> (Keystone)
+      if (getParser().parsePrimaryExpr(Val, End))
+          return ErrorOperand(Tok.getLoc(), "unknown token in expression");
 
-    return X86Operand::CreateMem(getPointerWidth(), Val, Start, End, Size);
+      return X86Operand::CreateMem(0, Val, Start, End, Size);
+  } else {
+    if (getParser().parseExpression(Val, End))
+      return nullptr;
+    return X86Operand::CreateImm(Val, Start, End);
   }
-
-  InlineAsmIdentifierInfo Info;
-  StringRef Identifier = Tok.getString();
-  if (ParseIntelIdentifier(Val, Identifier, Info,
-                           /*Unevaluated=*/false, End))
-    return nullptr;
-
-  if (!getLexer().is(AsmToken::LBrac))
-    return CreateMemForInlineAsm(/*SegReg=*/0, Val, /*BaseReg=*/0, /*IndexReg=*/0,
-                                 /*Scale=*/1, Start, End, Size, Identifier, Info);
-
-  Parser.Lex(); // Eat '['
-
-  // Parse Identifier [ ImmDisp ]
-  IntelExprStateMachine SM(/*ImmDisp=*/0, /*StopOnLBrac=*/true,
-                           /*AddImmPrefix=*/false);
-  if (ParseIntelExpression(SM, End))
-    return nullptr;
-
-  if (SM.getSym()) {
-    Error(Start, "cannot use more than one symbol in memory operand");
-    return nullptr;
-  }
-  if (SM.getBaseReg()) {
-    Error(Start, "cannot use base register with variable reference");
-    return nullptr;
-  }
-  if (SM.getIndexReg()) {
-    Error(Start, "cannot use index register with variable reference");
-    return nullptr;
-  }
-
-  const MCExpr *Disp = MCConstantExpr::create(SM.getImm(), getContext());
-  // BaseReg is non-zero to avoid assertions.  In the context of inline asm,
-  // we're pointing to a local variable in memory, so the base register is
-  // really the frame or stack pointer.
-  return X86Operand::CreateMem(getPointerWidth(), /*SegReg=*/0, Disp,
-                               /*BaseReg=*/1, /*IndexReg=*/0, /*Scale=*/1,
-                               Start, End, Size, Identifier, Info.OpDecl);
 }
 
 /// Parse the '.' operator.
@@ -1807,27 +1835,30 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperator(unsigned OpKind) {
   return X86Operand::CreateImm(Imm, Start, End);
 }
 
-std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand(StringRef Mnem)
+std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand(StringRef Mnem, unsigned int &KsError)
 {
   MCAsmParser &Parser = getParser();
   const AsmToken &Tok = Parser.getTok();
   SMLoc Start, End;
 
+  //printf(">> ParseIntelOperand::Tok = %s\n", Tok.getString().str().c_str());
+
   // Offset, length, type and size operators.
   if (isParsingInlineAsm()) {
-    StringRef AsmTokStr = Tok.getString();
-    if (AsmTokStr == "offset" || AsmTokStr == "OFFSET")
+    std::string AsmTokStr = Tok.getString().lower();
+    if (AsmTokStr == "offset")
       return ParseIntelOffsetOfOperator();
-    if (AsmTokStr == "length" || AsmTokStr == "LENGTH")
+    if (AsmTokStr == "length")
       return ParseIntelOperator(IOK_LENGTH);
-    if (AsmTokStr == "size" || AsmTokStr == "SIZE")
+    if (AsmTokStr == "size")
       return ParseIntelOperator(IOK_SIZE);
-    if (AsmTokStr == "type" || AsmTokStr == "TYPE")
+    if (AsmTokStr == "type")
       return ParseIntelOperator(IOK_TYPE);
   }
 
   bool PtrInOperand = false;
   unsigned Size = getIntelMemOperandSize(Tok.getString());
+  //printf(">> Intel Op Size = %u\n", Size);
   if (Size) {
     Parser.Lex(); // Eat operand size (e.g., byte, word).
     if (KsSyntax == KS_OPT_SYNTAX_NASM) {
@@ -1853,7 +1884,11 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand(StringRef Mnem)
     if (ParseIntelExpression(SM, End))
       return nullptr;
 
-    int64_t Imm = SM.getImm();
+    int64_t Imm = SM.getImm(KsError);
+    if (KsError) {
+      return nullptr;
+    }
+
     if (isParsingInlineAsm()) {
       unsigned Len = Tok.getLoc().getPointer() - Start.getPointer();
       if (StartTok.getString().size() == Len)
@@ -1873,11 +1908,11 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand(StringRef Mnem)
         return X86Operand::CreateMem(getPointerWidth(), SM.getSym(), Start, End,
                                      Size);
 
-      if (Mnem.str().c_str()[0] == 'j') {
-          // JMP <immediate>
+      if (Mnem.str() == "call" || Mnem.str().c_str()[0] == 'j') {
+          // CALL/JMP/Jxx <immediate> (Keystone)
           const MCExpr *Disp = MCConstantExpr::create(Imm, Parser.getContext());
-          return X86Operand::CreateMem(getPointerWidth(), 0, Disp, 0, 0, 1,
-                  Start, End);
+          return X86Operand::CreateMem(0, 0, Disp, 0, 0, 1,
+                  Start, End, 0);
       }
 
       const MCExpr *ImmExpr = MCConstantExpr::create(Imm, getContext());
@@ -1890,7 +1925,7 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand(StringRef Mnem)
                           "before bracketed expr.");
 
     // Parse ImmDisp [ BaseReg + Scale*IndexReg + Disp ].
-    return ParseIntelMemOperand(Imm, Start, Size);
+    return ParseIntelMemOperand(Mnem, Imm, Start, Size, KsError);
   }
 
   // rounding mode token
@@ -1914,11 +1949,11 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand(StringRef Mnem)
       return X86Operand::CreateReg(RegNo, Start, End);
     }
     
-    return ParseIntelSegmentOverride(/*SegReg=*/RegNo, Start, Size);
+    return ParseIntelSegmentOverride(/*SegReg=*/RegNo, Start, Size, KsError);
   }
 
   // Memory operand.
-  return ParseIntelMemOperand(/*Disp=*/0, Start, Size);
+  return ParseIntelMemOperand(Mnem, /*Disp=*/0, Start, Size, KsError);
 }
 
 std::unique_ptr<X86Operand> X86AsmParser::ParseATTOperand()
@@ -2010,8 +2045,9 @@ bool X86AsmParser::HandleAVX512Operand(OperandVector &Operands,
         return true;
       } else {
         // Parse mask register {%k1}
+        unsigned int KsError;
         Operands.push_back(X86Operand::CreateToken("{", consumedToken));
-        if (std::unique_ptr<X86Operand> Op = ParseOperand("")) {
+        if (std::unique_ptr<X86Operand> Op = ParseOperand("", KsError)) {
           Operands.push_back(std::move(Op));
           if (!getLexer().is(AsmToken::RCurly))
             return !ErrorAndEatStatement(getLexer().getLoc(),
@@ -2215,6 +2251,7 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseMemOperand(unsigned SegReg,
 }
 
 // TODO: this also output error??
+// return true on error
 bool X86AsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
                                     SMLoc NameLoc, OperandVector &Operands, unsigned int &ErrorCode)
 {
@@ -2371,7 +2408,7 @@ bool X86AsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
 
     // Read the operands.
     while(1) {
-      if (std::unique_ptr<X86Operand> Op = ParseOperand(Name)) {
+      if (std::unique_ptr<X86Operand> Op = ParseOperand(Name, ErrorCode)) {
         Operands.push_back(std::move(Op));
         if (!HandleAVX512Operand(Operands, *Operands.back()))
           return true;
@@ -2386,9 +2423,12 @@ bool X86AsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
         break;
      }
 
-    if (getLexer().isNot(AsmToken::EndOfStatement) && getLexer().isNot(AsmToken::Eof))
-      return ErrorAndEatStatement(getLexer().getLoc(),
-                                  "unexpected token in argument list");
+    if (getLexer().isNot(AsmToken::EndOfStatement) && getLexer().isNot(AsmToken::Eof)) {
+      //return ErrorAndEatStatement(getLexer().getLoc(),
+      //                            "unexpected token in argument list");
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
+      return true;
+    }
    }
 
   // Consume the EndOfStatement or the prefix separator Slash
@@ -2522,6 +2562,7 @@ bool X86AsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
 
   // Check if we encountered an error for one the string insturctions
   if (HadVerifyError) {
+    ErrorCode = KS_ERR_ASM_X86_INVALIDOPERAND;
     return HadVerifyError;
   }
 
@@ -2620,9 +2661,9 @@ bool X86AsmParser::processInstruction(MCInst &Inst, const OperandVector &Ops) {
 static const char *getSubtargetFeatureName(uint64_t Val);
 
 void X86AsmParser::EmitInstruction(MCInst &Inst, OperandVector &Operands,
-                                   MCStreamer &Out) {
+                                   MCStreamer &Out, unsigned int &KsError) {
   Instrumentation->InstrumentAndEmitInstruction(Inst, Operands, getContext(),
-                                                MII, Out);
+                                                MII, Out, KsError);
 }
 
 bool X86AsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
@@ -2631,9 +2672,9 @@ bool X86AsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
                                            bool MatchingInlineAsm, unsigned int &ErrorCode, uint64_t &Address) {
   if (isParsingIntelSyntax())
     return MatchAndEmitIntelInstruction(IDLoc, Opcode, Operands, Out, ErrorInfo,
-                                        MatchingInlineAsm, ErrorCode);
+                                        MatchingInlineAsm, ErrorCode, Address);
   return MatchAndEmitATTInstruction(IDLoc, Opcode, Operands, Out, ErrorInfo,
-                                    MatchingInlineAsm, ErrorCode);
+                                    MatchingInlineAsm, ErrorCode, Address);
 }
 
 void X86AsmParser::MatchFPUWaitAlias(SMLoc IDLoc, X86Operand &Op,
@@ -2656,8 +2697,9 @@ void X86AsmParser::MatchFPUWaitAlias(SMLoc IDLoc, X86Operand &Op,
     MCInst Inst;
     Inst.setOpcode(X86::WAIT);
     Inst.setLoc(IDLoc);
+    unsigned int KsError = 0;
     if (!MatchingInlineAsm)
-      EmitInstruction(Inst, Operands, Out);
+      EmitInstruction(Inst, Operands, Out, KsError);
     Operands[0] = X86Operand::CreateToken(Repl, IDLoc);
   }
 }
@@ -2682,7 +2724,7 @@ bool X86AsmParser::MatchAndEmitATTInstruction(SMLoc IDLoc, unsigned &Opcode,
                                               OperandVector &Operands,
                                               MCStreamer &Out,
                                               uint64_t &ErrorInfo,
-                                              bool MatchingInlineAsm, unsigned int &ErrorCode)
+                                              bool MatchingInlineAsm, unsigned int &ErrorCode, uint64_t &Address)
 {
   assert(!Operands.empty() && "Unexpect empty operand list!");
   X86Operand &Op = static_cast<X86Operand &>(*Operands[0]);
@@ -2709,8 +2751,11 @@ bool X86AsmParser::MatchAndEmitATTInstruction(SMLoc IDLoc, unsigned &Opcode,
         ;
 
     Inst.setLoc(IDLoc);
-    if (!MatchingInlineAsm)
-      EmitInstruction(Inst, Operands, Out);
+    if (!MatchingInlineAsm) {
+      EmitInstruction(Inst, Operands, Out, ErrorCode);
+      if (ErrorCode)
+          return true;
+    }
     Opcode = Inst.getOpcode();
     return false;
   case Match_MissingFeature:
@@ -2766,8 +2811,11 @@ bool X86AsmParser::MatchAndEmitATTInstruction(SMLoc IDLoc, unsigned &Opcode,
       std::count(std::begin(Match), std::end(Match), Match_Success);
   if (NumSuccessfulMatches == 1) {
     Inst.setLoc(IDLoc);
-    if (!MatchingInlineAsm)
-      EmitInstruction(Inst, Operands, Out);
+    if (!MatchingInlineAsm) {
+      EmitInstruction(Inst, Operands, Out, ErrorCode);
+      if (ErrorCode)
+          return true;
+    }
     Opcode = Inst.getOpcode();
     return false;
   }
@@ -2874,7 +2922,7 @@ bool X86AsmParser::MatchAndEmitIntelInstruction(SMLoc IDLoc, unsigned &Opcode,
                                                 OperandVector &Operands,
                                                 MCStreamer &Out,
                                                 uint64_t &ErrorInfo,
-                                                bool MatchingInlineAsm, unsigned int &ErrorCode)
+                                                bool MatchingInlineAsm, unsigned int &ErrorCode, uint64_t &Address)
 {
   assert(!Operands.empty() && "Unexpect empty operand list!");
   X86Operand &Op = static_cast<X86Operand &>(*Operands[0]);
@@ -2885,7 +2933,7 @@ bool X86AsmParser::MatchAndEmitIntelInstruction(SMLoc IDLoc, unsigned &Opcode,
   // First, handle aliases that expand to multiple instructions.
   MatchFPUWaitAlias(IDLoc, Op, Operands, Out, MatchingInlineAsm);
 
-  MCInst Inst;
+  MCInst Inst(Address);
 
   // Find one unsized memory operand, if present.
   X86Operand *UnsizedMemOp = nullptr;
@@ -2973,9 +3021,13 @@ bool X86AsmParser::MatchAndEmitIntelInstruction(SMLoc IDLoc, unsigned &Opcode,
       while (processInstruction(Inst, Operands))
         ;
     Inst.setLoc(IDLoc);
-    if (!MatchingInlineAsm)
-      EmitInstruction(Inst, Operands, Out);
+    if (!MatchingInlineAsm) {
+      EmitInstruction(Inst, Operands, Out, ErrorCode);
+      if (ErrorCode)
+          return true;
+    }
     Opcode = Inst.getOpcode();
+    Address = Inst.getAddress(); // Keystone update address
     return false;
   } else if (NumSuccessfulMatches > 1) {
     assert(UnsizedMemOp &&

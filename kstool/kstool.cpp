@@ -212,8 +212,7 @@ int main(int argc, char **argv)
         printf("ERROR: failed on ks_asm() with count = %lu, error = '%s' (code = %u)\n", count, ks_strerror(ks_errno(ks)), ks_errno(ks));
     } else {
         size_t i;
-        printf("Kstool v%s for Keystone Engine (www.keystone-engine.org)\n\n", VERSION);
-
+        //printf("Kstool v%s for Keystone Engine (www.keystone-engine.org)\n\n", VERSION);
         printf("%s = [ ", assembly);
         for (i = 0; i < size; i++) {
             printf("%02x ", insn[i]);

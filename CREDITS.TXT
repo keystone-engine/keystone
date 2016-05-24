@@ -30,9 +30,14 @@ Peter Geissler
 Ingmar Steen (CED)
 Matteo Favaro
 Julien Legras
+Anton Kochkov
+Francisco Alonso
+rdmz
+practicalswift
 
 
 Contributors (in no particular order)
 =====================================
 
 Ingmar Steen: NodeJS binding.
+Sascha Schirra: Ruby binding.

@@ -720,7 +720,7 @@ public:
   }
 
   /// \brief Emit the given \p Instruction into the current section.
-  virtual void EmitInstruction(MCInst &Inst, const MCSubtargetInfo &STI);
+  virtual void EmitInstruction(MCInst &Inst, const MCSubtargetInfo &STI, unsigned int &KsError);
 
   /// \brief Set the bundle alignment mode from now on in the section.
   /// The argument is the power of 2 to which the alignment is set. The
@@ -742,9 +742,9 @@ public:
   void EmitRawText(const Twine &String);
 
   /// \brief Streamer specific finalization.
-  virtual void FinishImpl();
+  virtual unsigned int FinishImpl();
   /// \brief Finish emission of machine code.
-  void Finish();
+  unsigned int Finish();
 
   virtual bool mayHaveInstructions(MCSection &Sec) const { return true; }
 };

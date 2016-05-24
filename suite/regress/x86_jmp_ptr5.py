@@ -1,9 +1,8 @@
 #!/usr/bin/python
-# Nguyen Anh Quynh, 2016
 
 # Test 'jmp dword ptr [5]' with both X86 Intel & ATT syntax
 
-# Github issue: #5
+# Github issue: #6
 # Author: Nguyen Anh Quynh
 
 from keystone import *

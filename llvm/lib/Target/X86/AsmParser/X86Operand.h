@@ -276,8 +276,8 @@ struct X86Operand : public MCParsedAsmOperand {
   }
 
   bool isAbsMem() const {
-    return Kind == Memory && !getMemSegReg() && !getMemBaseReg() &&
-      !getMemIndexReg() && getMemScale() == 1;
+    return (Kind == Memory) && !getMemSegReg() && !getMemBaseReg() &&
+      !getMemIndexReg() && (getMemScale() == 1) && (Mem.ModeSize == 0 || Mem.Size == 0);
   }
   bool isAVX512RC() const{
       return isImm();
@@ -518,7 +518,7 @@ struct X86Operand : public MCParsedAsmOperand {
             void *OpDecl = nullptr) {
     // We should never just have a displacement, that should be parsed as an
     // absolute memory operand.
-    assert((SegReg || BaseReg || IndexReg) && "Invalid memory operand!");
+    // assert((SegReg || BaseReg || IndexReg) && "Invalid memory operand!");
 
     // The scale should always be one of {1,2,4,8}.
     assert(((Scale == 1 || Scale == 2 || Scale == 4 || Scale == 8)) &&

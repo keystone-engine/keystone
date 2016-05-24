@@ -22,6 +22,11 @@ For Windows, see [COMPILE-WINDOWS.md](COMPILE-WINDOWS.md)
         $ cd build
         $ ../make-share.sh
 
+   In the case you want to compile with all the debug information, replace the
+   last line with:
+
+        $ ../make-share.sh debug
+
    By default, this builds all architectures, which is: AArch64, ARM, Hexagon,
    Mips, PowerPC, Sparc, SystemZ & X86. To compile just some selected ones,
    pass a semicolon-separated list of targets to LLVM_TARGETS_TO_BUILD,
@@ -35,6 +40,11 @@ For Windows, see [COMPILE-WINDOWS.md](COMPILE-WINDOWS.md)
         $ mkdir build
         $ cd build
         $ ../make-lib.sh
+
+   In the case you want to compile with all the debug information, replace the
+   last line with:
+
+        $ ../make-lib.sh debug
 
    Like above, this builds all architectures. To compile just some selected ones,
    pass a semicolon-separated list of targets to LLVM_TARGETS_TO_BUILD,

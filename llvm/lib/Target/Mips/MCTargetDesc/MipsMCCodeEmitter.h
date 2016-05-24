@@ -53,7 +53,8 @@ public:
 
   void encodeInstruction(MCInst &MI, raw_ostream &OS,
                          SmallVectorImpl<MCFixup> &Fixups,
-                         const MCSubtargetInfo &STI) const override;
+                         const MCSubtargetInfo &STI,
+                         unsigned int &KsError) const override;
 
   // getBinaryCodeForInstr - TableGen'erated function for getting the
   // binary encoding for an instruction.

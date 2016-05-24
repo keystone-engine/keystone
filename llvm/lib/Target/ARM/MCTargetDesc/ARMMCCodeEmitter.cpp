@@ -436,7 +436,8 @@ public:
 
   void encodeInstruction(MCInst &MI, raw_ostream &OS,
                          SmallVectorImpl<MCFixup> &Fixups,
-                         const MCSubtargetInfo &STI) const override;
+                         const MCSubtargetInfo &STI,
+                         unsigned int &KsError) const override;
 };
 
 } // end anonymous namespace
@@ -1704,7 +1705,10 @@ getShiftRight64Imm(const MCInst &MI, unsigned Op,
 void ARMMCCodeEmitter::
 encodeInstruction(MCInst &MI, raw_ostream &OS,
                   SmallVectorImpl<MCFixup> &Fixups,
-                  const MCSubtargetInfo &STI) const {   // qq
+                  const MCSubtargetInfo &STI,
+                  unsigned int &KsError) const
+{
+  KsError = 0;
   // Pseudo instructions don't get encoded.
   const MCInstrDesc &Desc = MCII.get(MI.getOpcode());
   uint64_t TSFlags = Desc.TSFlags;

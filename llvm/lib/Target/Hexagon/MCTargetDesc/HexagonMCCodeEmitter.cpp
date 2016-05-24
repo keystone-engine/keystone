@@ -64,7 +64,10 @@ uint32_t HexagonMCCodeEmitter::parseBits(size_t Instruction, size_t Last,
 
 void HexagonMCCodeEmitter::encodeInstruction(MCInst &MI, raw_ostream &OS,
                                              SmallVectorImpl<MCFixup> &Fixups,
-                                             MCSubtargetInfo const &STI) const {
+                                             MCSubtargetInfo const &STI,
+                                             unsigned int &KsError) const
+{
+  KsError = 0;
   MCInst &HMB = const_cast<MCInst &>(MI);
 
   assert(HexagonMCInstrInfo::isBundle(HMB));

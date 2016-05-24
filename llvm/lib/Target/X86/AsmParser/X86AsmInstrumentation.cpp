@@ -101,13 +101,14 @@ X86AsmInstrumentation::~X86AsmInstrumentation() {}
 
 void X86AsmInstrumentation::InstrumentAndEmitInstruction(
     MCInst &Inst, OperandVector &Operands, MCContext &Ctx,
-    const MCInstrInfo &MII, MCStreamer &Out) {
-  EmitInstruction(Out, Inst);
+    const MCInstrInfo &MII, MCStreamer &Out, unsigned int &KsError) {
+  EmitInstruction(Out, Inst, KsError);
 }
 
 void X86AsmInstrumentation::EmitInstruction(MCStreamer &Out,
-                                            MCInst &Inst) {
-  Out.EmitInstruction(Inst, *STI);
+                                            MCInst &Inst,
+                                            unsigned int &KsError) {
+  Out.EmitInstruction(Inst, *STI, KsError);
 }
 
 unsigned X86AsmInstrumentation::GetFrameRegGeneric(const MCContext &Ctx,

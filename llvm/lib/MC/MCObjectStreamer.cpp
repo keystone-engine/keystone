@@ -35,8 +35,6 @@ MCObjectStreamer::MCObjectStreamer(MCContext &Context, MCAsmBackend &TAB,
       EmitEHFrame(true), EmitDebugFrame(false) {}
 
 MCObjectStreamer::~MCObjectStreamer() {
-  delete &Assembler->getBackend();
-  delete &Assembler->getEmitter();
   delete &Assembler->getWriter();
   delete Assembler;
 }
@@ -130,14 +128,15 @@ void MCObjectStreamer::EmitValueImpl(const MCExpr *Value, unsigned Size,
   MCDataFragment *DF = getOrCreateDataFragment();
   flushPendingLabels(DF, DF->getContents().size());
 
-  if (Value->getKind() == MCExpr::SymbolRef) {
-      // Keystone: record data in the same section
-      const MCSymbolRefExpr &SRE = cast<MCSymbolRefExpr>(*Value);
-      const StringRef Sym = SRE.getSymbol().getName();
-      DF->getContents().append(Sym.begin(), Sym.end());
-
-      return;
-  }
+  // This makes the symbol's name (label) end up literally in the output stream
+  //if (Value->getKind() == MCExpr::SymbolRef) {
+  //    // Keystone: record data in the same section
+  //    const MCSymbolRefExpr &SRE = cast<MCSymbolRefExpr>(*Value);
+  //    const StringRef Sym = SRE.getSymbol().getName();
+  //    DF->getContents().append(Sym.begin(), Sym.end());
+  //
+  //    return;
+  //}
 
   //MCCVLineEntry::Make(this);
   //MCDwarfLineEntry::Make(this, getCurrentSection().first);
@@ -239,8 +238,10 @@ bool MCObjectStreamer::mayHaveInstructions(MCSection &Sec) const {
 }
 
 void MCObjectStreamer::EmitInstruction(MCInst &Inst,
-                                       const MCSubtargetInfo &STI) {    // qq
-  MCStreamer::EmitInstruction(Inst, STI);
+                                       const MCSubtargetInfo &STI,
+                                       unsigned int &KsError)
+{
+  MCStreamer::EmitInstruction(Inst, STI, KsError);
 
   MCSection *Sec = getCurrentSectionOnly();
   Sec->setHasInstructions(true);
@@ -253,7 +254,7 @@ void MCObjectStreamer::EmitInstruction(MCInst &Inst,
   // If this instruction doesn't need relaxation, just emit it as data.
   MCAssembler &Assembler = getAssembler();
   if (!Assembler.getBackend().mayNeedRelaxation(Inst)) {
-    EmitInstToData(Inst, STI);
+    EmitInstToData(Inst, STI, KsError);
     return;
   }
 
@@ -268,7 +269,7 @@ void MCObjectStreamer::EmitInstruction(MCInst &Inst,
     getAssembler().getBackend().relaxInstruction(Inst, Relaxed);
     while (getAssembler().getBackend().mayNeedRelaxation(Relaxed))
       getAssembler().getBackend().relaxInstruction(Relaxed, Relaxed);
-    EmitInstToData(Relaxed, STI);
+    EmitInstToData(Relaxed, STI, KsError);
     return;
   }
 
@@ -288,8 +289,9 @@ void MCObjectStreamer::EmitInstToFragment(MCInst &Inst,
 
   SmallString<128> Code;
   raw_svector_ostream VecOS(Code);
+  unsigned int KsError;
   getAssembler().getEmitter().encodeInstruction(Inst, VecOS, IF->getFixups(),
-                                                STI);
+                                                STI, KsError);
   IF->getContents().append(Code.begin(), Code.end());
 }
 
@@ -502,7 +504,8 @@ void MCObjectStreamer::EmitFill(uint64_t NumBytes, uint8_t FillValue) {
   insert(new MCFillFragment(FillValue, NumBytes));
 }
 
-void MCObjectStreamer::FinishImpl() {
+unsigned int MCObjectStreamer::FinishImpl() {
+  unsigned int KsError = 0;
   // If we are generating dwarf for assembly source files dump out the sections.
   //if (getContext().getGenDwarfForAssembly())
   //  MCGenDwarfInfo::Emit(this);
@@ -511,5 +514,7 @@ void MCObjectStreamer::FinishImpl() {
   //MCDwarfLineTable::Emit(this, getAssembler().getDWARFLinetableParams());
 
   flushPendingLabels(nullptr);
-  getAssembler().Finish();
+  getAssembler().Finish(KsError);
+
+  return KsError;
 }

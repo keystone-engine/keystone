@@ -7,7 +7,7 @@ project(kstool)
 
 include_directories("../include")
 
-add_executable(kstool kstool.c)
+add_executable(kstool kstool.cpp)
 
 target_link_libraries(kstool keystone)
 

@@ -3,8 +3,6 @@
 
 # This tests the LDR Rd, =imm pseudo-instruction on ARM.
 
-# Fill in the information in the form below when you create a new regression
-
 # Github issue: #28
 # Author: Ingmar Steen
 

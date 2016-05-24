@@ -174,7 +174,8 @@ public:
 
   void encodeInstruction(MCInst &MI, raw_ostream &OS,
                          SmallVectorImpl<MCFixup> &Fixups,
-                         const MCSubtargetInfo &STI) const override;
+                         const MCSubtargetInfo &STI,
+                         unsigned int &KsError) const override;
 
   unsigned fixMulHigh(const MCInst &MI, unsigned EncodedValue,
                       const MCSubtargetInfo &STI) const;
@@ -573,7 +574,9 @@ unsigned AArch64MCCodeEmitter::fixMOVZ(const MCInst &MI, unsigned EncodedValue,
 
 void AArch64MCCodeEmitter::encodeInstruction(MCInst &MI, raw_ostream &OS,
                                              SmallVectorImpl<MCFixup> &Fixups,
-                                             const MCSubtargetInfo &STI) const {
+                                             const MCSubtargetInfo &STI,
+                                             unsigned int &KsError) const {
+  KsError = 0;
   if (MI.getOpcode() == AArch64::TLSDESCCALL) {
     // This is a directive which applies an R_AARCH64_TLSDESC_CALL to the
     // following (BLR) instruction. It doesn't emit any code itself so it

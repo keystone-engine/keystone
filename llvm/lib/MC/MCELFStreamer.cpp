@@ -91,7 +91,6 @@ void MCELFStreamer::mergeFragment(MCDataFragment *DF,
 void MCELFStreamer::InitSections(bool NoExecStack) {
   MCContext &Ctx = getContext();
   SwitchSection(Ctx.getObjectFileInfo()->getTextSection());
-  EmitCodeAlignment(4);
 
   if (NoExecStack)
     SwitchSection(Ctx.getAsmInfo()->getNonexecutableStackSection(Ctx));
@@ -473,12 +472,16 @@ void MCELFStreamer::EmitInstToFragment(MCInst &Inst,
 }
 
 void MCELFStreamer::EmitInstToData(MCInst &Inst,
-                                   const MCSubtargetInfo &STI) {
+                                   const MCSubtargetInfo &STI,
+                                   unsigned int &KsError)
+{
   MCAssembler &Assembler = getAssembler();
   SmallVector<MCFixup, 4> Fixups;
   SmallString<256> Code;
   raw_svector_ostream VecOS(Code);
-  Assembler.getEmitter().encodeInstruction(Inst, VecOS, Fixups, STI);
+  Assembler.getEmitter().encodeInstruction(Inst, VecOS, Fixups, STI, KsError);
+  if (KsError)
+      return;
 
   for (unsigned i = 0, e = Fixups.size(); i != e; ++i)
     fixSymbolsInTLSFixups(Fixups[i].getValue());
@@ -623,14 +626,14 @@ void MCELFStreamer::EmitBundleUnlock() {
     Sec.setBundleLockState(MCSection::NotBundleLocked);
 }
 
-void MCELFStreamer::FinishImpl() {
+unsigned int MCELFStreamer::FinishImpl() {
   // Ensure the last section gets aligned if necessary.
   MCSection *CurSection = getCurrentSectionOnly();
   setSectionAlignmentForBundling(getAssembler(), CurSection);
 
   EmitFrames(nullptr);
 
-  this->MCObjectStreamer::FinishImpl();
+  return this->MCObjectStreamer::FinishImpl();
 }
 
 MCStreamer *llvm::createELFStreamer(MCContext &Context, MCAsmBackend &MAB,

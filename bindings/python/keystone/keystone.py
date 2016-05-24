@@ -40,6 +40,7 @@ if _found == False:
     # try loading from default paths
     for _lib in _all_libs:
         try:
+            #print(">> 1: Trying to load %s" %_lib);
             _ks = cdll.LoadLibrary(_lib)
             _found = True
             break
@@ -55,8 +56,10 @@ if _found == False:
                 for dll in _all_windows_dlls:    # load all the rest DLLs first
                     _lib_file = join(_lib_path, 'keystone', dll)
                     if exists(_lib_file):
+                        #print(">> 2: Trying to load %s" %_lib_file);
                         cdll.LoadLibrary(_lib_file)
             _lib_file = join(_lib_path, 'keystone', _lib)
+            #print(">> 2: Trying to load %s" %_lib_file);
             _ks = cdll.LoadLibrary(_lib_file)
             _found = True
             break
@@ -70,7 +73,7 @@ if (_found == False) and (system() == 'Darwin'):
     for _lib in _all_libs:
         try:
             _lib_file = join(_lib_path, _lib)
-            # print "Trying to load:", _lib_file
+            #print(">> 3: Trying to load %s" %_lib_file);
             _ks = cdll.LoadLibrary(_lib_file)
             _found = True
             break

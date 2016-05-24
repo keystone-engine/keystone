@@ -1,9 +1,6 @@
 #!/usr/bin/python
-# Nguyen Anh Quynh, 2016
 
 # This tests alias instructions of MOV RDI, <big-int-numbers>
-
-# Fill in the information in the form below when you create a new regression
 
 # Github issue: #12
 # Author: Nguyen Anh Quynh

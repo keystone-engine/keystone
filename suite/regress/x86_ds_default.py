@@ -1,7 +1,6 @@
 #!/usr/bin/python
-# Nguyen Anh Quynh, 2016
 
-# Fill in the information in the form below when you create a new regression
+# Test to confirm that DS prefix is not emitted for data access
 
 # Github issue: #9
 # Author: Nguyen Anh Quynh
