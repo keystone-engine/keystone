@@ -15,7 +15,7 @@ def printTest(x64, ip, expectedData, asm, data):
     sys.stdout.write("Actual   (%.2d) " % len(data))
     for i in range(0, len(data)):
         sys.stdout.write("%02X " % data[i])
-    print("")
+    print("\n")
 
 def runTest(n, x64, ip, expectedData, asm):
     global successCount
