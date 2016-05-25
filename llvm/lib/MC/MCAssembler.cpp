@@ -207,14 +207,13 @@ bool MCAssembler::evaluateFixup(const MCAsmLayout &Layout,
       Value -= Layout.getSymbolOffset(Sym);
   }
 
-
   bool ShouldAlignPC = Backend.getFixupKindInfo(Fixup.getKind()).Flags &
                          MCFixupKindInfo::FKF_IsAlignedDownTo32Bits;
   assert((ShouldAlignPC ? IsPCRel : true) &&
     "FKF_IsAlignedDownTo32Bits is only allowed on PC-relative fixups!");
 
   if (IsPCRel) {
-    uint32_t Offset = Layout.getFragmentOffset(DF) + Fixup.getOffset();
+    uint64_t Offset = Layout.getFragmentOffset(DF) + Fixup.getOffset();
 
     // A number of ARM fixups in Thumb mode require that the effective PC
     // address be determined as the 32-bit aligned version of the actual offset.
@@ -773,7 +772,8 @@ bool MCAssembler::relaxDwarfCallFrameFragment(MCAsmLayout &Layout,
   return false;
 }
 
-bool MCAssembler::layoutSectionOnce(MCAsmLayout &Layout, MCSection &Sec) {
+bool MCAssembler::layoutSectionOnce(MCAsmLayout &Layout, MCSection &Sec)
+{
   // Holds the first fragment which needed relaxing during this layout. It will
   // remain NULL if none were relaxed.
   // When a fragment is relaxed, all the fragments following it should get
@@ -815,7 +815,8 @@ bool MCAssembler::layoutSectionOnce(MCAsmLayout &Layout, MCSection &Sec) {
   return false;
 }
 
-bool MCAssembler::layoutOnce(MCAsmLayout &Layout) {
+bool MCAssembler::layoutOnce(MCAsmLayout &Layout)
+{
   bool WasRelaxed = false;
   for (iterator it = begin(), ie = end(); it != ie; ++it) {
     MCSection &Sec = *it;

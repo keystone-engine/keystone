@@ -278,7 +278,8 @@ void MCObjectStreamer::EmitInstruction(MCInst &Inst,
 }
 
 void MCObjectStreamer::EmitInstToFragment(MCInst &Inst,
-                                          const MCSubtargetInfo &STI) {
+                                          const MCSubtargetInfo &STI)
+{
   if (getAssembler().getRelaxAll() && getAssembler().isBundlingEnabled())
     llvm_unreachable("All instructions should have already been relaxed");
 
