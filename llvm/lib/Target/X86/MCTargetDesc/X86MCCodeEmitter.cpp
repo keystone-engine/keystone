@@ -1174,8 +1174,10 @@ void X86MCCodeEmitter::EmitOpcodePrefix(uint64_t TSFlags, unsigned &CurByte,
 {
   // Emit the operand size opcode prefix as needed.
   if ((TSFlags & X86II::OpSizeMask) == (is16BitMode(STI) ? X86II::OpSize32
-                                                         : X86II::OpSize16))
-    EmitByte(0x66, CurByte, OS);
+                                                         : X86II::OpSize16)) {
+    if (MI.getOpcode() != X86::MOV16sm)
+        EmitByte(0x66, CurByte, OS);
+  }
 
   // Emit the LOCK opcode prefix.
   if (TSFlags & X86II::LOCK)
