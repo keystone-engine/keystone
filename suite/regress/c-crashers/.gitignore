@@ -1,14 +1,3 @@
-crash-01-empty-tombstone-value-shouldnt-be-inserted-into-map
-crash-02-index-lt-size-failed
-crash-03-invalid-index
-crash-04-readcount-not-equal-to-one
-crash-05-normal-symbols-cannot-be-unnamed
-crash-06-exponent-has-no-digits-in-apfloat-line-126
-crash-07-exponent-has-no-digits-in-apfloat-line-131
-crash-08-invalid-character-in-exponent-absexponent-case
-crash-09-invalid-character-in-exponent-value-case
-crash-10-stringref-cannot-be-built-from-a-null-argument
-crash-11-elfobjectwriter-should-not-have-constructed-this
-crash-12-cannot-set-a-variable-that-has-already-been-used
-crash-13-hexagon-mc-code-emitter-mk-is-not-equal-to-symbolref
-
+!Makefile
+!*.c
+*
