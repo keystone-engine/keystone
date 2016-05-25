@@ -1042,14 +1042,15 @@ void X86MCCodeEmitter::EmitVEXOpcodePrefix(uint64_t TSFlags, unsigned &CurByte,
 /// REX prefix which specifies 1) 64-bit instructions, 2) non-default operand
 /// size, and 3) use of X86-64 extended registers.
 static unsigned DetermineREXPrefix(const MCInst &MI, uint64_t TSFlags,
-                                   const MCInstrDesc &Desc) {
+                                   const MCInstrDesc &Desc)
+{
   unsigned REX = 0;
   bool UsesHighByteReg = false;
 
+  if (MI.getNumOperands() == 0) return REX;
+
   if (TSFlags & X86II::REX_W)
     REX |= 1 << 3; // set REX.W
-
-  if (MI.getNumOperands() == 0) return REX;
 
   unsigned NumOps = MI.getNumOperands();
   // FIXME: MCInst should explicitize the two-addrness.
