@@ -753,16 +753,16 @@ private:
                             std::unique_ptr<llvm::MCParsedAsmOperand> &&Dst);
   bool VerifyAndAdjustOperands(OperandVector &OrigOperands,
                                OperandVector &FinalOperands);
-  std::unique_ptr<X86Operand> ParseOperand(StringRef Mnem, unsigned int &KsError);
+  std::unique_ptr<X86Operand> ParseOperand(std::string Mnem, unsigned int &KsError);
   std::unique_ptr<X86Operand> ParseATTOperand();
-  std::unique_ptr<X86Operand> ParseIntelOperand(StringRef Mnem, unsigned int &KsError);
+  std::unique_ptr<X86Operand> ParseIntelOperand(std::string Mnem, unsigned int &KsError);
   std::unique_ptr<X86Operand> ParseIntelOffsetOfOperator();
   bool ParseIntelDotOperator(const MCExpr *Disp, const MCExpr *&NewDisp);
   std::unique_ptr<X86Operand> ParseIntelOperator(unsigned OpKind);
   std::unique_ptr<X86Operand>
   ParseIntelSegmentOverride(unsigned SegReg, SMLoc Start, unsigned Size, unsigned int &KsError);
   std::unique_ptr<X86Operand>
-  ParseIntelMemOperand(StringRef Mnem, int64_t ImmDisp, SMLoc StartLoc, unsigned Size, unsigned int &KsError);
+  ParseIntelMemOperand(std::string Mnem, int64_t ImmDisp, SMLoc StartLoc, unsigned Size, unsigned int &KsError);
   std::unique_ptr<X86Operand> ParseRoundingModeOp(SMLoc Start, SMLoc End);
   bool ParseIntelExpression(IntelExprStateMachine &SM, SMLoc &End);
   std::unique_ptr<X86Operand> ParseIntelBracExpression(unsigned SegReg,
@@ -1194,7 +1194,7 @@ bool X86AsmParser::VerifyAndAdjustOperands(OperandVector &OrigOperands,
   return false;
 }
 
-std::unique_ptr<X86Operand> X86AsmParser::ParseOperand(StringRef Mnem, unsigned int &KsError) {
+std::unique_ptr<X86Operand> X86AsmParser::ParseOperand(std::string Mnem, unsigned int &KsError) {
   if (isParsingIntelSyntax())
     return ParseIntelOperand(Mnem, KsError);
   return ParseATTOperand();
@@ -1692,7 +1692,7 @@ X86AsmParser::ParseRoundingModeOp(SMLoc Start, SMLoc End) {
   return ErrorOperand(Tok.getLoc(), "unknown token in expression");
 }
 /// ParseIntelMemOperand - Parse intel style memory operand.
-std::unique_ptr<X86Operand> X86AsmParser::ParseIntelMemOperand(StringRef Mnem,
+std::unique_ptr<X86Operand> X86AsmParser::ParseIntelMemOperand(std::string Mnem,
                                                                int64_t ImmDisp,
                                                                SMLoc Start,
                                                                unsigned Size, unsigned int &KsError)
@@ -1707,7 +1707,7 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelMemOperand(StringRef Mnem,
   assert(ImmDisp == 0);
 
   const MCExpr *Val;
-  if (Mnem.str() == "call" || Mnem.str().c_str()[0] == 'j') {
+  if (Mnem == "call" || Mnem.c_str()[0] == 'j') {
       // CALL/JMP/Jxx <immediate> (Keystone)
       if (getParser().parsePrimaryExpr(Val, End))
           return ErrorOperand(Tok.getLoc(), "unknown token in expression");
@@ -1838,7 +1838,7 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperator(unsigned OpKind) {
   return X86Operand::CreateImm(Imm, Start, End);
 }
 
-std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand(StringRef Mnem, unsigned int &KsError)
+std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand(std::string Mnem, unsigned int &KsError)
 {
   MCAsmParser &Parser = getParser();
   const AsmToken &Tok = Parser.getTok();
@@ -1913,7 +1913,8 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand(StringRef Mnem, unsi
         return X86Operand::CreateMem(getPointerWidth(), SM.getSym(), Start, End,
                                      Size);
 
-      if (Mnem.str() == "call" || Mnem.str().c_str()[0] == 'j') {
+      if (Mnem == "call" || Mnem == "loop" || Mnem == "loope" ||
+              Mnem == "loopne" || Mnem.c_str()[0] == 'j') {
           // CALL/JMP/Jxx <immediate> (Keystone)
           const MCExpr *Disp = MCConstantExpr::create(Imm, Parser.getContext());
           return X86Operand::CreateMem(0, 0, Disp, 0, 0, 1,
@@ -2407,21 +2408,20 @@ bool X86AsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
     Name == "repne" || Name == "repnz" ||
     Name == "rex64" || Name == "data16";
 
+  push32 = false;
+
   // This does the actual operand parsing.  Don't parse any more if we have a
   // prefix juxtaposed with an operation like "lock incl 4(%rax)", because we
   // just want to parse the "lock" as the first instruction and the "incl" as
   // the next one.
   if (getLexer().isNot(AsmToken::EndOfStatement) && !isPrefix) {
-
     // Parse '*' modifier.
     if (getLexer().is(AsmToken::Star))
       Operands.push_back(X86Operand::CreateToken("*", consumeToken()));
 
-    push32 = false;
-
     // Read the operands.
     while(1) {
-      if (std::unique_ptr<X86Operand> Op = ParseOperand(Name, ErrorCode)) {
+      if (std::unique_ptr<X86Operand> Op = ParseOperand(Name.str(), ErrorCode)) {
         Operands.push_back(std::move(Op));
         if (!HandleAVX512Operand(Operands, *Operands.back()))
           return true;
