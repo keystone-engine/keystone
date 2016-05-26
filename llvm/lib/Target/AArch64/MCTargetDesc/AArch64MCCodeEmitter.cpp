@@ -575,8 +575,10 @@ unsigned AArch64MCCodeEmitter::fixMOVZ(const MCInst &MI, unsigned EncodedValue,
 void AArch64MCCodeEmitter::encodeInstruction(MCInst &MI, raw_ostream &OS,
                                              SmallVectorImpl<MCFixup> &Fixups,
                                              const MCSubtargetInfo &STI,
-                                             unsigned int &KsError) const {
+                                             unsigned int &KsError) const
+{
   KsError = 0;
+#if 0
   if (MI.getOpcode() == AArch64::TLSDESCCALL) {
     // This is a directive which applies an R_AARCH64_TLSDESC_CALL to the
     // following (BLR) instruction. It doesn't emit any code itself so it
@@ -585,9 +587,13 @@ void AArch64MCCodeEmitter::encodeInstruction(MCInst &MI, raw_ostream &OS,
     Fixups.push_back(MCFixup::create(0, MI.getOperand(0).getExpr(), Fixup));
     return;
   }
+#endif
 
   uint64_t Binary = getBinaryCodeForInstr(MI, Fixups, STI);
   support::endian::Writer<support::little>(OS).write<uint32_t>(Binary);
+
+  // Keystone: update Inst.Address to point to the next instruction
+  MI.setAddress(MI.getAddress() + 4);
 }
 
 unsigned

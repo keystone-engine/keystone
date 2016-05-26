@@ -2930,7 +2930,8 @@ bool AArch64AsmParser::parseRegister(OperandVector &Operands) {
   return false;
 }
 
-bool AArch64AsmParser::parseSymbolicImmVal(const MCExpr *&ImmVal) {
+bool AArch64AsmParser::parseSymbolicImmVal(const MCExpr *&ImmVal)
+{
   MCAsmParser &Parser = getParser();
   bool HasELFModifier = false;
   AArch64MCExpr::VariantKind RefKind;
@@ -3154,7 +3155,8 @@ AArch64AsmParser::tryParseGPR64sp0Operand(OperandVector &Operands) {
 /// parseOperand - Parse a arm instruction operand.  For now this parses the
 /// operand regardless of the mnemonic.
 bool AArch64AsmParser::parseOperand(OperandVector &Operands, bool isCondCode,
-                                  bool invertCondCode) {
+                                  bool invertCondCode)
+{
   MCAsmParser &Parser = getParser();
   // Check if the current operand has a custom associated parser, if so, try to
   // custom parse the operand, or fallback to the general approach.
@@ -3320,7 +3322,8 @@ bool AArch64AsmParser::parseOperand(OperandVector &Operands, bool isCondCode,
 /// operands.
 bool AArch64AsmParser::ParseInstruction(ParseInstructionInfo &Info,
                                         StringRef Name, SMLoc NameLoc,
-                                        OperandVector &Operands, unsigned int &ErrorCode) {
+                                        OperandVector &Operands, unsigned int &ErrorCode)
+{
   MCAsmParser &Parser = getParser();
   Name = StringSwitch<StringRef>(Name.lower())
              .Case("beq", "b.eq")
@@ -4061,7 +4064,7 @@ bool AArch64AsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
     }
   }
 
-  MCInst Inst;
+  MCInst Inst(Address);
   // First try to match against the secondary set of tables containing the
   // short-form NEON instructions (e.g. "fadd.2s v0, v1, v2").
   unsigned MatchResult =
@@ -4104,7 +4107,11 @@ bool AArch64AsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
 
     Inst.setLoc(IDLoc);
     Out.EmitInstruction(Inst, getSTI(), ErrorCode);
-    return (ErrorCode != 0);
+    if (ErrorCode == 0) {
+        Address = Inst.getAddress(); // Keystone update address
+        return false;
+    } else
+        return true;
   }
   case Match_MissingFeature: {
     assert(ErrorInfo && "Unknown missing feature!");
