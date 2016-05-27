@@ -2,6 +2,8 @@
 // By Nguyen Anh Quynh, 2016
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 #include <keystone/keystone.h>
 
@@ -10,7 +12,7 @@
 static void usage(char *prog)
 {
     printf("Kstool v%s for Keystone Assembler Engine (www.keystone-engine.org)\nBy Nguyen Anh Quynh, 2016\n\n", VERSION);
-    printf("Syntax: %s <arch+mode> <assembly-string>\n", prog);
+    printf("Syntax: %s <arch+mode> <assembly-string> or cat <asmfile> | %s <arch+mode> \n", prog, prog);
     printf("\nThe following <arch+mode> options are supported:\n");
 
     if (ks_arch_supported(KS_ARCH_X86)) {
@@ -69,18 +71,47 @@ int main(int argc, char **argv)
 {
     ks_engine *ks;
     ks_err err = KS_ERR_ARCH;
-    char *mode, *assembly;
+    char *mode, *assembly = NULL;
+    char *input = NULL;
     size_t count;
     unsigned char *insn;
     size_t size;
 
-    if (argc != 3) {
+#ifndef LLVM_ON_WIN32
+    if (argc == 2) {
+        mode = argv[1];
+
+        int flags;
+        if (-1 == (flags = fcntl(STDIN_FILENO, F_GETFL, 0)))
+            flags = 0;
+
+        fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
+
+        size_t index = 0;
+
+        char buf[1024];
+        while( fgets(buf, sizeof(buf), stdin) ) {
+            input = (char*)realloc(assembly, index + strlen(buf));
+            if (!input) {
+                printf("Failed to allocate memory.");
+                return 1;
+            }
+
+            memcpy(&input[index], buf, strlen(buf));
+            index += strlen(buf);
+        }
+
+        assembly = input;
+    } else if (argc == 3) {
+#else
+    if (argc == 3) {
+#endif
+        mode = argv[1];
+        assembly = argv[2];
+    } else {
         usage(argv[0]);
         return -1;
     }
-
-    mode = argv[1];
-    assembly = argv[2];
 
     if (!strcmp(mode, "x16")) {
         err = ks_open(KS_ARCH_X86, KS_MODE_16, &ks);
@@ -226,6 +257,8 @@ int main(int argc, char **argv)
 
     // close Keystone instance when done
     ks_close(ks);
+
+    free(input);
 
     return 0;
 }
