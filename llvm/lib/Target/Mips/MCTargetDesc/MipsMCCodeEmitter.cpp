@@ -213,6 +213,9 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
     llvm_unreachable("Desc.getSize() returns 0");
 
   EmitInstruction(Binary, Size, STI, OS);
+
+  // Keystone: update Inst.Address to point to the next instruction
+  MI.setAddress(MI.getAddress() + Size);
 }
 
 /// getBranchTargetOpValue - Return binary encoding of the branch
@@ -226,7 +229,7 @@ getBranchTargetOpValue(const MCInst &MI, unsigned OpNo,
   const MCOperand &MO = MI.getOperand(OpNo);
 
   // If the destination is an immediate, divide by 4.
-  if (MO.isImm()) return MO.getImm() >> 2;
+  if (MO.isImm()) return (MO.getImm() - MI.getAddress() - 4) >> 2;
 
   assert(MO.isExpr() &&
          "getBranchTargetOpValue expects only expressions or immediates");

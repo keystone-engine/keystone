@@ -3629,9 +3629,9 @@ bool MipsAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
                                             OperandVector &Operands,
                                             MCStreamer &Out,
                                             uint64_t &ErrorInfo,
-                                            bool MatchingInlineAsm, unsigned int &ErrorCode, uint64_t &Address) {
-
-  MCInst Inst;
+                                            bool MatchingInlineAsm, unsigned int &ErrorCode, uint64_t &Address)
+{
+  MCInst Inst(Address);
   SmallVector<MCInst, 8> Instructions;
   unsigned MatchResult =
       MatchInstructionImpl(Operands, Inst, ErrorInfo, MatchingInlineAsm);
@@ -3642,7 +3642,12 @@ bool MipsAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
       return true;
     for (unsigned i = 0; i < Instructions.size(); i++)
       Out.EmitInstruction(Instructions[i], getSTI(), ErrorCode);
-    return ErrorCode != 0;
+    if (ErrorCode == 0) {
+        Address = Inst.getAddress(); // Keystone update address
+        return false;
+    } else
+        return true;
+
   }
   case Match_MissingFeature:
     Error(IDLoc, "instruction requires a CPU feature not currently enabled");
