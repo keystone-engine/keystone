@@ -152,10 +152,7 @@ MCSymbol *MCContext::getOrCreateLSDASymbol(StringRef FuncName) {
 MCSymbol *MCContext::createSymbolImpl(const StringMapEntry<bool> *Name,
                                       bool IsTemporary) {
   if (MOFI) {
-    switch (MOFI->getObjectFileType()) {
-    case MCObjectFileInfo::IsELF:
-      return new (Name, *this) MCSymbolELF(Name, IsTemporary);
-    }
+    return new (Name, *this) MCSymbolELF(Name, IsTemporary);
   }
   return new (Name, *this) MCSymbol(MCSymbol::SymbolKindUnset, Name,
                                     IsTemporary);
