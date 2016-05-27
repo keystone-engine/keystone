@@ -136,6 +136,9 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
     OS << uint8_t(Bits >> ShiftValue);
     ShiftValue -= 8;
   }
+
+  // Keystone: update Inst.Address to point to the next instruction
+  MI.setAddress(MI.getAddress() + Size);
 }
 
 uint64_t SystemZMCCodeEmitter::

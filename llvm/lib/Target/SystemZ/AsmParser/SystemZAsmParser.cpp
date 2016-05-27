@@ -815,7 +815,7 @@ bool SystemZAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
                                                uint64_t &ErrorInfo,
                                                bool MatchingInlineAsm, unsigned int &ErrorCode, uint64_t &Address)
 {
-  MCInst Inst;
+  MCInst Inst(Address);
   unsigned MatchResult;
 
   MatchResult = MatchInstructionImpl(Operands, Inst, ErrorInfo,
@@ -824,7 +824,11 @@ bool SystemZAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
   case Match_Success:
     Inst.setLoc(IDLoc);
     Out.EmitInstruction(Inst, getSTI(), ErrorCode);
-    return (ErrorCode != 0);
+    if (ErrorCode == 0) {
+        Address = Inst.getAddress(); // Keystone update address
+        return false;
+    } else
+        return true;
 
   case Match_MissingFeature: {
 #if 0
@@ -889,7 +893,8 @@ SystemZAsmParser::parseAccessReg(OperandVector &Operands, unsigned int &ErrorCod
 
 SystemZAsmParser::OperandMatchResultTy
 SystemZAsmParser::parsePCRel(OperandVector &Operands, int64_t MinVal,
-                             int64_t MaxVal, bool AllowTLS) {
+                             int64_t MaxVal, bool AllowTLS)
+{
   MCContext &Ctx = getContext();
   MCStreamer &Out = getStreamer();
   const MCExpr *Expr;
