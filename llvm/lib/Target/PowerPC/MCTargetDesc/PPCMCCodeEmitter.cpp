@@ -130,6 +130,9 @@ public:
     default:
       llvm_unreachable ("Invalid instruction size");
     }
+
+    // Keystone: update Inst.Address to point to the next instruction
+    MI.setAddress(MI.getAddress() + Size);
   }
   
 };
@@ -147,7 +150,12 @@ getDirectBrEncoding(const MCInst &MI, unsigned OpNo,
                     SmallVectorImpl<MCFixup> &Fixups,
                     const MCSubtargetInfo &STI) const {
   const MCOperand &MO = MI.getOperand(OpNo);
-  if (MO.isReg() || MO.isImm()) return getMachineOpValue(MI, MO, Fixups, STI);
+
+  if (MO.isImm())
+      return (MO.getImm() * 4 - MI.getAddress()) / 4;
+
+  if (MO.isReg())
+      return getMachineOpValue(MI, MO, Fixups, STI);
   
   // Add a fixup for the branch target.
   Fixups.push_back(MCFixup::create(0, MO.getExpr(),
@@ -159,7 +167,12 @@ unsigned PPCMCCodeEmitter::getCondBrEncoding(const MCInst &MI, unsigned OpNo,
                                      SmallVectorImpl<MCFixup> &Fixups,
                                      const MCSubtargetInfo &STI) const {
   const MCOperand &MO = MI.getOperand(OpNo);
-  if (MO.isReg() || MO.isImm()) return getMachineOpValue(MI, MO, Fixups, STI);
+
+  if (MO.isImm())
+      return (MO.getImm() * 4 - MI.getAddress()) / 4;
+
+  if (MO.isReg())
+      return getMachineOpValue(MI, MO, Fixups, STI);
 
   // Add a fixup for the branch target.
   Fixups.push_back(MCFixup::create(0, MO.getExpr(),

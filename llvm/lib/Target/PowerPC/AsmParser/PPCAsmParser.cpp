@@ -1198,8 +1198,9 @@ void PPCAsmParser::ProcessInstruction(MCInst &Inst,
 bool PPCAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
                                            OperandVector &Operands,
                                            MCStreamer &Out, uint64_t &ErrorInfo,
-                                           bool MatchingInlineAsm, unsigned int &ErrorCode, uint64_t &Address) {
-  MCInst Inst;
+                                           bool MatchingInlineAsm, unsigned int &ErrorCode, uint64_t &Address)
+{
+  MCInst Inst(Address);
 
   switch (MatchInstructionImpl(Operands, Inst, ErrorInfo, MatchingInlineAsm)) {
   case Match_Success:
@@ -1207,6 +1208,11 @@ bool PPCAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
     ProcessInstruction(Inst, Operands);
     Inst.setLoc(IDLoc);
     Out.EmitInstruction(Inst, getSTI(), ErrorCode);
+    if (ErrorCode == 0) {
+        Address = Inst.getAddress(); // Keystone update address
+        return false;
+    } else
+        return true;
     return (ErrorCode != 0);
   case Match_MissingFeature:
     // return Error(IDLoc, "instruction use requires an option to be enabled");
