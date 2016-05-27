@@ -657,7 +657,7 @@ getThumbBRTargetOpValue(const MCInst &MI, unsigned OpIdx,
   if (MO.isExpr())
     return ::getBranchTargetOpValue(MI, OpIdx, ARM::fixup_arm_thumb_br,
                                     Fixups, STI);
-  return (MO.getImm() >> 1);
+  return ((MO.getImm() - MI.getAddress() - 4) >> 1);
 }
 
 /// getThumbBCCTargetOpValue - Return encoding info for Thumb branch target.
@@ -669,7 +669,7 @@ getThumbBCCTargetOpValue(const MCInst &MI, unsigned OpIdx,
   if (MO.isExpr())
     return ::getBranchTargetOpValue(MI, OpIdx, ARM::fixup_arm_thumb_bcc,
                                     Fixups, STI);
-  return (MO.getImm() >> 1);
+  return ((MO.getImm() - MI.getAddress() - 4) >> 1);
 }
 
 /// getThumbCBTargetOpValue - Return encoding info for Thumb branch target.
@@ -680,7 +680,7 @@ getThumbCBTargetOpValue(const MCInst &MI, unsigned OpIdx,
   const MCOperand MO = MI.getOperand(OpIdx);
   if (MO.isExpr())
     return ::getBranchTargetOpValue(MI, OpIdx, ARM::fixup_arm_thumb_cb, Fixups, STI);
-  return (MO.getImm() >> 1);
+  return ((MO.getImm() - MI.getAddress() - 4) >> 1);
 }
 
 /// Return true if this branch has a non-always predication
@@ -729,7 +729,7 @@ getARMBranchTargetOpValue(const MCInst &MI, unsigned OpIdx,
                                     ARM::fixup_arm_uncondbranch, Fixups, STI);
   }
 
-  return MO.getImm() >> 2;
+  return (MO.getImm() - MI.getAddress() - 8) >> 2;
 }
 
 uint32_t ARMMCCodeEmitter::
@@ -744,7 +744,7 @@ getARMBLTargetOpValue(const MCInst &MI, unsigned OpIdx,
     return ::getBranchTargetOpValue(MI, OpIdx, ARM::fixup_arm_uncondbl, Fixups, STI);
   }
 
-  return MO.getImm() >> 2;
+  return (MO.getImm() - MI.getAddress() - 8) >> 2;
 }
 
 uint32_t ARMMCCodeEmitter::
@@ -755,10 +755,7 @@ getARMBLXTargetOpValue(const MCInst &MI, unsigned OpIdx,
   if (MO.isExpr())
     return ::getBranchTargetOpValue(MI, OpIdx, ARM::fixup_arm_blx, Fixups, STI);
 
-  if (isThumb(STI))
-      return (MO.getImm() - MI.getAddress() - 4) >> 1;
-  else
-      return (MO.getImm() - MI.getAddress() - 8) >> 1;
+  return (MO.getImm() - MI.getAddress() - 8) >> 1;
 }
 
 /// getUnconditionalBranchTargetOpValue - Return encoding info for 24-bit

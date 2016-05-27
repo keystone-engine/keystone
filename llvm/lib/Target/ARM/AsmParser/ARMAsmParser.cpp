@@ -692,6 +692,22 @@ public:
     }
     return false;
   }
+  // checks whether this operand is an signed offset relative to an address
+  // which fits is a field of specified width and scaled by a specific number
+  // of bits
+  template<unsigned width, unsigned scale>
+  bool isSignedOffsetRel(int64_t Addr) const {
+    if (!isImm()) return false;
+    if (isa<MCSymbolRefExpr>(Imm.Val)) return true;
+    if (const MCConstantExpr *CE = dyn_cast<MCConstantExpr>(Imm.Val)) {
+      int64_t Val = CE->getValue() - Addr;
+      int64_t Align = 1LL << scale;
+      int64_t Max = Align * ((1LL << (width-1)) - 1);
+      int64_t Min = -Align * (1LL << (width-1));
+      return ((Val % Align) == 0) && (Val >= Min) && (Val <= Max);
+    }
+    return false;
+  }
 
   // checks whether this operand is a memory operand computed as an offset
   // applied to PC. the offset may have 8 bits of magnitude and is represented
@@ -4760,14 +4776,14 @@ void ARMAsmParser::cvtThumbBranches(MCInst &Inst,
     // classify tB as either t2B or t1B based on range of immediate operand
     case ARM::tB: {
       ARMOperand &op = static_cast<ARMOperand &>(*Operands[ImmOp]);
-      if (!op.isSignedOffset<11, 1>() && isThumb() && hasV8MBaseline())
+      if (!op.isSignedOffsetRel<11, 1>(Inst.getAddress()) && isThumb() && hasV8MBaseline())
         Inst.setOpcode(ARM::t2B);
       break;
     }
     // classify tBcc as either t2Bcc or t1Bcc based on range of immediate operand
     case ARM::tBcc: {
       ARMOperand &op = static_cast<ARMOperand &>(*Operands[ImmOp]);
-      if (!op.isSignedOffset<8, 1>() && isThumb() && hasV8MBaseline())
+      if (!op.isSignedOffsetRel<8, 1>(Inst.getAddress()) && isThumb() && hasV8MBaseline())
         Inst.setOpcode(ARM::t2Bcc);
       break;
     }
@@ -6459,23 +6475,23 @@ bool ARMAsmParser::validateInstruction(MCInst &Inst,
   }
   // Final range checking for Thumb unconditional branch instructions.
   case ARM::tB:
-    if (!(static_cast<ARMOperand &>(*Operands[2])).isSignedOffset<11, 1>())
+    if (!(static_cast<ARMOperand &>(*Operands[2])).isSignedOffsetRel<11, 1>(Inst.getAddress()))
       return Error(Operands[2]->getStartLoc(), "branch target out of range");
     break;
   case ARM::t2B: {
     int op = (Operands[2]->isImm()) ? 2 : 3;
-    if (!static_cast<ARMOperand &>(*Operands[op]).isSignedOffset<24, 1>())
+    if (!static_cast<ARMOperand &>(*Operands[op]).isSignedOffsetRel<24, 1>(Inst.getAddress()))
       return Error(Operands[op]->getStartLoc(), "branch target out of range");
     break;
   }
   // Final range checking for Thumb conditional branch instructions.
   case ARM::tBcc:
-    if (!static_cast<ARMOperand &>(*Operands[2]).isSignedOffset<8, 1>())
+    if (!static_cast<ARMOperand &>(*Operands[2]).isSignedOffsetRel<8, 1>(Inst.getAddress()))
       return Error(Operands[2]->getStartLoc(), "branch target out of range");
     break;
   case ARM::t2Bcc: {
     int Op = (Operands[2]->isImm()) ? 2 : 3;
-    if (!static_cast<ARMOperand &>(*Operands[Op]).isSignedOffset<20, 1>())
+    if (!static_cast<ARMOperand &>(*Operands[Op]).isSignedOffsetRel<20, 1>(Inst.getAddress()))
       return Error(Operands[Op]->getStartLoc(), "branch target out of range");
     break;
   }
