@@ -120,8 +120,6 @@ void MCStreamer::EmitSymbolValue(const MCSymbol *Sym, unsigned Size,
 
   if (!IsSectionRelative)
     EmitValueImpl(MCSymbolRefExpr::create(Sym, getContext()), Size);
-  else
-    EmitCOFFSecRel32(Sym);
 }
 
 void MCStreamer::EmitGPRel64Value(const MCExpr *Value) {
@@ -586,15 +584,6 @@ void MCStreamer::EmitWinCFIEndProlog() {
   CurrentWinFrameInfo->PrologEnd = Label;
 }
 
-void MCStreamer::EmitCOFFSafeSEH(MCSymbol const *Symbol) {
-}
-
-void MCStreamer::EmitCOFFSectionIndex(MCSymbol const *Symbol) {
-}
-
-void MCStreamer::EmitCOFFSecRel32(MCSymbol const *Symbol) {
-}
-
 /// EmitRawText - If this file is backed by an assembly streamer, this dumps
 /// the specified string in the output .s file.  This capability is
 /// indicated by the hasRawTextSupport() predicate.
@@ -692,11 +681,7 @@ void MCStreamer::emitAbsoluteSymbolDiff(const MCSymbol *Hi, const MCSymbol *Lo,
 void MCStreamer::EmitAssemblerFlag(MCAssemblerFlag Flag) {}
 void MCStreamer::EmitThumbFunc(MCSymbol *Func) {}
 void MCStreamer::EmitSymbolDesc(MCSymbol *Symbol, unsigned DescValue) {}
-void MCStreamer::BeginCOFFSymbolDef(const MCSymbol *Symbol) {}
-void MCStreamer::EndCOFFSymbolDef() {}
 void MCStreamer::EmitFileDirective(StringRef Filename) {}
-void MCStreamer::EmitCOFFSymbolStorageClass(int StorageClass) {}
-void MCStreamer::EmitCOFFSymbolType(int Type) {}
 void MCStreamer::emitELFSize(MCSymbolELF *Symbol, const MCExpr *Value) {}
 void MCStreamer::EmitLocalCommonSymbol(MCSymbol *Symbol, uint64_t Size,
                                        unsigned ByteAlignment) {}

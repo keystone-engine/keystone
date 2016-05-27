@@ -42,9 +42,7 @@ protected:
   /// class is actually one of the appropriate subclasses of MCSymbol.
   enum SymbolKind {
     SymbolKindUnset,
-    SymbolKindCOFF,
     SymbolKindELF,
-    SymbolKindMachO,
   };
 
   /// A symbol can contain an Offset, or Value, or be Common, but never more
@@ -276,10 +274,6 @@ public:
   void setUndefined() { FragmentAndHasName.setPointer(nullptr); }
 
   bool isELF() const { return Kind == SymbolKindELF; }
-
-  bool isCOFF() const { return Kind == SymbolKindCOFF; }
-
-  bool isMachO() const { return Kind == SymbolKindMachO; }
 
   /// @}
   /// \name Variable Symbols

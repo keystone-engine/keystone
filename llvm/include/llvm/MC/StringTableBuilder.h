@@ -19,7 +19,7 @@ namespace llvm {
 /// \brief Utility for building string tables with deduplicated suffixes.
 class StringTableBuilder {
 public:
-  enum Kind { ELF, WinCOFF, MachO, RAW };
+  enum Kind { ELF, RAW };
 
 private:
   SmallString<256> StringTable;

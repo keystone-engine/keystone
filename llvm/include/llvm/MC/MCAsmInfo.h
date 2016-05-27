@@ -74,18 +74,6 @@ protected:
   /// True if target stack grow up.  Default is false.
   bool StackGrowsUp;
 
-  /// True if this target has the MachO .subsections_via_symbols directive.
-  /// Default is false.
-  bool HasSubsectionsViaSymbols;
-
-  /// True if this is a MachO target that supports the macho-specific .zerofill
-  /// directive for emitting BSS Symbols.  Default is false.
-  bool HasMachoZeroFillDirective;
-
-  /// True if this is a MachO target that supports the macho-specific .tbss
-  /// directive for emitting thread local BSS Symbols.  Default is false.
-  bool HasMachoTBSSDirective;
-
   /// True if the compiler should emit a ".reference .constructors_used" or
   /// ".reference .destructors_used" directive after the static ctor/dtor
   /// list.  This directive is only emitted in Static relocation model.  Default
@@ -276,10 +264,6 @@ protected:
   /// Defaults to false.
   bool HasIdentDirective;
 
-  /// True if this target supports the MachO .no_dead_strip directive.  Defaults
-  /// to false.
-  bool HasNoDeadStrip;
-
   /// Used to declare a global as being a weak symbol. Defaults to ".weak".
   const char *WeakDirective;
 
@@ -378,8 +362,6 @@ public:
   /// True if target stack grow up.
   bool isStackGrowthDirectionUp() const { return StackGrowsUp; }
 
-  bool hasSubsectionsViaSymbols() const { return HasSubsectionsViaSymbols; }
-
   // Data directive accessors.
 
   const char *getData8bitsDirective() const { return Data8bitsDirective; }
@@ -437,8 +419,6 @@ public:
 
   // Accessors.
 
-  bool hasMachoZeroFillDirective() const { return HasMachoZeroFillDirective; }
-  bool hasMachoTBSSDirective() const { return HasMachoTBSSDirective; }
   bool hasStaticCtorDtorReferenceInStaticMode() const {
     return HasStaticCtorDtorReferenceInStaticMode;
   }
@@ -499,7 +479,6 @@ public:
   bool hasDotTypeDotSizeDirective() const { return HasDotTypeDotSizeDirective; }
   bool hasSingleParameterDotFile() const { return HasSingleParameterDotFile; }
   bool hasIdentDirective() const { return HasIdentDirective; }
-  bool hasNoDeadStrip() const { return HasNoDeadStrip; }
   const char *getWeakDirective() const { return WeakDirective; }
   const char *getWeakRefDirective() const { return WeakRefDirective; }
   bool hasWeakDefDirective() const { return HasWeakDefDirective; }

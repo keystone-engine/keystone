@@ -4213,11 +4213,6 @@ bool AArch64AsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
 
 /// ParseDirective parses the arm specific directives
 bool AArch64AsmParser::ParseDirective(AsmToken DirectiveID) {
-  const MCObjectFileInfo::Environment Format =
-    getContext().getObjectFileInfo()->getObjectFileType();
-  bool IsMachO = Format == MCObjectFileInfo::IsMachO;
-  bool IsCOFF = Format == MCObjectFileInfo::IsCOFF;
-
   StringRef IDVal = DirectiveID.getIdentifier();
   SMLoc Loc = DirectiveID.getLoc();
   if (IDVal == ".hword")
@@ -4232,11 +4227,8 @@ bool AArch64AsmParser::ParseDirective(AsmToken DirectiveID) {
     return parseDirectiveLtorg(Loc);
   if (IDVal == ".unreq")
     return parseDirectiveUnreq(Loc);
-
-  if (!IsMachO && !IsCOFF) {
-    if (IDVal == ".inst")
-      return parseDirectiveInst(Loc);
-  }
+  if (IDVal == ".inst")
+    return parseDirectiveInst(Loc);
 
   return parseDirectiveLOH(IDVal, Loc);
 }

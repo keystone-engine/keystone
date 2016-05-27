@@ -183,13 +183,6 @@ public:
     CoreCLR,
     LastEnvironmentType = CoreCLR
   };
-  enum ObjectFormatType {
-    UnknownObjectFormat,
-
-    COFF,
-    ELF,
-    MachO,
-  };
 
 private:
   std::string Data;
@@ -209,16 +202,13 @@ private:
   /// The parsed Environment type.
   EnvironmentType Environment;
 
-  /// The object format type.
-  ObjectFormatType ObjectFormat;
-
 public:
   /// @name Constructors
   /// @{
 
   /// Default constructor is the same as an empty string and leaves all
   /// triple fields unknown.
-  Triple() : Data(), Arch(), Vendor(), OS(), Environment(), ObjectFormat() {}
+  Triple() : Data(), Arch(), Vendor(), OS(), Environment() {}
 
   explicit Triple(const Twine &Str);
   Triple(const Twine &ArchStr, const Twine &VendorStr, const Twine &OSStr);
@@ -228,8 +218,7 @@ public:
   bool operator==(const Triple &Other) const {
     return Arch == Other.Arch && SubArch == Other.SubArch &&
            Vendor == Other.Vendor && OS == Other.OS &&
-           Environment == Other.Environment &&
-           ObjectFormat == Other.ObjectFormat;
+           Environment == Other.Environment;
   }
 
   /// @}
@@ -278,9 +267,6 @@ public:
   /// If an entry is not defined, it will be returned as 0.
   void getEnvironmentVersion(unsigned &Major, unsigned &Minor,
                              unsigned &Micro) const;
-
-  /// getFormat - Get the object format for this triple.
-  ObjectFormatType getObjectFormat() const { return ObjectFormat; }
 
   /// getOSVersion - Parse the version number from the OS name component of the
   /// triple, if present.
@@ -519,21 +505,6 @@ public:
     return getOS() == Triple::Linux;
   }
 
-  /// Tests whether the OS uses the ELF binary format.
-  bool isOSBinFormatELF() const {
-    return getObjectFormat() == Triple::ELF;
-  }
-
-  /// Tests whether the OS uses the COFF binary format.
-  bool isOSBinFormatCOFF() const {
-    return getObjectFormat() == Triple::COFF;
-  }
-
-  /// Tests whether the environment is MachO.
-  bool isOSBinFormatMachO() const {
-    return getObjectFormat() == Triple::MachO;
-  }
-
   /// Tests whether the target is the PS4 CPU
   bool isPS4CPU() const {
     return getArch() == Triple::x86_64 &&
@@ -574,9 +545,6 @@ public:
   /// setEnvironment - Set the environment (fourth) component of the triple
   /// to a known type.
   void setEnvironment(EnvironmentType Kind);
-
-  /// setObjectFormat - Set the object file format
-  void setObjectFormat(ObjectFormatType Kind);
 
   /// setTriple - Set all components to the new triple \p Str.
   void setTriple(const Twine &Str);

@@ -27,39 +27,6 @@ enum AsmWriterVariantTy {
 
 static AsmWriterVariantTy AsmWriterVariant = Default;
 
-AArch64MCAsmInfoDarwin::AArch64MCAsmInfoDarwin() {
-  // We prefer NEON instructions to be printed in the short form.
-  AssemblerDialect = AsmWriterVariant == Default ? 1 : AsmWriterVariant;
-
-  PrivateGlobalPrefix = "L";
-  PrivateLabelPrefix = "L";
-  SeparatorString = "%%";
-  CommentString = ";";
-  PointerSize = CalleeSaveStackSlotSize = 8;
-
-  AlignmentIsInBytes = false;
-  UsesELFSectionDirectiveForBSS = true;
-  SupportsDebugInformation = true;
-  UseDataRegionDirectives = true;
-
-  ExceptionsType = ExceptionHandling::DwarfCFI;
-}
-
-const MCExpr *AArch64MCAsmInfoDarwin::getExprForPersonalitySymbol(
-    const MCSymbol *Sym, unsigned Encoding, MCStreamer &Streamer) const {
-  // On Darwin, we can reference dwarf symbols with foo@GOT-., which
-  // is an indirect pc-relative reference. The default implementation
-  // won't reference using the GOT, so we need this target-specific
-  // version.
-  MCContext &Context = Streamer.getContext();
-  const MCExpr *Res =
-      MCSymbolRefExpr::create(Sym, MCSymbolRefExpr::VK_GOT, Context);
-  MCSymbol *PCSym = Context.createTempSymbol();
-  Streamer.EmitLabel(PCSym);
-  const MCExpr *PC = MCSymbolRefExpr::create(PCSym, Context);
-  return MCBinaryExpr::createSub(Res, PC, Context);
-}
-
 AArch64MCAsmInfoELF::AArch64MCAsmInfoELF(const Triple &T) {
   if (T.getArch() == Triple::aarch64_be)
     IsLittleEndian = false;

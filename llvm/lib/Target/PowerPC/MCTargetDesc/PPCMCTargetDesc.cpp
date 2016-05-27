@@ -71,11 +71,7 @@ static MCAsmInfo *createPPCMCAsmInfo(const MCRegisterInfo &MRI,
   bool isPPC64 = (TheTriple.getArch() == Triple::ppc64 ||
                   TheTriple.getArch() == Triple::ppc64le);
 
-  MCAsmInfo *MAI;
-  if (TheTriple.isOSDarwin())
-    MAI = new PPCMCAsmInfoDarwin(isPPC64, TheTriple);
-  else
-    MAI = new PPCELFMCAsmInfo(isPPC64, TheTriple);
+  MCAsmInfo *MAI = new PPCELFMCAsmInfo(isPPC64, TheTriple);
 
   // Initial state of the frame pointer is R1.
   unsigned Reg = isPPC64 ? PPC::X1 : PPC::R1;
@@ -173,24 +169,6 @@ public:
     Other &= ~ELF::STO_PPC64_LOCAL_MASK;
     Other |= RhsSym.getOther() & ELF::STO_PPC64_LOCAL_MASK;
     Symbol->setOther(Other);
-  }
-};
-
-class PPCTargetMachOStreamer : public PPCTargetStreamer {
-public:
-  PPCTargetMachOStreamer(MCStreamer &S) : PPCTargetStreamer(S) {}
-  void emitTCEntry(const MCSymbol &S) override {
-    llvm_unreachable("Unknown pseudo-op: .tc");
-  }
-  void emitMachine(StringRef CPU) override {
-    // FIXME: We should update the CPUType, CPUSubType in the Object file if
-    // the new values are different from the defaults.
-  }
-  void emitAbiVersion(int AbiVersion) override {
-    llvm_unreachable("Unknown pseudo-op: .abiversion");
-  }
-  void emitLocalEntry(MCSymbolELF *S, const MCExpr *LocalOffset) override {
-    llvm_unreachable("Unknown pseudo-op: .localentry");
   }
 };
 }

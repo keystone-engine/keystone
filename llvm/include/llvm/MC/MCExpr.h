@@ -278,8 +278,6 @@ public:
     VK_Mips_PCREL_HI16,
     VK_Mips_PCREL_LO16,
 
-    VK_COFF_IMGREL32, // symbol@imgrel (image-relative)
-
     VK_Hexagon_PCREL,
     VK_Hexagon_LO16,
     VK_Hexagon_HI16,
@@ -303,9 +301,6 @@ private:
 
   /// Specifies how the variant kind should be printed.
   const unsigned UseParensForSymbolVariant : 1;
-
-  // FIXME: Remove this bit.
-  const unsigned HasSubsectionsViaSymbols : 1;
 
   /// The symbol being referenced.
   const MCSymbol *Symbol;
@@ -335,8 +330,6 @@ public:
   VariantKind getKind() const { return Kind; }
 
   void printVariantKind(raw_ostream &OS) const;
-
-  bool hasSubsectionsViaSymbols() const { return HasSubsectionsViaSymbols; }
 
   /// @}
   /// \name Static Utility Functions

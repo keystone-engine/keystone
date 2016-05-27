@@ -462,14 +462,6 @@ static Triple::EnvironmentType parseEnvironment(StringRef EnvironmentName) {
     .Default(Triple::UnknownEnvironment);
 }
 
-static Triple::ObjectFormatType parseFormat(StringRef EnvironmentName) {
-  return StringSwitch<Triple::ObjectFormatType>(EnvironmentName)
-    .EndsWith("coff", Triple::COFF)
-    .EndsWith("elf", Triple::ELF)
-    .EndsWith("macho", Triple::MachO)
-    .Default(Triple::UnknownObjectFormat);
-}
-
 static Triple::SubArchType parseSubArch(StringRef SubArchName) {
   StringRef ARMSubArch = ARM::getCanonicalArchName(SubArchName);
 
@@ -530,84 +522,13 @@ static Triple::SubArchType parseSubArch(StringRef SubArchName) {
   }
 }
 
-static const char *getObjectFormatTypeName(Triple::ObjectFormatType Kind) {
-  switch (Kind) {
-  case Triple::UnknownObjectFormat: return "";
-  case Triple::COFF: return "coff";
-  case Triple::ELF: return "elf";
-  case Triple::MachO: return "macho";
-  }
-  llvm_unreachable("unknown object format type");
-}
-
-static Triple::ObjectFormatType getDefaultFormat(const Triple &T) {
-  switch (T.getArch()) {
-  case Triple::UnknownArch:
-  case Triple::aarch64:
-  case Triple::arm:
-  case Triple::thumb:
-  case Triple::x86:
-  case Triple::x86_64:
-    if (T.isOSDarwin())
-      return Triple::MachO;
-    else if (T.isOSWindows())
-      return Triple::COFF;
-    return Triple::ELF;
-
-  case Triple::aarch64_be:
-  case Triple::amdgcn:
-  case Triple::amdil:
-  case Triple::amdil64:
-  case Triple::armeb:
-  case Triple::avr:
-  case Triple::bpfeb:
-  case Triple::bpfel:
-  case Triple::hexagon:
-  case Triple::hsail:
-  case Triple::hsail64:
-  case Triple::kalimba:
-  case Triple::le32:
-  case Triple::le64:
-  case Triple::mips:
-  case Triple::mips64:
-  case Triple::mips64el:
-  case Triple::mipsel:
-  case Triple::msp430:
-  case Triple::nvptx:
-  case Triple::nvptx64:
-  case Triple::ppc64le:
-  case Triple::r600:
-  case Triple::shave:
-  case Triple::sparc:
-  case Triple::sparcel:
-  case Triple::sparcv9:
-  case Triple::spir:
-  case Triple::spir64:
-  case Triple::systemz:
-  case Triple::tce:
-  case Triple::thumbeb:
-  case Triple::wasm32:
-  case Triple::wasm64:
-  case Triple::xcore:
-    return Triple::ELF;
-
-  case Triple::ppc:
-  case Triple::ppc64:
-    if (T.isOSDarwin())
-      return Triple::MachO;
-    return Triple::ELF;
-  }
-  llvm_unreachable("unknown architecture");
-}
-
 /// \brief Construct a triple from the string representation provided.
 ///
 /// This stores the string representation and parses the various pieces into
 /// enum members.
 Triple::Triple(const Twine &Str)
     : Data(Str.str()), Arch(UnknownArch), SubArch(NoSubArch),
-      Vendor(UnknownVendor), OS(UnknownOS), Environment(UnknownEnvironment),
-      ObjectFormat(UnknownObjectFormat) {
+      Vendor(UnknownVendor), OS(UnknownOS), Environment(UnknownEnvironment) {
   // Do minimal parsing by hand here.
   SmallVector<StringRef, 4> Components;
   StringRef(Data).split(Components, '-', /*MaxSplit*/ 3);
@@ -620,13 +541,10 @@ Triple::Triple(const Twine &Str)
         OS = parseOS(Components[2]);
         if (Components.size() > 3) {
           Environment = parseEnvironment(Components[3]);
-          ObjectFormat = parseFormat(Components[3]);
         }
       }
     }
   }
-  if (ObjectFormat == UnknownObjectFormat)
-    ObjectFormat = getDefaultFormat(*this);
 }
 
 /// \brief Construct a triple from string representations of the architecture,
@@ -641,8 +559,7 @@ Triple::Triple(const Twine &ArchStr, const Twine &VendorStr, const Twine &OSStr)
       SubArch(parseSubArch(ArchStr.str())),
       Vendor(parseVendor(VendorStr.str())),
       OS(parseOS(OSStr.str())),
-      Environment(), ObjectFormat(Triple::UnknownObjectFormat) {
-  ObjectFormat = getDefaultFormat(*this);
+      Environment() {
 }
 
 /// \brief Construct a triple from string representations of the architecture,
@@ -658,10 +575,7 @@ Triple::Triple(const Twine &ArchStr, const Twine &VendorStr, const Twine &OSStr,
       SubArch(parseSubArch(ArchStr.str())),
       Vendor(parseVendor(VendorStr.str())),
       OS(parseOS(OSStr.str())),
-      Environment(parseEnvironment(EnvironmentStr.str())),
-      ObjectFormat(parseFormat(EnvironmentStr.str())) {
-  if (ObjectFormat == Triple::UnknownObjectFormat)
-    ObjectFormat = getDefaultFormat(*this);
+      Environment(parseEnvironment(EnvironmentStr.str())) {
 }
 
 std::string Triple::normalize(StringRef Str) {
@@ -692,9 +606,6 @@ std::string Triple::normalize(StringRef Str) {
   EnvironmentType Environment = UnknownEnvironment;
   if (Components.size() > 3)
     Environment = parseEnvironment(Components[3]);
-  ObjectFormatType ObjectFormat = UnknownObjectFormat;
-  if (Components.size() > 4)
-    ObjectFormat = parseFormat(Components[4]);
 
   // Note which components are already in their final position.  These will not
   // be moved.
@@ -738,10 +649,6 @@ std::string Triple::normalize(StringRef Str) {
       case 3:
         Environment = parseEnvironment(Comp);
         Valid = Environment != UnknownEnvironment;
-        if (!Valid) {
-          ObjectFormat = parseFormat(Comp);
-          Valid = ObjectFormat != UnknownObjectFormat;
-        }
         break;
       }
       if (!Valid)
@@ -818,10 +725,7 @@ std::string Triple::normalize(StringRef Str) {
     Components.resize(4);
     Components[2] = "windows";
     if (Environment == UnknownEnvironment) {
-      if (ObjectFormat == UnknownObjectFormat || ObjectFormat == Triple::COFF)
-        Components[3] = "msvc";
-      else
-        Components[3] = getObjectFormatTypeName(ObjectFormat);
+      Components[3] = "elf";
     }
   } else if (IsMinGW32) {
     Components.resize(4);
@@ -834,10 +738,8 @@ std::string Triple::normalize(StringRef Str) {
   }
   if (IsMinGW32 || IsCygwin ||
       (OS == Triple::Win32 && Environment != UnknownEnvironment)) {
-    if (ObjectFormat != UnknownObjectFormat && ObjectFormat != Triple::COFF) {
-      Components.resize(5);
-      Components[4] = getObjectFormatTypeName(ObjectFormat);
-    }
+    Components.resize(5);
+    Components[4] = "elf";
   }
 
   // Stick the corrected components back together to form the normalized string.
@@ -1039,19 +941,8 @@ void Triple::setOS(OSType Kind) {
 }
 
 void Triple::setEnvironment(EnvironmentType Kind) {
-  if (ObjectFormat == getDefaultFormat(*this))
-    return setEnvironmentName(getEnvironmentTypeName(Kind));
-
   setEnvironmentName((getEnvironmentTypeName(Kind) + Twine("-") +
-                      getObjectFormatTypeName(ObjectFormat)).str());
-}
-
-void Triple::setObjectFormat(ObjectFormatType Kind) {
-  if (Environment == UnknownEnvironment)
-    return setEnvironmentName(getObjectFormatTypeName(Kind));
-
-  setEnvironmentName((getEnvironmentTypeName(Environment) + Twine("-") +
-                      getObjectFormatTypeName(Kind)).str());
+                      "elf").str());
 }
 
 void Triple::setArchName(StringRef Str) {

@@ -54,8 +54,6 @@ unsigned X86_MC::getDwarfRegFlavour(const Triple &TT, bool isEH) {
   if (TT.getArch() == Triple::x86_64)
     return DWARFFlavour::X86_64;
 
-  if (TT.isOSDarwin())
-    return isEH ? DWARFFlavour::X86_32_DarwinEH : DWARFFlavour::X86_32_Generic;
   if (TT.isOSCygMing())
     // Unsupported by now, just quick fallback
     return DWARFFlavour::X86_32_Generic;
@@ -109,25 +107,7 @@ static MCAsmInfo *createX86MCAsmInfo(const MCRegisterInfo &MRI,
                                      const Triple &TheTriple) {
   bool is64Bit = TheTriple.getArch() == Triple::x86_64;
 
-  MCAsmInfo *MAI;
-  if (TheTriple.isOSBinFormatMachO()) {
-    if (is64Bit)
-      MAI = new X86_64MCAsmInfoDarwin(TheTriple);
-    else
-      MAI = new X86MCAsmInfoDarwin(TheTriple);
-  } else if (TheTriple.isOSBinFormatELF()) {
-    // Force the use of an ELF container.
-    MAI = new X86ELFMCAsmInfo(TheTriple);
-  } else if (TheTriple.isWindowsMSVCEnvironment() ||
-             TheTriple.isWindowsCoreCLREnvironment()) {
-    MAI = new X86MCAsmInfoMicrosoft(TheTriple);
-  } else if (TheTriple.isOSCygMing() ||
-             TheTriple.isWindowsItaniumEnvironment()) {
-    MAI = new X86MCAsmInfoGNUCOFF(TheTriple);
-  } else {
-    // The default is ELF.
-    MAI = new X86ELFMCAsmInfo(TheTriple);
-  }
+  MCAsmInfo *MAI = new X86ELFMCAsmInfo(TheTriple);
 
   // Initialize initial frame state.
   // Calculate amount of bytes used for return address storing

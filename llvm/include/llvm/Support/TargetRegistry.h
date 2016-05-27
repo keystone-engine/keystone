@@ -104,11 +104,6 @@ public:
                                            raw_pwrite_stream &OS,
                                            MCCodeEmitter *Emitter,
                                            bool RelaxAll);
-  typedef MCStreamer *(*MachOStreamerCtorTy)(MCContext &Ctx, MCAsmBackend &TAB,
-                                             raw_pwrite_stream &OS,
-                                             MCCodeEmitter *Emitter,
-                                             bool RelaxAll,
-                                             bool DWARFMustBeAtTheEnd);
   typedef MCTargetStreamer *(*NullTargetStreamerCtorTy)(MCStreamer &S);
   typedef MCTargetStreamer *(*AsmTargetStreamerCtorTy)(
       MCStreamer &S, formatted_raw_ostream &OS);
@@ -345,16 +340,10 @@ public:
                                      const MCSubtargetInfo &STI, bool RelaxAll,
                                      bool DWARFMustBeAtTheEnd) const {
     MCStreamer *S;
-    switch (T.getObjectFormat()) {
-    default:
-      llvm_unreachable("Unknown object format");
-    case Triple::ELF:
-      if (ELFStreamerCtorFn)
-        S = ELFStreamerCtorFn(T, Ctx, TAB, OS, Emitter, RelaxAll);
-      else
-        S = createELFStreamer(Ctx, TAB, OS, Emitter, RelaxAll);
-      break;
-    }
+    if (ELFStreamerCtorFn)
+      S = ELFStreamerCtorFn(T, Ctx, TAB, OS, Emitter, RelaxAll);
+    else
+      S = createELFStreamer(Ctx, TAB, OS, Emitter, RelaxAll);
     if (ObjectTargetStreamerCtorFn)
       ObjectTargetStreamerCtorFn(*S, STI);
     return S;

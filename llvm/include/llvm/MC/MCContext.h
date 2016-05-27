@@ -40,9 +40,7 @@ namespace llvm {
   class MCRegisterInfo;
   class MCLineSection;
   class SMLoc;
-  class MCSectionMachO;
   class MCSectionELF;
-  class MCSectionCOFF;
 
   /// Context object for machine code objects.  This class owns all of the
   /// sections that it creates.
@@ -73,9 +71,7 @@ namespace llvm {
     /// objects.
     BumpPtrAllocator Allocator;
 
-    SpecificBumpPtrAllocator<MCSectionCOFF> COFFAllocator;
     SpecificBumpPtrAllocator<MCSectionELF> ELFAllocator;
-    SpecificBumpPtrAllocator<MCSectionMachO> MachOAllocator;
 
     /// Bindings of names to symbols.
     SymbolTable Symbols;
@@ -191,26 +187,7 @@ namespace llvm {
       }
     };
 
-    struct COFFSectionKey {
-      std::string SectionName;
-      StringRef GroupName;
-      int SelectionKey;
-      COFFSectionKey(StringRef SectionName, StringRef GroupName,
-                     int SelectionKey)
-          : SectionName(SectionName), GroupName(GroupName),
-            SelectionKey(SelectionKey) {}
-      bool operator<(const COFFSectionKey &Other) const {
-        if (SectionName != Other.SectionName)
-          return SectionName < Other.SectionName;
-        if (GroupName != Other.GroupName)
-          return GroupName < Other.GroupName;
-        return SelectionKey < Other.SelectionKey;
-      }
-    };
-
-    StringMap<MCSectionMachO *> MachOUniquingMap;
     std::map<ELFSectionKey, MCSectionELF *> ELFUniquingMap;
-    std::map<COFFSectionKey, MCSectionCOFF *> COFFUniquingMap;
     StringMap<bool> ELFRelSecNames;
 
     SpecificBumpPtrAllocator<MCSubtargetInfo> MCSubtargetAllocator;
@@ -313,20 +290,6 @@ namespace llvm {
     /// \name Section Management
     /// @{
 
-    /// Return the MCSection for the specified mach-o section.  This requires
-    /// the operands to be valid.
-    MCSectionMachO *getMachOSection(StringRef Segment, StringRef Section,
-                                    unsigned TypeAndAttributes,
-                                    unsigned Reserved2, SectionKind K,
-                                    const char *BeginSymName = nullptr);
-
-    MCSectionMachO *getMachOSection(StringRef Segment, StringRef Section,
-                                    unsigned TypeAndAttributes, SectionKind K,
-                                    const char *BeginSymName = nullptr) {
-      return getMachOSection(Segment, Section, TypeAndAttributes, 0, K,
-                             BeginSymName);
-    }
-
     MCSectionELF *getELFSection(StringRef Section, unsigned Type,
                                 unsigned Flags) {
       return getELFSection(Section, Type, Flags, nullptr);
@@ -376,24 +339,6 @@ namespace llvm {
     void renameELFSection(MCSectionELF *Section, StringRef Name);
 
     MCSectionELF *createELFGroupSection(const MCSymbolELF *Group);
-
-    MCSectionCOFF *getCOFFSection(StringRef Section, unsigned Characteristics,
-                                  SectionKind Kind, StringRef COMDATSymName,
-                                  int Selection,
-                                  const char *BeginSymName = nullptr);
-
-    MCSectionCOFF *getCOFFSection(StringRef Section, unsigned Characteristics,
-                                  SectionKind Kind,
-                                  const char *BeginSymName = nullptr);
-
-    MCSectionCOFF *getCOFFSection(StringRef Section);
-
-    /// Gets or creates a section equivalent to Sec that is associated with the
-    /// section containing KeySym. For example, to create a debug info section
-    /// associated with an inline function, pass the normal debug info section
-    /// as Sec and the function symbol as KeySym.
-    MCSectionCOFF *getAssociativeCOFFSection(MCSectionCOFF *Sec,
-                                             const MCSymbol *KeySym);
 
     // Create and save a copy of STI and return a reference to the copy.
     MCSubtargetInfo &getSubtargetCopy(const MCSubtargetInfo &STI);

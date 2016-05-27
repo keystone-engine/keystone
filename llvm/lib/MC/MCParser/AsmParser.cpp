@@ -29,7 +29,6 @@
 #include "llvm/MC/MCParser/MCParsedAsmOperand.h"
 #include "llvm/MC/MCParser/MCTargetAsmParser.h"
 #include "llvm/MC/MCRegisterInfo.h"
-#include "llvm/MC/MCSectionMachO.h"
 #include "llvm/MC/MCStreamer.h"
 #include "llvm/MC/MCSymbol.h"
 #include "llvm/MC/MCValue.h"
@@ -175,9 +174,6 @@ private:
 
   /// AssemblerDialect. ~OU means unset value and use value provided by MAI.
   unsigned AssemblerDialect;
-
-  /// \brief is Darwin compatibility enabled?
-  bool IsDarwin;
 
   /// \brief Are we parsing ms-style inline assembly?
   bool ParsingInlineAsm;
@@ -533,9 +529,7 @@ private:
 
 namespace llvm {
 
-extern MCAsmParserExtension *createDarwinAsmParser();
 extern MCAsmParserExtension *createELFAsmParser();
-extern MCAsmParserExtension *createCOFFAsmParser();
 
 }
 
@@ -546,7 +540,7 @@ AsmParser::AsmParser(SourceMgr &SM, MCContext &Ctx, MCStreamer &Out,
     : Lexer(MAI), Ctx(Ctx), Out(Out), MAI(MAI), SrcMgr(SM),
       PlatformParser(nullptr), CurBuffer(SM.getMainFileID()),
       MacrosEnabledFlag(true), HadError(false), CppHashLineNumber(0),
-      AssemblerDialect(~0U), IsDarwin(false), ParsingInlineAsm(false),
+      AssemblerDialect(~0U), ParsingInlineAsm(false),
       NasmDefaultRel(false) {
   // Save the old handler.
   SavedDiagHandler = SrcMgr.getDiagHandler();
@@ -556,17 +550,9 @@ AsmParser::AsmParser(SourceMgr &SM, MCContext &Ctx, MCStreamer &Out,
   Lexer.setBuffer(SrcMgr.getMemoryBuffer(CurBuffer)->getBuffer());
 
   // Initialize the platform / file format parser.
-  PlatformParser.reset(createDarwinAsmParser());
-  IsDarwin = true;
+  PlatformParser.reset(createELFAsmParser());
 #if 0
   switch (Ctx.getObjectFileInfo()->getObjectFileType()) {
-  case MCObjectFileInfo::IsCOFF:
-    PlatformParser.reset(createCOFFAsmParser());
-    break;
-  case MCObjectFileInfo::IsMachO:
-    PlatformParser.reset(createDarwinAsmParser());
-    IsDarwin = true;
-    break;
   case MCObjectFileInfo::IsELF:
     PlatformParser.reset(createELFAsmParser());
     break;
@@ -720,25 +706,6 @@ size_t AsmParser::Run(bool NoInitialTextSection, uint64_t Address, bool NoFinali
   if (TheCondState.TheCond != StartingCondState.TheCond ||
       TheCondState.Ignore != StartingCondState.Ignore)
     return TokError("unmatched .ifs or .elses");
-
-  // Check to see that all assembler local symbols were actually defined.
-  // Targets that don't do subsections via symbols may not want this, though,
-  // so conservatively exclude them. Only do this if we're finalizing, though,
-  // as otherwise we won't necessarilly have seen everything yet.
-  if (!NoFinalize && MAI.hasSubsectionsViaSymbols()) {
-    for (const auto &TableEntry : getContext().getSymbols()) {
-      MCSymbol *Sym = TableEntry.getValue();
-      // Variable symbols may not be marked as defined, so check those
-      // explicitly. If we know it's a variable, we have a definition for
-      // the purposes of this check.
-      if (Sym->isTemporary() && !Sym->isVariable() && !Sym->isDefined())
-        // FIXME: We would really like to refer back to where the symbol was
-        // first referenced for a source location. We need to add something
-        // to track that. Currently, we just point to the end of the file.
-        return Error(getLexer().getLoc(), "assembler local symbol '" +
-                                              Sym->getName() + "' not defined");
-    }
-  }
 
   // Finalize the output stream if there are no errors and if the client wants
   // us to.
@@ -1171,84 +1138,6 @@ bool AsmParser::parseAbsoluteExpression(int64_t &Res) {
   return false;
 }
 
-static unsigned getDarwinBinOpPrecedence(AsmToken::TokenKind K,
-                                         MCBinaryExpr::Opcode &Kind,
-                                         bool ShouldUseLogicalShr) {
-  switch (K) {
-  default:
-    return 0; // not a binop.
-
-  // Lowest Precedence: &&, ||
-  case AsmToken::AmpAmp:
-    Kind = MCBinaryExpr::LAnd;
-    return 1;
-  case AsmToken::PipePipe:
-    Kind = MCBinaryExpr::LOr;
-    return 1;
-
-  // Low Precedence: |, &, ^
-  //
-  // FIXME: gas seems to support '!' as an infix operator?
-  case AsmToken::Pipe:
-    Kind = MCBinaryExpr::Or;
-    return 2;
-  case AsmToken::Caret:
-    Kind = MCBinaryExpr::Xor;
-    return 2;
-  case AsmToken::Amp:
-    Kind = MCBinaryExpr::And;
-    return 2;
-
-  // Low Intermediate Precedence: ==, !=, <>, <, <=, >, >=
-  case AsmToken::EqualEqual:
-    Kind = MCBinaryExpr::EQ;
-    return 3;
-  case AsmToken::ExclaimEqual:
-  case AsmToken::LessGreater:
-    Kind = MCBinaryExpr::NE;
-    return 3;
-  case AsmToken::Less:
-    Kind = MCBinaryExpr::LT;
-    return 3;
-  case AsmToken::LessEqual:
-    Kind = MCBinaryExpr::LTE;
-    return 3;
-  case AsmToken::Greater:
-    Kind = MCBinaryExpr::GT;
-    return 3;
-  case AsmToken::GreaterEqual:
-    Kind = MCBinaryExpr::GTE;
-    return 3;
-
-  // Intermediate Precedence: <<, >>
-  case AsmToken::LessLess:
-    Kind = MCBinaryExpr::Shl;
-    return 4;
-  case AsmToken::GreaterGreater:
-    Kind = ShouldUseLogicalShr ? MCBinaryExpr::LShr : MCBinaryExpr::AShr;
-    return 4;
-
-  // High Intermediate Precedence: +, -
-  case AsmToken::Plus:
-    Kind = MCBinaryExpr::Add;
-    return 5;
-  case AsmToken::Minus:
-    Kind = MCBinaryExpr::Sub;
-    return 5;
-
-  // Highest Precedence: *, /, %
-  case AsmToken::Star:
-    Kind = MCBinaryExpr::Mul;
-    return 6;
-  case AsmToken::Slash:
-    Kind = MCBinaryExpr::Div;
-    return 6;
-  case AsmToken::Percent:
-    Kind = MCBinaryExpr::Mod;
-    return 6;
-  }
-}
-
 static unsigned getGNUBinOpPrecedence(AsmToken::TokenKind K,
                                       MCBinaryExpr::Opcode &Kind,
                                       bool ShouldUseLogicalShr) {
@@ -1328,8 +1217,7 @@ static unsigned getGNUBinOpPrecedence(AsmToken::TokenKind K,
 unsigned AsmParser::getBinOpPrecedence(AsmToken::TokenKind K,
                                        MCBinaryExpr::Opcode &Kind) {
   bool ShouldUseLogicalShr = MAI.shouldUseLogicalShr();
-  return IsDarwin ? getDarwinBinOpPrecedence(K, Kind, ShouldUseLogicalShr)
-                  : getGNUBinOpPrecedence(K, Kind, ShouldUseLogicalShr);
+  return getGNUBinOpPrecedence(K, Kind, ShouldUseLogicalShr);
 }
 
 /// \brief Parse all binary operators with precedence >= 'Precedence'.
@@ -2048,7 +1936,7 @@ bool AsmParser::expandMacro(raw_svector_ostream &OS, StringRef Body,
 {
   unsigned NParameters = Parameters.size();
   bool HasVararg = NParameters ? Parameters.back().Vararg : false;
-  if ((!IsDarwin || NParameters != 0) && NParameters != A.size())
+  if ((NParameters != 0) && NParameters != A.size())
     return Error(L, "Wrong number of arguments");
 
   // A macro without parameters is handled differently on Darwin:
@@ -2058,20 +1946,9 @@ bool AsmParser::expandMacro(raw_svector_ostream &OS, StringRef Body,
     std::size_t End = Body.size(), Pos = 0;
     for (; Pos != End; ++Pos) {
       // Check for a substitution or escape.
-      if (IsDarwin && !NParameters) {
-        // This macro has no parameters, look for $0, $1, etc.
-        if (Body[Pos] != '$' || Pos + 1 == End)
-          continue;
-
-        char Next = Body[Pos + 1];
-        if (Next == '$' || Next == 'n' ||
-            isdigit(static_cast<unsigned char>(Next)))
-          break;
-      } else {
-        // This macro has parameters, look for \foo, \bar, etc.
-        if (Body[Pos] == '\\' && Pos + 1 != End)
-          break;
-      }
+      // This macro has parameters, look for \foo, \bar, etc.
+      if (Body[Pos] == '\\' && Pos + 1 != End)
+        break;
     }
 
     // Add the prefix.
@@ -2081,79 +1958,51 @@ bool AsmParser::expandMacro(raw_svector_ostream &OS, StringRef Body,
     if (Pos == End)
       break;
 
-    if (IsDarwin && !NParameters) {
-      switch (Body[Pos + 1]) {
-      // $$ => $
-      case '$':
-        OS << '$';
-        break;
+    unsigned I = Pos + 1;
 
-      // $n => number of arguments
-      case 'n':
-        OS << A.size();
-        break;
+    // Check for the \@ pseudo-variable.
+    if (EnableAtPseudoVariable && Body[I] == '@' && I + 1 != End)
+      ++I;
+    else
+      while (isIdentifierChar(Body[I]) && I + 1 != End)
+        ++I;
 
-      // $[0-9] => argument
-      default: {
-        // Missing arguments are ignored.
-        unsigned Index = Body[Pos + 1] - '0';
-        if (Index >= A.size())
-          break;
+    const char *Begin = Body.data() + Pos + 1;
+    StringRef Argument(Begin, I - (Pos + 1));
+    unsigned Index = 0;
 
-        // Otherwise substitute with the token values, with spaces eliminated.
-        for (const AsmToken &Token : A[Index])
-          OS << Token.getString();
-        break;
-      }
-      }
+    if (Argument == "@") {
+      OS << NumOfMacroInstantiations;
       Pos += 2;
     } else {
-      unsigned I = Pos + 1;
+      for (; Index < NParameters; ++Index)
+        if (Parameters[Index].Name == Argument)
+          break;
 
-      // Check for the \@ pseudo-variable.
-      if (EnableAtPseudoVariable && Body[I] == '@' && I + 1 != End)
-        ++I;
-      else
-        while (isIdentifierChar(Body[I]) && I + 1 != End)
-          ++I;
-
-      const char *Begin = Body.data() + Pos + 1;
-      StringRef Argument(Begin, I - (Pos + 1));
-      unsigned Index = 0;
-
-      if (Argument == "@") {
-        OS << NumOfMacroInstantiations;
-        Pos += 2;
-      } else {
-        for (; Index < NParameters; ++Index)
-          if (Parameters[Index].Name == Argument)
-            break;
-
-        if (Index == NParameters) {
-          if (Body[Pos + 1] == '(' && Body[Pos + 2] == ')')
-            Pos += 3;
-          else {
-            OS << '\\' << Argument;
-            Pos = I;
-          }
-        } else {
-          bool VarargParameter = HasVararg && Index == (NParameters - 1);
-          for (const AsmToken &Token : A[Index])
-            // We expect no quotes around the string's contents when
-            // parsing for varargs.
-            if (Token.getKind() != AsmToken::String || VarargParameter)
-              OS << Token.getString();
-            else {
-              bool valid;
-              OS << Token.getStringContents(valid);
-              if (!valid) {
-                  KsError = KS_ERR_ASM_MACRO_STR;
-                  return true;
-              }
-            }
-
-          Pos += 1 + Argument.size();
+      if (Index == NParameters) {
+        if (Body[Pos + 1] == '(' && Body[Pos + 2] == ')')
+          Pos += 3;
+        else {
+          OS << '\\' << Argument;
+          Pos = I;
         }
+      } else {
+        bool VarargParameter = HasVararg && Index == (NParameters - 1);
+        for (const AsmToken &Token : A[Index])
+          // We expect no quotes around the string's contents when
+          // parsing for varargs.
+          if (Token.getKind() != AsmToken::String || VarargParameter)
+            OS << Token.getString();
+          else {
+            bool valid;
+            OS << Token.getStringContents(valid);
+            if (!valid) {
+                KsError = KS_ERR_ASM_MACRO_STR;
+                return true;
+            }
+          }
+
+        Pos += 1 + Argument.size();
       }
     }
     // Update the scan point.
@@ -2228,8 +2077,7 @@ bool AsmParser::parseMacroArgument(MCAsmMacroArgument &MA, bool Vararg) {
   unsigned ParenLevel = 0;
   unsigned AddTokens = 0;
 
-  // Darwin doesn't use spaces to delmit arguments.
-  AsmLexerSkipSpaceRAII ScopedSkipSpace(Lexer, IsDarwin);
+  AsmLexerSkipSpaceRAII ScopedSkipSpace(Lexer, false);
 
   for (;;) {
     if (Lexer.is(AsmToken::Eof) || Lexer.is(AsmToken::Equal)) {
@@ -2247,18 +2095,16 @@ bool AsmParser::parseMacroArgument(MCAsmMacroArgument &MA, bool Vararg) {
       // Spaces can delimit parameters, but could also be part an expression.
       // If the token after a space is an operator, add the token and the next
       // one into this argument
-      if (!IsDarwin) {
-        if (isOperator(Lexer.getKind())) {
-          // Check to see whether the token is used as an operator,
-          // or part of an identifier
-          const char *NextChar = getTok().getEndLoc().getPointer();
-          if (*NextChar == ' ')
-            AddTokens = 2;
-        }
+      if (isOperator(Lexer.getKind())) {
+        // Check to see whether the token is used as an operator,
+        // or part of an identifier
+        const char *NextChar = getTok().getEndLoc().getPointer();
+        if (*NextChar == ' ')
+          AddTokens = 2;
+      }
 
-        if (!AddTokens && ParenLevel == 0) {
-          break;
-        }
+      if (!AddTokens && ParenLevel == 0) {
+        break;
       }
     }
 

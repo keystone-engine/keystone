@@ -149,7 +149,6 @@ MCSymbolRefExpr::MCSymbolRefExpr(const MCSymbol *Symbol, VariantKind Kind,
                                  const MCAsmInfo *MAI)
     : MCExpr(MCExpr::SymbolRef), Kind(Kind),
       UseParensForSymbolVariant(MAI->useParensForSymbolVariant()),
-      HasSubsectionsViaSymbols(MAI->hasSubsectionsViaSymbols()),
       Symbol(Symbol) {
   assert(Symbol);
 }
@@ -281,7 +280,6 @@ StringRef MCSymbolRefExpr::getVariantKindName(VariantKind Kind) {
   case VK_Mips_CALL_LO16: return "CALL_LO16";
   case VK_Mips_PCREL_HI16: return "PCREL_HI16";
   case VK_Mips_PCREL_LO16: return "PCREL_LO16";
-  case VK_COFF_IMGREL32: return "IMGREL";
   case VK_Hexagon_PCREL: return "PCREL";
   case VK_Hexagon_LO16: return "LO16";
   case VK_Hexagon_HI16: return "HI16";
@@ -322,7 +320,6 @@ MCSymbolRefExpr::getVariantKindForName(StringRef Name) {
     .Case("pageoff", VK_PAGEOFF)
     .Case("gotpage", VK_GOTPAGE)
     .Case("gotpageoff", VK_GOTPAGEOFF)
-    .Case("imgrel", VK_COFF_IMGREL32)
     .Case("secrel32", VK_SECREL)
     .Case("size", VK_SIZE)
     .Case("l", VK_PPC_LO)
@@ -637,22 +634,9 @@ bool MCExpr::evaluateAsRelocatableImpl(MCValue &Res, const MCAssembler *Asm,
     // Evaluate recursively if this is a variable.
     if (Sym.isVariable() && SRE->getKind() == MCSymbolRefExpr::VK_None &&
         canExpand(Sym, InSet)) {
-      bool IsMachO = SRE->hasSubsectionsViaSymbols();
       if (Sym.getVariableValue()->evaluateAsRelocatableImpl(
-              Res, Asm, Layout, Fixup, Addrs, InSet || IsMachO)) {
-        if (!IsMachO)
-          return true;
-
-        const MCSymbolRefExpr *A = Res.getSymA();
-        const MCSymbolRefExpr *B = Res.getSymB();
-        // FIXME: This is small hack. Given
-        // a = b + 4
-        // .long a
-        // the OS X assembler will completely drop the 4. We should probably
-        // include it in the relocation or produce an error if that is not
-        // possible.
-        if (!A && !B)
-          return true;
+              Res, Asm, Layout, Fixup, Addrs, InSet)) {
+        return true;
       }
     }
 

@@ -24,14 +24,12 @@
 #include "llvm/MC/MCObjectWriter.h"
 #include "llvm/MC/MCRegisterInfo.h"
 #include "llvm/MC/MCSectionELF.h"
-#include "llvm/MC/MCSectionMachO.h"
 #include "llvm/MC/MCSubtargetInfo.h"
 #include "llvm/MC/MCValue.h"
 #include "llvm/Support/Debug.h"
 #include "llvm/Support/ELF.h"
 #include "llvm/Support/ErrorHandling.h"
 #include "llvm/Support/Format.h"
-#include "llvm/Support/MachO.h"
 #include "llvm/Support/TargetParser.h"
 #include "llvm/Support/raw_ostream.h"
 using namespace llvm;
@@ -872,14 +870,8 @@ MCAsmBackend *llvm::createARMAsmBackend(const Target &T,
                                         const MCRegisterInfo &MRI,
                                         const Triple &TheTriple, StringRef CPU,
                                         bool isLittle) {
-  switch (TheTriple.getObjectFormat()) {
-  default:
-    llvm_unreachable("unsupported object format");
-  case Triple::ELF:
-    assert(TheTriple.isOSBinFormatELF() && "using ELF for non-ELF target");
-    uint8_t OSABI = MCELFObjectTargetWriter::getOSABI(TheTriple.getOS());
-    return new ARMAsmBackendELF(T, TheTriple, OSABI, isLittle);
-  }
+  uint8_t OSABI = MCELFObjectTargetWriter::getOSABI(TheTriple.getOS());
+  return new ARMAsmBackendELF(T, TheTriple, OSABI, isLittle);
 }
 
 MCAsmBackend *llvm::createARMLEAsmBackend(const Target &T,

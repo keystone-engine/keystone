@@ -40,24 +40,16 @@ protected:
 
   enum {
     ID_Archive,
-    ID_MachOUniversalBinary,
-    ID_COFFImportFile,
     ID_IR,            // LLVM IR
     ID_FunctionIndex, // Function summary index
 
     // Object and children.
     ID_StartObjects,
-    ID_COFF,
 
     ID_ELF32L, // ELF 32-bit, little endian
     ID_ELF32B, // ELF 32-bit, big endian
     ID_ELF64L, // ELF 64-bit, little endian
     ID_ELF64B, // ELF 64-bit, big endian
-
-    ID_MachO32L, // MachO 32-bit, little endian
-    ID_MachO32B, // MachO 32-bit, big endian
-    ID_MachO64L, // MachO 64-bit, little endian
-    ID_MachO64B, // MachO 64-bit, big endian
 
     ID_EndObjects
   };
@@ -67,13 +59,6 @@ protected:
       return is64Bits ? ID_ELF64L : ID_ELF32L;
     else
       return is64Bits ? ID_ELF64B : ID_ELF32B;
-  }
-
-  static unsigned int getMachOType(bool isLE, bool is64Bits) {
-    if (isLE)
-      return is64Bits ? ID_MachO64L : ID_MachO32L;
-    else
-      return is64Bits ? ID_MachO64B : ID_MachO32B;
   }
 
 public:
@@ -99,24 +84,8 @@ public:
     return TypeID == ID_Archive;
   }
 
-  bool isMachOUniversalBinary() const {
-    return TypeID == ID_MachOUniversalBinary;
-  }
-
   bool isELF() const {
     return TypeID >= ID_ELF32L && TypeID <= ID_ELF64B;
-  }
-
-  bool isMachO() const {
-    return TypeID >= ID_MachO32L && TypeID <= ID_MachO64B;
-  }
-
-  bool isCOFF() const {
-    return TypeID == ID_COFF;
-  }
-
-  bool isCOFFImportFile() const {
-    return TypeID == ID_COFFImportFile;
   }
 
   bool isIR() const {
@@ -126,8 +95,7 @@ public:
   bool isFunctionIndex() const { return TypeID == ID_FunctionIndex; }
 
   bool isLittleEndian() const {
-    return !(TypeID == ID_ELF32B || TypeID == ID_ELF64B ||
-             TypeID == ID_MachO32B || TypeID == ID_MachO64B);
+    return !(TypeID == ID_ELF32B || TypeID == ID_ELF64B);
   }
 };
 

@@ -28,9 +28,6 @@ MCAsmInfo::MCAsmInfo() {
 
   IsLittleEndian = true;
   StackGrowsUp = false;
-  HasSubsectionsViaSymbols = false;
-  HasMachoZeroFillDirective = false;
-  HasMachoTBSSDirective = false;
   HasStaticCtorDtorReferenceInStaticMode = false;
   MaxInstLength = 4;
   MinInstAlignment = 1;
@@ -74,7 +71,6 @@ MCAsmInfo::MCAsmInfo() {
   HasDotTypeDotSizeDirective = true;
   HasSingleParameterDotFile = true;
   HasIdentDirective = false;
-  HasNoDeadStrip = false;
   WeakDirective = "\t.weak\t";
   WeakRefDirective = nullptr;
   HasWeakDefDirective = false;

@@ -38,7 +38,6 @@
 #include "llvm/MC/MCSymbol.h"
 #include "llvm/Support/ARMBuildAttributes.h"
 #include "llvm/Support/ARMEHABI.h"
-#include "llvm/Support/COFF.h"
 #include "llvm/Support/Debug.h"
 #include "llvm/Support/ELF.h"
 #include "llvm/Support/MathExtras.h"
@@ -5290,17 +5289,15 @@ bool ARMAsmParser::parsePrefix(ARMMCExpr::VariantKind &RefKind) {
   }
 
   enum {
-    COFF = (1 << MCObjectFileInfo::IsCOFF),
     ELF = (1 << MCObjectFileInfo::IsELF),
-    MACHO = (1 << MCObjectFileInfo::IsMachO)
   };
   static const struct PrefixEntry {
     const char *Spelling;
     ARMMCExpr::VariantKind VariantKind;
     uint8_t SupportedFormats;
   } PrefixEntries[] = {
-    { "lower16", ARMMCExpr::VK_ARM_LO16, COFF | ELF | MACHO },
-    { "upper16", ARMMCExpr::VK_ARM_HI16, COFF | ELF | MACHO },
+    { "lower16", ARMMCExpr::VK_ARM_LO16, ELF},
+    { "upper16", ARMMCExpr::VK_ARM_HI16, ELF},
   };
 
   StringRef IDVal = Parser.getTok().getIdentifier();
@@ -5317,14 +5314,8 @@ bool ARMAsmParser::parsePrefix(ARMMCExpr::VariantKind &RefKind) {
 
   uint8_t CurrentFormat;
   switch (getContext().getObjectFileInfo()->getObjectFileType()) {
-  case MCObjectFileInfo::IsMachO:
-    CurrentFormat = MACHO;
-    break;
   case MCObjectFileInfo::IsELF:
     CurrentFormat = ELF;
-    break;
-  case MCObjectFileInfo::IsCOFF:
-    CurrentFormat = COFF;
     break;
   }
 
@@ -8823,11 +8814,6 @@ bool ARMAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
 
 /// parseDirective parses the arm specific directives
 bool ARMAsmParser::ParseDirective(AsmToken DirectiveID) {
-  const MCObjectFileInfo::Environment Format =
-    getContext().getObjectFileInfo()->getObjectFileType();
-  bool IsMachO = Format == MCObjectFileInfo::IsMachO;
-  bool IsCOFF = Format == MCObjectFileInfo::IsCOFF;
-
   StringRef IDVal = DirectiveID.getIdentifier();
   if (IDVal == ".word")
     return parseLiteralValues(4, DirectiveID.getLoc());
@@ -8877,29 +8863,26 @@ bool ARMAsmParser::ParseDirective(AsmToken DirectiveID) {
     return parseDirectiveAlign(DirectiveID.getLoc());
   else if (IDVal == ".thumb_set")
     return parseDirectiveThumbSet(DirectiveID.getLoc());
-
-  if (!IsMachO && !IsCOFF) {
-    if (IDVal == ".arch")
-      return parseDirectiveArch(DirectiveID.getLoc());
-    else if (IDVal == ".cpu")
-      return parseDirectiveCPU(DirectiveID.getLoc());
-    else if (IDVal == ".eabi_attribute")
-      return parseDirectiveEabiAttr(DirectiveID.getLoc());
-    else if (IDVal == ".fpu")
-      return parseDirectiveFPU(DirectiveID.getLoc());
-    else if (IDVal == ".fnstart")
-      return parseDirectiveFnStart(DirectiveID.getLoc());
-    else if (IDVal == ".inst")
-      return parseDirectiveInst(DirectiveID.getLoc());
-    else if (IDVal == ".inst.n")
-      return parseDirectiveInst(DirectiveID.getLoc(), 'n');
-    else if (IDVal == ".inst.w")
-      return parseDirectiveInst(DirectiveID.getLoc(), 'w');
-    else if (IDVal == ".object_arch")
-      return parseDirectiveObjectArch(DirectiveID.getLoc());
-    else if (IDVal == ".tlsdescseq")
-      return parseDirectiveTLSDescSeq(DirectiveID.getLoc());
-  }
+  else if (IDVal == ".arch")
+    return parseDirectiveArch(DirectiveID.getLoc());
+  else if (IDVal == ".cpu")
+    return parseDirectiveCPU(DirectiveID.getLoc());
+  else if (IDVal == ".eabi_attribute")
+    return parseDirectiveEabiAttr(DirectiveID.getLoc());
+  else if (IDVal == ".fpu")
+    return parseDirectiveFPU(DirectiveID.getLoc());
+  else if (IDVal == ".fnstart")
+    return parseDirectiveFnStart(DirectiveID.getLoc());
+  else if (IDVal == ".inst")
+    return parseDirectiveInst(DirectiveID.getLoc());
+  else if (IDVal == ".inst.n")
+    return parseDirectiveInst(DirectiveID.getLoc(), 'n');
+  else if (IDVal == ".inst.w")
+    return parseDirectiveInst(DirectiveID.getLoc(), 'w');
+  else if (IDVal == ".object_arch")
+    return parseDirectiveObjectArch(DirectiveID.getLoc());
+  else if (IDVal == ".tlsdescseq")
+    return parseDirectiveTLSDescSeq(DirectiveID.getLoc());
 
   return true;
 }
@@ -8991,26 +8974,6 @@ void ARMAsmParser::onLabelParsed(MCSymbol *Symbol) {
 ///  ::= .thumbfunc symbol_name
 bool ARMAsmParser::parseDirectiveThumbFunc(SMLoc L) {
   MCAsmParser &Parser = getParser();
-  const auto Format = getContext().getObjectFileInfo()->getObjectFileType();
-  bool IsMachO = Format == MCObjectFileInfo::IsMachO;
-
-  // Darwin asm has (optionally) function name after .thumb_func direction
-  // ELF doesn't
-  if (IsMachO) {
-    const AsmToken &Tok = Parser.getTok();
-    if (Tok.isNot(AsmToken::EndOfStatement)) {
-      if (Tok.isNot(AsmToken::Identifier) && Tok.isNot(AsmToken::String)) {
-        Error(L, "unexpected token in .thumb_func directive");
-        return false;
-      }
-
-      MCSymbol *Func =
-          getParser().getContext().getOrCreateSymbol(Tok.getIdentifier());
-      getParser().getStreamer().EmitThumbFunc(Func);
-      Parser.Lex(); // Consume the identifier token.
-      return false;
-    }
-  }
 
   if (getLexer().isNot(AsmToken::EndOfStatement)) {
     Error(Parser.getTok().getLoc(), "unexpected token in directive");

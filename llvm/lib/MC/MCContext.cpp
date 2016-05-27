@@ -17,14 +17,9 @@
 #include "llvm/MC/MCLabel.h"
 #include "llvm/MC/MCObjectFileInfo.h"
 #include "llvm/MC/MCRegisterInfo.h"
-#include "llvm/MC/MCSectionCOFF.h"
 #include "llvm/MC/MCSectionELF.h"
-#include "llvm/MC/MCSectionMachO.h"
 #include "llvm/MC/MCStreamer.h"
-#include "llvm/MC/MCSymbolCOFF.h"
 #include "llvm/MC/MCSymbolELF.h"
-#include "llvm/MC/MCSymbolMachO.h"
-#include "llvm/Support/COFF.h"
 #include "llvm/Support/ELF.h"
 #include "llvm/Support/ErrorHandling.h"
 #include "llvm/Support/FileSystem.h"
@@ -71,9 +66,7 @@ MCContext::~MCContext() {
 
 void MCContext::reset() {
   // Call the destructors so the fragments are freed
-  COFFAllocator.DestroyAll();
   ELFAllocator.DestroyAll();
-  MachOAllocator.DestroyAll();
 
   MCSubtargetAllocator.DestroyAll();
   UsedNames.clear();
@@ -90,9 +83,7 @@ void MCContext::reset() {
   DwarfCompileUnitID = 0;
   CurrentDwarfLoc = MCDwarfLoc(0, 0, 0, DWARF2_FLAG_IS_STMT, 0, 0);
 
-  MachOUniquingMap.clear();
   ELFUniquingMap.clear();
-  COFFUniquingMap.clear();
 
   NextID.clear();
   AllowTemporaryLabels = true;
@@ -162,12 +153,8 @@ MCSymbol *MCContext::createSymbolImpl(const StringMapEntry<bool> *Name,
                                       bool IsTemporary) {
   if (MOFI) {
     switch (MOFI->getObjectFileType()) {
-    case MCObjectFileInfo::IsCOFF:
-      return new (Name, *this) MCSymbolCOFF(Name, IsTemporary);
     case MCObjectFileInfo::IsELF:
       return new (Name, *this) MCSymbolELF(Name, IsTemporary);
-    case MCObjectFileInfo::IsMachO:
-      return new (Name, *this) MCSymbolMachO(Name, IsTemporary);
     }
   }
   return new (Name, *this) MCSymbol(MCSymbol::SymbolKindUnset, Name,
@@ -267,35 +254,6 @@ MCSymbol *MCContext::lookupSymbol(const Twine &Name) const {
 // Section Management
 //===----------------------------------------------------------------------===//
 
-MCSectionMachO *MCContext::getMachOSection(StringRef Segment, StringRef Section,
-                                           unsigned TypeAndAttributes,
-                                           unsigned Reserved2, SectionKind Kind,
-                                           const char *BeginSymName) {
-
-  // We unique sections by their segment/section pair.  The returned section
-  // may not have the same flags as the requested section, if so this should be
-  // diagnosed by the client as an error.
-
-  // Form the name to look up.
-  SmallString<64> Name;
-  Name += Segment;
-  Name.push_back(',');
-  Name += Section;
-
-  // Do the lookup, if we have a hit, return it.
-  MCSectionMachO *&Entry = MachOUniquingMap[Name];
-  if (Entry)
-    return Entry;
-
-  MCSymbol *Begin = nullptr;
-  if (BeginSymName)
-    Begin = createTempSymbol(BeginSymName, false);
-
-  // Otherwise, return a new section.
-  return Entry = new (MachOAllocator.Allocate()) MCSectionMachO(
-             Segment, Section, TypeAndAttributes, Reserved2, Kind, Begin);
-}
-
 void MCContext::renameELFSection(MCSectionELF *Section, StringRef Name) {
   StringRef GroupName;
   if (const MCSymbol *Group = Section->getGroup())
@@ -377,66 +335,6 @@ MCSectionELF *MCContext::createELFGroupSection(const MCSymbolELF *Group) {
       MCSectionELF(".group", ELF::SHT_GROUP, 0, SectionKind::getReadOnly(), 4,
                    Group, ~0, nullptr, nullptr);
   return Result;
-}
-
-MCSectionCOFF *MCContext::getCOFFSection(StringRef Section,
-                                         unsigned Characteristics,
-                                         SectionKind Kind,
-                                         StringRef COMDATSymName, int Selection,
-                                         const char *BeginSymName) {
-  MCSymbol *COMDATSymbol = nullptr;
-  if (!COMDATSymName.empty()) {
-    COMDATSymbol = getOrCreateSymbol(COMDATSymName);
-    COMDATSymName = COMDATSymbol->getName();
-  }
-
-  // Do the lookup, if we have a hit, return it.
-  COFFSectionKey T{Section, COMDATSymName, Selection};
-  auto IterBool = COFFUniquingMap.insert(std::make_pair(T, nullptr));
-  auto Iter = IterBool.first;
-  if (!IterBool.second)
-    return Iter->second;
-
-  MCSymbol *Begin = nullptr;
-  if (BeginSymName)
-    Begin = createTempSymbol(BeginSymName, false);
-
-  StringRef CachedName = Iter->first.SectionName;
-  MCSectionCOFF *Result = new (COFFAllocator.Allocate()) MCSectionCOFF(
-      CachedName, Characteristics, COMDATSymbol, Selection, Kind, Begin);
-
-  Iter->second = Result;
-  return Result;
-}
-
-MCSectionCOFF *MCContext::getCOFFSection(StringRef Section,
-                                         unsigned Characteristics,
-                                         SectionKind Kind,
-                                         const char *BeginSymName) {
-  return getCOFFSection(Section, Characteristics, Kind, "", 0, BeginSymName);
-}
-
-MCSectionCOFF *MCContext::getCOFFSection(StringRef Section) {
-  COFFSectionKey T{Section, "", 0};
-  auto Iter = COFFUniquingMap.find(T);
-  if (Iter == COFFUniquingMap.end())
-    return nullptr;
-  return Iter->second;
-}
-
-MCSectionCOFF *MCContext::getAssociativeCOFFSection(MCSectionCOFF *Sec,
-                                                    const MCSymbol *KeySym) {
-  // Return the normal section if we don't have to be associative.
-  if (!KeySym)
-    return Sec;
-
-  // Make an associative section with the same name and kind as the normal
-  // section.
-  unsigned Characteristics =
-      Sec->getCharacteristics() | COFF::IMAGE_SCN_LNK_COMDAT;
-  return getCOFFSection(Sec->getSectionName(), Characteristics, Sec->getKind(),
-                        KeySym->getName(),
-                        COFF::IMAGE_COMDAT_SELECT_ASSOCIATIVE);
 }
 
 MCSubtargetInfo &MCContext::getSubtargetCopy(const MCSubtargetInfo &STI) {
