@@ -116,29 +116,47 @@ decDigitValue(unsigned int c)
    If the exponent overflows, returns a large exponent with the
    appropriate sign.  */
 static int
-readExponent(StringRef::iterator begin, StringRef::iterator end)
+readExponent(StringRef::iterator begin, StringRef::iterator end, APFloat::opStatus &fp)
 {
   bool isNegative;
   unsigned int absExponent;
   const unsigned int overlargeExponent = 24000;  /* FIXME.  */
   StringRef::iterator p = begin;
 
-  assert(p != end && "Exponent has no digits");
+  fp = APFloat::opOK;
+
+  //assert(p != end && "Exponent has no digits"); // qq
+  if (p == end) {
+      fp = APFloat::opInvalidOp;
+      return 0;
+  }
 
   isNegative = (*p == '-');
   if (*p == '-' || *p == '+') {
     p++;
-    assert(p != end && "Exponent has no digits");
+    //assert(p != end && "Exponent has no digits");
+    if (p == end) {
+      fp = APFloat::opInvalidOp;
+      return 0;
+    }
   }
 
   absExponent = decDigitValue(*p++);
-  assert(absExponent < 10U && "Invalid character in exponent");
+  //assert(absExponent < 10U && "Invalid character in exponent");
+  if (absExponent >= 10U) {
+      fp = APFloat::opInvalidOp;
+      return 0;
+  }
 
   for (; p != end; ++p) {
     unsigned int value;
 
     value = decDigitValue(*p);
-    assert(value < 10U && "Invalid character in exponent");
+    //assert(value < 10U && "Invalid character in exponent");
+    if (value >= 10U) {
+        fp = APFloat::opInvalidOp;
+        return 0;
+    }
 
     value += absExponent * 10;
     if (absExponent >= overlargeExponent) {
@@ -149,7 +167,11 @@ readExponent(StringRef::iterator begin, StringRef::iterator end)
     absExponent = value;
   }
 
-  assert(p == end && "Invalid exponent in exponent");
+  //assert(p == end && "Invalid exponent in exponent");
+  if (p != end) {
+      fp = APFloat::opInvalidOp;
+      return 0;
+  }
 
   if (isNegative)
     return -(int) absExponent;
@@ -249,12 +271,13 @@ struct decimalInfo {
   int normalizedExponent;
 };
 
-static void
+APFloat::opStatus
 interpretDecimal(StringRef::iterator begin, StringRef::iterator end,
                  decimalInfo *D)
 {
   StringRef::iterator dot = end;
   StringRef::iterator p = skipLeadingZeroesAndAnyDot (begin, end, &dot);
+  APFloat::opStatus fp;
 
   D->firstSigDigit = p;
   D->exponent = 0;
@@ -262,7 +285,9 @@ interpretDecimal(StringRef::iterator begin, StringRef::iterator end,
 
   for (; p != end; ++p) {
     if (*p == '.') {
-      assert(dot == end && "String contains multiple dots");
+      //assert(dot == end && "String contains multiple dots");
+      if (dot != end)
+          return APFloat::opInvalidOp;
       dot = p++;
       if (p == end)
         break;
@@ -272,12 +297,20 @@ interpretDecimal(StringRef::iterator begin, StringRef::iterator end,
   }
 
   if (p != end) {
-    assert((*p == 'e' || *p == 'E') && "Invalid character in significand");
-    assert(p != begin && "Significand has no digits");
-    assert((dot == end || p - begin != 1) && "Significand has no digits");
+    //assert((*p == 'e' || *p == 'E') && "Invalid character in significand");
+    if (*p != 'e' && *p != 'E')
+        return APFloat::opInvalidOp;
+    //assert(p != begin && "Significand has no digits");
+    if (p == begin)
+        return APFloat::opInvalidOp;
+    //assert((dot == end || p - begin != 1) && "Significand has no digits");
+    if (dot != end && p - begin == 1)
+        return APFloat::opInvalidOp;
 
     /* p points to the first non-digit in the string */
-    D->exponent = readExponent(p + 1, end);
+    D->exponent = readExponent(p + 1, end, fp); // qq
+    if (fp)
+        return fp;
 
     /* Implied decimal point?  */
     if (dot == end)
@@ -303,6 +336,8 @@ interpretDecimal(StringRef::iterator begin, StringRef::iterator end,
   }
 
   D->lastSigDigit = p;
+
+  return APFloat::opOK;
 }
 
 /* Return the trailing fraction of a hexadecimal number.
@@ -1431,7 +1466,7 @@ APFloat::addOrSubtractSpecials(const APFloat &rhs, bool subtract)
        subtracted.  */
     if (((sign ^ rhs.sign)!=0) != subtract) {
       makeNaN();
-      return opInvalidOp;
+      return APFloat::opInvalidOp;
     }
 
     return opOK;
@@ -2517,14 +2552,16 @@ APFloat::roundSignificandWithExponent(const integerPart *decSigParts,
 }
 
 APFloat::opStatus
-APFloat::convertFromDecimalString(StringRef str, roundingMode rounding_mode)
+APFloat::convertFromDecimalString(StringRef str, roundingMode rounding_mode)    // qq
 {
   decimalInfo D;
   opStatus fs;
 
   /* Scan the text.  */
   StringRef::iterator p = str.begin();
-  interpretDecimal(p, str.end(), &D);
+  fs = interpretDecimal(p, str.end(), &D);
+  if (fs != opOK)
+      return fs;
 
   /* Handle the quick cases.  First the case of no significant digits,
      i.e. zero, and then exponents that are obviously too large or too
