@@ -10116,7 +10116,8 @@ bool ARMAsmParser::parseDirectiveArchExtension(SMLoc L) {
 // Define this matcher function after the auto-generated include so we
 // have the match class enum definitions.
 unsigned ARMAsmParser::validateTargetOperandClass(MCParsedAsmOperand &AsmOp,
-                                                  unsigned Kind) {
+                                                  unsigned Kind)
+{
   ARMOperand &Op = static_cast<ARMOperand &>(AsmOp);
   // If the kind is a token for a literal immediate, check if our asm
   // operand matches. This is for InstAliases which have a fixed-value
@@ -10135,8 +10136,10 @@ unsigned ARMAsmParser::validateTargetOperandClass(MCParsedAsmOperand &AsmOp,
       int64_t Value;
       if (!SOExpr->evaluateAsAbsolute(Value))
         return Match_Success;
-      assert((Value >= INT32_MIN && Value <= UINT32_MAX) &&
-             "expression value must be representable in 32 bits");
+      //assert((Value >= INT32_MIN && Value <= UINT32_MAX) &&
+      //       "expression value must be representable in 32 bits");
+      if (Value < INT32_MIN || Value > UINT32_MAX)
+          return Match_InvalidOperand;
     }
     break;
   case MCK_rGPR:
