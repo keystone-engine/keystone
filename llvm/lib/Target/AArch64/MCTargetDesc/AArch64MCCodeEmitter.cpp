@@ -369,8 +369,10 @@ AArch64MCCodeEmitter::getBranchTargetOpValue(const MCInst &MI, unsigned OpIdx,
   const MCOperand &MO = MI.getOperand(OpIdx);
 
   // If the destination is an immediate, we have nothing to do.
-  if (MO.isImm())
-    return MO.getImm();
+  if (MO.isImm()) {
+    // encode relative address
+    return (MO.getImm() * 4 - MI.getAddress()) / 4;
+  }
   assert(MO.isExpr() && "Unexpected ADR target type!");
 
   MCFixupKind Kind = MI.getOpcode() == AArch64::BL
