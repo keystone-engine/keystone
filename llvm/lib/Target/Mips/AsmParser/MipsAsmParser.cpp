@@ -330,7 +330,8 @@ class MipsAsmParser : public MCTargetAsmParser {
   unsigned getATReg(SMLoc Loc);
 
   bool processInstruction(MCInst &Inst, SMLoc IDLoc,
-                          SmallVectorImpl<MCInst> &Instructions);
+                          SmallVectorImpl<MCInst> &Instructions,
+                          unsigned int &KsError);
 
   // Helper function that checks if the value of a vector index is within the
   // boundaries of accepted values for each RegisterKind
@@ -1532,8 +1533,11 @@ void emitAppropriateDSLL(unsigned DstReg, unsigned SrcReg, int16_t ShiftAmount,
 }
 } // end anonymous namespace.
 
+// return true on error
 bool MipsAsmParser::processInstruction(MCInst &Inst, SMLoc IDLoc,
-                                       SmallVectorImpl<MCInst> &Instructions) {
+                                       SmallVectorImpl<MCInst> &Instructions,
+                                       unsigned int &KsError)
+{
   const MCInstrDesc &MCID = getInstDesc(Inst.getOpcode());
   bool ExpandedJalSym = false;
 
@@ -1561,11 +1565,17 @@ bool MipsAsmParser::processInstruction(MCInst &Inst, SMLoc IDLoc,
       Offset = Inst.getOperand(2);
       if (!Offset.isImm())
         break; // We'll deal with this situation later on when applying fixups.
-      if (!isIntN(inMicroMipsMode() ? 17 : 18, Offset.getImm()))
-        return Error(IDLoc, "branch target out of range");
+      if (!isIntN(inMicroMipsMode() ? 17 : 18, Offset.getImm())) {
+        KsError = KS_ERR_ASM_INVALIDOPERAND;
+        return true;
+        //return Error(IDLoc, "branch target out of range");
+      }
       if (OffsetToAlignment(Offset.getImm(),
-                            1LL << (inMicroMipsMode() ? 1 : 2)))
-        return Error(IDLoc, "branch to misaligned address");
+                            1LL << (inMicroMipsMode() ? 1 : 2))) {
+        KsError = KS_ERR_ASM_INVALIDOPERAND;
+        return true;
+        //return Error(IDLoc, "branch to misaligned address");
+      }
       break;
     case Mips::BGEZ:
     case Mips::BGTZ:
@@ -1587,11 +1597,17 @@ bool MipsAsmParser::processInstruction(MCInst &Inst, SMLoc IDLoc,
       Offset = Inst.getOperand(1);
       if (!Offset.isImm())
         break; // We'll deal with this situation later on when applying fixups.
-      if (!isIntN(inMicroMipsMode() ? 17 : 18, Offset.getImm()))
-        return Error(IDLoc, "branch target out of range");
+      if (!isIntN(inMicroMipsMode() ? 17 : 18, Offset.getImm())) {
+        KsError = KS_ERR_ASM_INVALIDOPERAND;
+        return true;
+        //return Error(IDLoc, "branch target out of range");
+      }
       if (OffsetToAlignment(Offset.getImm(),
-                            1LL << (inMicroMipsMode() ? 1 : 2)))
-        return Error(IDLoc, "branch to misaligned address");
+                            1LL << (inMicroMipsMode() ? 1 : 2))) {
+        KsError = KS_ERR_ASM_INVALIDOPERAND;
+        return true;
+        //return Error(IDLoc, "branch to misaligned address");
+      }
       break;
     case Mips::BEQZ16_MM:
     case Mips::BEQZC16_MMR6:
@@ -1601,10 +1617,16 @@ bool MipsAsmParser::processInstruction(MCInst &Inst, SMLoc IDLoc,
       Offset = Inst.getOperand(1);
       if (!Offset.isImm())
         break; // We'll deal with this situation later on when applying fixups.
-      if (!isInt<8>(Offset.getImm()))
-        return Error(IDLoc, "branch target out of range");
-      if (OffsetToAlignment(Offset.getImm(), 2LL))
-        return Error(IDLoc, "branch to misaligned address");
+      if (!isInt<8>(Offset.getImm())) {
+        KsError = KS_ERR_ASM_INVALIDOPERAND;
+        return true;
+        //return Error(IDLoc, "branch target out of range");
+      }
+      if (OffsetToAlignment(Offset.getImm(), 2LL)) {
+        KsError = KS_ERR_ASM_INVALIDOPERAND;
+        return true;
+        //return Error(IDLoc, "branch to misaligned address");
+      }
       break;
     }
   }
@@ -1633,12 +1655,18 @@ bool MipsAsmParser::processInstruction(MCInst &Inst, SMLoc IDLoc,
         assert(MCID.getNumOperands() == 3 && "unexpected number of operands");
         // The offset is handled above
         Opnd = Inst.getOperand(1);
-        if (!Opnd.isImm())
-          return Error(IDLoc, "expected immediate operand kind");
+        if (!Opnd.isImm()) {
+          KsError = KS_ERR_ASM_INVALIDOPERAND;
+          return true;
+          //return Error(IDLoc, "expected immediate operand kind");
+        }
         Imm = Opnd.getImm();
         if (Imm < 0 || Imm > (Opcode == Mips::BBIT0 ||
-                              Opcode == Mips::BBIT1 ? 63 : 31))
-          return Error(IDLoc, "immediate operand value out of range");
+                              Opcode == Mips::BBIT1 ? 63 : 31)) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+          //return Error(IDLoc, "immediate operand value out of range");
+        }
         if (Imm > 31) {
           Inst.setOpcode(Opcode == Mips::BBIT0 ? Mips::BBIT032
                                                : Mips::BBIT132);
@@ -1650,11 +1678,17 @@ bool MipsAsmParser::processInstruction(MCInst &Inst, SMLoc IDLoc,
       case Mips::SNEi:
         assert(MCID.getNumOperands() == 3 && "unexpected number of operands");
         Opnd = Inst.getOperand(2);
-        if (!Opnd.isImm())
-          return Error(IDLoc, "expected immediate operand kind");
+        if (!Opnd.isImm()) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "expected immediate operand kind");
+        }
         Imm = Opnd.getImm();
-        if (!isInt<10>(Imm))
-          return Error(IDLoc, "immediate operand value out of range");
+        if (!isInt<10>(Imm)) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "immediate operand value out of range");
+        }
         break;
     }
   }
@@ -1669,8 +1703,11 @@ bool MipsAsmParser::processInstruction(MCInst &Inst, SMLoc IDLoc,
 
     // We can do this expansion if there's only 1 symbol in the argument
     // expression.
-    if (countMCSymbolRefExpr(JalExpr) > 1)
-      return Error(IDLoc, "jal doesn't support multiple symbols in PIC mode");
+    if (countMCSymbolRefExpr(JalExpr) > 1) {
+        KsError = KS_ERR_ASM_INVALIDOPERAND;
+        return true;
+        //return Error(IDLoc, "jal doesn't support multiple symbols in PIC mode");
+    }
 
     // FIXME: This is checking the expression can be handled by the later stages
     //        of the assembler. We ought to leave it to those later stages but
@@ -1805,111 +1842,186 @@ bool MipsAsmParser::processInstruction(MCInst &Inst, SMLoc IDLoc,
         break;
       case Mips::ADDIUS5_MM:
         Opnd = Inst.getOperand(2);
-        if (!Opnd.isImm())
-          return Error(IDLoc, "expected immediate operand kind");
+        if (!Opnd.isImm()) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "expected immediate operand kind");
+        }
         Imm = Opnd.getImm();
-        if (Imm < -8 || Imm > 7)
-          return Error(IDLoc, "immediate operand value out of range");
+        if (Imm < -8 || Imm > 7) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "immediate operand value out of range");
+        }
         break;
       case Mips::ADDIUSP_MM:
         Opnd = Inst.getOperand(0);
-        if (!Opnd.isImm())
-          return Error(IDLoc, "expected immediate operand kind");
+        if (!Opnd.isImm()) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "expected immediate operand kind");
+        }
         Imm = Opnd.getImm();
         if (Imm < -1032 || Imm > 1028 || (Imm < 8 && Imm > -12) ||
-            Imm % 4 != 0)
-          return Error(IDLoc, "immediate operand value out of range");
+            Imm % 4 != 0) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "immediate operand value out of range");
+        }
         break;
       case Mips::SLL16_MM:
       case Mips::SRL16_MM:
         Opnd = Inst.getOperand(2);
-        if (!Opnd.isImm())
-          return Error(IDLoc, "expected immediate operand kind");
+        if (!Opnd.isImm()) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "expected immediate operand kind");
+        }
         Imm = Opnd.getImm();
-        if (Imm < 1 || Imm > 8)
-          return Error(IDLoc, "immediate operand value out of range");
+        if (Imm < 1 || Imm > 8) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "immediate operand value out of range");
+        }
         break;
       case Mips::LI16_MM:
         Opnd = Inst.getOperand(1);
-        if (!Opnd.isImm())
-          return Error(IDLoc, "expected immediate operand kind");
+        if (!Opnd.isImm()) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "expected immediate operand kind");
+        }
         Imm = Opnd.getImm();
-        if (Imm < -1 || Imm > 126)
-          return Error(IDLoc, "immediate operand value out of range");
+        if (Imm < -1 || Imm > 126) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "immediate operand value out of range");
+        }
         break;
       case Mips::ADDIUR2_MM:
         Opnd = Inst.getOperand(2);
-        if (!Opnd.isImm())
-          return Error(IDLoc, "expected immediate operand kind");
+        if (!Opnd.isImm()) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "expected immediate operand kind");
+        }
         Imm = Opnd.getImm();
         if (!(Imm == 1 || Imm == -1 ||
-              ((Imm % 4 == 0) && Imm < 28 && Imm > 0)))
-          return Error(IDLoc, "immediate operand value out of range");
+              ((Imm % 4 == 0) && Imm < 28 && Imm > 0))) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "immediate operand value out of range");
+        }
         break;
       case Mips::ADDIUR1SP_MM:
         Opnd = Inst.getOperand(1);
-        if (!Opnd.isImm())
-          return Error(IDLoc, "expected immediate operand kind");
+        if (!Opnd.isImm()) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "expected immediate operand kind");
+        }
         Imm = Opnd.getImm();
-        if (OffsetToAlignment(Imm, 4LL))
-          return Error(IDLoc, "misaligned immediate operand value");
-        if (Imm < 0 || Imm > 255)
-          return Error(IDLoc, "immediate operand value out of range");
+        if (OffsetToAlignment(Imm, 4LL)) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "misaligned immediate operand value");
+        }
+        if (Imm < 0 || Imm > 255) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "immediate operand value out of range");
+        }
         break;
       case Mips::ANDI16_MM:
         Opnd = Inst.getOperand(2);
-        if (!Opnd.isImm())
-          return Error(IDLoc, "expected immediate operand kind");
+        if (!Opnd.isImm()) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "expected immediate operand kind");
+        }
         Imm = Opnd.getImm();
         if (!(Imm == 128 || (Imm >= 1 && Imm <= 4) || Imm == 7 || Imm == 8 ||
               Imm == 15 || Imm == 16 || Imm == 31 || Imm == 32 || Imm == 63 ||
-              Imm == 64 || Imm == 255 || Imm == 32768 || Imm == 65535))
-          return Error(IDLoc, "immediate operand value out of range");
+              Imm == 64 || Imm == 255 || Imm == 32768 || Imm == 65535)) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "immediate operand value out of range");
+        }
         break;
       case Mips::LBU16_MM:
         Opnd = Inst.getOperand(2);
-        if (!Opnd.isImm())
-          return Error(IDLoc, "expected immediate operand kind");
+        if (!Opnd.isImm()) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "expected immediate operand kind");
+        }
         Imm = Opnd.getImm();
-        if (Imm < -1 || Imm > 14)
-          return Error(IDLoc, "immediate operand value out of range");
+        if (Imm < -1 || Imm > 14) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "immediate operand value out of range");
+        }
         break;
       case Mips::SB16_MM:
       case Mips::SB16_MMR6:
         Opnd = Inst.getOperand(2);
-        if (!Opnd.isImm())
-          return Error(IDLoc, "expected immediate operand kind");
+        if (!Opnd.isImm()) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "expected immediate operand kind");
+        }
         Imm = Opnd.getImm();
-        if (Imm < 0 || Imm > 15)
-          return Error(IDLoc, "immediate operand value out of range");
+        if (Imm < 0 || Imm > 15) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "immediate operand value out of range");
+        }
         break;
       case Mips::LHU16_MM:
       case Mips::SH16_MM:
       case Mips::SH16_MMR6:
         Opnd = Inst.getOperand(2);
-        if (!Opnd.isImm())
-          return Error(IDLoc, "expected immediate operand kind");
+        if (!Opnd.isImm()) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "expected immediate operand kind");
+        }
         Imm = Opnd.getImm();
-        if (Imm < 0 || Imm > 30 || (Imm % 2 != 0))
-          return Error(IDLoc, "immediate operand value out of range");
+        if (Imm < 0 || Imm > 30 || (Imm % 2 != 0)) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "immediate operand value out of range");
+         }
         break;
       case Mips::LW16_MM:
       case Mips::SW16_MM:
       case Mips::SW16_MMR6:
         Opnd = Inst.getOperand(2);
-        if (!Opnd.isImm())
-          return Error(IDLoc, "expected immediate operand kind");
+        if (!Opnd.isImm()) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "expected immediate operand kind");
+        }
         Imm = Opnd.getImm();
-        if (Imm < 0 || Imm > 60 || (Imm % 4 != 0))
-          return Error(IDLoc, "immediate operand value out of range");
+        if (Imm < 0 || Imm > 60 || (Imm % 4 != 0)) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "immediate operand value out of range");
+        }
         break;
       case Mips::ADDIUPC_MM:
         MCOperand Opnd = Inst.getOperand(1);
-        if (!Opnd.isImm())
-          return Error(IDLoc, "expected immediate operand kind");
+        if (!Opnd.isImm()) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "expected immediate operand kind");
+        }
         int Imm = Opnd.getImm();
-        if ((Imm % 4 != 0) || !isInt<25>(Imm))
-          return Error(IDLoc, "immediate operand value out of range");
+        if ((Imm % 4 != 0) || !isInt<25>(Imm)) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return true;
+            //return Error(IDLoc, "immediate operand value out of range");
+        }
         break;
     }
   }
@@ -3638,7 +3750,7 @@ bool MipsAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
 
   switch (MatchResult) {
   case Match_Success: {
-    if (processInstruction(Inst, IDLoc, Instructions))
+    if (processInstruction(Inst, IDLoc, Instructions, ErrorCode))
       return true;
     for (unsigned i = 0; i < Instructions.size(); i++)
       Out.EmitInstruction(Instructions[i], getSTI(), ErrorCode);
