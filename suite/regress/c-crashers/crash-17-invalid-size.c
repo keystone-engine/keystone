@@ -15,7 +15,8 @@ int main(int argc, char **argv) {
   if (!err) {
     size_t count, size;
     unsigned char *insn;
-    ks_asm(ks, (char *)assembly, 0, &insn, &size, &count);
+    if (ks_asm(ks, (char *)assembly, 0, &insn, &size, &count))
+      printf("ERROR: failed on ks_asm() with error = %s, code = %u\n", ks_strerror(ks_errno(ks)), ks_errno(ks));
     ks_free(insn);
   }
   ks_close(ks);
