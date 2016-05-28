@@ -1404,7 +1404,10 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
   // Allow an integer followed by a ':' as a directional local label.
   if (Lexer.is(AsmToken::Integer)) {
     LocalLabelVal = getTok().getIntVal();
-    if (LocalLabelVal < 0) {
+    // We limit the value of local labels as high values can be interpreted
+    // as special markers in DenseMap and will cause an assert when trying
+    // to add this value.
+    if (LocalLabelVal < 0 || LocalLabelVal > 99) {
       if (!TheCondState.Ignore) {
         // return TokError("unexpected token at start of statement");
         Info.KsError = KS_ERR_ASM_STAT_TOKEN;
