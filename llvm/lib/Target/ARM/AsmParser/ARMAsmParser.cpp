@@ -3137,7 +3137,8 @@ int ARMAsmParser::tryParseShiftRegister(OperandVector &Operands) {
 ///
 /// TODO this is likely to change to allow different register types and or to
 /// parse for a specific register type.
-bool ARMAsmParser::tryParseRegisterWithWriteBack(OperandVector &Operands) {
+bool ARMAsmParser::tryParseRegisterWithWriteBack(OperandVector &Operands)
+{
   MCAsmParser &Parser = getParser();
   const AsmToken &RegTok = Parser.getTok();
   int RegNo = tryParseRegister();
@@ -3314,7 +3315,8 @@ ARMAsmParser::parseCoprocRegOperand(OperandVector &Operands, unsigned int &Error
 /// parseCoprocOptionOperand - Try to parse an coprocessor option operand.
 /// coproc_option : '{' imm0_255 '}'
 ARMAsmParser::OperandMatchResultTy
-ARMAsmParser::parseCoprocOptionOperand(OperandVector &Operands, unsigned int &ErrorCode) {
+ARMAsmParser::parseCoprocOptionOperand(OperandVector &Operands, unsigned int &ErrorCode)
+{
   MCAsmParser &Parser = getParser();
   SMLoc S = Parser.getTok().getLoc();
 
@@ -3324,14 +3326,16 @@ ARMAsmParser::parseCoprocOptionOperand(OperandVector &Operands, unsigned int &Er
   Parser.Lex(); // Eat the '{'
 
   const MCExpr *Expr;
-  SMLoc Loc = Parser.getTok().getLoc();
+  //SMLoc Loc = Parser.getTok().getLoc();
   if (getParser().parseExpression(Expr)) {
-    Error(Loc, "illegal expression");
+    //Error(Loc, "illegal expression");
+    ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
     return MatchOperand_ParseFail;
   }
   const MCConstantExpr *CE = dyn_cast<MCConstantExpr>(Expr);
   if (!CE || CE->getValue() < 0 || CE->getValue() > 255) {
-    Error(Loc, "coprocessor option must be an immediate in range [0, 255]");
+    //Error(Loc, "coprocessor option must be an immediate in range [0, 255]");
+    ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
     return MatchOperand_ParseFail;
   }
   int Val = CE->getValue();
@@ -3524,7 +3528,8 @@ bool ARMAsmParser::parseRegisterList(OperandVector &Operands) {
 
 // Helper function to parse the lane index for vector lists.
 ARMAsmParser::OperandMatchResultTy ARMAsmParser::
-parseVectorLane(VectorLaneTy &LaneKind, unsigned &Index, SMLoc &EndLoc, unsigned int &ErrorCode) {
+parseVectorLane(VectorLaneTy &LaneKind, unsigned &Index, SMLoc &EndLoc, unsigned int &ErrorCode)
+{
   MCAsmParser &Parser = getParser();
   Index = 0; // Always return a defined index value.
   if (Parser.getTok().is(AsmToken::LBrac)) {
@@ -3543,18 +3548,21 @@ parseVectorLane(VectorLaneTy &LaneKind, unsigned &Index, SMLoc &EndLoc, unsigned
       Parser.Lex(); // Eat '#' or '$'.
 
     const MCExpr *LaneIndex;
-    SMLoc Loc = Parser.getTok().getLoc();
+    //SMLoc Loc = Parser.getTok().getLoc();
     if (getParser().parseExpression(LaneIndex)) {
-      Error(Loc, "illegal expression");
+      //Error(Loc, "illegal expression");
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return MatchOperand_ParseFail;
     }
     const MCConstantExpr *CE = dyn_cast<MCConstantExpr>(LaneIndex);
     if (!CE) {
-      Error(Loc, "lane index must be empty or an integer");
+      //Error(Loc, "lane index must be empty or an integer");
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return MatchOperand_ParseFail;
     }
     if (Parser.getTok().isNot(AsmToken::RBrac)) {
-      Error(Parser.getTok().getLoc(), "']' expected");
+      //Error(Parser.getTok().getLoc(), "']' expected");
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return MatchOperand_ParseFail;
     }
     EndLoc = Parser.getTok().getEndLoc();
@@ -3563,7 +3571,8 @@ parseVectorLane(VectorLaneTy &LaneKind, unsigned &Index, SMLoc &EndLoc, unsigned
 
     // FIXME: Make this range check context sensitive for .8, .16, .32.
     if (Val < 0 || Val > 7) {
-      Error(Parser.getTok().getLoc(), "lane index out of range");
+      //Error(Parser.getTok().getLoc(), "lane index out of range");
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return MatchOperand_ParseFail;
     }
     Index = Val;
@@ -3576,7 +3585,8 @@ parseVectorLane(VectorLaneTy &LaneKind, unsigned &Index, SMLoc &EndLoc, unsigned
 
 // parse a vector register list
 ARMAsmParser::OperandMatchResultTy
-ARMAsmParser::parseVectorList(OperandVector &Operands, unsigned int &ErrorCode) {
+ARMAsmParser::parseVectorList(OperandVector &Operands, unsigned int &ErrorCode)
+{
   MCAsmParser &Parser = getParser();
   VectorLaneTy LaneKind;
   unsigned LaneIndex;
@@ -3634,7 +3644,8 @@ ARMAsmParser::parseVectorList(OperandVector &Operands, unsigned int &ErrorCode) 
       }
       return MatchOperand_Success;
     }
-    Error(S, "vector register expected");
+    //Error(S, "vector register expected");
+    ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
     return MatchOperand_ParseFail;
   }
 
@@ -3646,7 +3657,8 @@ ARMAsmParser::parseVectorList(OperandVector &Operands, unsigned int &ErrorCode) 
 
   int Reg = tryParseRegister();
   if (Reg == -1) {
-    Error(RegLoc, "register expected");
+    //Error(RegLoc, "register expected");
+    ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
     return MatchOperand_ParseFail;
   }
   unsigned Count = 1;
@@ -3672,15 +3684,17 @@ ARMAsmParser::parseVectorList(OperandVector &Operands, unsigned int &ErrorCode) 
       if (!Spacing)
         Spacing = 1; // Register range implies a single spaced list.
       else if (Spacing == 2) {
-        Error(Parser.getTok().getLoc(),
-              "sequential registers in double spaced list");
+        //Error(Parser.getTok().getLoc(),
+        //      "sequential registers in double spaced list");
+        ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
         return MatchOperand_ParseFail;
       }
       Parser.Lex(); // Eat the minus.
-      SMLoc AfterMinusLoc = Parser.getTok().getLoc();
+      //SMLoc AfterMinusLoc = Parser.getTok().getLoc();
       int EndReg = tryParseRegister();
       if (EndReg == -1) {
-        Error(AfterMinusLoc, "register expected");
+        //Error(AfterMinusLoc, "register expected");
+        ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
         return MatchOperand_ParseFail;
       }
       // Allow Q regs and just interpret them as the two D sub-registers.
@@ -3692,12 +3706,14 @@ ARMAsmParser::parseVectorList(OperandVector &Operands, unsigned int &ErrorCode) 
         continue;
       // The register must be in the same register class as the first.
       if (!ARMMCRegisterClasses[ARM::DPRRegClassID].contains(EndReg)) {
-        Error(AfterMinusLoc, "invalid register in register list");
+        //Error(AfterMinusLoc, "invalid register in register list");
+        ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
         return MatchOperand_ParseFail;
       }
       // Ranges must go from low to high.
       if (Reg > EndReg) {
-        Error(AfterMinusLoc, "bad range in register list");
+        //Error(AfterMinusLoc, "bad range in register list");
+        ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
         return MatchOperand_ParseFail;
       }
       // Parse the lane specifier if present.
@@ -3707,7 +3723,8 @@ ARMAsmParser::parseVectorList(OperandVector &Operands, unsigned int &ErrorCode) 
           MatchOperand_Success)
         return MatchOperand_ParseFail;
       if (NextLaneKind != LaneKind || LaneIndex != NextLaneIndex) {
-        Error(AfterMinusLoc, "mismatched lane index in register list");
+        //Error(AfterMinusLoc, "mismatched lane index in register list");
+        ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
         return MatchOperand_ParseFail;
       }
 
@@ -3721,7 +3738,8 @@ ARMAsmParser::parseVectorList(OperandVector &Operands, unsigned int &ErrorCode) 
     int OldReg = Reg;
     Reg = tryParseRegister();
     if (Reg == -1) {
-      Error(RegLoc, "register expected");
+      //Error(RegLoc, "register expected");
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return MatchOperand_ParseFail;
     }
     // vector register lists must be contiguous.
@@ -3734,13 +3752,15 @@ ARMAsmParser::parseVectorList(OperandVector &Operands, unsigned int &ErrorCode) 
       if (!Spacing)
         Spacing = 1; // Register range implies a single spaced list.
       else if (Spacing == 2) {
-        Error(RegLoc,
-              "invalid register in double-spaced list (must be 'D' register')");
+        //Error(RegLoc,
+        //      "invalid register in double-spaced list (must be 'D' register')");
+        ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
         return MatchOperand_ParseFail;
       }
       Reg = getDRegFromQReg(Reg);
       if (Reg != OldReg + 1) {
-        Error(RegLoc, "non-contiguous register range");
+        //Error(RegLoc, "non-contiguous register range");
+        ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
         return MatchOperand_ParseFail;
       }
       ++Reg;
@@ -3748,12 +3768,13 @@ ARMAsmParser::parseVectorList(OperandVector &Operands, unsigned int &ErrorCode) 
       // Parse the lane specifier if present.
       VectorLaneTy NextLaneKind;
       unsigned NextLaneIndex;
-      SMLoc LaneLoc = Parser.getTok().getLoc();
+      //SMLoc LaneLoc = Parser.getTok().getLoc();
       if (parseVectorLane(NextLaneKind, NextLaneIndex, E, ErrorCode) !=
           MatchOperand_Success)
         return MatchOperand_ParseFail;
       if (NextLaneKind != LaneKind || LaneIndex != NextLaneIndex) {
-        Error(LaneLoc, "mismatched lane index in register list");
+        //Error(LaneLoc, "mismatched lane index in register list");
+        ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
         return MatchOperand_ParseFail;
       }
       continue;
@@ -3766,24 +3787,27 @@ ARMAsmParser::parseVectorList(OperandVector &Operands, unsigned int &ErrorCode) 
 
     // Just check that it's contiguous and keep going.
     if (Reg != OldReg + Spacing) {
-      Error(RegLoc, "non-contiguous register range");
+      //Error(RegLoc, "non-contiguous register range");
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return MatchOperand_ParseFail;
     }
     ++Count;
     // Parse the lane specifier if present.
     VectorLaneTy NextLaneKind;
     unsigned NextLaneIndex;
-    SMLoc EndLoc = Parser.getTok().getLoc();
+    //SMLoc EndLoc = Parser.getTok().getLoc();
     if (parseVectorLane(NextLaneKind, NextLaneIndex, E, ErrorCode) != MatchOperand_Success)
       return MatchOperand_ParseFail;
     if (NextLaneKind != LaneKind || LaneIndex != NextLaneIndex) {
-      Error(EndLoc, "mismatched lane index in register list");
+      //Error(EndLoc, "mismatched lane index in register list");
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return MatchOperand_ParseFail;
     }
   }
 
   if (Parser.getTok().isNot(AsmToken::RCurly)) {
-    Error(Parser.getTok().getLoc(), "'}' expected");
+    //Error(Parser.getTok().getLoc(), "'}' expected");
+    ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
     return MatchOperand_ParseFail;
   }
   E = Parser.getTok().getEndLoc();
@@ -3870,23 +3894,27 @@ ARMAsmParser::parseMemBarrierOptOperand(OperandVector &Operands, unsigned int &E
              Tok.is(AsmToken::Integer)) {
     if (Parser.getTok().isNot(AsmToken::Integer))
       Parser.Lex(); // Eat '#' or '$'.
-    SMLoc Loc = Parser.getTok().getLoc();
+
+    //SMLoc Loc = Parser.getTok().getLoc();
 
     const MCExpr *MemBarrierID;
     if (getParser().parseExpression(MemBarrierID)) {
-      Error(Loc, "illegal expression");
+      //Error(Loc, "illegal expression");
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return MatchOperand_ParseFail;
     }
 
     const MCConstantExpr *CE = dyn_cast<MCConstantExpr>(MemBarrierID);
     if (!CE) {
-      Error(Loc, "constant expression expected");
+      //Error(Loc, "constant expression expected");
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return MatchOperand_ParseFail;
     }
 
     int Val = CE->getValue();
     if (Val & ~0xf) {
-      Error(Loc, "immediate value out of range");
+      //Error(Loc, "immediate value out of range");
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return MatchOperand_ParseFail;
     }
 
@@ -3920,23 +3948,27 @@ ARMAsmParser::parseInstSyncBarrierOptOperand(OperandVector &Operands, unsigned i
              Tok.is(AsmToken::Integer)) {
     if (Parser.getTok().isNot(AsmToken::Integer))
       Parser.Lex(); // Eat '#' or '$'.
-    SMLoc Loc = Parser.getTok().getLoc();
+
+    //SMLoc Loc = Parser.getTok().getLoc();
 
     const MCExpr *ISBarrierID;
     if (getParser().parseExpression(ISBarrierID)) {
-      Error(Loc, "illegal expression");
+      //Error(Loc, "illegal expression");
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return MatchOperand_ParseFail;
     }
 
     const MCConstantExpr *CE = dyn_cast<MCConstantExpr>(ISBarrierID);
     if (!CE) {
-      Error(Loc, "constant expression expected");
+      //Error(Loc, "constant expression expected");
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return MatchOperand_ParseFail;
     }
 
     int Val = CE->getValue();
     if (Val & ~0xf) {
-      Error(Loc, "immediate value out of range");
+      //Error(Loc, "immediate value out of range");
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return MatchOperand_ParseFail;
     }
 
@@ -4196,18 +4228,21 @@ ARMAsmParser::parseBankedRegOperand(OperandVector &Operands, unsigned int &Error
 
 ARMAsmParser::OperandMatchResultTy
 ARMAsmParser::parsePKHImm(OperandVector &Operands, StringRef Op, int Low,
-                          int High, unsigned int &ErrorCode) {
+                          int High, unsigned int &ErrorCode)
+{
   MCAsmParser &Parser = getParser();
   const AsmToken &Tok = Parser.getTok();
   if (Tok.isNot(AsmToken::Identifier)) {
-    Error(Parser.getTok().getLoc(), Op + " operand expected.");
+    //Error(Parser.getTok().getLoc(), Op + " operand expected.");
+    ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
     return MatchOperand_ParseFail;
   }
   StringRef ShiftName = Tok.getString();
   std::string LowerOp = Op.lower();
   std::string UpperOp = Op.upper();
   if (ShiftName != LowerOp && ShiftName != UpperOp) {
-    Error(Parser.getTok().getLoc(), Op + " operand expected.");
+    //Error(Parser.getTok().getLoc(), Op + " operand expected.");
+    ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
     return MatchOperand_ParseFail;
   }
   Parser.Lex(); // Eat shift type token.
@@ -4215,7 +4250,8 @@ ARMAsmParser::parsePKHImm(OperandVector &Operands, StringRef Op, int Low,
   // There must be a '#' and a shift amount.
   if (Parser.getTok().isNot(AsmToken::Hash) &&
       Parser.getTok().isNot(AsmToken::Dollar)) {
-    Error(Parser.getTok().getLoc(), "'#' expected");
+    //Error(Parser.getTok().getLoc(), "'#' expected");
+    ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
     return MatchOperand_ParseFail;
   }
   Parser.Lex(); // Eat hash token.
@@ -4224,17 +4260,20 @@ ARMAsmParser::parsePKHImm(OperandVector &Operands, StringRef Op, int Low,
   SMLoc Loc = Parser.getTok().getLoc();
   SMLoc EndLoc;
   if (getParser().parseExpression(ShiftAmount, EndLoc)) {
-    Error(Loc, "illegal expression");
+    //Error(Loc, "illegal expression");
+    ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
     return MatchOperand_ParseFail;
   }
   const MCConstantExpr *CE = dyn_cast<MCConstantExpr>(ShiftAmount);
   if (!CE) {
-    Error(Loc, "constant expression expected");
+    //Error(Loc, "constant expression expected");
+    ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
     return MatchOperand_ParseFail;
   }
   int Val = CE->getValue();
   if (Val < Low || Val > High) {
-    Error(Loc, "immediate value out of range");
+    //Error(Loc, "immediate value out of range");
+    ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
     return MatchOperand_ParseFail;
   }
 
@@ -4244,12 +4283,14 @@ ARMAsmParser::parsePKHImm(OperandVector &Operands, StringRef Op, int Low,
 }
 
 ARMAsmParser::OperandMatchResultTy
-ARMAsmParser::parseSetEndImm(OperandVector &Operands, unsigned int &ErrorCode) {
+ARMAsmParser::parseSetEndImm(OperandVector &Operands, unsigned int &ErrorCode)
+{
   MCAsmParser &Parser = getParser();
   const AsmToken &Tok = Parser.getTok();
   SMLoc S = Tok.getLoc();
   if (Tok.isNot(AsmToken::Identifier)) {
-    Error(S, "'be' or 'le' operand expected");
+    //Error(S, "'be' or 'le' operand expected");
+    ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
     return MatchOperand_ParseFail;
   }
   int Val = StringSwitch<int>(Tok.getString().lower())
@@ -4259,7 +4300,8 @@ ARMAsmParser::parseSetEndImm(OperandVector &Operands, unsigned int &ErrorCode) {
   Parser.Lex(); // Eat the token.
 
   if (Val == -1) {
-    Error(S, "'be' or 'le' operand expected");
+    //Error(S, "'be' or 'le' operand expected");
+    ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
     return MatchOperand_ParseFail;
   }
   Operands.push_back(ARMOperand::CreateImm(MCConstantExpr::create(Val,
@@ -4274,12 +4316,14 @@ ARMAsmParser::parseSetEndImm(OperandVector &Operands, unsigned int &ErrorCode) {
 ///     asr #n  'n' in [1,32]
 ///             n == 32 encoded as n == 0.
 ARMAsmParser::OperandMatchResultTy
-ARMAsmParser::parseShifterImm(OperandVector &Operands, unsigned int &ErrorCode) {
+ARMAsmParser::parseShifterImm(OperandVector &Operands, unsigned int &ErrorCode)
+{
   MCAsmParser &Parser = getParser();
   const AsmToken &Tok = Parser.getTok();
   SMLoc S = Tok.getLoc();
   if (Tok.isNot(AsmToken::Identifier)) {
-    Error(S, "shift operator 'asr' or 'lsl' expected");
+    //Error(S, "shift operator 'asr' or 'lsl' expected");
+    ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
     return MatchOperand_ParseFail;
   }
   StringRef ShiftName = Tok.getString();
@@ -4289,7 +4333,8 @@ ARMAsmParser::parseShifterImm(OperandVector &Operands, unsigned int &ErrorCode) 
   else if (ShiftName == "asr" || ShiftName == "ASR")
     isASR = true;
   else {
-    Error(S, "shift operator 'asr' or 'lsl' expected");
+    //Error(S, "shift operator 'asr' or 'lsl' expected");
+    ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
     return MatchOperand_ParseFail;
   }
   Parser.Lex(); // Eat the operator.
@@ -4297,21 +4342,24 @@ ARMAsmParser::parseShifterImm(OperandVector &Operands, unsigned int &ErrorCode) 
   // A '#' and a shift amount.
   if (Parser.getTok().isNot(AsmToken::Hash) &&
       Parser.getTok().isNot(AsmToken::Dollar)) {
-    Error(Parser.getTok().getLoc(), "'#' expected");
+    //Error(Parser.getTok().getLoc(), "'#' expected");
+    ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
     return MatchOperand_ParseFail;
   }
   Parser.Lex(); // Eat hash token.
-  SMLoc ExLoc = Parser.getTok().getLoc();
+  //SMLoc ExLoc = Parser.getTok().getLoc();
 
   const MCExpr *ShiftAmount;
   SMLoc EndLoc;
   if (getParser().parseExpression(ShiftAmount, EndLoc)) {
-    Error(ExLoc, "malformed shift expression");
+    //Error(ExLoc, "malformed shift expression");
+    ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
     return MatchOperand_ParseFail;
   }
   const MCConstantExpr *CE = dyn_cast<MCConstantExpr>(ShiftAmount);
   if (!CE) {
-    Error(ExLoc, "shift amount must be an immediate");
+    //Error(ExLoc, "shift amount must be an immediate");
+    ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
     return MatchOperand_ParseFail;
   }
 
@@ -4319,19 +4367,22 @@ ARMAsmParser::parseShifterImm(OperandVector &Operands, unsigned int &ErrorCode) 
   if (isASR) {
     // Shift amount must be in [1,32]
     if (Val < 1 || Val > 32) {
-      Error(ExLoc, "'asr' shift amount must be in range [1,32]");
+      //Error(ExLoc, "'asr' shift amount must be in range [1,32]");
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return MatchOperand_ParseFail;
     }
     // asr #32 encoded as asr #0, but is not allowed in Thumb2 mode.
     if (isThumb() && Val == 32) {
-      Error(ExLoc, "'asr #32' shift amount not allowed in Thumb mode");
+      //Error(ExLoc, "'asr #32' shift amount not allowed in Thumb mode");
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return MatchOperand_ParseFail;
     }
     if (Val == 32) Val = 0;
   } else {
     // Shift amount must be in [1,32]
     if (Val < 0 || Val > 31) {
-      Error(ExLoc, "'lsr' shift amount must be in range [0,31]");
+      //Error(ExLoc, "'lsr' shift amount must be in range [0,31]");
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return MatchOperand_ParseFail;
     }
   }
@@ -4359,21 +4410,24 @@ ARMAsmParser::parseRotImm(OperandVector &Operands, unsigned int &ErrorCode) {
   // A '#' and a rotate amount.
   if (Parser.getTok().isNot(AsmToken::Hash) &&
       Parser.getTok().isNot(AsmToken::Dollar)) {
-    Error(Parser.getTok().getLoc(), "'#' expected");
+    //Error(Parser.getTok().getLoc(), "'#' expected");
+    ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
     return MatchOperand_ParseFail;
   }
   Parser.Lex(); // Eat hash token.
-  SMLoc ExLoc = Parser.getTok().getLoc();
+  //SMLoc ExLoc = Parser.getTok().getLoc();
 
   const MCExpr *ShiftAmount;
   SMLoc EndLoc;
   if (getParser().parseExpression(ShiftAmount, EndLoc)) {
-    Error(ExLoc, "malformed rotate expression");
+    //Error(ExLoc, "malformed rotate expression");
+    ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
     return MatchOperand_ParseFail;
   }
   const MCConstantExpr *CE = dyn_cast<MCConstantExpr>(ShiftAmount);
   if (!CE) {
-    Error(ExLoc, "rotate amount must be an immediate");
+    //Error(ExLoc, "rotate amount must be an immediate");
+    ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
     return MatchOperand_ParseFail;
   }
 
@@ -4382,7 +4436,8 @@ ARMAsmParser::parseRotImm(OperandVector &Operands, unsigned int &ErrorCode) {
   // normally, zero is represented in asm by omitting the rotate operand
   // entirely.
   if (Val != 8 && Val != 16 && Val != 24 && Val != 0) {
-    Error(ExLoc, "'ror' rotate amount must be 8, 16, or 24");
+    //Error(ExLoc, "'ror' rotate amount must be 8, 16, or 24");
+    ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
     return MatchOperand_ParseFail;
   }
 
@@ -8682,7 +8737,7 @@ template <> inline bool IsCPSRDead<MCInst>(MCInst *Instr) {
 bool ARMAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
                                            OperandVector &Operands,
                                            MCStreamer &Out, uint64_t &ErrorInfo,
-                                           bool MatchingInlineAsm, unsigned int &ErrorCode, uint64_t &Address)  // qq
+                                           bool MatchingInlineAsm, unsigned int &ErrorCode, uint64_t &Address)
 {
   MCInst Inst(Address);
   unsigned MatchResult;
@@ -8822,7 +8877,8 @@ bool ARMAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
 }
 
 /// parseDirective parses the arm specific directives
-bool ARMAsmParser::ParseDirective(AsmToken DirectiveID) {
+bool ARMAsmParser::ParseDirective(AsmToken DirectiveID)
+{
   const MCObjectFileInfo::Environment Format =
     getContext().getObjectFileInfo()->getObjectFileType();
   bool IsMachO = Format == MCObjectFileInfo::IsMachO;
@@ -9691,7 +9747,8 @@ bool ARMAsmParser::parseDirectiveLtorg(SMLoc L) {
   return false;
 }
 
-bool ARMAsmParser::parseDirectiveEven(SMLoc L) {
+bool ARMAsmParser::parseDirectiveEven(SMLoc L)
+{
   const MCSection *Section = getStreamer().getCurrentSection().first;
 
   if (getLexer().isNot(AsmToken::EndOfStatement)) {
@@ -9853,7 +9910,8 @@ bool ARMAsmParser::parseDirectiveUnwindRaw(SMLoc L) {
 
 /// parseDirectiveTLSDescSeq
 ///   ::= .tlsdescseq tls-variable
-bool ARMAsmParser::parseDirectiveTLSDescSeq(SMLoc L) {
+bool ARMAsmParser::parseDirectiveTLSDescSeq(SMLoc L)
+{
   MCAsmParser &Parser = getParser();
 
   if (getLexer().isNot(AsmToken::Identifier)) {
@@ -9992,7 +10050,8 @@ bool ARMAsmParser::parseDirectiveAlign(SMLoc L) {
 
 /// parseDirectiveThumbSet
 ///  ::= .thumb_set name, value
-bool ARMAsmParser::parseDirectiveThumbSet(SMLoc L) {
+bool ARMAsmParser::parseDirectiveThumbSet(SMLoc L)
+{
   MCAsmParser &Parser = getParser();
 
   StringRef Name;
@@ -10062,7 +10121,8 @@ static const struct {
 
 /// parseDirectiveArchExtension
 ///   ::= .arch_extension [no]feature
-bool ARMAsmParser::parseDirectiveArchExtension(SMLoc L) {
+bool ARMAsmParser::parseDirectiveArchExtension(SMLoc L)
+{
   MCAsmParser &Parser = getParser();
 
   if (getLexer().isNot(AsmToken::Identifier)) {
