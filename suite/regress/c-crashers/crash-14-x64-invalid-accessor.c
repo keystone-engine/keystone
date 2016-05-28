@@ -1,6 +1,6 @@
 #include <keystone/keystone.h>
 int main(int argc, char **argv) {
-  int ks_arch = KS_ARCH_SYSTEMZ, ks_mode = KS_MODE_LITTLE_ENDIAN;
+  int ks_arch = KS_ARCH_X86, ks_mode = KS_MODE_64;
   unsigned char assembly[] = {
     'A', 'A', 'F', '=', 'A', 'A', '-', '-', 'A', 0x0a,
     'F', '=', 'A', 'd', '-', '5', ';', '.', '=', 'A',

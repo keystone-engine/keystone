@@ -1,8 +1,11 @@
 #include <keystone/keystone.h>
 int main(int argc, char **argv) {
-  int ks_arch = KS_ARCH_SYSTEMZ, ks_mode = KS_MODE_LITTLE_ENDIAN;
+  int ks_arch = KS_ARCH_X86, ks_mode = KS_MODE_64;
   unsigned char assembly[] = {
-    'D', '"', '"', 0x00,
+    'A', 'A', '=', 'F', '/', 'A', 0x0a, 'F', '/', 'A',
+    0x0a, 'A', 'A', '=', 'F', '/', 'a', 0x0a, 'A', '=',
+    '9', '/', '7', 0x0a, 'A', 'A', '=', 'F', '/', 'a',
+    0x0a, 'A', '=', 'F', 0x00,
   };
   ks_engine *ks;
   ks_err err = ks_open(ks_arch, ks_mode, &ks);
