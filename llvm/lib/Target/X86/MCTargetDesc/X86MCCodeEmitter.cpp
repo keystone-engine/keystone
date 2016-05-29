@@ -1290,14 +1290,26 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
   } else if (MemoryOperand < 0) {
     need_address_override = false;
   } else if (is64BitMode(STI)) {
-    assert(!Is16BitMemOperand(MI, MemoryOperand, STI));
+    //assert(!Is16BitMemOperand(MI, MemoryOperand, STI));
+    if (Is16BitMemOperand(MI, MemoryOperand, STI)) {
+        KsError = KS_ERR_ASM_INSN_UNSUPPORTED;
+        return;
+    }
     need_address_override = Is32BitMemOperand(MI, MemoryOperand);
   } else if (is32BitMode(STI)) {
-    assert(!Is64BitMemOperand(MI, MemoryOperand));
+    //assert(!Is64BitMemOperand(MI, MemoryOperand));
+    if (Is64BitMemOperand(MI, MemoryOperand)) {
+        KsError = KS_ERR_ASM_INSN_UNSUPPORTED;
+        return;
+    }
     need_address_override = Is16BitMemOperand(MI, MemoryOperand, STI);
   } else {
-    assert(is16BitMode(STI));
-    assert(!Is64BitMemOperand(MI, MemoryOperand));
+    //assert(is16BitMode(STI));
+    //assert(!Is64BitMemOperand(MI, MemoryOperand));
+    if (!is16BitMode(STI) || Is64BitMemOperand(MI, MemoryOperand)) {
+        KsError = KS_ERR_ASM_INSN_UNSUPPORTED;
+        return;
+    }
     need_address_override = !Is16BitMemOperand(MI, MemoryOperand, STI);
   }
 
@@ -1323,10 +1335,16 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
   case X86II::RawFrmDstSrc: {
     //printf(">> aa\n");
     unsigned siReg = MI.getOperand(1).getReg();
-    assert(((siReg == X86::SI && MI.getOperand(0).getReg() == X86::DI) ||
-            (siReg == X86::ESI && MI.getOperand(0).getReg() == X86::EDI) ||
-            (siReg == X86::RSI && MI.getOperand(0).getReg() == X86::RDI)) &&
-           "SI and DI register sizes do not match");
+    //assert(((siReg == X86::SI && MI.getOperand(0).getReg() == X86::DI) ||
+    //        (siReg == X86::ESI && MI.getOperand(0).getReg() == X86::EDI) ||
+    //        (siReg == X86::RSI && MI.getOperand(0).getReg() == X86::RDI)) &&
+    //       "SI and DI register sizes do not match");
+    if (!(siReg == X86::SI && MI.getOperand(0).getReg() == X86::DI) &&
+            !(siReg == X86::ESI && MI.getOperand(0).getReg() == X86::EDI) &&
+            !(siReg == X86::RSI && MI.getOperand(0).getReg() == X86::RDI)) {
+        KsError = KS_ERR_ASM_INSN_UNSUPPORTED;
+        return;
+    }
     // Emit segment override opcode prefix as needed (not for %ds).
     if (MI.getOperand(2).getReg() != X86::DS)
       EmitSegmentOverridePrefix(CurByte, 2, MI, OS);
@@ -1572,7 +1590,11 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
         const MCOperand &MIMM = MI.getOperand(CurOp++);
         if (MIMM.isImm()) {
           unsigned Val = MIMM.getImm();
-          assert(Val < 16 && "Immediate operand value out of range");
+          // assert(Val < 16 && "Immediate operand value out of range");
+          if (Val >= 16) {
+              KsError = KS_ERR_ASM_INSN_UNSUPPORTED;
+              return;
+          }
           RegNum |= Val;
         }
       }

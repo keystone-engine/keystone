@@ -124,6 +124,10 @@ const char *ks_strerror(ks_err code)
             return "Invalid escape string (KS_ERR_ASM_ESC_STR)";
         case KS_ERR_ASM_TOKEN_INVALID:   // invalid token from input assembly
             return "Invalid input token (KS_ERR_ASM_TOKEN_INVALID)";
+        case KS_ERR_ASM_INSN_UNSUPPORTED:
+            return "Instruction is unsupported in this mode (KS_ERR_ASM_INSN_UNSUPPORTED)";
+        case KS_ERR_ASM_DIRECTIVE_UNKNOWN:
+            return "Unknown directive (KS_ERR_ASM_DIRECTIVE_UNKNOWN)";
     }
 }
 
