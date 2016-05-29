@@ -671,7 +671,9 @@ bool ELFAsmParser::ParseDirectiveSymver(StringRef, SMLoc) {
 
 /// ParseDirectiveVersion
 ///  ::= .version string
-bool ELFAsmParser::ParseDirectiveVersion(StringRef, SMLoc) {
+bool ELFAsmParser::ParseDirectiveVersion(StringRef, SMLoc)
+{
+  bool Error;
   if (getLexer().isNot(AsmToken::String))
     return TokError("unexpected token in '.version' directive");
 
@@ -683,11 +685,13 @@ bool ELFAsmParser::ParseDirectiveVersion(StringRef, SMLoc) {
 
   getStreamer().PushSection();
   getStreamer().SwitchSection(Note);
-  getStreamer().EmitIntValue(Data.size()+1, 4); // namesz.
-  getStreamer().EmitIntValue(0, 4);             // descsz = 0 (no description).
-  getStreamer().EmitIntValue(1, 4);             // type = NT_VERSION.
+  getStreamer().EmitIntValue(Data.size()+1, 4, Error); // namesz.
+  if (Error)
+      return true;
+  getStreamer().EmitIntValue(0, 4, Error);             // descsz = 0 (no description).
+  getStreamer().EmitIntValue(1, 4, Error);             // type = NT_VERSION.
   getStreamer().EmitBytes(Data);                // name.
-  getStreamer().EmitIntValue(0, 1);             // terminate the string.
+  getStreamer().EmitIntValue(0, 1, Error);             // terminate the string.
   getStreamer().EmitValueToAlignment(4);        // ensure 4 byte alignment.
   getStreamer().PopSection();
   return false;

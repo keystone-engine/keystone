@@ -2773,7 +2773,12 @@ bool AsmParser::parseDirectiveValue(unsigned Size, unsigned int &KsError)
             KsError = KS_ERR_ASM_DIRECTIVE_VALUE_RANGE;
             return true;
         }
-        getStreamer().EmitIntValue(IntValue, Size);
+        bool Error;
+        getStreamer().EmitIntValue(IntValue, Size, Error);
+        if (Error) {
+            KsError = KS_ERR_ASM_DIRECTIVE_TOKEN;
+            return true;
+        }
       } else
         getStreamer().EmitValue(Value, Size, ExprLoc);
 
@@ -2829,12 +2834,13 @@ bool AsmParser::parseDirectiveOctaValue(unsigned int &KsError)
         return true;
       }
 
+      bool Error;
       if (MAI.isLittleEndian()) {
-        getStreamer().EmitIntValue(lo, 8);
-        getStreamer().EmitIntValue(hi, 8);
+        getStreamer().EmitIntValue(lo, 8, Error);
+        getStreamer().EmitIntValue(hi, 8, Error);
       } else {
-        getStreamer().EmitIntValue(hi, 8);
-        getStreamer().EmitIntValue(lo, 8);
+        getStreamer().EmitIntValue(hi, 8, Error);
+        getStreamer().EmitIntValue(lo, 8, Error);
       }
 
       if (getLexer().is(AsmToken::EndOfStatement))
@@ -2856,7 +2862,8 @@ bool AsmParser::parseDirectiveOctaValue(unsigned int &KsError)
 
 /// parseDirectiveRealValue
 ///  ::= (.single | .double) [ expression (, expression)* ]
-bool AsmParser::parseDirectiveRealValue(const fltSemantics &Semantics) {
+bool AsmParser::parseDirectiveRealValue(const fltSemantics &Semantics)
+{
   if (getLexer().isNot(AsmToken::EndOfStatement)) {
     checkForValidSection();
 
@@ -2905,8 +2912,11 @@ bool AsmParser::parseDirectiveRealValue(const fltSemantics &Semantics) {
 
       // Emit the value as an integer.
       APInt AsInt = Value.bitcastToAPInt();
+      bool Error;
       getStreamer().EmitIntValue(AsInt.getLimitedValue(),
-                                 AsInt.getBitWidth() / 8);
+                                 AsInt.getBitWidth() / 8, Error);
+      if (Error)
+          return true;
 
       if (getLexer().is(AsmToken::EndOfStatement))
         break;
@@ -2955,7 +2965,8 @@ bool AsmParser::parseDirectiveZero() {
 
 /// parseDirectiveFill
 ///  ::= .fill expression [ , expression [ , expression ] ]
-bool AsmParser::parseDirectiveFill() {
+bool AsmParser::parseDirectiveFill()
+{
   checkForValidSection();
 
   SMLoc RepeatLoc = getLexer().getLoc();
@@ -3022,10 +3033,16 @@ bool AsmParser::parseDirectiveFill() {
   if (NumValues > 0) {
     int64_t NonZeroFillSize = FillSize > 4 ? 4 : FillSize;
     FillExpr &= ~0ULL >> (64 - NonZeroFillSize * 8);
+    bool Error;
     for (uint64_t i = 0, e = NumValues; i != e; ++i) {
-      getStreamer().EmitIntValue(FillExpr, NonZeroFillSize);
-      if (NonZeroFillSize < FillSize)
-        getStreamer().EmitIntValue(0, FillSize - NonZeroFillSize);
+      getStreamer().EmitIntValue(FillExpr, NonZeroFillSize, Error);
+      if (Error)
+          return true;
+      if (NonZeroFillSize < FillSize) {
+        getStreamer().EmitIntValue(0, FillSize - NonZeroFillSize, Error);
+        if (Error)
+            return true;
+      }
     }
   }
 

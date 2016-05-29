@@ -367,16 +367,17 @@ void MCELFStreamer::EmitFileDirective(StringRef Filename) {
 }
 
 void MCELFStreamer::EmitIdent(StringRef IdentString) {
+  bool Error;
   MCSection *Comment = getAssembler().getContext().getELFSection(
       ".comment", ELF::SHT_PROGBITS, ELF::SHF_MERGE | ELF::SHF_STRINGS, 1, "");
   PushSection();
   SwitchSection(Comment);
   if (!SeenIdent) {
-    EmitIntValue(0, 1);
+    EmitIntValue(0, 1, Error);
     SeenIdent = true;
   }
   EmitBytes(IdentString);
-  EmitIntValue(0, 1);
+  EmitIntValue(0, 1, Error);
   PopSection();
 }
 

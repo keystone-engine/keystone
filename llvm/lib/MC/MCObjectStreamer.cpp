@@ -58,6 +58,7 @@ void MCObjectStreamer::flushPendingLabels(MCFragment *F, uint64_t FOffset) {
 void MCObjectStreamer::emitAbsoluteSymbolDiff(const MCSymbol *Hi,
                                               const MCSymbol *Lo,
                                               unsigned Size) {
+  bool Error;
   // If not assigned to the same (valid) fragment, fallback.
   if (!Hi->getFragment() || Hi->getFragment() != Lo->getFragment() ||
       Hi->isVariable() || Lo->isVariable()) {
@@ -65,7 +66,8 @@ void MCObjectStreamer::emitAbsoluteSymbolDiff(const MCSymbol *Hi,
     return;
   }
 
-  EmitIntValue(Hi->getOffset() - Lo->getOffset(), Size);
+  // TODO: hande Error?
+  EmitIntValue(Hi->getOffset() - Lo->getOffset(), Size, Error);
 }
 
 void MCObjectStreamer::reset() {
@@ -123,7 +125,8 @@ void MCObjectStreamer::EmitCFISections(bool EH, bool Debug) {
 }
 
 void MCObjectStreamer::EmitValueImpl(const MCExpr *Value, unsigned Size,
-                                     SMLoc Loc) {
+                                     SMLoc Loc)
+{
   MCStreamer::EmitValueImpl(Value, Size, Loc);
   MCDataFragment *DF = getOrCreateDataFragment();
   flushPendingLabels(DF, DF->getContents().size());
@@ -143,8 +146,10 @@ void MCObjectStreamer::EmitValueImpl(const MCExpr *Value, unsigned Size,
 
   // Avoid fixups when possible.
   int64_t AbsValue;
+  bool Error;
   if (Value->evaluateAsAbsolute(AbsValue, getAssembler())) {
-    EmitIntValue(AbsValue, Size);
+    // TODO: hande Error?
+    EmitIntValue(AbsValue, Size, Error);
     return;
   }
   DF->getFixups().push_back(
