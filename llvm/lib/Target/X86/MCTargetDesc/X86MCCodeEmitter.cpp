@@ -240,7 +240,6 @@ static bool Is32BitMemOperand(const MCInst &MI, unsigned Op) {
 
 /// Is64BitMemOperand - Return true if the specified instruction has
 /// a 64-bit memory operand. Op specifies the operand # of the memoperand.
-#ifndef NDEBUG
 static bool Is64BitMemOperand(const MCInst &MI, unsigned Op) {
   const MCOperand &BaseReg  = MI.getOperand(Op+X86::AddrBaseReg);
   const MCOperand &IndexReg = MI.getOperand(Op+X86::AddrIndexReg);
@@ -252,7 +251,6 @@ static bool Is64BitMemOperand(const MCInst &MI, unsigned Op) {
     return true;
   return false;
 }
-#endif
 
 /// StartsWithGlobalOffsetTable - Check if this expression starts with
 ///  _GLOBAL_OFFSET_TABLE_ and if it is of the form
