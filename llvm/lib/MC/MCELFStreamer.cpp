@@ -161,11 +161,14 @@ void MCELFStreamer::ChangeSection(MCSection *Section,
   }
 }
 
-void MCELFStreamer::EmitWeakReference(MCSymbol *Alias, const MCSymbol *Symbol) {
+void MCELFStreamer::EmitWeakReference(MCSymbol *Alias, const MCSymbol *Symbol) {    // qq
   getAssembler().registerSymbol(*Symbol);
   const MCExpr *Value = MCSymbolRefExpr::create(
       Symbol, MCSymbolRefExpr::VK_WEAKREF, getContext());
-  Alias->setVariableValue(Value);
+  bool valid;
+  Alias->setVariableValue(Value, valid);
+  if (!valid)
+      return;
 }
 
 // When GNU as encounters more than one .type declaration for an object it seems

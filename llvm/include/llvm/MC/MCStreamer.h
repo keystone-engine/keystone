@@ -404,7 +404,7 @@ public:
   ///
   /// \param Symbol - The symbol being assigned to.
   /// \param Value - The value for the symbol.
-  virtual void EmitAssignment(MCSymbol *Symbol, const MCExpr *Value);
+  virtual bool EmitAssignment(MCSymbol *Symbol, const MCExpr *Value);
 
   /// \brief Emit an weak reference from \p Alias to \p Symbol.
   ///

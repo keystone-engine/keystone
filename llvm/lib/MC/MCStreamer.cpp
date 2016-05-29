@@ -633,13 +633,18 @@ unsigned int MCStreamer::Finish() {
   return FinishImpl();
 }
 
-void MCStreamer::EmitAssignment(MCSymbol *Symbol, const MCExpr *Value) {
+bool MCStreamer::EmitAssignment(MCSymbol *Symbol, const MCExpr *Value) {
   visitUsedExpr(*Value);
-  Symbol->setVariableValue(Value);
+  bool valid;
+  Symbol->setVariableValue(Value, valid);
+  if (!valid)
+      return false;
 
   MCTargetStreamer *TS = getTargetStreamer();
   if (TS)
     TS->emitAssignment(Symbol, Value);
+
+  return true;
 }
 
 void MCStreamer::visitUsedSymbol(const MCSymbol &Sym) {

@@ -90,7 +90,7 @@ public:
   /// @{
 
   void EmitLabel(MCSymbol *Symbol) override;
-  void EmitAssignment(MCSymbol *Symbol, const MCExpr *Value) override;
+  bool EmitAssignment(MCSymbol *Symbol, const MCExpr *Value) override;
   void EmitValueImpl(const MCExpr *Value, unsigned Size,
                      SMLoc Loc = SMLoc()) override;
   void EmitULEB128Value(const MCExpr *Value) override;

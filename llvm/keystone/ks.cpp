@@ -88,6 +88,8 @@ const char *ks_strerror(ks_err code)
             return "Invalid floating point in directive (KS_ERR_ASM_DIRECTIVE_FPOINT)";
         case KS_ERR_ASM_VARIANT_INVALID: // invalid variant
             return "Invalid variant (KS_ERR_ASM_VARIANT_INVALID)";
+        case KS_ERR_ASM_DIRECTIVE_EQU:
+            return "Invalid equal directive (KS_ERR_ASM_DIRECTIVE_EQU)";
         case KS_ERR_ASM_EXPR_BRACKET:    // brackets expression not supported on this target
             return "Brackets expression not supported (KS_ERR_ASM_EXPR_BRACKET)";
         case KS_ERR_ASM_SYMBOL_MODIFIER: // unexpected symbol modifier following '@'

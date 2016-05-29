@@ -1624,7 +1624,11 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
     // identifier '=' ... -> assignment statement
     Lex();
 
-    return parseAssignment(IDVal, true);
+    if (parseAssignment(IDVal, true)) {
+        Info.KsError = KS_ERR_ASM_DIRECTIVE_EQU;
+        return true;
+    }
+    return false;
 
   default: // Normal instruction or directive.
     break;
@@ -2522,7 +2526,10 @@ bool AsmParser::parseAssignment(StringRef Name, bool allow_redef,
   }
 
   // Do the assignment.
-  Out.EmitAssignment(Sym, Value);
+  if (!Out.EmitAssignment(Sym, Value)) {
+    KsError = KS_ERR_ASM_DIRECTIVE_ID;
+    return true;
+  }
   if (NoDeadStrip)
     Out.EmitSymbolAttribute(Sym, MCSA_NoDeadStrip);
 

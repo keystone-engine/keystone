@@ -5320,7 +5320,10 @@ bool MipsAsmParser::parseSetAssignment() {
     return reportParseError("expected valid expression after comma");
 
   MCSymbol *Sym = getContext().getOrCreateSymbol(Name);
-  Sym->setVariableValue(Value);
+  bool valid;
+  Sym->setVariableValue(Value, valid);
+  if (!valid)
+      return true;
 
   return false;
 }

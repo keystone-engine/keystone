@@ -233,9 +233,9 @@ bool MCObjectStreamer::changeSectionImpl(MCSection *Section,
   return Created;
 }
 
-void MCObjectStreamer::EmitAssignment(MCSymbol *Symbol, const MCExpr *Value) {
+bool MCObjectStreamer::EmitAssignment(MCSymbol *Symbol, const MCExpr *Value) {
   getAssembler().registerSymbol(*Symbol);
-  MCStreamer::EmitAssignment(Symbol, Value);
+  return MCStreamer::EmitAssignment(Symbol, Value);
 }
 
 bool MCObjectStreamer::mayHaveInstructions(MCSection &Sec) const {
