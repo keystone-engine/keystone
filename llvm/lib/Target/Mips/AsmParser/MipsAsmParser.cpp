@@ -4489,7 +4489,8 @@ MipsAsmParser::matchAnyRegisterNameWithoutDollar(OperandVector &Operands,
 }
 
 MipsAsmParser::OperandMatchResultTy
-MipsAsmParser::matchAnyRegisterWithoutDollar(OperandVector &Operands, SMLoc S) {
+MipsAsmParser::matchAnyRegisterWithoutDollar(OperandVector &Operands, SMLoc S)
+{
   MCAsmParser &Parser = getParser();
   auto Token = Parser.getLexer().peekTok(false);
 
@@ -4501,8 +4502,12 @@ MipsAsmParser::matchAnyRegisterWithoutDollar(OperandVector &Operands, SMLoc S) {
     return ResTy;
   } else if (Token.is(AsmToken::Integer)) {
     DEBUG(dbgs() << ".. integer\n");
+    bool valid;
+    unsigned Value = Token.getIntVal(valid);
+    if (!valid)
+        return MatchOperand_NoMatch;
     Operands.push_back(MipsOperand::createNumericReg(
-        Token.getIntVal(), getContext().getRegisterInfo(), S, Token.getLoc(),
+        Value, getContext().getRegisterInfo(), S, Token.getLoc(),
         *this));
     return MatchOperand_Success;
   }
@@ -4985,7 +4990,8 @@ bool MipsAsmParser::parseSetNoAtDirective() {
   return false;
 }
 
-bool MipsAsmParser::parseSetAtDirective() {
+bool MipsAsmParser::parseSetAtDirective()
+{
   // Line can be: ".set at", which sets $at to $1
   //          or  ".set at=$reg", which sets $at to $reg.
   MCAsmParser &Parser = getParser();
@@ -5023,7 +5029,10 @@ bool MipsAsmParser::parseSetAtDirective() {
   if (Reg.is(AsmToken::Identifier)) {
     AtRegNo = matchCPURegisterName(Reg.getIdentifier());
   } else if (Reg.is(AsmToken::Integer)) {
-    AtRegNo = Reg.getIntVal();
+    bool valid;
+    AtRegNo = Reg.getIntVal(valid);
+    if (!valid)
+        return true;
   } else {
     reportParseError("unexpected token, expected identifier or integer");
     return false;
@@ -6024,7 +6033,8 @@ bool MipsAsmParser::parseDirectiveModuleFP() {
 }
 
 bool MipsAsmParser::parseFpABIValue(MipsABIFlagsSection::FpABIKind &FpABI,
-                                    StringRef Directive) {
+                                    StringRef Directive)
+{
   MCAsmParser &Parser = getParser();
   MCAsmLexer &Lexer = getLexer();
   bool ModuleLevelOptions = Directive == ".module";
@@ -6055,7 +6065,10 @@ bool MipsAsmParser::parseFpABIValue(MipsABIFlagsSection::FpABIKind &FpABI,
   }
 
   if (Lexer.is(AsmToken::Integer)) {
-    unsigned Value = Parser.getTok().getIntVal();
+    bool valid;
+    unsigned Value = Parser.getTok().getIntVal(valid);
+    if (!valid)
+        return true;
     Parser.Lex();
 
     if (Value != 32 && Value != 64) {

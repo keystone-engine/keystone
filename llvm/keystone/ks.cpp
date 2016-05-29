@@ -122,6 +122,8 @@ const char *ks_strerror(ks_err code)
             return "Invalid escape sequence (KS_ERR_ASM_ESC_SEQUENCE)";
         case KS_ERR_ASM_ESC_STR:         // broken escape string
             return "Invalid escape string (KS_ERR_ASM_ESC_STR)";
+        case KS_ERR_ASM_TOKEN_INVALID:   // invalid token from input assembly
+            return "Invalid input token (KS_ERR_ASM_TOKEN_INVALID)";
     }
 }
 

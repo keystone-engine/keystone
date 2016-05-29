@@ -125,6 +125,7 @@ typedef enum ks_err {
     KS_ERR_ASM_ESC_OCTAL,       // invalid octal escape sequence  (out of range)
     KS_ERR_ASM_ESC_SEQUENCE,         // invalid escape sequence (unrecognized character)
     KS_ERR_ASM_ESC_STR,         // broken escape string
+    KS_ERR_ASM_TOKEN_INVALID,   // invalid token
 
     // generic input assembly errors - architecture specific
     KS_ERR_ASM_INVALIDOPERAND = KS_ERR_ASM_ARCH,

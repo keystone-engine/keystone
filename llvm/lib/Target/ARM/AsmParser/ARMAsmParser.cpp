@@ -5191,7 +5191,10 @@ ARMAsmParser::parseFPImm(OperandVector &Operands, unsigned int &ErrorCode) {
   // Also handle plain integers. Instructions which allow floating point
   // immediates also allow a raw encoded 8-bit value.
   if (Tok.is(AsmToken::Integer) && isFconst) {
-    int64_t Val = Tok.getIntVal();
+    bool valid;
+    int64_t Val = Tok.getIntVal(valid);
+    if (!valid)
+      return MatchOperand_ParseFail;
     Parser.Lex(); // Eat the token.
     if (Val > 255 || Val < 0) {
       //Error(Loc, "encoded floating point value out of range");
@@ -9213,7 +9216,10 @@ bool ARMAsmParser::parseDirectiveCode(SMLoc L) {
     //Error(L, "unexpected token in .code directive");
     return false;
   }
-  int64_t Val = Parser.getTok().getIntVal();
+  bool valid;
+  int64_t Val = Parser.getTok().getIntVal(valid);
+  if (!valid)
+    return false;
   if (Val != 16 && Val != 32) {
     //Error(L, "invalid operand to .code directive");
     return false;

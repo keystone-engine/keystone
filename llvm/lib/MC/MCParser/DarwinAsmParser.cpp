@@ -907,7 +907,8 @@ bool DarwinAsmParser::parseVersionMin(StringRef Directive, SMLoc Loc) {
   // Get the major version number.
   if (getLexer().isNot(AsmToken::Integer))
     return TokError("invalid OS major version number");
-  Major = getLexer().getTok().getIntVal();
+  bool valid;
+  Major = getLexer().getTok().getIntVal(valid);
   if (Major > 65535 || Major <= 0)
     return TokError("invalid OS major version number");
   Lex();
@@ -917,7 +918,7 @@ bool DarwinAsmParser::parseVersionMin(StringRef Directive, SMLoc Loc) {
   // Get the minor version number.
   if (getLexer().isNot(AsmToken::Integer))
     return TokError("invalid OS minor version number");
-  Minor = getLexer().getTok().getIntVal();
+  Minor = getLexer().getTok().getIntVal(valid);
   if (Minor > 255 || Minor < 0)
     return TokError("invalid OS minor version number");
   Lex();
@@ -928,7 +929,7 @@ bool DarwinAsmParser::parseVersionMin(StringRef Directive, SMLoc Loc) {
     Lex();
     if (getLexer().isNot(AsmToken::Integer))
       return TokError("invalid OS update number");
-    Update = getLexer().getTok().getIntVal();
+    Update = getLexer().getTok().getIntVal(valid);
   if (Update > 255 || Update < 0)
     return TokError("invalid OS update number");
     Lex();

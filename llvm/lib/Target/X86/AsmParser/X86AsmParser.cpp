@@ -995,7 +995,11 @@ bool X86AsmParser::ParseRegister(unsigned &RegNo,
     if (IntTok.isNot(AsmToken::Integer))
       //return Error(IntTok.getLoc(), "expected stack index");
       return true;
-    switch (IntTok.getIntVal()) {
+    bool valid;
+    unsigned r = IntTok.getIntVal(valid);
+    if (!valid)
+        return true;
+    switch (r) {
     case 0: RegNo = X86::ST0; break;
     case 1: RegNo = X86::ST1; break;
     case 2: RegNo = X86::ST2; break;
@@ -1422,7 +1426,10 @@ bool X86AsmParser::ParseIntelExpression(IntelExprStateMachine &SM, SMLoc &End)
         InstInfo->AsmRewrites->emplace_back(AOK_ImmPrefix, Tok.getLoc());
       // Look for 'b' or 'f' following an Integer as a directional label
       //SMLoc Loc = getTok().getLoc();
-      int64_t IntVal = getTok().getIntVal();
+      bool valid;
+      int64_t IntVal = getTok().getIntVal(valid);
+      if (!valid)
+          return true;
       End = consumeToken();
       UpdateLocLex = false;
       if (getLexer().getKind() == AsmToken::Identifier) {
@@ -1630,7 +1637,10 @@ X86AsmParser::ParseIntelSegmentOverride(unsigned SegReg, SMLoc Start,
 
   int64_t ImmDisp = 0;
   if (getLexer().is(AsmToken::Integer)) {
-    ImmDisp = Tok.getIntVal();
+    bool valid;
+    ImmDisp = Tok.getIntVal(valid);
+    if (!valid)
+        return nullptr;
     AsmToken ImmDispToken = Parser.Lex(); // Eat the integer.
 
     if (isParsingInlineAsm())
@@ -2044,7 +2054,8 @@ bool X86AsmParser::HandleAVX512Operand(OperandVector &Operands,
       // Distinguish {1to<NUM>} from {%k<NUM>}.
       if(getLexer().is(AsmToken::Integer)) {
         // Parse memory broadcasting ({1to<NUM>}).
-        if (getLexer().getTok().getIntVal() != 1)
+        bool valid;
+        if (getLexer().getTok().getIntVal(valid) != 1)
           //return !ErrorAndEatStatement(getLexer().getLoc(),
           //                             "Expected 1to<NUM> at this point");
           return false;

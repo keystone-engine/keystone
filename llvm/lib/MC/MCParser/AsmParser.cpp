@@ -658,12 +658,12 @@ const AsmToken &AsmParser::Lex() {
     SMLoc ParentIncludeLoc = SrcMgr.getParentIncludeLoc(CurBuffer);
     if (ParentIncludeLoc != SMLoc()) {
       jumpToLoc(ParentIncludeLoc);
-      tok = &Lexer.Lex();
+      tok = &Lexer.Lex();   // qq
     }
   }
 
-  if (tok->is(AsmToken::Error))
-    Error(Lexer.getErrLoc(), Lexer.getErr());
+  //if (tok->is(AsmToken::Error))
+  //  Error(Lexer.getErrLoc(), Lexer.getErr());
 
   return *tok;
 }
@@ -679,6 +679,10 @@ size_t AsmParser::Run(bool NoInitialTextSection, uint64_t Address, bool NoFinali
 
   // Prime the lexer.
   Lex();
+  if (!Lexer.isNot(AsmToken::Error)) {
+    KsError = KS_ERR_ASM_TOKEN_INVALID;
+    return 0;
+  }
 
   HadError = false;
   AsmCond StartingCondState = TheCondState;
@@ -955,7 +959,11 @@ bool AsmParser::parsePrimaryExpr(const MCExpr *&Res, SMLoc &EndLoc)
     return true;
   case AsmToken::Integer: {
     //SMLoc Loc = getTok().getLoc();
-    int64_t IntVal = getTok().getIntVal();
+    bool valid;
+    int64_t IntVal = getTok().getIntVal(valid);
+    if (!valid) {
+        return true;
+    }
     Res = MCConstantExpr::create(IntVal, getContext());
     EndLoc = Lexer.getTok().getEndLoc();
     Lex(); // Eat token.
@@ -1431,7 +1439,11 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
 
   // Allow an integer followed by a ':' as a directional local label.
   if (Lexer.is(AsmToken::Integer)) {
-    LocalLabelVal = getTok().getIntVal();
+    bool valid;
+    LocalLabelVal = getTok().getIntVal(valid);
+    if (!valid) {
+        return true;
+    }
     if (LocalLabelVal < 0) {
       if (!TheCondState.Ignore) {
         // return TokError("unexpected token at start of statement");
@@ -1986,7 +1998,11 @@ bool AsmParser::parseCppHashLineFilenameComment(SMLoc L) {
     return false;
   }
 
-  int64_t LineNumber = getTok().getIntVal();
+  bool valid;
+  int64_t LineNumber = getTok().getIntVal(valid);
+  if (!valid) {
+      return true;
+  }
   Lex();
 
   if (getLexer().isNot(AsmToken::String)) {
@@ -2179,7 +2195,6 @@ bool AsmParser::expandMacro(raw_svector_ostream &OS, StringRef Body,
               bool valid;
               OS << Token.getStringContents(valid);
               if (!valid) {
-                  KsError = KS_ERR_ASM_MACRO_STR;
                   return true;
               }
             }
@@ -2586,7 +2601,6 @@ bool AsmParser::parseEscapedString(std::string &Data)
   bool valid;
   StringRef Str = getTok().getStringContents(valid);
   if (!valid) {
-      KsError = KS_ERR_ASM_ESC_STR;
       return true;
   }
 
@@ -2817,7 +2831,10 @@ bool AsmParser::parseDirectiveOctaValue(unsigned int &KsError)
       }
 
       // SMLoc ExprLoc = getLexer().getLoc();
-      APInt IntValue = getTok().getAPIntVal();
+      bool valid;
+      APInt IntValue = getTok().getAPIntVal(valid);
+      if (!valid)
+          return true;
       Lex();
 
       uint64_t hi, lo;
@@ -3201,7 +3218,11 @@ bool AsmParser::parseDirectiveFile(SMLoc DirectiveLoc)
   int64_t FileNumber = -1;
   //SMLoc FileNumberLoc = getLexer().getLoc();
   if (getLexer().is(AsmToken::Integer)) {
-    FileNumber = getTok().getIntVal();
+    bool valid;
+    FileNumber = getTok().getIntVal(valid);
+    if (!valid) {
+        return true;
+    }
     Lex();
 
     if (FileNumber < 1)
@@ -3267,7 +3288,11 @@ bool AsmParser::parseDirectiveLine()
       //return TokError("unexpected token in '.line' directive");
       return true;
 
-    int64_t LineNumber = getTok().getIntVal();
+    bool valid;
+    int64_t LineNumber = getTok().getIntVal(valid);
+    if (!valid) {
+        return true;
+    }
     (void)LineNumber;
     Lex();
 
@@ -3293,7 +3318,11 @@ bool AsmParser::parseDirectiveLoc()
   if (getLexer().isNot(AsmToken::Integer))
     //return TokError("unexpected token in '.loc' directive");
     return true;
-  int64_t FileNumber = getTok().getIntVal();
+  bool valid;
+  int64_t FileNumber = getTok().getIntVal(valid);
+  if (!valid) {
+      return true;
+  }
   if (FileNumber < 1)
     //return TokError("file number less than one in '.loc' directive");
     return true;
@@ -3304,7 +3333,11 @@ bool AsmParser::parseDirectiveLoc()
 
   int64_t LineNumber = 0;
   if (getLexer().is(AsmToken::Integer)) {
-    LineNumber = getTok().getIntVal();
+    bool valid;
+    LineNumber = getTok().getIntVal(valid);
+    if (!valid) {
+        return true;
+    }
     if (LineNumber < 0)
       //return TokError("line number less than zero in '.loc' directive");
       return true;
@@ -3313,7 +3346,11 @@ bool AsmParser::parseDirectiveLoc()
 
   int64_t ColumnPos = 0;
   if (getLexer().is(AsmToken::Integer)) {
-    ColumnPos = getTok().getIntVal();
+    bool valid;
+    ColumnPos = getTok().getIntVal(valid);
+    if (!valid) {
+        return true;
+    }
     if (ColumnPos < 0)
       //return TokError("column position less than zero in '.loc' directive");
       return true;
@@ -3411,7 +3448,11 @@ bool AsmParser::parseDirectiveCVFile()
     //return TokError("expected file number in '.cv_file' directive");
     return true;
 
-  int64_t FileNumber = getTok().getIntVal();
+  bool valid;
+  int64_t FileNumber = getTok().getIntVal(valid);
+  if (!valid) {
+      return true;
+  }
   Lex();
 
   if (FileNumber < 1)
@@ -3453,13 +3494,20 @@ bool AsmParser::parseDirectiveCVLoc()
     //return TokError("unexpected token in '.cv_loc' directive");
     return true;
 
-  int64_t FunctionId = getTok().getIntVal();
+  bool valid;
+  int64_t FunctionId = getTok().getIntVal(valid);
+  if (!valid) {
+      return true;
+  }
   if (FunctionId < 0)
     //return TokError("function id less than zero in '.cv_loc' directive");
     return true;
   Lex();
 
-  int64_t FileNumber = getTok().getIntVal();
+  int64_t FileNumber = getTok().getIntVal(valid);
+  if (!valid) {
+      return true;
+  }
   if (FileNumber < 1)
     //return TokError("file number less than one in '.cv_loc' directive");
     return true;
@@ -3470,7 +3518,10 @@ bool AsmParser::parseDirectiveCVLoc()
 
   int64_t LineNumber = 0;
   if (getLexer().is(AsmToken::Integer)) {
-    LineNumber = getTok().getIntVal();
+    LineNumber = getTok().getIntVal(valid);
+    if (!valid) {
+        return true;
+    }
     if (LineNumber < 0)
       //return TokError("line number less than zero in '.cv_loc' directive");
       return true;
@@ -3479,7 +3530,10 @@ bool AsmParser::parseDirectiveCVLoc()
 
   int64_t ColumnPos = 0;
   if (getLexer().is(AsmToken::Integer)) {
-    ColumnPos = getTok().getIntVal();
+    ColumnPos = getTok().getIntVal(valid);
+    if (!valid) {
+        return true;
+    }
     if (ColumnPos < 0)
       //return TokError("column position less than zero in '.cv_loc' directive");
       return true;
@@ -3523,8 +3577,13 @@ bool AsmParser::parseDirectiveCVLoc()
 
 /// parseDirectiveCVLinetable
 /// ::= .cv_linetable FunctionId, FnStart, FnEnd
-bool AsmParser::parseDirectiveCVLinetable() {
-  int64_t FunctionId = getTok().getIntVal();
+bool AsmParser::parseDirectiveCVLinetable()
+{
+  bool valid;
+  int64_t FunctionId = getTok().getIntVal(valid);
+  if (!valid) {
+      return true;
+  }
   if (FunctionId < 0)
     //return TokError("function id less than zero in '.cv_linetable' directive");
     return true;
@@ -3564,21 +3623,31 @@ bool AsmParser::parseDirectiveCVLinetable() {
 ///          ("contains" SecondaryFunctionId+)?
 bool AsmParser::parseDirectiveCVInlineLinetable()
 {
-  int64_t PrimaryFunctionId = getTok().getIntVal();
+  bool valid;
+  int64_t PrimaryFunctionId = getTok().getIntVal(valid);
+  if (!valid) {
+      return true;
+  }
   if (PrimaryFunctionId < 0)
     //return TokError(
     //    "function id less than zero in '.cv_inline_linetable' directive");
     return true;
   Lex();
 
-  int64_t SourceFileId = getTok().getIntVal();
+  int64_t SourceFileId = getTok().getIntVal(valid);
+  if (!valid) {
+      return true;
+  }
   if (SourceFileId <= 0)
     //return TokError(
     //    "File id less than zero in '.cv_inline_linetable' directive");
     return true;
   Lex();
 
-  int64_t SourceLineNum = getTok().getIntVal();
+  int64_t SourceLineNum = getTok().getIntVal(valid);
+  if (!valid) {
+      return true;
+  }
   if (SourceLineNum < 0)
     //return TokError(
     //    "Line number less than zero in '.cv_inline_linetable' directive");
@@ -3594,7 +3663,10 @@ bool AsmParser::parseDirectiveCVInlineLinetable()
     Lex();
 
     while (getLexer().isNot(AsmToken::EndOfStatement)) {
-      int64_t SecondaryFunctionId = getTok().getIntVal();
+      int64_t SecondaryFunctionId = getTok().getIntVal(valid);
+      if (!valid) {
+          return true;
+      }
       if (SecondaryFunctionId < 0)
         //return TokError(
         //    "function id less than zero in '.cv_inline_linetable' directive");
@@ -4727,7 +4799,6 @@ bool AsmParser::parseDirectiveIfeqs(SMLoc DirectiveLoc, bool ExpectEqual)
   bool valid;
   StringRef String1 = getTok().getStringContents(valid);
   if (!valid) {
-      KsError = KS_ERR_ASM_DIRECTIVE_STR;
       return true;
   }
 
@@ -4755,7 +4826,6 @@ bool AsmParser::parseDirectiveIfeqs(SMLoc DirectiveLoc, bool ExpectEqual)
 
   StringRef String2 = getTok().getStringContents(valid);
   if (!valid) {
-      KsError = KS_ERR_ASM_ESC_BACKSLASH;
       return true;
   }
 
@@ -4901,7 +4971,6 @@ bool AsmParser::parseDirectiveError(SMLoc L, bool WithMessage)
     bool valid;
     Message = getTok().getStringContents(valid);
     if (!valid) {
-        KsError = KS_ERR_ASM_DIRECTIVE_STR;
         return true;
     }
     Lex();
@@ -4933,7 +5002,6 @@ bool AsmParser::parseDirectiveWarning(SMLoc L)
     bool valid;
     Message = getTok().getStringContents(valid);
     if (!valid) {
-        KsError = KS_ERR_ASM_DIRECTIVE_STR;
         return true;
     }
     Lex();

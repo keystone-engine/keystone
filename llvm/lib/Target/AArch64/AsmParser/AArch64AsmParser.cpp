@@ -2260,7 +2260,10 @@ AArch64AsmParser::tryParseFPImm(OperandVector &Operands) {
   if (Tok.is(AsmToken::Integer)) {
     int64_t Val;
     if (!isNegative && Tok.getString().startswith("0x")) {
-      Val = Tok.getIntVal();
+      bool valid;
+      Val = Tok.getIntVal(valid);
+      if (!valid)
+        return MatchOperand_ParseFail;
       if (Val > 255 || Val < 0) {
         //TokError("encoded floating point value out of range");
         return MatchOperand_ParseFail;
@@ -2337,7 +2340,10 @@ AArch64AsmParser::tryParseAddSubImm(OperandVector &Operands) {
     return MatchOperand_ParseFail;
   }
 
-  int64_t ShiftAmount = Parser.getTok().getIntVal();
+  bool valid;
+  int64_t ShiftAmount = Parser.getTok().getIntVal(valid);
+  if (!valid)
+    return MatchOperand_ParseFail;
 
   if (ShiftAmount < 0) {
     //Error(Parser.getTok().getLoc(), "positive shift amount required");
@@ -2932,7 +2938,10 @@ bool AArch64AsmParser::parseRegister(OperandVector &Operands)
     const AsmToken &Tok = Parser.getTok();
     if (Tok.is(AsmToken::Integer)) {
       SMLoc IntS = getLoc();
-      int64_t Val = Tok.getIntVal();
+      bool valid;
+      int64_t Val = Tok.getIntVal(valid);
+      if (!valid)
+        return MatchOperand_ParseFail;
       if (Val == 1) {
         Parser.Lex();
         if (getLexer().getKind() == AsmToken::RBrac) {
@@ -4481,7 +4490,10 @@ bool AArch64AsmParser::parseDirectiveLOH(StringRef IDVal, SMLoc Loc)
       return true;
     // We successfully get a numeric value for the identifier.
     // Check if it is valid.
-    int64_t Id = getParser().getTok().getIntVal();
+    bool valid;
+    int64_t Id = getParser().getTok().getIntVal(valid);
+    if (!valid)
+      return MatchOperand_ParseFail;
     if (Id <= -1U && !isValidMCLOHType(Id))
       //return TokError("invalid numeric identifier in directive");
       return true;
