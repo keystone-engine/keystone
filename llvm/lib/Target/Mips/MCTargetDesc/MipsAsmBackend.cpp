@@ -193,7 +193,7 @@ static unsigned calculateMMLEIndex(unsigned i) {
 /// fixup kind as appropriate.
 void MipsAsmBackend::applyFixup(const MCFixup &Fixup, char *Data,
                                 unsigned DataSize, uint64_t Value,
-                                bool IsPCRel) const {
+                                bool IsPCRel, unsigned int &KsError) const {
   MCFixupKind Kind = Fixup.getKind();
   Value = adjustFixupValue(Fixup, Value);
 

@@ -22,6 +22,9 @@
 #include "llvm/MC/MCValue.h"
 #include "llvm/Support/ErrorHandling.h"
 #include "llvm/Support/MachO.h"
+
+#include <keystone/keystone.h>
+
 using namespace llvm;
 
 namespace {
@@ -72,7 +75,7 @@ public:
   }
 
   void applyFixup(const MCFixup &Fixup, char *Data, unsigned DataSize,
-                  uint64_t Value, bool IsPCRel) const override;
+                  uint64_t Value, bool IsPCRel, unsigned int &KsError) const override;
 
   bool mayNeedRelaxation(const MCInst &Inst) const override;
   bool fixupNeedsRelaxation(const MCFixup &Fixup, uint64_t Value,
@@ -248,7 +251,7 @@ unsigned AArch64AsmBackend::getFixupKindContainereSizeInBytes(unsigned Kind) con
 
 void AArch64AsmBackend::applyFixup(const MCFixup &Fixup, char *Data,
                                    unsigned DataSize, uint64_t Value,
-                                   bool IsPCRel) const {
+                                   bool IsPCRel, unsigned int &KsError) const {
   unsigned NumBytes = getFixupKindNumBytes(Fixup.getKind());
   if (!Value)
     return; // Doesn't change encoding.
@@ -260,7 +263,11 @@ void AArch64AsmBackend::applyFixup(const MCFixup &Fixup, char *Data,
   Value <<= Info.TargetOffset;
 
   unsigned Offset = Fixup.getOffset();
-  assert(Offset + NumBytes <= DataSize && "Invalid fixup offset!");
+  //assert(Offset + NumBytes <= DataSize && "Invalid fixup offset!");
+  if (Offset + NumBytes > DataSize) {
+      KsError = KS_ERR_ASM_FIXUP_INVALID;
+      return;
+  }
 
   // Used to point to big endian bytes.
   unsigned FulleSizeInBytes = getFixupKindContainereSizeInBytes(Fixup.getKind());
@@ -274,8 +281,13 @@ void AArch64AsmBackend::applyFixup(const MCFixup &Fixup, char *Data,
     }
   } else {
     // Handle as big-endian
-    assert((Offset + FulleSizeInBytes) <= DataSize && "Invalid fixup size!");
-    assert(NumBytes <= FulleSizeInBytes && "Invalid fixup size!");
+    //assert((Offset + FulleSizeInBytes) <= DataSize && "Invalid fixup size!");
+    //assert(NumBytes <= FulleSizeInBytes && "Invalid fixup size!");
+    if ((Offset + FulleSizeInBytes) > DataSize ||
+            NumBytes > FulleSizeInBytes) {
+        KsError = KS_ERR_ASM_FIXUP_INVALID;
+        return;
+    }
     for (unsigned i = 0; i != NumBytes; ++i) {
       unsigned Idx = FulleSizeInBytes - 1 - i;
       Data[Offset + Idx] |= uint8_t((Value >> (i * 8)) & 0xff);

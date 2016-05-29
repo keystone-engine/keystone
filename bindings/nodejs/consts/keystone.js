@@ -71,6 +71,7 @@ module.exports.ERR_ASM_ESC_SEQUENCE = 154
 module.exports.ERR_ASM_ESC_STR = 155
 module.exports.ERR_ASM_TOKEN_INVALID = 156
 module.exports.ERR_ASM_INSN_UNSUPPORTED = 157
+module.exports.ERR_ASM_FIXUP_INVALID = 158
 module.exports.ERR_ASM_INVALIDOPERAND = 512
 module.exports.ERR_ASM_MISSINGFEATURE = 513
 module.exports.ERR_ASM_MNEMONICFAIL = 514

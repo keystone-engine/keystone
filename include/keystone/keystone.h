@@ -127,6 +127,7 @@ typedef enum ks_err {
     KS_ERR_ASM_ESC_STR,         // broken escape string
     KS_ERR_ASM_TOKEN_INVALID,   // invalid token
     KS_ERR_ASM_INSN_UNSUPPORTED,   // this instruction is unsupported in this mode
+    KS_ERR_ASM_FIXUP_INVALID,   // invalid fixup
 
     // generic input assembly errors - architecture specific
     KS_ERR_ASM_INVALIDOPERAND = KS_ERR_ASM_ARCH,

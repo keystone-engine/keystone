@@ -25,6 +25,9 @@
 #include "llvm/Support/MachO.h"
 #include "llvm/Support/TargetRegistry.h"
 #include "llvm/Support/raw_ostream.h"
+
+#include <keystone/keystone.h>
+
 using namespace llvm;
 
 static unsigned getFixupKindLog2Size(unsigned Kind) {
@@ -104,18 +107,23 @@ public:
   }
 
   void applyFixup(const MCFixup &Fixup, char *Data, unsigned DataSize,
-                  uint64_t Value, bool IsPCRel) const override {
+                  uint64_t Value, bool IsPCRel, unsigned int &KsError) const override {
     unsigned Size = 1 << getFixupKindLog2Size(Fixup.getKind());
 
-    assert(Fixup.getOffset() + Size <= DataSize &&
-           "Invalid fixup offset!");
+    //assert(Fixup.getOffset() + Size <= DataSize &&
+    //       "Invalid fixup offset!");
 
     // Check that uppper bits are either all zeros or all ones.
     // Specifically ignore overflow/underflow as long as the leakage is
     // limited to the lower bits. This is to remain compatible with
     // other assemblers.
-    assert(isIntN(Size * 8 + 1, Value) &&
-           "Value does not fit in the Fixup field");
+    //assert(isIntN(Size * 8 + 1, Value) &&
+    //       "Value does not fit in the Fixup field");
+    if (Fixup.getOffset() + Size > DataSize ||
+            !isIntN(Size * 8 + 1, Value)) {
+        KsError = KS_ERR_ASM_FIXUP_INVALID;
+        return;
+    }
 
     for (unsigned i = 0; i != Size; ++i)
       Data[Fixup.getOffset() + i] = uint8_t(Value >> (i * 8));

@@ -128,6 +128,8 @@ const char *ks_strerror(ks_err code)
             return "Instruction is unsupported in this mode (KS_ERR_ASM_INSN_UNSUPPORTED)";
         case KS_ERR_ASM_DIRECTIVE_UNKNOWN:
             return "Unknown directive (KS_ERR_ASM_DIRECTIVE_UNKNOWN)";
+        case KS_ERR_ASM_FIXUP_INVALID:
+            return "Invalid fixup (KS_ERR_ASM_FIXUP_INVALID)";
     }
 }
 
