@@ -3,7 +3,7 @@ int main(int argc, char **argv) {
   int ks_arch = KS_ARCH_X86, ks_mode = KS_MODE_64;
   unsigned char assembly[] = {
     'L', '-', 'e', 'B', 'L', '-', 'e', 'B', '*', '-',
-    'e', 'B', '*', 'B', 'L', '*', 'B', 'L', 0x00,
+    'e', 'B', '*', 'B', 'L', 0x00,
   };
   ks_engine *ks;
   ks_err err = ks_open(ks_arch, ks_mode, &ks);
