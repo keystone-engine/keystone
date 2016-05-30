@@ -27,6 +27,8 @@
 #include "llvm/Support/ErrorHandling.h"
 #include "llvm/Support/raw_ostream.h"
 
+#include "keystone/keystone.h"
+
 using namespace llvm;
 
 #define DEBUG_TYPE "mccodeemitter"
@@ -39,6 +41,7 @@ class ARMMCCodeEmitter : public MCCodeEmitter {
   const MCInstrInfo &MCII;
   const MCContext &CTX;
   bool IsLittleEndian;
+  mutable unsigned int ErrorCode;
 
 public:
   ARMMCCodeEmitter(const MCInstrInfo &mcii, MCContext &ctx, bool IsLittle)
@@ -46,6 +49,9 @@ public:
   }
 
   ~ARMMCCodeEmitter() override {}
+
+  void setError(unsigned int E) const { ErrorCode = E; }
+  unsigned int getError() const { return ErrorCode; }
 
   bool isThumb(const MCSubtargetInfo &STI) const {
     return STI.getFeatureBits()[ARM::ModeThumb];
@@ -553,7 +559,9 @@ getMachineOpValue(const MCInst &MI, const MCOperand &MO,
                      .bitcastToAPInt().getHiBits(32).getLimitedValue());
   }
 
-  llvm_unreachable("Unable to encode MCOperand!");
+  //llvm_unreachable("Unable to encode MCOperand!");
+  setError(KS_ERR_ASM_INVALIDOPERAND);
+  return 0;
 }
 
 /// getAddrModeImmOpValue - Return encoding info for 'reg +/- imm' operand.
@@ -1706,6 +1714,7 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
                   unsigned int &KsError) const
 {
   KsError = 0;
+  setError(0);
   // Pseudo instructions don't get encoded.
   const MCInstrDesc &Desc = MCII.get(MI.getOpcode());
   uint64_t TSFlags = Desc.TSFlags;
@@ -1714,11 +1723,15 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
 
   int Size;
   if (Desc.getSize() == 2 || Desc.getSize() == 4)
-    Size = Desc.getSize();  // qq
+    Size = Desc.getSize();
   else
     llvm_unreachable("Unexpected instruction size!");
 
-  uint32_t Binary = getBinaryCodeForInstr(MI, Fixups, STI); // qq
+  uint32_t Binary = getBinaryCodeForInstr(MI, Fixups, STI);
+  if (getError()) {
+      KsError = ErrorCode;
+      return;
+  }
   // Thumb 32-bit wide instructions need to emit the high order halfword
   // first.
   if (isThumb(STI) && Size == 4) {

@@ -8865,8 +8865,11 @@ bool ARMAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
 
     Inst.setLoc(IDLoc);
     Out.EmitInstruction(Inst, getSTI(), ErrorCode);
-    Address = Inst.getAddress(); // keystone update address
-    return ErrorCode != 0;
+    if (ErrorCode == 0) {
+        Address = Inst.getAddress(); // Keystone update address
+        return false;
+    } else
+        return true;
   case Match_MissingFeature: {
     ErrorCode = KS_ERR_ASM_ARM_MISSINGFEATURE;
     return true;
