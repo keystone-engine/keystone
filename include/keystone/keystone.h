@@ -129,6 +129,7 @@ typedef enum ks_err {
     KS_ERR_ASM_TOKEN_INVALID,   // invalid token
     KS_ERR_ASM_INSN_UNSUPPORTED,   // this instruction is unsupported in this mode
     KS_ERR_ASM_FIXUP_INVALID,   // invalid fixup
+    KS_ERR_ASM_LABEL_INVALID,   // invalid label
 
     // generic input assembly errors - architecture specific
     KS_ERR_ASM_INVALIDOPERAND = KS_ERR_ASM_ARCH,

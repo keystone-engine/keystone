@@ -1563,8 +1563,13 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
   // See what kind of statement we have.
   switch (Lexer.getKind()) {
   case AsmToken::Colon: {
-    if (!getTargetParser().isLabel(ID))
+    bool valid;
+    if (!getTargetParser().isLabel(ID, valid))
       break;
+    if (!valid) {
+        Info.KsError = KS_ERR_ASM_LABEL_INVALID;
+        return true;
+    }
     checkForValidSection();
 
     // identifier ':'   -> Label.

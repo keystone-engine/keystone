@@ -190,10 +190,8 @@ public:
     AsmToken Tok;
 
     MutableArrayRef<AsmToken> Buf(Tok);
-    size_t ReadCount = peekTokens(Buf, ShouldSkipSpace);
-
-    assert(ReadCount == 1);
-    (void)ReadCount;
+    if (peekTokens(Buf, ShouldSkipSpace) != 1)
+        return AsmToken(AsmToken::Error, nullptr);
 
     return Tok;
   }

@@ -73,7 +73,7 @@ class HexagonAsmParser : public MCTargetAsmParser {
   MCAsmLexer &getLexer() const { return Parser.getLexer(); }
 
   bool equalIsAsmAssignment() override { return false; }
-  bool isLabel(AsmToken &Token) override;
+  bool isLabel(AsmToken &Token, bool &valid) override;
 
   void Warning(SMLoc L, const Twine &Msg) { Parser.Warning(L, Msg); }
   bool Error(SMLoc L, const Twine &Msg) { return Parser.Error(L, Msg); }
@@ -1195,10 +1195,15 @@ bool HexagonAsmParser::parseOperand(OperandVector &Operands) {
   return splitIdentifier(Operands);
 }
 
-bool HexagonAsmParser::isLabel(AsmToken &Token) {
+bool HexagonAsmParser::isLabel(AsmToken &Token, bool &valid) {
+  valid = true;
   MCAsmLexer &Lexer = getLexer();
   AsmToken const &Second = Lexer.getTok();
   AsmToken Third = Lexer.peekTok();  
+  if (Third.is(AsmToken::Error)) {
+      valid = false;
+      return true;
+  }
   StringRef String = Token.getString();
   if (Token.is(AsmToken::TokenKind::LCurly) ||
       Token.is(AsmToken::TokenKind::RCurly))
