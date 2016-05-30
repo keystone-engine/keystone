@@ -64,11 +64,11 @@ pub struct AsmResult {
 
 impl fmt::Display for AsmResult {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-          for byte in &self.bytes {
-            try!( f.write_fmt(format_args!("{:02x}", byte)));
+        for byte in &self.bytes {
+            try!(f.write_fmt(format_args!("{:02x}", byte)));
         }
 
-        Ok(()) 
+        Ok(())
     }
 }
 
@@ -98,7 +98,7 @@ pub fn error_msg(error: Error) -> String {
 }
 
 pub struct Keystone {
-    handle: ks_handle, 
+    handle: ks_handle,
 }
 
 impl Keystone {
@@ -110,7 +110,9 @@ impl Keystone {
 
         let mut handle: ks_handle = 0;
 
-        let err = Error::from_bits_truncate(unsafe { ffi::ks_open(arch.val(), mode.bits(), &mut handle) });
+        let err = Error::from_bits_truncate(unsafe {
+            ffi::ks_open(arch.val(), mode.bits(), &mut handle)
+        });
         if err == ERR_OK {
             Ok(Keystone { handle: handle })
         } else {
@@ -130,7 +132,9 @@ impl Keystone {
 
     /// Set option for Keystone engine at runtime
     pub fn option(&self, type_: OptionType, value: OptionValue) -> Result<(), Error> {
-        let err = Error::from_bits_truncate(unsafe { ffi::ks_option(self.handle, type_.val(), value.bits()) });
+        let err = Error::from_bits_truncate(unsafe {
+            ffi::ks_option(self.handle, type_.val(), value.bits())
+        });
         if err == ERR_OK {
             Ok(())
         } else {
@@ -140,7 +144,7 @@ impl Keystone {
 
     /// Assemble a string given its the buffer, size, start address and number
     /// of instructions to be decoded.
-    /// 
+    ///
     /// This API dynamically allocate memory to contain assembled instruction.
     /// Resulted array of bytes containing the machine code  is put into @*encoding
     pub fn asm(&self, str: String, address: u64) -> Result<AsmResult, Error> {
@@ -150,16 +154,23 @@ impl Keystone {
         let s = CString::new(str).unwrap();
         let mut ptr: *mut libc::c_uchar = std::ptr::null_mut();
 
-        let err = Error::from_bits_truncate(unsafe { ffi::ks_asm(self.handle, s.as_ptr(), address, &mut ptr, &mut size, &mut stat_count) });
+        let err = Error::from_bits_truncate(unsafe {
+            ffi::ks_asm(self.handle,
+                        s.as_ptr(),
+                        address,
+                        &mut ptr,
+                        &mut size,
+                        &mut stat_count)
+        });
 
         if err == ERR_OK {
             let bytes = unsafe { std::slice::from_raw_parts(ptr, size) };
 
-            unsafe{ 
+            unsafe {
                 ffi::ks_free(ptr);
             };
 
-            Ok( AsmResult {
+            Ok(AsmResult {
                 size: size as u32,
                 stat_count: stat_count as u32,
                 bytes: From::from(&bytes[..]),

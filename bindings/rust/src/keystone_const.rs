@@ -2,17 +2,17 @@
 extern crate libc;
 
 
-pub const KS_API_MAJOR : u32 = 1;
-pub const KS_API_MINOR : u32 = 0;
-pub const KS_ARCH_ARM : u32 = 1;
-pub const KS_ARCH_ARM64 : u32 = 2;
-pub const KS_ARCH_MIPS : u32 = 3;
-pub const KS_ARCH_X86 : u32 = 4;
-pub const KS_ARCH_PPC : u32 = 5;
-pub const KS_ARCH_SPARC : u32 = 6;
-pub const KS_ARCH_SYSTEMZ : u32 = 7;
-pub const KS_ARCH_HEXAGON : u32 = 8;
-pub const KS_ARCH_MAX : u32 = 9;
+pub const KS_API_MAJOR: u32 = 1;
+pub const KS_API_MINOR: u32 = 0;
+pub const KS_ARCH_ARM: u32 = 1;
+pub const KS_ARCH_ARM64: u32 = 2;
+pub const KS_ARCH_MIPS: u32 = 3;
+pub const KS_ARCH_X86: u32 = 4;
+pub const KS_ARCH_PPC: u32 = 5;
+pub const KS_ARCH_SPARC: u32 = 6;
+pub const KS_ARCH_SYSTEMZ: u32 = 7;
+pub const KS_ARCH_HEXAGON: u32 = 8;
+pub const KS_ARCH_MAX: u32 = 9;
 
 
 bitflags! {
@@ -41,49 +41,49 @@ bitflags! {
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Arch {
-	ARM,
-	ARM64,
-	MIPS,
-	X86,
-	PPC,
-	SPARC,
-	SYSTEMZ,
-	HEXAGON,
-	MAX,
+    ARM,
+    ARM64,
+    MIPS,
+    X86,
+    PPC,
+    SPARC,
+    SYSTEMZ,
+    HEXAGON,
+    MAX,
 }
 
 
 impl Arch {
-	#[inline]
-	pub fn val(&self) -> u32 {
-		match *self {
-			Arch::ARM => 1,
-			Arch::ARM64 => 2,
-			Arch::MIPS => 3,
-			Arch::X86 => 4,
-			Arch::PPC => 5,
-			Arch::SPARC => 6,
-			Arch::SYSTEMZ => 7,
-			Arch::HEXAGON => 8,
-			Arch::MAX => 9,
-		}
-	}
+    #[inline]
+    pub fn val(&self) -> u32 {
+        match *self {
+            Arch::ARM => 1,
+            Arch::ARM64 => 2,
+            Arch::MIPS => 3,
+            Arch::X86 => 4,
+            Arch::PPC => 5,
+            Arch::SPARC => 6,
+            Arch::SYSTEMZ => 7,
+            Arch::HEXAGON => 8,
+            Arch::MAX => 9,
+        }
+    }
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum OptionType {
-	SYNTAX,
-	MAX,
+    SYNTAX,
+    MAX,
 }
 
 impl OptionType {
-	#[inline]
-	pub fn val(&self) -> u32 {
-		match *self {
-			OptionType::SYNTAX => 1,
-			OptionType::MAX => 99
-		}
-	}
+    #[inline]
+    pub fn val(&self) -> u32 {
+        match *self {
+            OptionType::SYNTAX => 1,
+            OptionType::MAX => 99,
+        }
+    }
 }
 
 bitflags! {
@@ -144,4 +144,3 @@ bitflags! {
 		const ERR_ASM_MNEMONICFAIL = 514,
 	}
 }
-
