@@ -42,3 +42,4 @@ Contributors (in no particular order)
 
 Ingmar Steen: NodeJS binding.
 Sascha Schirra: Ruby binding.
+Remco Verhoef: Go & Rust bindings.
