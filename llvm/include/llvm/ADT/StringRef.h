@@ -70,8 +70,11 @@ namespace llvm {
     /// Construct a string ref from a cstring.
     /*implicit*/ StringRef(const char *Str)
       : Data(Str) {
-        assert(Str && "StringRef cannot be built from a NULL argument");
-        Length = ::strlen(Str); // invoking strlen(NULL) is undefined behavior
+        //assert(Str && "StringRef cannot be built from a NULL argument");
+        if (!Str)
+            Length = 0;
+        else 
+            Length = ::strlen(Str); // invoking strlen(NULL) is undefined behavior
       }
 
     /// Construct a string ref from a pointer and length.

@@ -1413,7 +1413,7 @@ bool AsmParser::isDirective(StringRef IDVal)
     if (KsSyntax == KS_OPT_SYNTAX_NASM)
         return isNasmDirective(IDVal);
     else // Directives start with "."
-        return (IDVal[0] == '.' && IDVal != ".");
+        return (!IDVal.empty() && IDVal[0] == '.' && IDVal != ".");
 }
 
 /// ParseStatement:
