@@ -102,7 +102,7 @@ private:
       assert (!PostfixStack.empty() && "Poped an empty stack!");
       ICToken Op = PostfixStack.pop_back_val();
       assert ((Op.first == IC_IMM || Op.first == IC_REGISTER)
-              && "Expected and immediate or register!");
+              && "Expected an immediate or register!");
       return Op.second;
     }
     void pushOperand(InfixCalculatorTok Op, int64_t Val = 0) {
