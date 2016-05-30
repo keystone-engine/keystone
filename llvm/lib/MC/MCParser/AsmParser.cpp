@@ -936,6 +936,9 @@ bool AsmParser::parsePrimaryExpr(const MCExpr *&Res, SMLoc &EndLoc)
       }
     }
 
+    if (SymbolName.empty()) {
+        return true;
+    }
     MCSymbol *Sym = getContext().getOrCreateSymbol(SymbolName);
 
     // If this is an absolute variable reference, substitute it now to preserve
@@ -1591,6 +1594,9 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
         Info.AsmRewrites->emplace_back(AOK_Label, IDLoc, IDVal.size(),
                                        RewrittenLabel);
         IDVal = RewrittenLabel;
+      }
+      if (IDVal.empty()) {
+          return true;
       }
       Sym = getContext().getOrCreateSymbol(IDVal);
     } else
@@ -3621,6 +3627,9 @@ bool AsmParser::parseDirectiveCVLinetable()
     //return Error(Loc, "expected identifier in directive");
     return true;
 
+  if (FnStartName.empty() || FnEndName.empty()) {
+      return true;
+  }
   MCSymbol *FnStartSym = getContext().getOrCreateSymbol(FnStartName);
   MCSymbol *FnEndSym = getContext().getOrCreateSymbol(FnEndName);
 
@@ -3949,6 +3958,9 @@ bool AsmParser::parseDirectiveCFIPersonalityOrLsda(bool IsPersonality) {
     //return TokError("expected identifier in directive");
     return true;
 
+  if (Name.empty()) {
+      return true;
+  }
   MCSymbol *Sym = getContext().getOrCreateSymbol(Name);
 
   if (IsPersonality)
@@ -4495,6 +4507,9 @@ bool AsmParser::parseDirectiveSymbolAttribute(MCSymbolAttr Attr)
         //return Error(Loc, "expected identifier in directive");
         return true;
 
+      if (Name.empty()) {
+          return true;
+      }
       MCSymbol *Sym = getContext().getOrCreateSymbol(Name);
 
       // Assembler local symbols don't make any sense here. Complain loudly.
@@ -4532,6 +4547,9 @@ bool AsmParser::parseDirectiveComm(bool IsLocal)
     //return TokError("expected identifier in directive");
     return true;
 
+  if (Name.empty()) {
+      return true;
+  }
   // Handle the identifier as the key symbol.
   MCSymbol *Sym = getContext().getOrCreateSymbol(Name);
 
@@ -5815,8 +5833,12 @@ bool parseAssignmentExpression(StringRef Name, bool allow_redef,
   } else if (Name == ".") {
     Parser.getStreamer().emitValueToOffset(Value, 0);
     return false;
-  } else
+  } else {
+    if (Name.empty()) {
+        return true;
+    }
     Sym = Parser.getContext().getOrCreateSymbol(Name);
+  }
 
   Sym->setRedefinable(allow_redef);
 
