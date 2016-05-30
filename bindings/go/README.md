@@ -1,6 +1,13 @@
 # keystone 
 Go bindings for the [keystone](http://www.keystone-engine.org/) engine.
 
+## Configuration
+```
+export CGO_CFLAGS -I../../../include/keystone/
+export CGO_LDFLAGS "-L../../../build/llvm/lib/ -lkeystone"
+```
+
+## Sample
 ```go
 package main
 
@@ -32,14 +39,11 @@ func main() {
 }
 ```
 
-## Installation
+## Testing
 
-## Notes
+```
+go test
+```
 
-## Contributing
-
-Contributors:
+## Contributors
 - Remco Verhoef (@remco_verhoef)
-
-Special thanks to:
-- Sébastien Duquette (@ekse) for his [unicorn-rs](https://github.com/ekse/unicorn-rs) binding
