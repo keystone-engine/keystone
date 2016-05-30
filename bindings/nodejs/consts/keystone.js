@@ -1,6 +1,5 @@
 // For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [keystone_const.js]
 module.exports.API_MAJOR = 1
-
 module.exports.API_MINOR = 0
 module.exports.ARCH_ARM = 1
 module.exports.ARCH_ARM64 = 2
@@ -11,7 +10,6 @@ module.exports.ARCH_SPARC = 6
 module.exports.ARCH_SYSTEMZ = 7
 module.exports.ARCH_HEXAGON = 8
 module.exports.ARCH_MAX = 9
-
 module.exports.MODE_LITTLE_ENDIAN = 0
 module.exports.MODE_BIG_ENDIAN = 1073741824
 module.exports.MODE_ARM = 1
@@ -33,7 +31,6 @@ module.exports.MODE_SPARC64 = 8
 module.exports.MODE_V9 = 16
 module.exports.ERR_ASM = 128
 module.exports.ERR_ASM_ARCH = 512
-
 module.exports.ERR_OK = 0
 module.exports.ERR_NOMEM = 1
 module.exports.ERR_ARCH = 2

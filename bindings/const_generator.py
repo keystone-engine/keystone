@@ -155,7 +155,6 @@ template = {
     'python': {
             'header': "# For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [%s_const.py]\n",
             'footer': "",
-            'line_format': 'KS_%s = %s\n',
             'out_file': './python/keystone/%s_const.py',
             # prefixes for constant filenames of all archs - case sensitive
             'arm.h': 'arm',
@@ -169,11 +168,17 @@ template = {
             'keystone.h': 'keystone',
             'comment_open': '#',
             'comment_close': '',
+            'rules': [
+                {
+                    'regex': r'.*',
+                    'line_format': 'KS_{0} = {1}\n',
+                    'fn': (lambda x: x),
+                },
+            ]
         },
     'nodejs': {
             'header': "// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [%s_const.js]\n",
             'footer': "",
-            'line_format': 'module.exports.%s = %s\n',
             'out_file': './nodejs/consts/%s.js',
             # prefixes for constant filenames of all archs - case sensitive
             'arm.h': 'arm',
@@ -187,11 +192,17 @@ template = {
             'keystone.h': 'keystone',
             'comment_open': '//',
             'comment_close': '',
+            'rules': [
+                {
+                    'regex': r'.*',
+                    'line_format': 'module.exports.{0} = {1}\n',
+                    'fn': (lambda x: x),
+                },
+            ]
     },
     'ruby': {
             'header': "# For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [%s_const.rb]\n\nmodule Keystone\n",
             'footer': "end",
-            'line_format': '\tKS_%s = %s\n',
             'out_file': './ruby/keystone_gem/lib/keystone/%s_const.rb',
             # prefixes for constant filenames of all archs - case sensitive
             'arm.h': 'arm',
@@ -205,6 +216,13 @@ template = {
             'keystone.h': 'keystone',
             'comment_open': '#',
             'comment_close': '',
+            'rules': [
+                {
+                    'regex': r'.*',
+                    'line_format': '\tKS_{0} = {1}\n',
+                    'fn': (lambda x: x),
+                },
+            ]
     },
 }
 
@@ -289,11 +307,6 @@ def gen(lang):
 
                     count = int(rhs) + 1
 
-                    #if (count == 1):
-                    #    outfile.write(("\n").encode("utf-8"))
-                    #print (lhs_strip)
-
-                    #outfile.write((templ['line_format'] % (lhs_strip, rhs)).encode("utf-8"))
                     previous[lhs] = str(rhs)
 
 
@@ -316,14 +329,17 @@ def gen(lang):
             if len(consts2) == 0:
                 continue
 
-            outfile.write (rule['pre'])
+            if rule.get('pre'):
+                outfile.write (rule.get('pre'))
+
             for const in consts2:
                 lhs_strip = const[0]
                 rhs = const[1]
                 outfile.write(rule['line_format'].format(rule['fn'](lhs_strip), rhs, lhs_strip).encode("utf-8"))
 
-            outfile.write (rule['post'])
-            outfile.write ('\n')
+            if rule.get('post'):
+                outfile.write (rule.get('post'))
+                outfile.write ('\n')
 
         outfile.write (templ['footer'])
         outfile.close()
