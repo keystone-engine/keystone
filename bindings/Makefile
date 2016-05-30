@@ -11,10 +11,14 @@ SAMPLE_M68K = $(TMPDIR)/sample_m68k
 SAMPLE_SPARC = $(TMPDIR)/sample_sparc
 SAMPLE_X86 = $(TMPDIR)/sample_x86
 
-.PHONY: all expected python
+.PHONY: all expected python rust go nodejs ruby
 
 all:
 	cd python && $(MAKE) gen_const
+	python const_generator.py rust
+	python const_generator.py go
+	python const_generator.py python
+	python const_generator.py ruby
 	python const_generator.py nodejs
 	cd ruby && $(MAKE) gen_const
 
@@ -42,6 +46,18 @@ python: FORCE
 	python python/sample_x86.py > $(SAMPLE_X86)_o
 	$(MAKE) sample_diff
 
+ruby: FORCE
+	cd ruby && $(MAKE)
+
+nodejs: FORCE
+	cd nodejs && $(MAKE)
+
+rust: FORCE
+	cd rust && $(MAKE)
+
+go: FORCE
+	cd go && $(MAKE)
+
 sample_diff: FORCE
 	$(DIFF) $(SAMPLE_ARM)_e $(SAMPLE_ARM)_o
 	$(DIFF) $(SAMPLE_ARM64)_e $(SAMPLE_ARM64)_o
@@ -53,8 +69,16 @@ sample_diff: FORCE
 clean:
 	rm -rf $(TMPDIR)
 	cd python && $(MAKE) clean
+	cd rust && $(MAKE) clean
+	cd go && $(MAKE) clean
+	cd nodejs && $(MAKE) clean
+	cd ruby && $(MAKE) clean
 
 check:
 	make -C python check
+	make -C rust check
+	make -C go check
+	make -C nodejs check
+	make -C ruby check
 
 FORCE:

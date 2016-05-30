@@ -2,7 +2,6 @@
 
 module Keystone
 	KS_API_MAJOR = 1
-
 	KS_API_MINOR = 0
 	KS_ARCH_ARM = 1
 	KS_ARCH_ARM64 = 2
@@ -13,7 +12,6 @@ module Keystone
 	KS_ARCH_SYSTEMZ = 7
 	KS_ARCH_HEXAGON = 8
 	KS_ARCH_MAX = 9
-
 	KS_MODE_LITTLE_ENDIAN = 0
 	KS_MODE_BIG_ENDIAN = 1073741824
 	KS_MODE_ARM = 1
@@ -35,7 +33,6 @@ module Keystone
 	KS_MODE_V9 = 16
 	KS_ERR_ASM = 128
 	KS_ERR_ASM_ARCH = 512
-
 	KS_ERR_OK = 0
 	KS_ERR_NOMEM = 1
 	KS_ERR_ARCH = 2
