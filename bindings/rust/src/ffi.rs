@@ -1,3 +1,8 @@
+//! Keystone Assembler Engine (www.keystone-engine.org) */
+//! By Nguyen Anh Quynh <aquynh@gmail.com>, 2016 */
+//! Rust bindings by Remco Verhoef <remco@dutchcoders.io>, 2016 */
+//!
+
 use libc;
 use std::os::raw::c_char;
 

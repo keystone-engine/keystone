@@ -1,19 +1,25 @@
-//! Bindings for the Keystone Engine.
+//! Keystone Assembler Engine (www.keystone-engine.org) */
+//! By Nguyen Anh Quynh <aquynh@gmail.com>, 2016 */
+//! Rust bindings by Remco Verhoef <remco@dutchcoders.io>, 2016 */
 //!
 //! ```rust
 //! extern crate keystone;
-//! use keystone::{Keystone, Arch, OptionType, OptionValue};
+//! use keystone::{Keystone, Arch, OptionType};
 //!
 //! fn main() {
-//!     let engine = Keystone::new(Arch::X86, keystone::KS_MODE_32)
+//!     let engine = Keystone::new(Arch::X86, keystone::MODE_32)
 //!         .expect("Could not initialize Keystone engine");
-//!     engine.option(OptionType::SYNTAX, OptionValue::SYNTAX_NASM)
+//!     engine.option(OptionType::SYNTAX, keystone::OPT_SYNTAX_NASM)
 //!         .expect("Could not set option to nasm syntax");
 //!     let result = engine.asm("mov ah, 0x80".to_string(), 0)
 //!         .expect("Could not assemble");
 //! }
 //! ```
 
+#![doc(html_root_url="https://keystone/doc/here/v1")]
+
+#[macro_use]
+extern crate bitflags;
 extern crate libc;
 
 pub mod ffi;
@@ -30,6 +36,7 @@ pub mod keystone_const;
 
 use std::ffi::CStr;
 use std::ffi::CString;
+use std::fmt;
 
 pub use keystone_const::*;
 
@@ -42,6 +49,12 @@ impl Error {
     }
 }
 
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.msg())
+    }
+}
+
 #[derive(Debug, PartialEq)]
 pub struct AsmResult {
     pub size: u32,
@@ -49,7 +62,14 @@ pub struct AsmResult {
     pub bytes: Vec<u8>,
 }
 
-impl AsmResult {
+impl fmt::Display for AsmResult {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+          for byte in &self.bytes {
+            try!( f.write_fmt(format_args!("{:02x}", byte)));
+        }
+
+        Ok(()) 
+    }
 }
 
 pub fn bindings_version() -> (u32, u32) {
@@ -74,7 +94,7 @@ pub fn arch_supported(arch: Arch) -> bool {
 
 /// Return a string describing given error code.
 pub fn error_msg(error: Error) -> String {
-    unsafe { CStr::from_ptr(ffi::ks_strerror(error.to_val())).to_string_lossy().into_owned() }
+    unsafe { CStr::from_ptr(ffi::ks_strerror(error.bits())).to_string_lossy().into_owned() }
 }
 
 pub struct Keystone {
@@ -83,38 +103,38 @@ pub struct Keystone {
 
 impl Keystone {
     /// Create new instance of Keystone engine.
-    pub fn new(arch: Arch, mode: u32) -> Result<Keystone, Error> {
+    pub fn new(arch: Arch, mode: Mode) -> Result<Keystone, Error> {
         if version() != bindings_version() {
-            return Err(Error::VERSION);
+            return Err(ERR_VERSION);
         }
 
         let mut handle: ks_handle = 0;
 
-        let err = unsafe { ffi::ks_open(arch.val(), mode, &mut handle) };
-        if err == KS_ERR_OK {
+        let err = Error::from_bits_truncate(unsafe { ffi::ks_open(arch.val(), mode.bits(), &mut handle) });
+        if err == ERR_OK {
             Ok(Keystone { handle: handle })
         } else {
-            Err(Error::from_val(err))
+            Err(err)
         }
     }
 
     /// Report the last error number when some API function fail.
     pub fn error(&self) -> Result<(), Error> {
-        let err = unsafe { ffi::ks_errno(self.handle) };
-        if err == KS_ERR_OK {
+        let err = Error::from_bits_truncate(unsafe { ffi::ks_errno(self.handle) });
+        if err == ERR_OK {
             Ok(())
         } else {
-            Err(Error::from_val(err))
+            Err(err)
         }
     }
 
     /// Set option for Keystone engine at runtime
     pub fn option(&self, type_: OptionType, value: OptionValue) -> Result<(), Error> {
-        let err = unsafe { ffi::ks_option(self.handle, type_.val(), value.val() as libc::size_t) };
-        if err == KS_ERR_OK {
+        let err = Error::from_bits_truncate(unsafe { ffi::ks_option(self.handle, type_.val(), value.bits()) });
+        if err == ERR_OK {
             Ok(())
         } else {
-            Err(Error::from_val(err))
+            Err(err)
         }
     }
 
@@ -130,9 +150,9 @@ impl Keystone {
         let s = CString::new(str).unwrap();
         let mut ptr: *mut libc::c_uchar = std::ptr::null_mut();
 
-        let err = unsafe { ffi::ks_asm(self.handle, s.as_ptr(), address, &mut ptr, &mut size, &mut stat_count) };
+        let err = Error::from_bits_truncate(unsafe { ffi::ks_asm(self.handle, s.as_ptr(), address, &mut ptr, &mut size, &mut stat_count) });
 
-        if err == KS_ERR_OK {
+        if err == ERR_OK {
             let bytes = unsafe { std::slice::from_raw_parts(ptr, size) };
 
             unsafe{ 
@@ -145,8 +165,8 @@ impl Keystone {
                 bytes: From::from(&bytes[..]),
             })
         } else {
-            let err = unsafe { ffi::ks_errno(self.handle) };
-            Err(Error::from_val(err))
+            let err = Error::from_bits_truncate(unsafe { ffi::ks_errno(self.handle) });
+            Err(err)
         }
     }
 }

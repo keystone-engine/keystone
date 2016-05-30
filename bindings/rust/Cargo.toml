@@ -9,3 +9,4 @@ include = ["src/*", "tests/*", "Cargo.toml", "COPYING", "README.md"]
 
 [dependencies]
 libc = "0.2.*"
+bitflags = "0.7.0"
