@@ -88,6 +88,8 @@ const char *ks_strerror(ks_err code)
             return "Invalid floating point in directive (KS_ERR_ASM_DIRECTIVE_FPOINT)";
         case KS_ERR_ASM_VARIANT_INVALID: // invalid variant
             return "Invalid variant (KS_ERR_ASM_VARIANT_INVALID)";
+        case KS_ERR_ASM_DIRECTIVE_EQU:
+            return "Invalid equal directive (KS_ERR_ASM_DIRECTIVE_EQU)";
         case KS_ERR_ASM_EXPR_BRACKET:    // brackets expression not supported on this target
             return "Brackets expression not supported (KS_ERR_ASM_EXPR_BRACKET)";
         case KS_ERR_ASM_SYMBOL_MODIFIER: // unexpected symbol modifier following '@'
@@ -122,6 +124,14 @@ const char *ks_strerror(ks_err code)
             return "Invalid escape sequence (KS_ERR_ASM_ESC_SEQUENCE)";
         case KS_ERR_ASM_ESC_STR:         // broken escape string
             return "Invalid escape string (KS_ERR_ASM_ESC_STR)";
+        case KS_ERR_ASM_TOKEN_INVALID:   // invalid token from input assembly
+            return "Invalid input token (KS_ERR_ASM_TOKEN_INVALID)";
+        case KS_ERR_ASM_INSN_UNSUPPORTED:
+            return "Instruction is unsupported in this mode (KS_ERR_ASM_INSN_UNSUPPORTED)";
+        case KS_ERR_ASM_DIRECTIVE_UNKNOWN:
+            return "Unknown directive (KS_ERR_ASM_DIRECTIVE_UNKNOWN)";
+        case KS_ERR_ASM_FIXUP_INVALID:
+            return "Invalid fixup (KS_ERR_ASM_FIXUP_INVALID)";
     }
 }
 

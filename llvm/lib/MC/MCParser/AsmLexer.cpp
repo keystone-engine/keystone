@@ -10,7 +10,7 @@
 // This class implements the lexer for assembly files.
 //
 //===----------------------------------------------------------------------===//
-
+//
 #include "llvm/MC/MCParser/AsmLexer.h"
 #include "llvm/MC/MCAsmInfo.h"
 #include "llvm/Support/MemoryBuffer.h"
@@ -43,8 +43,9 @@ void AsmLexer::setBuffer(StringRef Buf, const char *ptr) {
 
 /// ReturnError - Set the error to the specified string at the specified
 /// location.  This is defined to always return AsmToken::Error.
-AsmToken AsmLexer::ReturnError(const char *Loc, const std::string &Msg) {
-  SetError(SMLoc::getFromPointer(Loc), Msg);
+AsmToken AsmLexer::ReturnError(const char *Loc, const std::string &Msg)
+{
+  //SetError(SMLoc::getFromPointer(Loc), Msg);
 
   return AsmToken(AsmToken::Error, StringRef(Loc, 0));
 }
@@ -97,7 +98,8 @@ AsmToken AsmLexer::LexFloatLiteral() {
 ///
 /// The leading "0x[0-9a-fA-F]*" (i.e. integer part) has already been consumed
 /// before we get here.
-AsmToken AsmLexer::LexHexFloatLiteral(bool NoIntDigits) {
+AsmToken AsmLexer::LexHexFloatLiteral(bool NoIntDigits)
+{
   assert((*CurPtr == 'p' || *CurPtr == 'P' || *CurPtr == '.') &&
          "unexpected parse state in floating hex");
   bool NoFracDigits = true;
@@ -166,7 +168,8 @@ AsmToken AsmLexer::LexIdentifier() {
 
 /// LexSlash: Slash: /
 ///           C-Style Comment: /* ... */
-AsmToken AsmLexer::LexSlash() {
+AsmToken AsmLexer::LexSlash()
+{
   switch (*CurPtr) {
   case '*': break; // C style comment.
   case '/': return ++CurPtr, LexLineComment();
@@ -251,7 +254,8 @@ static AsmToken intToken(StringRef Ref, APInt &Value)
 ///   Octal integer: 0[0-7]+
 ///   Hex integer: 0x[0-9a-fA-F]+ or [0x]?[0-9][0-9a-fA-F]*[hH]
 ///   Decimal integer: [1-9][0-9]*
-AsmToken AsmLexer::LexDigit() {
+AsmToken AsmLexer::LexDigit()
+{
   // Decimal integer: [1-9][0-9]*
   if (CurPtr[-1] != '0' || CurPtr[0] == '.') {
     unsigned Radix = doLookAhead(CurPtr, 10);
@@ -360,7 +364,8 @@ AsmToken AsmLexer::LexDigit() {
 }
 
 /// LexSingleQuote: Integer: 'b'
-AsmToken AsmLexer::LexSingleQuote() {
+AsmToken AsmLexer::LexSingleQuote()
+{
   int CurChar = getNextChar();
 
   if (CurChar == '\\')
@@ -396,7 +401,8 @@ AsmToken AsmLexer::LexSingleQuote() {
 
 
 /// LexQuote: String: "..."
-AsmToken AsmLexer::LexQuote() {
+AsmToken AsmLexer::LexQuote()
+{
   int CurChar = getNextChar();
   // TODO: does gas allow multiline string constants?
   while (CurChar != '"') {
@@ -437,7 +443,8 @@ StringRef AsmLexer::LexUntilEndOfLine() {
 }
 
 size_t AsmLexer::peekTokens(MutableArrayRef<AsmToken> Buf,
-                            bool ShouldSkipSpace) {
+                            bool ShouldSkipSpace)
+{
   const char *SavedTokStart = TokStart;
   const char *SavedCurPtr = CurPtr;
   bool SavedAtStartOfLine = isAtStartOfLine;
@@ -486,7 +493,8 @@ bool AsmLexer::isAtStatementSeparator(const char *Ptr) {
                  strlen(MAI.getSeparatorString())) == 0;
 }
 
-AsmToken AsmLexer::LexToken() {
+AsmToken AsmLexer::LexToken()
+{
   TokStart = CurPtr;
   // This always consumes at least one character.
   int CurChar = getNextChar();

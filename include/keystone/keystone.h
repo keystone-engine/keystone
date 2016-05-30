@@ -106,7 +106,9 @@ typedef enum ks_err {
     KS_ERR_ASM_DIRECTIVE_RELOC_NAME, // expected relocation name in directive
     KS_ERR_ASM_DIRECTIVE_RELOC_TOKEN, // unexpected token in .reloc directive
     KS_ERR_ASM_DIRECTIVE_FPOINT,    // invalid floating point in directive
+    KS_ERR_ASM_DIRECTIVE_UNKNOWN,    // unknown directive
     KS_ERR_ASM_VARIANT_INVALID, // invalid variant
+    KS_ERR_ASM_DIRECTIVE_EQU,   // invalid equal directive
     KS_ERR_ASM_EXPR_BRACKET,    // brackets expression not supported on this target
     KS_ERR_ASM_SYMBOL_MODIFIER, // unexpected symbol modifier following '@'
     KS_ERR_ASM_SYMBOL_REDEFINED, // invalid symbol redefinition
@@ -124,6 +126,9 @@ typedef enum ks_err {
     KS_ERR_ASM_ESC_OCTAL,       // invalid octal escape sequence  (out of range)
     KS_ERR_ASM_ESC_SEQUENCE,         // invalid escape sequence (unrecognized character)
     KS_ERR_ASM_ESC_STR,         // broken escape string
+    KS_ERR_ASM_TOKEN_INVALID,   // invalid token
+    KS_ERR_ASM_INSN_UNSUPPORTED,   // this instruction is unsupported in this mode
+    KS_ERR_ASM_FIXUP_INVALID,   // invalid fixup
 
     // generic input assembly errors - architecture specific
     KS_ERR_ASM_INVALIDOPERAND = KS_ERR_ASM_ARCH,

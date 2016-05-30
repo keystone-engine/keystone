@@ -291,7 +291,7 @@ public:
     return Value;
   }
 
-  void setVariableValue(const MCExpr *Value);
+  void setVariableValue(const MCExpr *Value, bool &valid);
 
   /// @}
 

@@ -32,6 +32,9 @@
 #include "llvm/Support/Format.h"
 #include "llvm/Support/TargetParser.h"
 #include "llvm/Support/raw_ostream.h"
+
+#include <keystone/keystone.h>
+
 using namespace llvm;
 
 namespace {
@@ -811,7 +814,7 @@ static unsigned getFixupKindContainerSizeBytes(unsigned Kind) {
 
 void ARMAsmBackend::applyFixup(const MCFixup &Fixup, char *Data,
                                unsigned DataSize, uint64_t Value,
-                               bool IsPCRel) const {
+                               bool IsPCRel, unsigned int &KsError) const {
   unsigned NumBytes = getFixupKindNumBytes(Fixup.getKind());
   Value =
       adjustFixupValue(Fixup, Value, IsPCRel, nullptr, IsLittleEndian, true);
@@ -819,14 +822,23 @@ void ARMAsmBackend::applyFixup(const MCFixup &Fixup, char *Data,
     return; // Doesn't change encoding.
 
   unsigned Offset = Fixup.getOffset();
-  assert(Offset + NumBytes <= DataSize && "Invalid fixup offset!");
+  //assert(Offset + NumBytes <= DataSize && "Invalid fixup offset!");
+  if (Offset + NumBytes > DataSize) {
+      KsError = KS_ERR_ASM_FIXUP_INVALID;
+      return;
+  }
 
   // Used to point to big endian bytes.
   unsigned FullSizeBytes;
   if (!IsLittleEndian) {
     FullSizeBytes = getFixupKindContainerSizeBytes(Fixup.getKind());
-    assert((Offset + FullSizeBytes) <= DataSize && "Invalid fixup size!");
-    assert(NumBytes <= FullSizeBytes && "Invalid fixup size!");
+    //assert((Offset + FullSizeBytes) <= DataSize && "Invalid fixup size!");
+    //assert(NumBytes <= FullSizeBytes && "Invalid fixup size!");
+    if ((Offset + FullSizeBytes) > DataSize ||
+            NumBytes > FullSizeBytes) {
+        KsError = KS_ERR_ASM_FIXUP_INVALID;
+        return;
+    }
   }
 
   // For each byte of the fragment that the fixup touches, mask in the bits from

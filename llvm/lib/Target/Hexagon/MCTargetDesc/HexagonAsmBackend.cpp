@@ -174,7 +174,7 @@ public:
 
   void applyFixup(MCFixup const & /*Fixup*/, char * /*Data*/,
                   unsigned /*DataSize*/, uint64_t /*Value*/,
-                  bool /*IsPCRel*/) const override {
+                  bool /*IsPCRel*/, unsigned int &KsError) const override {
     return;
   }
 

@@ -40,12 +40,18 @@ void *MCSymbol::operator new(size_t s, const StringMapEntry<bool> *Name,
   return End;
 }
 
-void MCSymbol::setVariableValue(const MCExpr *Value) {
-  assert(!IsUsed && "Cannot set a variable that has already been used.");
-  assert(Value && "Invalid variable value!");
-  assert((SymbolContents == SymContentsUnset ||
-          SymbolContents == SymContentsVariable) &&
-         "Cannot give common/offset symbol a variable value");
+void MCSymbol::setVariableValue(const MCExpr *Value, bool &valid) {
+  valid = true;
+  //assert(!IsUsed && "Cannot set a variable that has already been used.");
+  //assert(Value && "Invalid variable value!");
+  //assert((SymbolContents == SymContentsUnset ||
+  //        SymbolContents == SymContentsVariable) &&
+  //       "Cannot give common/offset symbol a variable value");
+  if (IsUsed || !Value || (SymbolContents != SymContentsUnset &&
+              SymbolContents != SymContentsVariable)) {
+      valid = false;
+      return;
+  }
   this->Value = Value;
   SymbolContents = SymContentsVariable;
   setUndefined();

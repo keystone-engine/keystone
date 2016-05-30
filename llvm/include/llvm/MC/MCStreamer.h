@@ -404,7 +404,7 @@ public:
   ///
   /// \param Symbol - The symbol being assigned to.
   /// \param Value - The value for the symbol.
-  virtual void EmitAssignment(MCSymbol *Symbol, const MCExpr *Value);
+  virtual bool EmitAssignment(MCSymbol *Symbol, const MCExpr *Value);
 
   /// \brief Emit an weak reference from \p Alias to \p Symbol.
   ///
@@ -499,7 +499,7 @@ public:
 
   /// \brief Special case of EmitValue that avoids the client having
   /// to pass in a MCExpr for constant integers.
-  virtual void EmitIntValue(uint64_t Value, unsigned Size);
+  virtual void EmitIntValue(uint64_t Value, unsigned Size, bool &Error);
 
   virtual void EmitULEB128Value(const MCExpr *Value);
 

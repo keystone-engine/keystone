@@ -672,7 +672,9 @@ void MCAssembler::layout(MCAsmLayout &Layout, unsigned int &KsError)
         if (KsError)
             return;
         getBackend().applyFixup(Fixup, Contents.data(),
-                                Contents.size(), FixedValue, IsPCRel);
+                                Contents.size(), FixedValue, IsPCRel, KsError);
+        if (KsError)
+            return;
       }
     }
   }

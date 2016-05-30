@@ -78,10 +78,20 @@ void MCStreamer::generateCompactUnwindEncodings(MCAsmBackend *MAB) {
 
 /// EmitIntValue - Special case of EmitValue that avoids the client having to
 /// pass in a MCExpr for constant integers.
-void MCStreamer::EmitIntValue(uint64_t Value, unsigned Size) {
-  assert(1 <= Size && Size <= 8 && "Invalid size");
-  assert((isUIntN(8 * Size, Value) || isIntN(8 * Size, Value)) &&
-         "Invalid size");
+void MCStreamer::EmitIntValue(uint64_t Value, unsigned Size, bool &Error)
+{
+  Error = false;
+  //assert(1 <= Size && Size <= 8 && "Invalid size");
+  if (1 > Size || Size > 8) {
+      Error = true;
+      return;
+  }
+  //assert((isUIntN(8 * Size, Value) || isIntN(8 * Size, Value)) &&
+  //       "Invalid size");
+  if (!isUIntN(8 * Size, Value) && !isIntN(8 * Size, Value)) {
+      Error = true;
+      return;
+  }
   char buf[8];
   const bool isLittleEndian = Context.getAsmInfo()->isLittleEndian();
   for (unsigned i = 0; i != Size; ++i) {
@@ -612,13 +622,18 @@ unsigned int MCStreamer::Finish() {
   return FinishImpl();
 }
 
-void MCStreamer::EmitAssignment(MCSymbol *Symbol, const MCExpr *Value) {
+bool MCStreamer::EmitAssignment(MCSymbol *Symbol, const MCExpr *Value) {
   visitUsedExpr(*Value);
-  Symbol->setVariableValue(Value);
+  bool valid;
+  Symbol->setVariableValue(Value, valid);
+  if (!valid)
+      return false;
 
   MCTargetStreamer *TS = getTargetStreamer();
   if (TS)
     TS->emitAssignment(Symbol, Value);
+
+  return true;
 }
 
 void MCStreamer::visitUsedSymbol(const MCSymbol &Sym) {

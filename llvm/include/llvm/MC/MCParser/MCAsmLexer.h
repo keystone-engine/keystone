@@ -108,14 +108,24 @@ public:
   // FIXME: Don't compute this in advance, it makes every token larger, and is
   // also not generally what we want (it is nicer for recovery etc. to lex 123br
   // as a single token, then diagnose as an invalid number).
-  int64_t getIntVal() const {
-    assert(Kind == Integer && "This token isn't an integer!");
+  int64_t getIntVal(bool &valid) const {
+    //assert(Kind == Integer && "This token isn't an integer!");
+    if (Kind != Integer) {
+        valid = false;
+        return -1;
+    }
+    valid = true;
     return IntVal.getZExtValue();
   }
 
-  APInt getAPIntVal() const {
-    assert((Kind == Integer || Kind == BigNum) &&
-           "This token isn't an integer!");
+  APInt getAPIntVal(bool &valid) const {
+    //assert((Kind == Integer || Kind == BigNum) &&
+    //       "This token isn't an integer!");
+    if (Kind != Integer && Kind != BigNum) {
+        valid = false;
+        //return APInt(-1);
+    }
+    valid = true;
     return IntVal;
   }
 };

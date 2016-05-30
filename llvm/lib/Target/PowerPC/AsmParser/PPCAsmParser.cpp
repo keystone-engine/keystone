@@ -1662,11 +1662,17 @@ bool PPCAsmParser::ParseDirectiveWord(unsigned Size, SMLoc L) {
         return false;
 
       if (const auto *MCE = dyn_cast<MCConstantExpr>(Value)) {
-        assert(Size <= 8 && "Invalid size");
+        bool Error;
+        //assert(Size <= 8 && "Invalid size");
+        if (Size > 8)
+            return true;
         uint64_t IntValue = MCE->getValue();
         if (!isUIntN(8 * Size, IntValue) && !isIntN(8 * Size, IntValue))
-          return Error(ExprLoc, "literal value out of range for directive");
-        getStreamer().EmitIntValue(IntValue, Size);
+          //return Error(ExprLoc, "literal value out of range for directive");
+          return true;
+        getStreamer().EmitIntValue(IntValue, Size, Error);
+        if (Error)
+            return true;
       } else {
         getStreamer().EmitValue(Value, Size, ExprLoc);
       }

@@ -15,6 +15,8 @@
 #include "llvm/MC/MCInst.h"
 #include "llvm/MC/MCObjectWriter.h"
 
+#include <keystone/keystone.h>
+
 using namespace llvm;
 
 // Value is a fully-resolved relocation value: Symbol + Addend [- Pivot].
@@ -49,7 +51,7 @@ public:
   }
   const MCFixupKindInfo &getFixupKindInfo(MCFixupKind Kind) const override;
   void applyFixup(const MCFixup &Fixup, char *Data, unsigned DataSize,
-                  uint64_t Value, bool IsPCRel) const override;
+                  uint64_t Value, bool IsPCRel, unsigned int &KsError) const override;
   bool mayNeedRelaxation(const MCInst &Inst) const override {
     return false;
   }
@@ -86,12 +88,16 @@ SystemZMCAsmBackend::getFixupKindInfo(MCFixupKind Kind) const {
 
 void SystemZMCAsmBackend::applyFixup(const MCFixup &Fixup, char *Data,
                                      unsigned DataSize, uint64_t Value,
-                                     bool IsPCRel) const {
+                                     bool IsPCRel, unsigned int &KsError) const {
   MCFixupKind Kind = Fixup.getKind();
   unsigned Offset = Fixup.getOffset();
   unsigned Size = (getFixupKindInfo(Kind).TargetSize + 7) / 8;
 
-  assert(Offset + Size <= DataSize && "Invalid fixup offset!");
+  //assert(Offset + Size <= DataSize && "Invalid fixup offset!");
+  if (Offset + Size > DataSize) {
+      KsError = KS_ERR_ASM_FIXUP_INVALID;
+      return;
+  }
 
   // Big-endian insertion of Size bytes.
   Value = extractBitsForFixup(Kind, Value);

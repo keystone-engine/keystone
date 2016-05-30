@@ -161,11 +161,14 @@ void MCELFStreamer::ChangeSection(MCSection *Section,
   }
 }
 
-void MCELFStreamer::EmitWeakReference(MCSymbol *Alias, const MCSymbol *Symbol) {
+void MCELFStreamer::EmitWeakReference(MCSymbol *Alias, const MCSymbol *Symbol) {    // qq
   getAssembler().registerSymbol(*Symbol);
   const MCExpr *Value = MCSymbolRefExpr::create(
       Symbol, MCSymbolRefExpr::VK_WEAKREF, getContext());
-  Alias->setVariableValue(Value);
+  bool valid;
+  Alias->setVariableValue(Value, valid);
+  if (!valid)
+      return;
 }
 
 // When GNU as encounters more than one .type declaration for an object it seems
@@ -367,16 +370,17 @@ void MCELFStreamer::EmitFileDirective(StringRef Filename) {
 }
 
 void MCELFStreamer::EmitIdent(StringRef IdentString) {
+  bool Error;
   MCSection *Comment = getAssembler().getContext().getELFSection(
       ".comment", ELF::SHT_PROGBITS, ELF::SHF_MERGE | ELF::SHF_STRINGS, 1, "");
   PushSection();
   SwitchSection(Comment);
   if (!SeenIdent) {
-    EmitIntValue(0, 1);
+    EmitIntValue(0, 1, Error);
     SeenIdent = true;
   }
   EmitBytes(IdentString);
-  EmitIntValue(0, 1);
+  EmitIntValue(0, 1, Error);
   PopSection();
 }
 

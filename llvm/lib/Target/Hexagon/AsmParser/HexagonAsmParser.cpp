@@ -950,22 +950,30 @@ bool HexagonAsmParser::ParseDirectiveFalign(unsigned Size, SMLoc L) {
 }
 
 ///  ::= .word [ expression (, expression)* ]
-bool HexagonAsmParser::ParseDirectiveValue(unsigned Size, SMLoc L) {
+bool HexagonAsmParser::ParseDirectiveValue(unsigned Size, SMLoc L)
+{
   if (getLexer().isNot(AsmToken::EndOfStatement)) {
 
     for (;;) {
       const MCExpr *Value;
-      SMLoc ExprLoc = L;
+      //SMLoc ExprLoc = L;
       if (getParser().parseExpression(Value))
         return true;
 
       // Special case constant expressions to match code generator.
       if (const MCConstantExpr *MCE = dyn_cast<MCConstantExpr>(Value)) {
-        assert(Size <= 8 && "Invalid size");
+        bool Error;
+        //assert(Size <= 8 && "Invalid size");
+        if (Size > 8)
+            return true;
         uint64_t IntValue = MCE->getValue();
         if (!isUIntN(8 * Size, IntValue) && !isIntN(8 * Size, IntValue))
-          return Error(ExprLoc, "literal value out of range for directive");
-        getStreamer().EmitIntValue(IntValue, Size);
+          //return Error(ExprLoc, "literal value out of range for directive");
+          return true;
+        getStreamer().EmitIntValue(IntValue, Size, Error);
+        if (Error) {
+            return true;
+        }
       } else
         getStreamer().EmitValue(Value, Size);
 
@@ -974,7 +982,8 @@ bool HexagonAsmParser::ParseDirectiveValue(unsigned Size, SMLoc L) {
 
       // FIXME: Improve diagnostic.
       if (getLexer().isNot(AsmToken::Comma))
-        return TokError("unexpected token in directive");
+        //return TokError("unexpected token in directive");
+        return true;
       Lex();
     }
   }
@@ -1524,7 +1533,8 @@ void HexagonAsmParser::OutOfRange(SMLoc IDLoc, long long Val, long long Max) {
 
 int HexagonAsmParser::processInstruction(MCInst &Inst,
                                          OperandVector const &Operands,
-                                         SMLoc IDLoc, bool &MustExtend) {
+                                         SMLoc IDLoc, bool &MustExtend)
+{
   MCContext &Context = getParser().getContext();
   const MCRegisterInfo *RI = getContext().getRegisterInfo();
   std::string r = "r";
@@ -1721,9 +1731,12 @@ int HexagonAsmParser::processInstruction(MCInst &Inst,
       if (Absolute) {
         Sym = getContext().getOrCreateSymbol(StringRef(myCharStr.c_str() + 16));
         if (Sym->isUndefined()) {
+          bool Error;
           getStreamer().EmitLabel(Sym);
           getStreamer().EmitSymbolAttribute(Sym, MCSA_Global);
-          getStreamer().EmitIntValue(Value, byteSize);
+          getStreamer().EmitIntValue(Value, byteSize, Error);
+          if (Error)
+              return Match_InvalidOperand;
         }
       } else if (MO_1.isExpr()) {
         const char *StringStart = 0;
