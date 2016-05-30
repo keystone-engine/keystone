@@ -98,11 +98,16 @@ private:
     SmallVector<ICToken, 4> PostfixStack;
 
   public:
-    int64_t popOperand() {
-      assert (!PostfixStack.empty() && "Poped an empty stack!");
+    int64_t popOperand(bool &valid) {
+      valid = true;
+      //assert (!PostfixStack.empty() && "Poped an empty stack!");
+      if (PostfixStack.empty())
+          valid = false;
       ICToken Op = PostfixStack.pop_back_val();
-      assert ((Op.first == IC_IMM || Op.first == IC_REGISTER)
-              && "Expected an immediate or register!");
+      //assert ((Op.first == IC_IMM || Op.first == IC_REGISTER)
+      //        && "Expected an immediate or register!");
+      if ((Op.first != IC_IMM && Op.first != IC_REGISTER))
+          valid = false;
       return Op.second;
     }
     void pushOperand(InfixCalculatorTok Op, int64_t Val = 0) {
@@ -437,7 +442,11 @@ private:
           if (!BaseReg) {
             BaseReg = TmpReg;
           } else {
-            assert (!IndexReg && "BaseReg/IndexReg already set!");
+            //assert (!IndexReg && "BaseReg/IndexReg already set!");
+            if (IndexReg) {
+                State = IES_ERROR;
+                break;
+            }
             IndexReg = TmpReg;
             Scale = 1;
           }
@@ -474,7 +483,11 @@ private:
           if (!BaseReg) {
             BaseReg = TmpReg;
           } else {
-            assert (!IndexReg && "BaseReg/IndexReg already set!");
+            //assert (!IndexReg && "BaseReg/IndexReg already set!");
+            if (IndexReg) {
+                State = IES_ERROR;
+                break;
+            }
             IndexReg = TmpReg;
             Scale = 1;
           }
@@ -517,11 +530,20 @@ private:
       case IES_MULTIPLY:
         // Index Register - Scale * Register
         if (PrevState == IES_INTEGER) {
-          assert (!IndexReg && "IndexReg already set!");
+          //assert (!IndexReg && "IndexReg already set!");
+          if (IndexReg) {
+              State = IES_ERROR;
+              break;
+          }
           State = IES_REGISTER;
           IndexReg = Reg;
           // Get the scale and replace the 'Scale * Register' with '0'.
-          Scale = IC.popOperand();
+          bool valid;
+          Scale = IC.popOperand(valid);
+          if (!valid) {
+              State = IES_ERROR;
+              break;
+          }
           IC.pushOperand(IC_IMM);
           IC.popOperator();
         } else {
@@ -567,7 +589,11 @@ private:
         State = IES_INTEGER;
         if (PrevState == IES_REGISTER && CurrState == IES_MULTIPLY) {
           // Index Register - Register * Scale
-          assert (!IndexReg && "IndexReg already set!");
+          //assert (!IndexReg && "IndexReg already set!");
+          if (IndexReg) {
+              State = IES_ERROR;
+              break;
+          }
           IndexReg = TmpReg;
           Scale = TmpInt;
           if(Scale != 1 && Scale != 2 && Scale != 4 && Scale != 8) {
@@ -660,7 +686,11 @@ private:
           if (!BaseReg) {
             BaseReg = TmpReg;
           } else {
-            assert (!IndexReg && "BaseReg/IndexReg already set!");
+            //assert (!IndexReg && "BaseReg/IndexReg already set!");
+            if (IndexReg) {
+                State = IES_ERROR;
+                break;
+            }
             IndexReg = TmpReg;
             Scale = 1;
           }
@@ -1394,6 +1424,8 @@ bool X86AsmParser::ParseIntelExpression(IntelExprStateMachine &SM, SMLoc &End)
       StringRef Identifier = Tok.getString();
       if (TK != AsmToken::String && !ParseRegister(TmpReg, IdentLoc, End, ErrorCode)) {
         SM.onRegister(TmpReg);
+        if (SM.hadError())
+            return true;
         UpdateLocLex = false;
         break;
       } else {
@@ -1514,8 +1546,10 @@ X86AsmParser::ParseIntelBracExpression(unsigned SegReg, SMLoc Start,
   // expression.
   IntelExprStateMachine SM(ImmDisp, /*StopOnLBrac=*/false, /*AddImmPrefix=*/true,
                            /*IsRel*/IsRel);
-  if (ParseIntelExpression(SM, End))
+  if (ParseIntelExpression(SM, End)) {
+    KsError = KS_ERR_ASM_INVALIDOPERAND;
     return nullptr;
+  }
 
   const MCExpr *Disp = nullptr;
   if (const MCExpr *Sym = SM.getSym()) {
@@ -1914,8 +1948,10 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand(std::string Mnem, un
     AsmToken StartTok = Tok;
     IntelExprStateMachine SM(/*Imm=*/0, /*StopOnLBrac=*/true,
                              /*AddImmPrefix=*/false);
-    if (ParseIntelExpression(SM, End))
+    if (ParseIntelExpression(SM, End)) {
+      KsError = KS_ERR_ASM_INVALIDOPERAND;
       return nullptr;
+    }
 
     int64_t Imm = SM.getImm(KsError);
     if (KsError) {
@@ -2116,7 +2152,7 @@ bool X86AsmParser::HandleAVX512Operand(OperandVector &Operands,
             Parser.Lex();  // Eat the }
           }
         } else
-            return false;
+            return true;
       }
     }
   }
@@ -2463,7 +2499,7 @@ bool X86AsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
           return true;
       } else {
          Parser.eatToEndOfStatement();
-         return false;
+         return true;
       }
       // check for comma and eat it
       if (getLexer().is(AsmToken::Comma))

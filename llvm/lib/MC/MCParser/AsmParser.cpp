@@ -752,8 +752,11 @@ size_t AsmParser::Run(bool NoInitialTextSection, uint64_t Address, bool NoFinali
 
   // Finalize the output stream if there are no errors and if the client wants
   // us to.
-  if (!KsError && !HadError && !NoFinalize)
-    KsError = Out.Finish();
+  if (!KsError) {
+      if (!HadError && !NoFinalize)
+          KsError = Out.Finish();
+  } else
+      Out.Finish();
 
   //return HadError || getContext().hadError();
   return count;
