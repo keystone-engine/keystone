@@ -1,0 +1,1 @@
+cmp QWORD PTR [rbp-0x450],0x0
