@@ -840,11 +840,16 @@ bool HexagonAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
     MCB.clear();
     MCB.addOperand(MCOperand::createImm(0));
   }
+  if (Operands.size() == 0) {
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
+      return true;
+  }
   HexagonOperand &FirstOperand = static_cast<HexagonOperand &>(*Operands[0]);
   if (FirstOperand.isToken() && FirstOperand.getToken() == "{") {
     assert(Operands.size() == 1 && "Brackets should be by themselves");
     if (InBrackets) {
-      getParser().Error(IDLoc, "Already in a packet");
+      //getParser().Error(IDLoc, "Already in a packet");
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return true;
     }
     InBrackets = true;
@@ -853,19 +858,24 @@ bool HexagonAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
   if (FirstOperand.isToken() && FirstOperand.getToken() == "}") {
     assert(Operands.size() == 1 && "Brackets should be by themselves");
     if (!InBrackets) {
-      getParser().Error(IDLoc, "Not in a packet");
+      //getParser().Error(IDLoc, "Not in a packet");
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return true;
     }
     InBrackets = false;
-    if (matchBundleOptions())
+    if (matchBundleOptions()) {
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return true;
+    }
     return finishBundle(IDLoc, Out);
   }
   MCInst *SubInst = new (getParser().getContext()) MCInst;
   bool MustExtend = false;
   if (matchOneInstruction(*SubInst, IDLoc, Operands, ErrorInfo,
-                          MatchingInlineAsm, MustExtend, ErrorCode))
+                          MatchingInlineAsm, MustExtend, ErrorCode)) {
+    ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
     return true;
+  }
   HexagonMCInstrInfo::extendIfNeeded(
       getParser().getContext(), MCII, MCB, *SubInst,
       HexagonMCInstrInfo::isExtended(MCII, *SubInst) || MustExtend);

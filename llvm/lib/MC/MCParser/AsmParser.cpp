@@ -170,8 +170,6 @@ private:
   /// and current line. Since this is slow and messes up the SourceMgr's
   /// cache we save the last info we queried with SrcMgr.FindLineNumber().
   SMLoc LastQueryIDLoc;
-  unsigned LastQueryBuffer;
-  unsigned LastQueryLine;
 
   /// AssemblerDialect. ~OU means unset value and use value provided by MAI.
   unsigned AssemblerDialect;
@@ -1919,71 +1917,13 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
                                                      Info.ParsedOperands, Info.KsError);
   Info.ParseError = HadError;
 
-#if 0
-  // Dump the parsed representation, if requested.
-  if (true) {
-    SmallString<256> Str;
-    raw_svector_ostream OS(Str);
-    OS << "parsed instruction: [";
-    for (unsigned i = 0; i != Info.ParsedOperands.size(); ++i) {
-      if (i != 0)
-        OS << ", ";
-      Info.ParsedOperands[i]->print(OS);
-    }
-    OS << "]";
-
-    printMessage(IDLoc, SourceMgr::DK_Note, OS.str());
-  }
-#endif
-
-  // If we are generating dwarf for the current section then generate a .loc
-  // directive for the instruction.
-  if (!HadError && getContext().getGenDwarfForAssembly() &&
-      getContext().getGenDwarfSectionSyms().count(
-          getStreamer().getCurrentSection().first)) {
-    unsigned Line;
-    if (ActiveMacros.empty())
-      Line = SrcMgr.FindLineNumber(IDLoc, CurBuffer);
-    else
-      Line = SrcMgr.FindLineNumber(ActiveMacros.front()->InstantiationLoc,
-                                   ActiveMacros.front()->ExitBuffer);
-
-    // If we previously parsed a cpp hash file line comment then make sure the
-    // current Dwarf File is for the CppHashFilename if not then emit the
-    // Dwarf File table for it and adjust the line number for the .loc.
-    if (CppHashFilename.size()) {
-      unsigned FileNumber = getStreamer().EmitDwarfFileDirective(
-          0, StringRef(), CppHashFilename);
-      getContext().setGenDwarfFileNumber(FileNumber);
-
-      // Since SrcMgr.FindLineNumber() is slow and messes up the SourceMgr's
-      // cache with the different Loc from the call above we save the last
-      // info we queried here with SrcMgr.FindLineNumber().
-      unsigned CppHashLocLineNo;
-      if (LastQueryIDLoc == CppHashLoc && LastQueryBuffer == CppHashBuf)
-        CppHashLocLineNo = LastQueryLine;
-      else {
-        CppHashLocLineNo = SrcMgr.FindLineNumber(CppHashLoc, CppHashBuf);
-        LastQueryLine = CppHashLocLineNo;
-        LastQueryIDLoc = CppHashLoc;
-        LastQueryBuffer = CppHashBuf;
-      }
-      Line = CppHashLineNumber - 1 + (Line - CppHashLocLineNo);
-    }
-
-    getStreamer().EmitDwarfLocDirective(
-        getContext().getGenDwarfFileNumber(), Line, 0,
-        DWARF2_LINE_DEFAULT_IS_STMT ? DWARF2_FLAG_IS_STMT : 0, 0, 0,
-        StringRef());
-  }
-
   // If parsing succeeded, match the instruction.
   if (!HadError) {
     uint64_t ErrorInfo;
     return getTargetParser().MatchAndEmitInstruction(IDLoc, Info.Opcode,
                                               Info.ParsedOperands, Out,
                                               ErrorInfo, ParsingInlineAsm,
-                                              Info.KsError, Address);   // qq
+                                              Info.KsError, Address);
   }
 
   return true;
