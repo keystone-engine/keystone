@@ -11,7 +11,7 @@ SAMPLE_M68K = $(TMPDIR)/sample_m68k
 SAMPLE_SPARC = $(TMPDIR)/sample_sparc
 SAMPLE_X86 = $(TMPDIR)/sample_x86
 
-.PHONY: all expected python
+.PHONY: all expected python rust go
 
 all:
 	cd python && $(MAKE) gen_const
@@ -53,8 +53,12 @@ sample_diff: FORCE
 clean:
 	rm -rf $(TMPDIR)
 	cd python && $(MAKE) clean
+	cd rust && $(MAKE) clean
+	cd go && $(MAKE) clean
 
 check:
 	make -C python check
+	make -C rust check
+	make -C go check
 
 FORCE:

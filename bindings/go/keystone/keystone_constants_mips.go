@@ -1,5 +1,0 @@
-package keystone
-// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [mips_const.py]
-const KS_ERR_ASM_MIPS_INVALIDOPERAND = 512
-const KS_ERR_ASM_MIPS_MISSINGFEATURE = 513
-const KS_ERR_ASM_MIPS_MNEMONICFAIL = 514

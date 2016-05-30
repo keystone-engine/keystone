@@ -30,7 +30,7 @@ template = {
             'keystone.h': 'keystone',
             'comment_open': '/*',
             'comment_close': '*/',
-            'filename': './rust/src/%s_const.rs',
+            'out_file': './rust/src/%s_const.rs',
             'rules': [
                 {
                     'regex': r'(API|ARCH)_.*',
@@ -93,10 +93,8 @@ template = {
             ],
     },
     'go': {
-            'header': "package keystone\n// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [keystone_constants_%s.go]\n",
+            'header': "package keystone\n// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [%s_const.go]\n\n",
             'footer': "",
-            'line_format': 'const KS_%s = %s\n',
-            'out_file': './go/keystone/keystone_constants_%s.go',
             # prefixes for constant filenames of all archs - case sensitive
             'arm.h': 'arm',
             'arm64.h': 'arm64',
@@ -109,6 +107,50 @@ template = {
             'keystone.h': 'keystone',
             'comment_open': '/*',
             'comment_close': '*/',
+            'out_file': './go/keystone/%s_const.go',
+            'rules': [
+                {
+                    'regex': r'(API)_.*',
+                    'pre': 'const (\n',
+                    'line_format': '\t\t{0} = {1}\n',
+                    'fn': (lambda x: x),
+                    'post': ')\n',
+                },
+                {   'regex': r'MODE_.*',
+                    'pre': 'const (\n',
+                    'line_format': '\t\t{0} Mode = {1}\n',
+                    'fn': (lambda x: x),
+                    'post': ')\n',
+                },
+                {
+                    'regex': r'ARCH_.*',
+                    'pre': 'const (\n',
+                    'line_format': '\t\t{0} Architecture = {1}\n',
+                    'fn': (lambda x: x),
+                    'post': ')\n',
+                },
+                {
+                    'regex': r'OPT_([A-Z]+)$',
+                    'pre': 'const (\n',
+                    'line_format': '\t\t{0} OptionType = {1}\n',
+                    'fn': (lambda x: x),
+                    'post': ')\n',
+                },
+                {
+                    'regex': r'OPT_([A-Z]+\_)+[A-Z]+',
+                    'pre': 'const (\n',
+                    'line_format': '\t\t{0} OptionValue = {1}\n',
+                    'fn': (lambda x: x),
+                    'post': ')\n',
+                },
+                {
+                    'regex': r'ERR_.*',
+                    'pre': 'const (\n',
+                    'line_format': '\t\t{0} Error = {1}\n',
+                    'fn': (lambda x: x),
+                    'post': ')\n',
+                },
+            ]
     },
     'python': {
             'header': "# For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [%s_const.py]\n",
@@ -258,17 +300,24 @@ def gen(lang):
     rules = templ['rules']
 
     for prefix in consts.keys():
-        outfile = open(templ['filename'] % prefix, 'wb')   # open as binary prevents windows newlines
+        outfile = open(templ['out_file'] % prefix, 'wb')   # open as binary prevents windows newlines
         outfile.write (templ['header'] % prefix)
 
         for rule in rules:
             regex = rule['regex']
 
-            outfile.write (rule['pre'])
-            for const in consts.get("keystone"):
+            consts2 = []
+            for const in consts.get(prefix):
                 if not (re.match(regex, const[0])):
                     continue
 
+                consts2.append(const)
+
+            if len(consts2) == 0:
+                continue
+
+            outfile.write (rule['pre'])
+            for const in consts2:
                 lhs_strip = const[0]
                 rhs = const[1]
                 outfile.write(rule['line_format'].format(rule['fn'](lhs_strip), rhs, lhs_strip).encode("utf-8"))

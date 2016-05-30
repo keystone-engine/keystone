@@ -12,14 +12,14 @@ import (
 
 func TestVersion(t *testing.T) {
 	major, minor := Version()
-	if major == KS_API_MAJOR && minor == KS_API_MINOR {
+	if major == API_MAJOR && minor == API_MINOR {
 	} else {
 		t.Error(fmt.Errorf("Unexpected version: got %d.%d expected %d.%d", major, minor, 1, 0))
 	}
 }
 
 func TestArchitectureSupported(t *testing.T) {
-	if !ArchitectureARM.Supported() {
+	if !ARCH_ARM.Supported() {
 		t.Error(fmt.Errorf("ARM not supported"))
 	}
 }
@@ -39,8 +39,8 @@ type Syntax struct {
 
 var tests = []Syntax{
 	Syntax{
-		OptionSyntaxIntel, []Test{
-			Test{ArchitectureX86, Mode32, 0, "mov ah, al", []byte{0x88, 0xc4}},
+		OPT_SYNTAX_INTEL, []Test{
+			Test{ARCH_X86, MODE_32 | MODE_LITTLE_ENDIAN, 0, "mov ah, al", []byte{0x88, 0xc4}},
 		},
 	},
 }
@@ -53,7 +53,7 @@ func TestRun(t *testing.T) {
 			} else {
 				defer ks.Close()
 
-				if err := ks.Option(OptionSyntax, st.Syntax); err != nil {
+				if err := ks.Option(OPT_SYNTAX, st.Syntax); err != nil {
 					t.Error(fmt.Errorf("Could not set syntax option to intel"))
 				} else if insn, _, ok := ks.Assemble(tr.Assembly, tr.Address); !ok {
 					t.Error(fmt.Errorf("Could not assemble instruction"))

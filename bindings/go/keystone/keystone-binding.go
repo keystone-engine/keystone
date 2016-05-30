@@ -23,7 +23,7 @@ func ks_arch_supported(a Architecture) bool {
 }
 
 func ks_open(a Architecture, m Mode, engine **C.ks_engine) error {
-	if err := C.ks_open((C.ks_arch)(a), (C.ks_mode)(m), (**C.ks_engine)(unsafe.Pointer(engine))); err != 0 {
+	if err := C.ks_open((C.ks_arch)(a), (C.int)(m), (**C.ks_engine)(unsafe.Pointer(engine))); err != 0 {
 		return Error(err)
 	}
 
