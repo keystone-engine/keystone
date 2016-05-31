@@ -16,8 +16,8 @@ SAMPLE_X86 = $(TMPDIR)/sample_x86
 all:
 	cd python && $(MAKE) gen_const
 	cd nodejs && $(MAKE) gen_const
-	cd rust && $(MAKE) gen_const
-	cd go && $(MAKE) gen_const
+	python const_generator.py rust
+	python const_generator.py go
 	cd ruby && $(MAKE) gen_const
 
 samples: expected python
