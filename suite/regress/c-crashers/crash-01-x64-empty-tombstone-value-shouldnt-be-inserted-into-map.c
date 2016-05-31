@@ -2,10 +2,8 @@
 int main(int argc, char **argv) {
   int ks_arch = KS_ARCH_X86, ks_mode = KS_MODE_64;
   unsigned char assembly[] = {
-    'b', '&', ';', 'b', ' ', '0', 'b', '&', 'R', 'b',
-    ' ', 0x10, 'b', 0x09, '0', 'b', '&', ';', 'b', ' ',
-    '0', '7', '7', '7', '7', '7', '7', '7', '7', '7',
-    '7', '7', '7', '7', '7', '7', '7', 'b', 0x00,
+    'b', ' ', '0', '7', '7', '7', '7', '7', '7', '7',
+    '7', '7', '7', '6', 'b', 0x00,
   };
   ks_engine *ks;
   ks_err err = ks_open(ks_arch, ks_mode, &ks);
