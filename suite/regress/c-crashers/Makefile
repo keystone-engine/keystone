@@ -1,6 +1,6 @@
 CFLAGS = -Wall
+LDLIBS = -l$(LIBNAME)
 LIBNAME = keystone
-LOADLIBES = -l$(LIBNAME)
 PROGS = $(patsubst %.c, %, $(wildcard crash-??-*.c))
 all: $(PROGS)
 clean:
