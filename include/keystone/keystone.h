@@ -30,8 +30,8 @@ struct ks_struct;
 typedef struct ks_struct ks_engine;
 
 // Keystone API version
-#define KS_API_MAJOR 1
-#define KS_API_MINOR 0
+#define KS_API_MAJOR 0
+#define KS_API_MINOR 9
 
 /*
   Macro to create combined version which can be compared to

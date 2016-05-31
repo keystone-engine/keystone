@@ -1,6 +1,6 @@
 // For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [keystone_const.js]
-module.exports.API_MAJOR = 1
-module.exports.API_MINOR = 0
+module.exports.API_MAJOR = 0
+module.exports.API_MINOR = 9
 module.exports.ARCH_ARM = 1
 module.exports.ARCH_ARM64 = 2
 module.exports.ARCH_MIPS = 3

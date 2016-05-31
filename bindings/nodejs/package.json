@@ -1,6 +1,6 @@
 {
   "name": "keystone",
-  "version": "1.0.0",
+  "version": "0.9.0",
   "description": "Keystone assembler engine",
   "homepage": "http://www.keystone-engine.org",
   "main": "index.js",

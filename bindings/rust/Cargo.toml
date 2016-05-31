@@ -1,6 +1,6 @@
 [package]
 name = "keystone"
-version = "0.1.0"
+version = "0.9.0"
 authors = ["Remco Verhoef <remco.verhoef@dutchcoders.io>"]
 description = "Rust bindings for the keystone-engine"
 license = "GPL-2.0"

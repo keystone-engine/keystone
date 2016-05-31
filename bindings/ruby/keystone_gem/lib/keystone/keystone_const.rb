@@ -1,8 +1,8 @@
 # For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [keystone_const.rb]
 
 module Keystone
-	KS_API_MAJOR = 1
-	KS_API_MINOR = 0
+	KS_API_MAJOR = 0
+	KS_API_MINOR = 9
 	KS_ARCH_ARM = 1
 	KS_ARCH_ARM64 = 2
 	KS_ARCH_MIPS = 3

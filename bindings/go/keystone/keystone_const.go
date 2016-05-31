@@ -2,8 +2,8 @@ package keystone
 // For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [keystone_const.go]
 
 const (
-		API_MAJOR = 1
-		API_MINOR = 0
+		API_MAJOR = 0
+		API_MINOR = 9
 )
 
 const (

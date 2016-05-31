@@ -2,8 +2,8 @@
 extern crate libc;
 
 
-pub const KS_API_MAJOR : u32 = 1;
-pub const KS_API_MINOR : u32 = 0;
+pub const KS_API_MAJOR : u32 = 0;
+pub const KS_API_MINOR : u32 = 9;
 pub const KS_ARCH_ARM : u32 = 1;
 pub const KS_ARCH_ARM64 : u32 = 2;
 pub const KS_ARCH_MIPS : u32 = 3;
