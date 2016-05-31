@@ -1,6 +1,7 @@
 # keystone-rs
 Rust bindings for the [keystone](http://www.keystone-engine.org/) engine.
 
+## Sample
 ```rust
 extern crate keystone;
 use keystone::{Keystone, Arch, Mode, OptionType, OptionValue};
@@ -19,13 +20,12 @@ fn main() {
 }
 ```
 
-## Installation
+## Testing
+```
+cargo test
+```
 
-## Notes
-
-## Contributing
-
-Contributors:
+## Contributors
 - Remco Verhoef (@remco_verhoef)
 
 Special thanks to:
