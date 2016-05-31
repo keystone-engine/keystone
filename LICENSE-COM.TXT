@@ -5,4 +5,4 @@ in commercial products.
 - You have the right to distribute the binary and modifications of Keystone.
 - No source code redistribution is allowed in any way.
 
-Contact Keystone authors (see AUTHORS.TXT) for more information.
+Contact keystone.engine@gmail.com for further information.
