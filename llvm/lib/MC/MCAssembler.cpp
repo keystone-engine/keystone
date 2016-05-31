@@ -593,6 +593,13 @@ std::pair<uint64_t, bool> MCAssembler::handleFixup(const MCAsmLayout &Layout,
     // The fixup was unresolved, we need a relocation. Inform the object
     // writer of the relocation, and give it an opportunity to adjust the
     // fixup value if need be.
+    if (const MCSymbolRefExpr *RefB = Target.getSymB()) {
+        if (RefB->getKind() != MCSymbolRefExpr::VK_None) {
+            KsError = KS_ERR_ASM_FIXUP_INVALID;
+            // return a dummy value
+            return std::make_pair(0, false);
+        }
+    }
     getWriter().recordRelocation(*this, Layout, &F, Fixup, Target, IsPCRel,
                                  FixedValue);
   }
