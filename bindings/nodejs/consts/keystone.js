@@ -71,6 +71,7 @@ module.exports.ERR_ASM_TOKEN_INVALID = 157
 module.exports.ERR_ASM_INSN_UNSUPPORTED = 158
 module.exports.ERR_ASM_FIXUP_INVALID = 159
 module.exports.ERR_ASM_LABEL_INVALID = 160
+module.exports.ERR_ASM_FRAGMENT_INVALID = 161
 module.exports.ERR_ASM_INVALIDOPERAND = 512
 module.exports.ERR_ASM_MISSINGFEATURE = 513
 module.exports.ERR_ASM_MNEMONICFAIL = 514

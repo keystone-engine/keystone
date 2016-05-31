@@ -130,6 +130,7 @@ typedef enum ks_err {
     KS_ERR_ASM_INSN_UNSUPPORTED,   // this instruction is unsupported in this mode
     KS_ERR_ASM_FIXUP_INVALID,   // invalid fixup
     KS_ERR_ASM_LABEL_INVALID,   // invalid label
+    KS_ERR_ASM_FRAGMENT_INVALID,   // invalid fragment
 
     // generic input assembly errors - architecture specific
     KS_ERR_ASM_INVALIDOPERAND = KS_ERR_ASM_ARCH,
