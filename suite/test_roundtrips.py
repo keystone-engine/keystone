@@ -32,6 +32,7 @@ roundtrip_tests = [
     ("x64", "test edi, ebx"),
     ("x64", "vaddpd zmm21 {k1} {z}, zmm11, zmmword ptr [rdx + 0x1bc0]"),
     ("x64", "vpminsd zmm4 {k1} {z}, zmm25, zmmword ptr [r8 + 0x1d80]"),
+    ("x64", "vpminuq zmm21 {k2}, zmm15, zmmword ptr [r10 - 0x1300]"),
     ("x64", "xchg rax, rax"),
     ("x64", "xor qword ptr [esi + 0x1df54066], 0x6c"),
 ]
