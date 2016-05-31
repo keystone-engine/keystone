@@ -1815,6 +1815,10 @@ bool X86AsmParser::ParseIntelDotOperator(const MCExpr *Disp,
   if (Tok.is(AsmToken::Real)) {
     APInt DotDisp;
     DotDispStr.getAsInteger(10, DotDisp);
+    // sanity check
+    if (DotDisp.getActiveBits() > 64) {
+        return true;
+    }
     DotDispVal = DotDisp.getZExtValue();
   } else if (isParsingInlineAsm() && Tok.is(AsmToken::Identifier)) {
     unsigned DotDisp;
