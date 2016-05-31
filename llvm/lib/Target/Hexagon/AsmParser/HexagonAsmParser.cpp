@@ -89,7 +89,7 @@ class HexagonAsmParser : public MCTargetAsmParser {
 
   bool matchBundleOptions();
   bool handleNoncontigiousRegister(bool Contigious, SMLoc &Loc);
-  bool finishBundle(SMLoc IDLoc, MCStreamer &Out);
+  bool finishBundle(SMLoc IDLoc, MCStreamer &Out, unsigned &KsError);
   void canonicalizeImmediates(MCInst &MCI);
   bool matchOneInstruction(MCInst &MCB, SMLoc IDLoc,
                            OperandVector &InstOperands, uint64_t &ErrorInfo,
@@ -604,7 +604,8 @@ void HexagonOperand::print(raw_ostream &OS) const {
 /// @name Auto-generated Match Functions
 static unsigned MatchRegisterName(StringRef Name);
 
-bool HexagonAsmParser::finishBundle(SMLoc IDLoc, MCStreamer &Out) {
+bool HexagonAsmParser::finishBundle(SMLoc IDLoc, MCStreamer &Out, unsigned &KsError)
+{
   DEBUG(dbgs() << "Bundle:");
   DEBUG(MCB.dump_pretty(dbgs()));
   DEBUG(dbgs() << "--\n");
@@ -700,8 +701,10 @@ bool HexagonAsmParser::finishBundle(SMLoc IDLoc, MCStreamer &Out) {
       // Empty packets are valid yet aren't emitted
       return false;
     }
-    unsigned int KsError;
     Out.EmitInstruction(MCB, getSTI(), KsError);
+    if (KsError) {
+        return true;
+    }
   } else {
     // If compounding and duplexing didn't reduce the size below
     // 4 or less we have a packet that is too big.
@@ -867,7 +870,7 @@ bool HexagonAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
       ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return true;
     }
-    return finishBundle(IDLoc, Out);
+    return finishBundle(IDLoc, Out, ErrorCode);
   }
   MCInst *SubInst = new (getParser().getContext()) MCInst;
   bool MustExtend = false;
@@ -881,7 +884,7 @@ bool HexagonAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
       HexagonMCInstrInfo::isExtended(MCII, *SubInst) || MustExtend);
   MCB.addOperand(MCOperand::createInst(SubInst));
   if (!InBrackets)
-    return finishBundle(IDLoc, Out);
+    return finishBundle(IDLoc, Out, ErrorCode);
   return false;
 }
 
