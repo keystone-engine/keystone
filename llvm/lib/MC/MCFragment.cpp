@@ -177,7 +177,8 @@ const MCSymbol *MCAsmLayout::getBaseSymbol(const MCSymbol &Symbol) const {
 uint64_t MCAsmLayout::getSectionAddressSize(const MCSection *Sec) const {
   // The size is the last fragment's end offset.
   const MCFragment &F = Sec->getFragmentList().back();
-  return getFragmentOffset(&F) + getAssembler().computeFragmentSize(*this, F);
+  bool valid;
+  return getFragmentOffset(&F) + getAssembler().computeFragmentSize(*this, F, valid);
 }
 
 uint64_t MCAsmLayout::getSectionFileSize(const MCSection *Sec) const {

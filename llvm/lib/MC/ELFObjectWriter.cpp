@@ -1185,6 +1185,8 @@ void ELFObjectWriter::writeObject(MCAssembler &Asm,
 
     const MCSymbolELF *SignatureSymbol = Section.getGroup();
     writeSectionData(Asm, Section, Layout);
+    if (Asm.getError())
+        return;
 
     uint64_t SecEnd = getStream().tell();
     SectionOffsets[&Section] = std::make_pair(SecStart, SecEnd);

@@ -55,8 +55,11 @@ struct DataRegionData {
 
 class MCAssembler {
   friend class MCAsmLayout;
+  mutable unsigned KsError;
 
 public:
+  void setError(unsigned E) const { KsError = E; }
+  unsigned getError() const { return KsError; }
   typedef std::vector<MCSection *> SectionListType;
   typedef std::vector<const MCSymbol *> SymbolDataListType;
 
@@ -200,7 +203,7 @@ public:
   /// Compute the effective fragment size assuming it is laid out at the given
   /// \p SectionAddress and \p FragmentOffset.
   uint64_t computeFragmentSize(const MCAsmLayout &Layout,
-                               const MCFragment &F) const;
+                               const MCFragment &F, bool &valid) const;
 
   /// Find the symbol which defines the atom containing the given symbol, or
   /// null if there is no such symbol.
