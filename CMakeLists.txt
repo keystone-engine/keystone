@@ -3,8 +3,8 @@
 
 cmake_minimum_required(VERSION 2.8.7)
 
-set(KEYSTONE_VERSION_MAJOR 1)
-set(KEYSTONE_VERSION_MINOR 0)
+set(KEYSTONE_VERSION_MAJOR 0)
+set(KEYSTONE_VERSION_MINOR 9)
 
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "No build type selected, default to Debug")

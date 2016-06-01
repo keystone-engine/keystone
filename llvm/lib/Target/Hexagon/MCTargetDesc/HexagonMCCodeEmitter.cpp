@@ -24,6 +24,8 @@
 #include "llvm/Support/EndianStream.h"
 #include "llvm/Support/raw_ostream.h"
 
+#include <keystone/keystone.h>
+
 #define DEBUG_TYPE "mccodeemitter"
 
 using namespace llvm;
@@ -79,9 +81,14 @@ void HexagonMCCodeEmitter::encodeInstruction(MCInst &MI, raw_ostream &OS,
   size_t Last = HexagonMCInstrInfo::bundleSize(HMB) - 1;
   for (auto &I : HexagonMCInstrInfo::bundleInstructions(HMB)) {
     MCInst &HMI = const_cast<MCInst &>(*I.getInst());
+    setError(0);
     EncodeSingleInstruction(HMI, OS, Fixups, STI,
                             parseBits(Instruction, Last, HMB, HMI),
                             Instruction);
+    if (getError()) {
+        KsError = getError();
+        return;
+    }
     *Extended = HexagonMCInstrInfo::isImmext(HMI);
     *Addend += HEXAGON_INSTR_SIZE;
     ++Instruction;
@@ -92,7 +99,8 @@ void HexagonMCCodeEmitter::encodeInstruction(MCInst &MI, raw_ostream &OS,
 /// EncodeSingleInstruction - Emit a single
 void HexagonMCCodeEmitter::EncodeSingleInstruction(
     const MCInst &MI, raw_ostream &OS, SmallVectorImpl<MCFixup> &Fixups,
-    const MCSubtargetInfo &STI, uint32_t Parse, size_t Index) const {
+    const MCSubtargetInfo &STI, uint32_t Parse, size_t Index) const
+{
   MCInst HMB = MI;
   assert(!HexagonMCInstrInfo::isBundle(HMB));
   uint64_t Binary;
@@ -160,6 +168,10 @@ void HexagonMCCodeEmitter::EncodeSingleInstruction(
   }
 
   Binary = getBinaryCodeForInstr(HMB, Fixups, STI);
+  if (getError()) {
+      return;
+  }
+
   // Check for unimplemented instructions. Immediate extenders
   // are encoded as zero, so they need to be accounted for.
   if ((!Binary) &&
@@ -243,8 +255,14 @@ void HexagonMCCodeEmitter::EncodeSingleInstruction(
 
     // get subinstruction slot 0
     unsigned subInstSlot0Bits = getBinaryCodeForInstr(*subInst0, Fixups, STI);
+    if (getError()) {
+        return;
+    }
     // get subinstruction slot 1
     unsigned subInstSlot1Bits = getBinaryCodeForInstr(*subInst1, Fixups, STI);
+    if (getError()) {
+        return;
+    }
 
     Binary |= subInstSlot0Bits | (subInstSlot1Bits << 16);
   }
@@ -397,6 +415,9 @@ unsigned HexagonMCCodeEmitter::getExprOpValue(const MCInst &MI,
 {
   int64_t Res;
 
+  if (getError())
+      return 0;
+
   if (ME->evaluateAsAbsolute(Res))
     return Res;
 
@@ -410,7 +431,11 @@ unsigned HexagonMCCodeEmitter::getExprOpValue(const MCInst &MI,
     return 0;
   }
 
-  assert(MK == MCExpr::SymbolRef);
+  //assert(MK == MCExpr::SymbolRef);
+  if (MK == MCExpr::SymbolRef) {
+      setError(KS_ERR_ASM_INVALIDOPERAND);
+      return 0;
+  }
 
   Hexagon::Fixups FixupKind =
       Hexagon::Fixups(Hexagon::fixup_Hexagon_TPREL_LO16);

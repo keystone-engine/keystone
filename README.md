@@ -1,18 +1,16 @@
 Keystone Engine
 ==============
 
-[![Build Status](https://travis-ci.com/keystone-engine/beta.svg?token=qRatki7fioYiV8ckDzCq&branch=master)](https://travis-ci.com/keystone-engine/beta)
-[![Build status](https://ci.appveyor.com/api/projects/status/oowet3r56q993ua0/branch/master?svg=true)](https://ci.appveyor.com/project/aquynh/beta/branch/master)
-[ ![Codeship Status for keystone-engine/beta](https://codeship.com/projects/884ca370-effc-0133-591d-7aa0b68b0e4b/status?branch=master)](https://codeship.com/projects/149135)
-[![Build Status](https://semaphoreci.com/api/v1/projects/550e7887-e607-44c8-952e-86099d713f4b/789869/badge.svg)](https://semaphoreci.com/aquynh/beta)
-
+[![Build Status](https://travis-ci.org/keystone-engine/keystone.svg?branch=master)](https://travis-ci.org/keystone-engine/keystone)
+[![Build Status](https://semaphoreci.com/api/v1/aquynh/keystone/branches/master/badge.svg)](https://semaphoreci.com/aquynh/keystone)
+[![Build status](https://ci.appveyor.com/api/projects/status/c27slvyrijiejvqs?svg=true)](https://ci.appveyor.com/project/aquynh/keystone)
 
 Keystone is a lightweight multi-platform, multi-architecture assembler framework.
 It offers some unparalleled features:
 
 - Multi-architecture, with support for Arm, Arm64 (AArch64/Armv8), Hexagon, Mips, PowerPC, Sparc, SystemZ & X86 (include 16/32/64bit).
 - Clean/simple/lightweight/intuitive architecture-neutral API.
-- Implemented in C/C++ languages, with bindings for Python, NodeJS & Ruby available.
+- Implemented in C/C++ languages, with bindings for Python, NodeJS, Ruby, Go & Rust available.
 - Native support for Windows & \*nix (with Mac OSX, Linux, *BSD & Solaris confirmed).
 - Thread-safe by design.
 - Open source - with a dual license.

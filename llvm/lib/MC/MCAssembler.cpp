@@ -230,7 +230,9 @@ bool MCAssembler::evaluateFixup(const MCAsmLayout &Layout,
 }
 
 uint64_t MCAssembler::computeFragmentSize(const MCAsmLayout &Layout,
-                                          const MCFragment &F) const {
+                                          const MCFragment &F, bool &valid) const
+{
+  valid = true;
   switch (F.getKind()) {
   case MCFragment::FT_Data:
     return cast<MCDataFragment>(F).getContents().size();
@@ -265,22 +267,31 @@ uint64_t MCAssembler::computeFragmentSize(const MCAsmLayout &Layout,
   case MCFragment::FT_Org: {
     const MCOrgFragment &OF = cast<MCOrgFragment>(F);
     MCValue Value;
-    if (!OF.getOffset().evaluateAsValue(Value, Layout))
-      report_fatal_error("expected assembly-time absolute expression");
+    if (!OF.getOffset().evaluateAsValue(Value, Layout)) {
+      //report_fatal_error("expected assembly-time absolute expression");
+      valid = false;
+      return 0;
+    }
 
     // FIXME: We need a way to communicate this error.
     uint64_t FragmentOffset = Layout.getFragmentOffset(&OF);
     int64_t TargetLocation = Value.getConstant();
     if (const MCSymbolRefExpr *A = Value.getSymA()) {
       uint64_t Val;
-      if (!Layout.getSymbolOffset(A->getSymbol(), Val))
-        report_fatal_error("expected absolute expression");
+      if (!Layout.getSymbolOffset(A->getSymbol(), Val)) {
+        //report_fatal_error("expected absolute expression");
+        valid = false;
+        return 0;
+      }
       TargetLocation += Val;
     }
     int64_t Size = TargetLocation - FragmentOffset;
-    if (Size < 0 || Size >= 0x40000000)
-      report_fatal_error("invalid .org offset '" + Twine(TargetLocation) +
-                         "' (at offset '" + Twine(FragmentOffset) + "')");
+    if (Size < 0 || Size >= 0x40000000) {
+      //report_fatal_error("invalid .org offset '" + Twine(TargetLocation) +
+      //                   "' (at offset '" + Twine(FragmentOffset) + "')");
+      valid = false;
+      return 0;
+    }
     return Size;
   }
 
@@ -295,7 +306,8 @@ uint64_t MCAssembler::computeFragmentSize(const MCAsmLayout &Layout,
   llvm_unreachable("invalid fragment kind");
 }
 
-void MCAsmLayout::layoutFragment(MCFragment *F) {
+void MCAsmLayout::layoutFragment(MCFragment *F)
+{
   MCFragment *Prev = F->getPrevNode();
 
   // We should never try to recompute something which is valid.
@@ -305,11 +317,15 @@ void MCAsmLayout::layoutFragment(MCFragment *F) {
   assert((!Prev || isFragmentValid(Prev)) &&
          "Attempt to compute fragment before its predecessor!");
 
+  bool valid = true;
   // Compute fragment offset and size.
   if (Prev)
-    F->Offset = Prev->Offset + getAssembler().computeFragmentSize(*this, *Prev);
+    F->Offset = Prev->Offset + getAssembler().computeFragmentSize(*this, *Prev, valid);
   else
     F->Offset = getAssembler().getContext().getBaseAddress();
+  if (!valid) {
+      return;
+  }
   LastValidFragment[F->getParent()] = F;
 
   // If bundling is enabled and this fragment has instructions in it, it has to
@@ -342,7 +358,8 @@ void MCAsmLayout::layoutFragment(MCFragment *F) {
   if (Assembler.isBundlingEnabled() && F->hasInstructions()) {
     assert(isa<MCEncodedFragment>(F) &&
            "Only MCEncodedFragment implementations have instructions");
-    uint64_t FSize = Assembler.computeFragmentSize(*this, *F);
+    bool valid;
+    uint64_t FSize = Assembler.computeFragmentSize(*this, *F, valid);
 
     if (!Assembler.getRelaxAll() && FSize > Assembler.getBundleAlignSize())
       report_fatal_error("Fragment can't be larger than a bundle size");
@@ -400,11 +417,20 @@ void MCAssembler::writeFragmentPadding(const MCFragment &F, uint64_t FSize,
 
 /// \brief Write the fragment \p F to the output file.
 static void writeFragment(const MCAssembler &Asm, const MCAsmLayout &Layout,
-                          const MCFragment &F) {
+                          const MCFragment &F)
+{
+  if (Asm.getError())
+      return;
+
   MCObjectWriter *OW = &Asm.getWriter();
 
+  bool valid;
   // FIXME: Embed in fragments instead?
-  uint64_t FragmentSize = Asm.computeFragmentSize(Layout, F);
+  uint64_t FragmentSize = Asm.computeFragmentSize(Layout, F, valid);
+  if (!valid) {
+      Asm.setError(KS_ERR_ASM_FRAGMENT_INVALID);
+      return;
+  }
 
   Asm.writeFragmentPadding(F, FragmentSize, OW);
 
@@ -524,7 +550,8 @@ static void writeFragment(const MCAssembler &Asm, const MCAsmLayout &Layout,
 }
 
 void MCAssembler::writeSectionData(const MCSection *Sec,
-                                   const MCAsmLayout &Layout) const {
+                                   const MCAsmLayout &Layout) const
+{
   // Ignore virtual sections.
   if (Sec->isVirtualSection()) {
     assert(Layout.getSectionFileSize(Sec) == 0 && "Invalid size for section!");
@@ -570,6 +597,7 @@ void MCAssembler::writeSectionData(const MCSection *Sec,
   uint64_t Start = getWriter().getStream().tell();
   (void)Start;
 
+  setError(0);
   for (const MCFragment &F : *Sec)
     writeFragment(*this, Layout, F);
 
@@ -593,6 +621,13 @@ std::pair<uint64_t, bool> MCAssembler::handleFixup(const MCAsmLayout &Layout,
     // The fixup was unresolved, we need a relocation. Inform the object
     // writer of the relocation, and give it an opportunity to adjust the
     // fixup value if need be.
+    if (const MCSymbolRefExpr *RefB = Target.getSymB()) {
+        if (RefB->getKind() != MCSymbolRefExpr::VK_None) {
+            KsError = KS_ERR_ASM_FIXUP_INVALID;
+            // return a dummy value
+            return std::make_pair(0, false);
+        }
+    }
     getWriter().recordRelocation(*this, Layout, &F, Fixup, Target, IsPCRel,
                                  FixedValue);
   }
@@ -688,6 +723,7 @@ void MCAssembler::Finish(unsigned int &KsError) {
   // Write the object file.
   if (!KsError)
       getWriter().writeObject(*this, Layout);
+  KsError = getError();
 }
 
 bool MCAssembler::fixupNeedsRelaxation(const MCFixup &Fixup,

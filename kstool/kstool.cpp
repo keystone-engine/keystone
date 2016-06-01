@@ -2,7 +2,10 @@
 // By Nguyen Anh Quynh, 2016
 #include <stdio.h>
 #include <string.h>
+#if !defined(WIN32) && !defined(WIN64) && !defined(_WIN32) && !defined(_WIN64)
 #include <unistd.h>
+#else
+#endif
 #include <fcntl.h>
 
 #include <keystone/keystone.h>
@@ -77,7 +80,7 @@ int main(int argc, char **argv)
     unsigned char *insn;
     size_t size;
 
-#ifndef LLVM_ON_WIN32
+#if !defined(WIN32) && !defined(WIN64) && !defined(_WIN32) && !defined(_WIN64)
     if (argc == 2) {
         mode = argv[1];
 

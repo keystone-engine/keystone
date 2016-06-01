@@ -24,7 +24,7 @@ PKG_NAME = 'keystone'
 if os.path.exists(PATH_LIB64) and os.path.exists(PATH_LIB32):
     PKG_NAME = 'keystone-windows'
 
-VERSION = '1.0'
+VERSION = '0.9'
 SYSTEM = sys.platform
 
 # virtualenv breaks import, but get_python_lib() will work.

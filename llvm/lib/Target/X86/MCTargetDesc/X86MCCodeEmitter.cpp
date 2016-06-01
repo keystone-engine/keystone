@@ -405,7 +405,7 @@ void X86MCCodeEmitter::EmitMemModRMByte(const MCInst &MI, unsigned Op,
   bool RIP_rel = false;
 
   // do we need x64 RIP relative encoding?
-  if (BaseReg == 0 && is64BitMode(STI) && IndexReg.getReg() == 0) {
+  if (BaseReg == 0 && is64BitMode(STI) && IndexReg.getReg() == 0 && Disp.isImm()) {
       if (ABS_SUB(MI.getAddress(), (uint64_t)Disp.getImm()) < 2 * (1UL << 30))
           RIP_rel = true;
   }
@@ -1596,7 +1596,6 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
           RegNum |= Val;
         }
       }
-      //printf(">> uu\n");
       EmitImmediate(MI, MCOperand::createImm(RegNum), MI.getLoc(), 1, FK_Data_1,
                     CurByte, OS, Fixups, KsError, is64BitMode(STI));
     } else {

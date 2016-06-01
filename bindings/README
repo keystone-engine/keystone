@@ -5,3 +5,5 @@ Except Python, all other bindings are contributed by community.
 
 - NodeJS binding: by Ingmar Steen
 - Ruby binding: by Sascha Schirra
+- Go binding: by Remco Verhoef
+- Rust binding: by Remco Verhoef

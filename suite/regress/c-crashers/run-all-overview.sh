@@ -1,9 +1,9 @@
 #!/bin/bash
 
-readonly COLOR_RED="\e[31m"
-readonly COLOR_GREEN="\e[32m"
 readonly COLOR_BOLD="\e[1m"
+readonly COLOR_GREEN="\e[32m"
 readonly COLOR_NORMAL_DISPLAY="\e[0m"
+readonly COLOR_RED="\e[31m"
 
 echo
 printf "== %b ==\n" "${COLOR_BOLD}keystone engine crashers${COLOR_NORMAL_DISPLAY}"

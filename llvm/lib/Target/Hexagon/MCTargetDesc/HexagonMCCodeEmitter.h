@@ -31,6 +31,7 @@ class HexagonMCCodeEmitter : public MCCodeEmitter {
   std::unique_ptr<unsigned> Addend;
   std::unique_ptr<bool> Extended;
   std::unique_ptr<MCInst const *> CurrentBundle;
+  mutable unsigned KsError;
 
   // helper routine for getMachineOpValue()
   unsigned getExprOpValue(const MCInst &MI, const MCOperand &MO,
@@ -39,6 +40,9 @@ class HexagonMCCodeEmitter : public MCCodeEmitter {
 
 public:
   HexagonMCCodeEmitter(MCInstrInfo const &aMII, MCContext &aMCT);
+
+  void setError(unsigned E) const { KsError = E; }
+  unsigned getError() const { return KsError; }
 
   // Return parse bits for instruction `MCI' inside bundle `MCB'
   uint32_t parseBits(size_t Instruction, size_t Last, MCInst const &MCB,

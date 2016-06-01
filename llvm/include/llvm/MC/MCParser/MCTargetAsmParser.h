@@ -209,7 +209,7 @@ public:
   // Return whether this parser uses assignment statements with equals tokens
   virtual bool equalIsAsmAssignment() { return true; };
   // Return whether this start of statement identifier is a label
-  virtual bool isLabel(AsmToken &Token) { return true; };
+  virtual bool isLabel(AsmToken &Token, bool &valid) { valid = true; return true; };
 
   virtual const MCExpr *applyModifierToExpr(const MCExpr *E,
                                             MCSymbolRefExpr::VariantKind,

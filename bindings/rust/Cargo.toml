@@ -1,0 +1,12 @@
+[package]
+name = "keystone"
+version = "0.9.0"
+authors = ["Remco Verhoef <remco.verhoef@dutchcoders.io>"]
+description = "Rust bindings for the keystone-engine"
+license = "GPL-2.0"
+readme = "README.md"
+include = ["src/*", "tests/*", "Cargo.toml", "COPYING", "README.md"]
+
+[dependencies]
+libc = "0.2.*"
+bitflags = "0.7.0"

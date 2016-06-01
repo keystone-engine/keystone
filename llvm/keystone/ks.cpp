@@ -132,6 +132,10 @@ const char *ks_strerror(ks_err code)
             return "Unknown directive (KS_ERR_ASM_DIRECTIVE_UNKNOWN)";
         case KS_ERR_ASM_FIXUP_INVALID:
             return "Invalid fixup (KS_ERR_ASM_FIXUP_INVALID)";
+        case KS_ERR_ASM_LABEL_INVALID:
+            return "Invalid label (KS_ERR_ASM_LABEL_INVALID)";
+        case KS_ERR_ASM_FRAGMENT_INVALID:
+            return "Invalid fragment (KS_ERR_ASM_FRAGMENT_INVALID)";
     }
 }
 

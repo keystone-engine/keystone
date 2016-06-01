@@ -73,7 +73,7 @@ class HexagonAsmParser : public MCTargetAsmParser {
   MCAsmLexer &getLexer() const { return Parser.getLexer(); }
 
   bool equalIsAsmAssignment() override { return false; }
-  bool isLabel(AsmToken &Token) override;
+  bool isLabel(AsmToken &Token, bool &valid) override;
 
   void Warning(SMLoc L, const Twine &Msg) { Parser.Warning(L, Msg); }
   bool Error(SMLoc L, const Twine &Msg) { return Parser.Error(L, Msg); }
@@ -89,7 +89,7 @@ class HexagonAsmParser : public MCTargetAsmParser {
 
   bool matchBundleOptions();
   bool handleNoncontigiousRegister(bool Contigious, SMLoc &Loc);
-  bool finishBundle(SMLoc IDLoc, MCStreamer &Out);
+  bool finishBundle(SMLoc IDLoc, MCStreamer &Out, unsigned &KsError);
   void canonicalizeImmediates(MCInst &MCI);
   bool matchOneInstruction(MCInst &MCB, SMLoc IDLoc,
                            OperandVector &InstOperands, uint64_t &ErrorInfo,
@@ -604,7 +604,8 @@ void HexagonOperand::print(raw_ostream &OS) const {
 /// @name Auto-generated Match Functions
 static unsigned MatchRegisterName(StringRef Name);
 
-bool HexagonAsmParser::finishBundle(SMLoc IDLoc, MCStreamer &Out) {
+bool HexagonAsmParser::finishBundle(SMLoc IDLoc, MCStreamer &Out, unsigned &KsError)
+{
   DEBUG(dbgs() << "Bundle:");
   DEBUG(MCB.dump_pretty(dbgs()));
   DEBUG(dbgs() << "--\n");
@@ -700,8 +701,10 @@ bool HexagonAsmParser::finishBundle(SMLoc IDLoc, MCStreamer &Out) {
       // Empty packets are valid yet aren't emitted
       return false;
     }
-    unsigned int KsError;
     Out.EmitInstruction(MCB, getSTI(), KsError);
+    if (KsError) {
+        return true;
+    }
   } else {
     // If compounding and duplexing didn't reduce the size below
     // 4 or less we have a packet that is too big.
@@ -840,11 +843,16 @@ bool HexagonAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
     MCB.clear();
     MCB.addOperand(MCOperand::createImm(0));
   }
+  if (Operands.size() == 0) {
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
+      return true;
+  }
   HexagonOperand &FirstOperand = static_cast<HexagonOperand &>(*Operands[0]);
   if (FirstOperand.isToken() && FirstOperand.getToken() == "{") {
     assert(Operands.size() == 1 && "Brackets should be by themselves");
     if (InBrackets) {
-      getParser().Error(IDLoc, "Already in a packet");
+      //getParser().Error(IDLoc, "Already in a packet");
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return true;
     }
     InBrackets = true;
@@ -853,25 +861,30 @@ bool HexagonAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
   if (FirstOperand.isToken() && FirstOperand.getToken() == "}") {
     assert(Operands.size() == 1 && "Brackets should be by themselves");
     if (!InBrackets) {
-      getParser().Error(IDLoc, "Not in a packet");
+      //getParser().Error(IDLoc, "Not in a packet");
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return true;
     }
     InBrackets = false;
-    if (matchBundleOptions())
+    if (matchBundleOptions()) {
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return true;
-    return finishBundle(IDLoc, Out);
+    }
+    return finishBundle(IDLoc, Out, ErrorCode);
   }
   MCInst *SubInst = new (getParser().getContext()) MCInst;
   bool MustExtend = false;
   if (matchOneInstruction(*SubInst, IDLoc, Operands, ErrorInfo,
-                          MatchingInlineAsm, MustExtend, ErrorCode))
+                          MatchingInlineAsm, MustExtend, ErrorCode)) {
+    ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
     return true;
+  }
   HexagonMCInstrInfo::extendIfNeeded(
       getParser().getContext(), MCII, MCB, *SubInst,
       HexagonMCInstrInfo::isExtended(MCII, *SubInst) || MustExtend);
   MCB.addOperand(MCOperand::createInst(SubInst));
   if (!InBrackets)
-    return finishBundle(IDLoc, Out);
+    return finishBundle(IDLoc, Out, ErrorCode);
   return false;
 }
 
@@ -1185,10 +1198,15 @@ bool HexagonAsmParser::parseOperand(OperandVector &Operands) {
   return splitIdentifier(Operands);
 }
 
-bool HexagonAsmParser::isLabel(AsmToken &Token) {
+bool HexagonAsmParser::isLabel(AsmToken &Token, bool &valid) {
+  valid = true;
   MCAsmLexer &Lexer = getLexer();
   AsmToken const &Second = Lexer.getTok();
   AsmToken Third = Lexer.peekTok();  
+  if (Third.is(AsmToken::Error)) {
+      valid = false;
+      return true;
+  }
   StringRef String = Token.getString();
   if (Token.is(AsmToken::TokenKind::LCurly) ||
       Token.is(AsmToken::TokenKind::RCurly))

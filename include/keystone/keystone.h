@@ -30,8 +30,8 @@ struct ks_struct;
 typedef struct ks_struct ks_engine;
 
 // Keystone API version
-#define KS_API_MAJOR 1
-#define KS_API_MINOR 0
+#define KS_API_MAJOR 0
+#define KS_API_MINOR 9
 
 /*
   Macro to create combined version which can be compared to
@@ -129,6 +129,8 @@ typedef enum ks_err {
     KS_ERR_ASM_TOKEN_INVALID,   // invalid token
     KS_ERR_ASM_INSN_UNSUPPORTED,   // this instruction is unsupported in this mode
     KS_ERR_ASM_FIXUP_INVALID,   // invalid fixup
+    KS_ERR_ASM_LABEL_INVALID,   // invalid label
+    KS_ERR_ASM_FRAGMENT_INVALID,   // invalid fragment
 
     // generic input assembly errors - architecture specific
     KS_ERR_ASM_INVALIDOPERAND = KS_ERR_ASM_ARCH,

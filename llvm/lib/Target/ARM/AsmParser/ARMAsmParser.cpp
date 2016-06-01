@@ -5178,6 +5178,8 @@ ARMAsmParser::parseFPImm(OperandVector &Operands, unsigned int &ErrorCode) {
   //SMLoc Loc = Tok.getLoc();
   if (Tok.is(AsmToken::Real) && isVmovf) {
     APFloat RealVal(APFloat::IEEEsingle, Tok.getString());
+    if (RealVal.bitcastToAPInt().getActiveBits() > 64)
+        return MatchOperand_ParseFail;
     uint64_t IntVal = RealVal.bitcastToAPInt().getZExtValue();
     // If we had a '-' in front, toggle the sign bit.
     IntVal ^= (uint64_t)isNegative << 31;
@@ -5200,6 +5202,8 @@ ARMAsmParser::parseFPImm(OperandVector &Operands, unsigned int &ErrorCode) {
       return MatchOperand_ParseFail;
     }
     float RealVal = ARM_AM::getFPImmFloat(Val);
+    if (APFloat(RealVal).bitcastToAPInt().getActiveBits() > 64)
+        return MatchOperand_ParseFail;
     Val = APFloat(RealVal).bitcastToAPInt().getZExtValue();
 
     Operands.push_back(ARMOperand::CreateImm(
@@ -8856,8 +8860,11 @@ bool ARMAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
 
     Inst.setLoc(IDLoc);
     Out.EmitInstruction(Inst, getSTI(), ErrorCode);
-    Address = Inst.getAddress(); // keystone update address
-    return ErrorCode != 0;
+    if (ErrorCode == 0) {
+        Address = Inst.getAddress(); // Keystone update address
+        return false;
+    } else
+        return true;
   case Match_MissingFeature: {
     ErrorCode = KS_ERR_ASM_ARM_MISSINGFEATURE;
     return true;
