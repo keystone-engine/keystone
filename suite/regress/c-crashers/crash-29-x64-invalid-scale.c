@@ -12,4 +12,5 @@ int main(int argc, char **argv) {
     ks_free(insn);
   }
   ks_close(ks);
+  return 0;
 }
