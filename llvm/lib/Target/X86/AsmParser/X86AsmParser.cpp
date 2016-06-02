@@ -1263,7 +1263,8 @@ static unsigned getIntelMemOperandSize(StringRef OpStr) {
 std::unique_ptr<X86Operand> X86AsmParser::CreateMemForInlineAsm(
     unsigned SegReg, const MCExpr *Disp, unsigned BaseReg, unsigned IndexReg,
     unsigned Scale, SMLoc Start, SMLoc End, unsigned Size, StringRef Identifier,
-    InlineAsmIdentifierInfo &Info) {
+    InlineAsmIdentifierInfo &Info)
+{
   // If we found a decl other than a VarDecl, then assume it is a FuncDecl or
   // some other label reference.
   if (isa<MCSymbolRefExpr>(Disp) && Info.OpDecl && !Info.IsVarDecl) {
@@ -1588,6 +1589,18 @@ X86AsmParser::ParseIntelBracExpression(unsigned SegReg, SMLoc Start,
   int IndexReg = SM.getIndexReg();
   //printf("--- BaseReg = %u, IndexReg = %u, SegReg = %u\n", BaseReg, IndexReg, SegReg);
   int Scale = SM.getScale();
+  if (IndexReg !=0 && !Scale) {
+      // Scale must go with Index register
+      KsError = KS_ERR_ASM_INVALIDOPERAND;
+      return nullptr;
+  }
+
+  if (Scale != 1 && Scale != 2 && Scale != 4 && Scale != 8) {
+      // invalid Scale
+      KsError = KS_ERR_ASM_INVALIDOPERAND;
+      return nullptr;
+  }
+
   if (!isParsingInlineAsm()) {
     // handle [-42]
     if (!BaseReg && !IndexReg) {
@@ -2379,6 +2392,18 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseMemOperand(unsigned SegReg,
     //Error(BaseLoc, ErrMsg);
     KsError = KS_ERR_ASM_INVALIDOPERAND;
     return nullptr;
+  }
+
+  if (IndexReg !=0 && !Scale) {
+      // Scale must go with Index register
+      KsError = KS_ERR_ASM_INVALIDOPERAND;
+      return nullptr;
+  }
+
+  if (Scale != 1 && Scale != 2 && Scale != 4 && Scale != 8) {
+      // invalid Scale
+      KsError = KS_ERR_ASM_INVALIDOPERAND;
+      return nullptr;
   }
 
   if (SegReg || BaseReg || IndexReg)
