@@ -1,18 +1,13 @@
 #include <keystone/keystone.h>
 int main(int argc, char **argv) {
   int ks_arch = KS_ARCH_X86, ks_mode = KS_MODE_64;
-  unsigned char assembly[] = {
-    'A', 'A', '=', 'F', '/', 'A', 0x0a, 'F', '/', 'A',
-    0x0a, 'A', 'A', '=', 'F', '/', 'a', 0x0a, 'A', '=',
-    '9', '/', '7', 0x0a, 'A', 'A', '=', 'F', '/', 'a',
-    0x0a, 'A', '=', 'F', 0x00,
-  };
+  char *assembly = "XX=Y/X\x0aY/X\x0aXX=Y/a\x0aX=9/7\x0aXX=Y/a\x0aX=Y";
   ks_engine *ks;
   ks_err err = ks_open(ks_arch, ks_mode, &ks);
   if (!err) {
     size_t count, size;
     unsigned char *insn;
-    if (ks_asm(ks, (char *)assembly, 0, &insn, &size, &count))
+    if (ks_asm(ks, assembly, 0, &insn, &size, &count))
       printf("ERROR: failed on ks_asm() with error = %s, code = %u\n", ks_strerror(ks_errno(ks)), ks_errno(ks));
     ks_free(insn);
   }
