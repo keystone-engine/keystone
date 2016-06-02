@@ -987,8 +987,11 @@ bool AsmParser::parsePrimaryExpr(const MCExpr *&Res, SMLoc &EndLoc)
         IDVal = Split.first;
       }
       if (IDVal == "f" || IDVal == "b") {
+        bool valid;
         MCSymbol *Sym =
-            Ctx.getDirectionalLocalSymbol(IntVal, IDVal == "b");
+            Ctx.getDirectionalLocalSymbol(IntVal, IDVal == "b", valid);
+        if (!valid)
+            return true;
         Res = MCSymbolRefExpr::create(Sym, Variant, getContext());
         if (IDVal == "b" && Sym->isUndefined()) {
           //return Error(Loc, "invalid reference to undefined symbol");
@@ -1602,8 +1605,14 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
           return true;
       }
       Sym = getContext().getOrCreateSymbol(IDVal);
-    } else
-      Sym = Ctx.createDirectionalLocalSymbol(LocalLabelVal);
+    } else {
+      bool valid;
+      Sym = Ctx.createDirectionalLocalSymbol(LocalLabelVal, valid);
+      if (!valid) {
+          Info.KsError = KS_ERR_ASM_LABEL_INVALID;
+          return true;
+      }
+    }
 
     Sym->redefineIfPossible();
 

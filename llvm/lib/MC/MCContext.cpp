@@ -222,14 +222,24 @@ MCSymbol *MCContext::createTempSymbol(bool CanBeUnnamed) {
   return createTempSymbol("tmp", true, CanBeUnnamed);
 }
 
-unsigned MCContext::NextInstance(unsigned LocalLabelVal) {
+unsigned MCContext::NextInstance(unsigned LocalLabelVal, bool &valid)
+{
+  if (LocalLabelVal > Instances.size()) {
+      valid = false;
+      return 0;
+  }
   MCLabel *&Label = Instances[LocalLabelVal];
   if (!Label)
     Label = new (*this) MCLabel(0);
   return Label->incInstance();
 }
 
-unsigned MCContext::GetInstance(unsigned LocalLabelVal) {
+unsigned MCContext::GetInstance(unsigned LocalLabelVal, bool &valid)
+{
+  if (LocalLabelVal > Instances.size()) {
+      valid = false;
+      return 0;
+  }
   MCLabel *&Label = Instances[LocalLabelVal];
   if (!Label)
     Label = new (*this) MCLabel(0);
@@ -244,14 +254,22 @@ MCSymbol *MCContext::getOrCreateDirectionalLocalSymbol(unsigned LocalLabelVal,
   return Sym;
 }
 
-MCSymbol *MCContext::createDirectionalLocalSymbol(unsigned LocalLabelVal) {
-  unsigned Instance = NextInstance(LocalLabelVal);
+MCSymbol *MCContext::createDirectionalLocalSymbol(unsigned LocalLabelVal, bool &valid)
+{
+  valid = true;
+  unsigned Instance = NextInstance(LocalLabelVal, valid);
+  if (!valid)
+      return nullptr;
   return getOrCreateDirectionalLocalSymbol(LocalLabelVal, Instance);
 }
 
 MCSymbol *MCContext::getDirectionalLocalSymbol(unsigned LocalLabelVal,
-                                               bool Before) {
-  unsigned Instance = GetInstance(LocalLabelVal);
+                                               bool Before, bool &valid)
+{
+  valid = true;
+  unsigned Instance = GetInstance(LocalLabelVal, valid);
+  if (!valid)
+      return nullptr;
   if (!Before)
     ++Instance;
   return getOrCreateDirectionalLocalSymbol(LocalLabelVal, Instance);

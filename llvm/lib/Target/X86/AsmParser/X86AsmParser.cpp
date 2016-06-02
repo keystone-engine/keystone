@@ -1468,8 +1468,11 @@ bool X86AsmParser::ParseIntelExpression(IntelExprStateMachine &SM, SMLoc &End)
       if (getLexer().getKind() == AsmToken::Identifier) {
         StringRef IDVal = getTok().getString();
         if (IDVal == "f" || IDVal == "b") {
+          bool valid;
           MCSymbol *Sym =
-              getContext().getDirectionalLocalSymbol(IntVal, IDVal == "b");
+              getContext().getDirectionalLocalSymbol(IntVal, IDVal == "b", valid);
+          if (!valid)
+              return true;
           MCSymbolRefExpr::VariantKind Variant = MCSymbolRefExpr::VK_None;
           const MCExpr *Val =
               MCSymbolRefExpr::create(Sym, Variant, getContext());

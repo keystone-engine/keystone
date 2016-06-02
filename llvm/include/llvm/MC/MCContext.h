@@ -104,10 +104,10 @@ namespace llvm {
     DenseMap<unsigned, MCLabel *> Instances;
     /// NextInstance() creates the next instance of the directional local label
     /// for the LocalLabelVal and adds it to the map if needed.
-    unsigned NextInstance(unsigned LocalLabelVal);
+    unsigned NextInstance(unsigned LocalLabelVal, bool &valid);
     /// GetInstance() gets the current instance of the directional local label
     /// for the LocalLabelVal and adds it to the map if needed.
-    unsigned GetInstance(unsigned LocalLabelVal);
+    unsigned GetInstance(unsigned LocalLabelVal, bool &valid);
 
     /// The file name of the log file from the environment variable
     /// AS_SECURE_LOG_FILE.  Which must be set before the .secure_log_unique
@@ -275,11 +275,11 @@ namespace llvm {
 
     /// Create the definition of a directional local symbol for numbered label
     /// (used for "1:" definitions).
-    MCSymbol *createDirectionalLocalSymbol(unsigned LocalLabelVal);
+    MCSymbol *createDirectionalLocalSymbol(unsigned LocalLabelVal, bool &valid);
 
     /// Create and return a directional local symbol for numbered label (used
     /// for "1b" or 1f" references).
-    MCSymbol *getDirectionalLocalSymbol(unsigned LocalLabelVal, bool Before);
+    MCSymbol *getDirectionalLocalSymbol(unsigned LocalLabelVal, bool Before, bool &valid);
 
     /// Lookup the symbol inside with the specified \p Name.  If it exists,
     /// return it.  If not, create a forward reference and return it.
