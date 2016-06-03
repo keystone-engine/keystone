@@ -1,7 +1,7 @@
 #include <keystone/keystone.h>
 int main(int argc, char **argv) {
   int ks_arch = KS_ARCH_X86, ks_mode = KS_MODE_64;
-  char *assembly = "{[0\x09.20000000000000000000";
+  char *assembly = "{[0\t.20000000000000000000";
   ks_engine *ks;
   ks_err err = ks_open(ks_arch, ks_mode, &ks);
   if (!err) {

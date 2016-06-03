@@ -1,7 +1,7 @@
 #include <keystone/keystone.h>
 int main(int argc, char **argv) {
   int ks_arch = KS_ARCH_SYSTEMZ, ks_mode = KS_MODE_LITTLE_ENDIAN;
-  char *assembly = ".=X\x0aX:.]";
+  char *assembly = ".=X;X:.]";
   ks_engine *ks;
   ks_err err = ks_open(ks_arch, ks_mode, &ks);
   if (!err) {
