@@ -213,7 +213,12 @@ bool MCAssembler::evaluateFixup(const MCAsmLayout &Layout,
     "FKF_IsAlignedDownTo32Bits is only allowed on PC-relative fixups!");
 
   if (IsPCRel) {
-    uint64_t Offset = Layout.getFragmentOffset(DF) + Fixup.getOffset();
+    bool valid;
+    uint64_t Offset = Layout.getFragmentOffset(DF, valid) + Fixup.getOffset();
+    if (!valid) {
+        KsError = KS_ERR_ASM_FRAGMENT_INVALID;
+        return false;
+    }
 
     // A number of ARM fixups in Thumb mode require that the effective PC
     // address be determined as the 32-bit aligned version of the actual offset.
@@ -251,7 +256,10 @@ uint64_t MCAssembler::computeFragmentSize(const MCAsmLayout &Layout,
 
   case MCFragment::FT_Align: {
     const MCAlignFragment &AF = cast<MCAlignFragment>(F);
-    unsigned Offset = Layout.getFragmentOffset(&AF);
+    unsigned Offset = Layout.getFragmentOffset(&AF, valid);
+    if (!valid) {
+        return 0;
+    }
     unsigned Size = OffsetToAlignment(Offset, AF.getAlignment());
     // If we are padding with nops, force the padding to be larger than the
     // minimum nop size.
@@ -274,7 +282,10 @@ uint64_t MCAssembler::computeFragmentSize(const MCAsmLayout &Layout,
     }
 
     // FIXME: We need a way to communicate this error.
-    uint64_t FragmentOffset = Layout.getFragmentOffset(&OF);
+    uint64_t FragmentOffset = Layout.getFragmentOffset(&OF, valid);
+    if (!valid) {
+      return 0;
+    }
     int64_t TargetLocation = Value.getConstant();
     if (const MCSymbolRefExpr *A = Value.getSymA()) {
       uint64_t Val;
@@ -868,6 +879,7 @@ bool MCAssembler::layoutOnce(MCAsmLayout &Layout)
 void MCAssembler::finishLayout(MCAsmLayout &Layout) {
   // The layout is done. Mark every fragment as valid.
   for (unsigned int i = 0, n = Layout.getSectionOrder().size(); i != n; ++i) {
-    Layout.getFragmentOffset(&*Layout.getSectionOrder()[i]->rbegin());
+    bool valid;
+    Layout.getFragmentOffset(&*Layout.getSectionOrder()[i]->rbegin(), valid);
   }
 }

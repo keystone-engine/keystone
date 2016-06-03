@@ -39,7 +39,7 @@ class MCAsmLayout {
 
   /// \brief Make sure that the layout for the given fragment is valid, lazily
   /// computing it if necessary.
-  void ensureValid(const MCFragment *F) const;
+  bool ensureValid(const MCFragment *F) const;
 
   /// \brief Is the layout for this fragment valid?
   bool isFragmentValid(const MCFragment *F) const;
@@ -73,7 +73,7 @@ public:
   /// @{
 
   /// \brief Get the offset of the given fragment inside its containing section.
-  uint64_t getFragmentOffset(const MCFragment *F) const;
+  uint64_t getFragmentOffset(const MCFragment *F, bool &valid) const;
 
   /// @}
   /// \name Utility Functions

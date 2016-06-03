@@ -59,7 +59,8 @@ void MCAsmLayout::invalidateFragmentsFrom(MCFragment *F) {
   LastValidFragment[F->getParent()] = F->getPrevNode();
 }
 
-void MCAsmLayout::ensureValid(const MCFragment *F) const {
+bool MCAsmLayout::ensureValid(const MCFragment *F) const
+{
   MCSection *Sec = F->getParent();
   MCSection::iterator I;
   if (MCFragment *Cur = LastValidFragment[Sec])
@@ -69,29 +70,47 @@ void MCAsmLayout::ensureValid(const MCFragment *F) const {
 
   // Advance the layout position until the fragment is valid.
   while (!isFragmentValid(F)) {
-    assert(I != Sec->end() && "Layout bookkeeping error");
+    //assert(I != Sec->end() && "Layout bookkeeping error");
+    if (I == Sec->end())
+        return false;
     const_cast<MCAsmLayout *>(this)->layoutFragment(&*I);
     ++I;
   }
+
+  return true;
 }
 
-uint64_t MCAsmLayout::getFragmentOffset(const MCFragment *F) const {
-  ensureValid(F);
-  assert(F->Offset != ~UINT64_C(0) && "Address not set!");
+uint64_t MCAsmLayout::getFragmentOffset(const MCFragment *F, bool &valid) const
+{
+  valid = true;
+  if (!ensureValid(F)) {
+      valid = false;
+      return 0;
+  }
+  //assert(F->Offset != ~UINT64_C(0) && "Address not set!");
+  if (F->Offset == ~UINT64_C(0)) {
+      valid = false;
+      return 0;
+  }
+
   return F->Offset;
 }
 
 // Simple getSymbolOffset helper for the non-varibale case.
 static bool getLabelOffset(const MCAsmLayout &Layout, const MCSymbol &S,
-                           bool ReportError, uint64_t &Val) {
+                           bool ReportError, uint64_t &Val)
+{
   if (!S.getFragment()) {
     if (ReportError)
       report_fatal_error("unable to evaluate offset to undefined symbol '" +
                          S.getName() + "'");
     return false;
   }
-  Val = Layout.getFragmentOffset(S.getFragment()) + S.getOffset();
-  return true;
+
+  bool valid;
+  Val = Layout.getFragmentOffset(S.getFragment(), valid) + S.getOffset();
+
+  return valid;
 }
 
 static bool getSymbolOffsetImpl(const MCAsmLayout &Layout, const MCSymbol &S,
@@ -174,11 +193,12 @@ const MCSymbol *MCAsmLayout::getBaseSymbol(const MCSymbol &Symbol) const {
   return &ASym;
 }
 
-uint64_t MCAsmLayout::getSectionAddressSize(const MCSection *Sec) const {
+uint64_t MCAsmLayout::getSectionAddressSize(const MCSection *Sec) const
+{
   // The size is the last fragment's end offset.
   const MCFragment &F = Sec->getFragmentList().back();
-  bool valid;
-  return getFragmentOffset(&F) + getAssembler().computeFragmentSize(*this, F, valid);
+  bool valid, valid2;
+  return getFragmentOffset(&F, valid2) + getAssembler().computeFragmentSize(*this, F, valid);
 }
 
 uint64_t MCAsmLayout::getSectionFileSize(const MCSection *Sec) const {

@@ -618,7 +618,8 @@ void ELFObjectWriter::recordRelocation(MCAssembler &Asm,
                                        bool &IsPCRel, uint64_t &FixedValue) {
   const MCSectionELF &FixupSection = cast<MCSectionELF>(*Fragment->getParent());
   uint64_t C = Target.getConstant();
-  uint64_t FixupOffset = Layout.getFragmentOffset(Fragment) + Fixup.getOffset();
+  bool valid;
+  uint64_t FixupOffset = Layout.getFragmentOffset(Fragment, valid) + Fixup.getOffset();
   MCContext &Ctx = Asm.getContext();
 
   if (const MCSymbolRefExpr *RefB = Target.getSymB()) {
