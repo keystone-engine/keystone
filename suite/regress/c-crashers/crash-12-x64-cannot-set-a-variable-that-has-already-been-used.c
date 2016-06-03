@@ -1,7 +1,7 @@
 #include <keystone/keystone.h>
 int main(int argc, char **argv) {
   int ks_arch = KS_ARCH_X86, ks_mode = KS_MODE_64;
-  char *assembly = "XX=Y/X\x0aY/X\x0aXX=Y/a\x0aX=9/7\x0aXX=Y/a\x0aX=Y";
+  char *assembly = "XX=Y/X\nY/X\nXX=Y/a\nX=9/7\nXX=Y/a\nX=Y";
   ks_engine *ks;
   ks_err err = ks_open(ks_arch, ks_mode, &ks);
   if (!err) {
