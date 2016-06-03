@@ -7,8 +7,11 @@ For *nix OS, see [COMPILE-NIX.md](COMPILE-NIX.md)
   CMake is required as dependency.
   Download & install cmake from http://www.cmake.org
 
-  Microsoft Visual Studio is required for compiling. Download & install it from 
-  https://www.visualstudio.com
+  Microsoft Visual Studio 2013 or older is required for compiling.
+  Download & install it from https://www.visualstudio.com
+
+  Python is another dependency. Download & install it from
+  https://www.python.org
 
 
 2. Open the Visual Studio Command Promplt, and from the root directory
