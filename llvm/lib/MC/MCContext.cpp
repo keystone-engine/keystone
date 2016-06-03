@@ -224,7 +224,7 @@ MCSymbol *MCContext::createTempSymbol(bool CanBeUnnamed) {
 
 unsigned MCContext::NextInstance(unsigned LocalLabelVal, bool &valid)
 {
-  if (LocalLabelVal > Instances.size()) {
+  if (LocalLabelVal >= Instances.size()) {
       valid = false;
       return 0;
   }
@@ -236,7 +236,7 @@ unsigned MCContext::NextInstance(unsigned LocalLabelVal, bool &valid)
 
 unsigned MCContext::GetInstance(unsigned LocalLabelVal, bool &valid)
 {
-  if (LocalLabelVal > Instances.size()) {
+  if (LocalLabelVal >= Instances.size()) {
       valid = false;
       return 0;
   }
