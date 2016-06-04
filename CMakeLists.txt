@@ -2,6 +2,7 @@
 # By Nguyen Anh Quynh, 2016
 
 cmake_minimum_required(VERSION 2.8.7)
+project(keystone)
 
 set(KEYSTONE_VERSION_MAJOR 0)
 set(KEYSTONE_VERSION_MINOR 9)
@@ -45,6 +46,30 @@ endif()
 else()
     add_subdirectory(kstool)
 endif()
+
+# generate and install pkg-config.pc
+FIND_PACKAGE(PkgConfig)
+SET(PKG_CONFIG_FILE_PATH
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc"
+)
+SET(PKG_CONFIG_LIBDIR
+    "${CMAKE_INSTALL_PREFIX}/lib"
+)
+SET(PKG_CONFIG_INCLUDEDIR
+    "${CMAKE_INSTALL_PREFIX}/include"
+)
+SET(PKG_CONFIG_LIBS
+    "-L\${libdir} -lkeystone"
+)
+SET(PKG_CONFIG_CFLAGS
+    "-I\${includedir}"
+)
+CONFIGURE_FILE(
+    "${CMAKE_CURRENT_SOURCE_DIR}/pkg-config.pc.cmake"
+    "${PKG_CONFIG_FILE_PATH}"
+)
+INSTALL(FILES "${PKG_CONFIG_FILE_PATH}"
+        DESTINATION lib/pkgconfig)
 
 # uninstall target
 configure_file(
