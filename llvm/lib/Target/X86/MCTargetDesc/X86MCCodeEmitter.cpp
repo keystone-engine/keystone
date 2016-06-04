@@ -157,7 +157,7 @@ public:
                          SmallVectorImpl<MCFixup> &Fixups,
                          const MCSubtargetInfo &STI, unsigned int &KsError) const override;
 
-  void EmitVEXOpcodePrefix(uint64_t TSFlags, unsigned &CurByte, int MemOperand,
+  bool EmitVEXOpcodePrefix(uint64_t TSFlags, unsigned &CurByte, int MemOperand,
                            const MCInst &MI, const MCInstrDesc &Desc,
                            raw_ostream &OS) const;
 
@@ -638,10 +638,11 @@ void X86MCCodeEmitter::EmitMemModRMByte(const MCInst &MI, unsigned Op,
 
 /// EmitVEXOpcodePrefix - AVX instructions are encoded using a opcode prefix
 /// called VEX.
-void X86MCCodeEmitter::EmitVEXOpcodePrefix(uint64_t TSFlags, unsigned &CurByte,
+bool X86MCCodeEmitter::EmitVEXOpcodePrefix(uint64_t TSFlags, unsigned &CurByte,
                                            int MemOperand, const MCInst &MI,
                                            const MCInstrDesc &Desc,
-                                           raw_ostream &OS) const {
+                                           raw_ostream &OS) const
+{
   assert(!(TSFlags & X86II::LOCK) && "Can't have LOCK VEX.");
 
   uint64_t Encoding = TSFlags & X86II::EncodingMask;
@@ -913,7 +914,9 @@ void X86MCCodeEmitter::EmitVEXOpcodePrefix(uint64_t TSFlags, unsigned &CurByte,
     if (EVEX_b) {
       if (HasEVEX_RC) {
         unsigned RcOperand = NumOps-1;
-        assert(RcOperand >= CurOp);
+        //assert(RcOperand >= CurOp);
+        if (RcOperand < CurOp || !MI.getOperand(RcOperand).isImm())
+            return true;
         EVEX_rc = MI.getOperand(RcOperand).getImm() & 0x3;
       }
       EncodeRC = true;
@@ -991,7 +994,7 @@ void X86MCCodeEmitter::EmitVEXOpcodePrefix(uint64_t TSFlags, unsigned &CurByte,
     if (Encoding == X86II::VEX && VEX_B && VEX_X && !VEX_W && (VEX_5M == 1)) {
       EmitByte(0xC5, CurByte, OS);
       EmitByte(LastByte | (VEX_R << 7), CurByte, OS);
-      return;
+      return false;
     }
 
     // 3 byte VEX prefix
@@ -1034,6 +1037,8 @@ void X86MCCodeEmitter::EmitVEXOpcodePrefix(uint64_t TSFlags, unsigned &CurByte,
               (EVEX_V2 << 3) |
               EVEX_aaa, CurByte, OS);
   }
+
+  return false;
 }
 
 /// DetermineREXPrefix - Determine if the MCInst has to be encoded with a X86-64
@@ -1316,8 +1321,12 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
 
   if (Encoding == 0)
       EmitOpcodePrefix(TSFlags, CurByte, MemoryOperand, MI, Desc, STI, OS);
-  else
-      EmitVEXOpcodePrefix(TSFlags, CurByte, MemoryOperand, MI, Desc, OS);
+  else {
+      if (EmitVEXOpcodePrefix(TSFlags, CurByte, MemoryOperand, MI, Desc, OS)) {
+          KsError = KS_ERR_ASM_INVALIDOPERAND;
+          return;
+      }
+  }
 
   unsigned char BaseOpcode = X86II::getBaseOpcodeFor(TSFlags);
 
