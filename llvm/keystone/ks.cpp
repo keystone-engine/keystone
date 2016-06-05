@@ -511,7 +511,7 @@ ks_err ks_option(ks_engine *ks, ks_opt_type type, size_t value)
 
 
 KEYSTONE_EXPORT
-void ks_free(void *p)
+void ks_free(unsigned char *p)
 {
     free(p);
 }

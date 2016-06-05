@@ -100,10 +100,10 @@ _setup_prototype(_ks, "ks_open", kserr, c_uint, c_uint, POINTER(ks_engine))
 _setup_prototype(_ks, "ks_close", kserr, ks_engine)
 _setup_prototype(_ks, "ks_strerror", c_char_p, kserr)
 _setup_prototype(_ks, "ks_errno", kserr, ks_engine)
-_setup_prototype(_ks, "ks_option", kserr, ks_engine, c_int, c_void_p)
+_setup_prototype(_ks, "ks_option", kserr, ks_engine, c_int, c_size_t)
 # int ks_asm(ks_engine *ks, const char *string, uint64_t address, unsigned char **encoding, size_t *encoding_size, size_t *stat_count);
 _setup_prototype(_ks, "ks_asm", c_int, ks_engine, c_char_p, c_uint64, POINTER(POINTER(c_ubyte)), POINTER(c_size_t), POINTER(c_size_t))
-_setup_prototype(_ks, "ks_free", None, c_void_p)
+_setup_prototype(_ks, "ks_free", None, POINTER(c_ubyte))
 
 
 # access to error code via @errno of KsError

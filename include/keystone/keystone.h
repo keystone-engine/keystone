@@ -302,7 +302,7 @@ int ks_asm(ks_engine *ks,
  @p: memory allocated in @encoding argument of ks_asm()
 */
 KEYSTONE_EXPORT
-void ks_free(void *p);
+void ks_free(unsigned char *p);
 
 
 #ifdef __cplusplus
