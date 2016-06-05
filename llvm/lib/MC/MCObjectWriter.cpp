@@ -19,7 +19,9 @@ MCObjectWriter::~MCObjectWriter() {
 
 bool MCObjectWriter::isSymbolRefDifferenceFullyResolved(
     const MCAssembler &Asm, const MCSymbolRefExpr *A, const MCSymbolRefExpr *B,
-    bool InSet) const {
+    bool InSet, bool &valid) const
+{
+  valid = true;
   // Modified symbol references cannot be resolved.
   if (A->getKind() != MCSymbolRefExpr::VK_None ||
       B->getKind() != MCSymbolRefExpr::VK_None)
@@ -33,6 +35,10 @@ bool MCObjectWriter::isSymbolRefDifferenceFullyResolved(
   if (!SA.getFragment() || !SB.getFragment())
     return false;
 
+  if (!SA.isInSection()) {
+      valid = false;
+      return false;
+  }
   return isSymbolRefDifferenceFullyResolvedImpl(Asm, SA, SB, InSet);
 }
 

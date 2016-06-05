@@ -61,7 +61,7 @@ protected:
   bool evaluateAsRelocatableImpl(MCValue &Res, const MCAssembler *Asm,
                                  const MCAsmLayout *Layout,
                                  const MCFixup *Fixup,
-                                 const SectionAddrMap *Addrs, bool InSet) const;
+                                 const SectionAddrMap *Addrs, bool InSet, bool &valid) const;
 
 public:
   /// \name Accessors

@@ -449,8 +449,9 @@ bool MCExpr::evaluateAsAbsolute(int64_t &Res, const MCAssembler *Asm,
     return true;
   }
 
+  bool valid;
   bool IsRelocatable =
-      evaluateAsRelocatableImpl(Value, Asm, Layout, nullptr, Addrs, InSet);
+      evaluateAsRelocatableImpl(Value, Asm, Layout, nullptr, Addrs, InSet, valid);
 
   // Record the current value.
   Res = Value.getConstant();
@@ -462,7 +463,8 @@ bool MCExpr::evaluateAsAbsolute(int64_t &Res, const MCAssembler *Asm,
 static void AttemptToFoldSymbolOffsetDifference(
     const MCAssembler *Asm, const MCAsmLayout *Layout,
     const SectionAddrMap *Addrs, bool InSet, const MCSymbolRefExpr *&A,
-    const MCSymbolRefExpr *&B, int64_t &Addend) {
+    const MCSymbolRefExpr *&B, int64_t &Addend, bool &valid) {
+  valid = true;
   if (!A || !B)
     return;
 
@@ -472,8 +474,10 @@ static void AttemptToFoldSymbolOffsetDifference(
   if (SA.isUndefined() || SB.isUndefined())
     return;
 
-  if (!Asm->getWriter().isSymbolRefDifferenceFullyResolved(*Asm, A, B, InSet))
+  if (!Asm->getWriter().isSymbolRefDifferenceFullyResolved(*Asm, A, B, InSet, valid))
     return;
+  if (!valid)
+      return;
 
   if (SA.getFragment() == SB.getFragment() && !SA.isVariable() &&
       !SB.isVariable()) {
@@ -539,7 +543,8 @@ static bool
 EvaluateSymbolicAdd(const MCAssembler *Asm, const MCAsmLayout *Layout,
                     const SectionAddrMap *Addrs, bool InSet, const MCValue &LHS,
                     const MCSymbolRefExpr *RHS_A, const MCSymbolRefExpr *RHS_B,
-                    int64_t RHS_Cst, MCValue &Res) {
+                    int64_t RHS_Cst, MCValue &Res, bool &valid)
+{
   // FIXME: This routine (and other evaluation parts) are *incredibly* sloppy
   // about dealing with modifiers. This will ultimately bite us, one day.
   const MCSymbolRefExpr *LHS_A = LHS.getSymA();
@@ -565,13 +570,21 @@ EvaluateSymbolicAdd(const MCAssembler *Asm, const MCAsmLayout *Layout,
     // Since we are attempting to be as aggressive as possible about folding, we
     // attempt to evaluate each possible alternative.
     AttemptToFoldSymbolOffsetDifference(Asm, Layout, Addrs, InSet, LHS_A, LHS_B,
-                                        Result_Cst);
+                                        Result_Cst, valid);
+    if (!valid)
+        return false;
     AttemptToFoldSymbolOffsetDifference(Asm, Layout, Addrs, InSet, LHS_A, RHS_B,
-                                        Result_Cst);
+                                        Result_Cst, valid);
+    if (!valid)
+        return false;
     AttemptToFoldSymbolOffsetDifference(Asm, Layout, Addrs, InSet, RHS_A, LHS_B,
-                                        Result_Cst);
+                                        Result_Cst, valid);
+    if (!valid)
+        return false;
     AttemptToFoldSymbolOffsetDifference(Asm, Layout, Addrs, InSet, RHS_A, RHS_B,
-                                        Result_Cst);
+                                        Result_Cst, valid);
+    if (!valid)
+        return false;
   }
 
   // We can't represent the addition or subtraction of two symbols.
@@ -592,15 +605,17 @@ bool MCExpr::evaluateAsRelocatable(MCValue &Res,
                                    const MCFixup *Fixup) const
 {
   MCAssembler *Assembler = Layout ? &Layout->getAssembler() : nullptr;
+  bool valid;
   return evaluateAsRelocatableImpl(Res, Assembler, Layout, Fixup, nullptr,
-                                   false);
+                                   false, valid);
 }
 
 bool MCExpr::evaluateAsValue(MCValue &Res, const MCAsmLayout &Layout) const
 {
   MCAssembler *Assembler = &Layout.getAssembler();
+  bool valid;
   return evaluateAsRelocatableImpl(Res, Assembler, &Layout, nullptr, nullptr,
-                                   true);
+                                   true, valid);
 }
 
 static bool canExpand(const MCSymbol &Sym, bool InSet) {
@@ -620,7 +635,7 @@ bool MCExpr::evaluateAsRelocatableImpl(MCValue &Res, const MCAssembler *Asm,
                                        const MCAsmLayout *Layout,
                                        const MCFixup *Fixup,
                                        const SectionAddrMap *Addrs,
-                                       bool InSet) const
+                                       bool InSet, bool &valid) const
 {
   switch (getKind()) {
   case Target:
@@ -639,8 +654,9 @@ bool MCExpr::evaluateAsRelocatableImpl(MCValue &Res, const MCAssembler *Asm,
     if (Sym.isVariable() && SRE->getKind() == MCSymbolRefExpr::VK_None &&
         canExpand(Sym, InSet)) {
       bool IsMachO = SRE->hasSubsectionsViaSymbols();
+      bool valid;
       if (Sym.getVariableValue()->evaluateAsRelocatableImpl(
-              Res, Asm, Layout, Fixup, Addrs, InSet || IsMachO)) {
+              Res, Asm, Layout, Fixup, Addrs, InSet || IsMachO, valid)) {
         if (!IsMachO)
           return true;
 
@@ -665,8 +681,9 @@ bool MCExpr::evaluateAsRelocatableImpl(MCValue &Res, const MCAssembler *Asm,
     const MCUnaryExpr *AUE = cast<MCUnaryExpr>(this);
     MCValue Value;
 
+    bool valid;
     if (!AUE->getSubExpr()->evaluateAsRelocatableImpl(Value, Asm, Layout, Fixup,
-                                                      Addrs, InSet))
+                                                      Addrs, InSet, valid))
       return false;
 
     switch (AUE->getOpcode()) {
@@ -698,11 +715,12 @@ bool MCExpr::evaluateAsRelocatableImpl(MCValue &Res, const MCAssembler *Asm,
   case Binary: {
     const MCBinaryExpr *ABE = cast<MCBinaryExpr>(this);
     MCValue LHSValue, RHSValue;
+    bool valid;
 
     if (!ABE->getLHS()->evaluateAsRelocatableImpl(LHSValue, Asm, Layout, Fixup,
-                                                  Addrs, InSet) ||
+                                                  Addrs, InSet, valid) ||
         !ABE->getRHS()->evaluateAsRelocatableImpl(RHSValue, Asm, Layout, Fixup,
-                                                  Addrs, InSet))
+                                                  Addrs, InSet, valid))
       return false;
 
     // We only support a few operations on non-constant expressions, handle
@@ -715,12 +733,12 @@ bool MCExpr::evaluateAsRelocatableImpl(MCValue &Res, const MCAssembler *Asm,
         // Negate RHS and add.
         return EvaluateSymbolicAdd(Asm, Layout, Addrs, InSet, LHSValue,
                                    RHSValue.getSymB(), RHSValue.getSymA(),
-                                   -RHSValue.getConstant(), Res);
+                                   -RHSValue.getConstant(), Res, valid);
 
       case MCBinaryExpr::Add:
         return EvaluateSymbolicAdd(Asm, Layout, Addrs, InSet, LHSValue,
                                    RHSValue.getSymA(), RHSValue.getSymB(),
-                                   RHSValue.getConstant(), Res);
+                                   RHSValue.getConstant(), Res, valid);
       }
     }
 
