@@ -58,7 +58,7 @@ public:
   /// \brief Perform layout for a single fragment, assuming that the previous
   /// fragment has already been laid out correctly, and the parent section has
   /// been initialized.
-  void layoutFragment(MCFragment *Fragment);
+  bool layoutFragment(MCFragment *Fragment);
 
   /// \name Section Access (in layout order)
   /// @{

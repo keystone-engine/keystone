@@ -48,5 +48,6 @@ bool MCAsmBackend::fixupNeedsRelaxationAdvanced(
     const MCRelaxableFragment *DF, const MCAsmLayout &Layout) const {
   if (!Resolved)
     return true;
-  return fixupNeedsRelaxation(Fixup, Value, DF, Layout);
+  unsigned KsError;
+  return fixupNeedsRelaxation(Fixup, Value, DF, Layout, KsError);
 }

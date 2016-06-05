@@ -133,7 +133,7 @@ public:
 
   bool fixupNeedsRelaxation(const MCFixup &Fixup, uint64_t Value,
                             const MCRelaxableFragment *DF,
-                            const MCAsmLayout &Layout) const override;
+                            const MCAsmLayout &Layout, unsigned &KsError) const override;
 
   void relaxInstruction(const MCInst &Inst, MCInst &Res) const override;
 
@@ -279,7 +279,7 @@ bool X86AsmBackend::mayNeedRelaxation(const MCInst &Inst) const {
 bool X86AsmBackend::fixupNeedsRelaxation(const MCFixup &Fixup,
                                          uint64_t Value,
                                          const MCRelaxableFragment *DF,
-                                         const MCAsmLayout &Layout) const {
+                                         const MCAsmLayout &Layout, unsigned &KsError) const {
   // Relax if the value is too big for a (signed) i8.
   return int64_t(Value) != int64_t(int8_t(Value));
 }

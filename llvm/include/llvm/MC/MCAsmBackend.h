@@ -110,7 +110,7 @@ public:
   /// Simple predicate for targets where !Resolved implies requiring relaxation
   virtual bool fixupNeedsRelaxation(const MCFixup &Fixup, uint64_t Value,
                                     const MCRelaxableFragment *DF,
-                                    const MCAsmLayout &Layout) const = 0;
+                                    const MCAsmLayout &Layout, unsigned &KsError) const = 0;
 
   /// Relax the instruction in the given fragment to the next wider instruction.
   ///

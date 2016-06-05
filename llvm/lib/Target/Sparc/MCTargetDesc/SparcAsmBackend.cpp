@@ -243,7 +243,7 @@ namespace {
     bool fixupNeedsRelaxation(const MCFixup &Fixup,
                               uint64_t Value,
                               const MCRelaxableFragment *DF,
-                              const MCAsmLayout &Layout) const override {
+                              const MCAsmLayout &Layout, unsigned &KsError) const override {
       // FIXME.
       llvm_unreachable("fixupNeedsRelaxation() unimplemented");
       return false;

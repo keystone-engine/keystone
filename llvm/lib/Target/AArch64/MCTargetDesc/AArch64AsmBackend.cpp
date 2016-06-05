@@ -80,7 +80,7 @@ public:
   bool mayNeedRelaxation(const MCInst &Inst) const override;
   bool fixupNeedsRelaxation(const MCFixup &Fixup, uint64_t Value,
                             const MCRelaxableFragment *DF,
-                            const MCAsmLayout &Layout) const override;
+                            const MCAsmLayout &Layout, unsigned &KsError) const override;
   void relaxInstruction(const MCInst &Inst, MCInst &Res) const override;
   bool writeNopData(uint64_t Count, MCObjectWriter *OW) const override;
 
@@ -302,7 +302,7 @@ bool AArch64AsmBackend::mayNeedRelaxation(const MCInst &Inst) const {
 bool AArch64AsmBackend::fixupNeedsRelaxation(const MCFixup &Fixup,
                                              uint64_t Value,
                                              const MCRelaxableFragment *DF,
-                                             const MCAsmLayout &Layout) const {
+                                             const MCAsmLayout &Layout, unsigned &KsError) const {
   // FIXME:  This isn't correct for AArch64. Just moving the "generic" logic
   // into the targets for now.
   //

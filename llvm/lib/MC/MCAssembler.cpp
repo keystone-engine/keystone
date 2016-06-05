@@ -317,16 +317,21 @@ uint64_t MCAssembler::computeFragmentSize(const MCAsmLayout &Layout,
   llvm_unreachable("invalid fragment kind");
 }
 
-void MCAsmLayout::layoutFragment(MCFragment *F)
+bool MCAsmLayout::layoutFragment(MCFragment *F)
 {
   MCFragment *Prev = F->getPrevNode();
 
   // We should never try to recompute something which is valid.
-  assert(!isFragmentValid(F) && "Attempt to recompute a valid fragment!");
+  //assert(!isFragmentValid(F) && "Attempt to recompute a valid fragment!");
+  if (isFragmentValid(F))
+      return true;
+
   // We should never try to compute the fragment layout if its predecessor
   // isn't valid.
-  assert((!Prev || isFragmentValid(Prev)) &&
-         "Attempt to compute fragment before its predecessor!");
+  //assert((!Prev || isFragmentValid(Prev)) &&
+  //       "Attempt to compute fragment before its predecessor!");
+  if (Prev && !isFragmentValid(Prev))
+      return true;
 
   bool valid = true;
   // Compute fragment offset and size.
@@ -335,7 +340,7 @@ void MCAsmLayout::layoutFragment(MCFragment *F)
   else
     F->Offset = getAssembler().getContext().getBaseAddress();
   if (!valid) {
-      return;
+      return false;
   }
   LastValidFragment[F->getParent()] = F;
 
@@ -369,19 +374,29 @@ void MCAsmLayout::layoutFragment(MCFragment *F)
   if (Assembler.isBundlingEnabled() && F->hasInstructions()) {
     assert(isa<MCEncodedFragment>(F) &&
            "Only MCEncodedFragment implementations have instructions");
+    if (!isa<MCEncodedFragment>(F))
+        return true;
+
     bool valid;
     uint64_t FSize = Assembler.computeFragmentSize(*this, *F, valid);
+    if (!valid)
+        return true;
 
     if (!Assembler.getRelaxAll() && FSize > Assembler.getBundleAlignSize())
-      report_fatal_error("Fragment can't be larger than a bundle size");
+      //report_fatal_error("Fragment can't be larger than a bundle size");
+      return true;
 
     uint64_t RequiredBundlePadding = computeBundlePadding(Assembler, F,
                                                           F->Offset, FSize);
     if (RequiredBundlePadding > UINT8_MAX)
-      report_fatal_error("Padding cannot exceed 255 bytes");
+      //report_fatal_error("Padding cannot exceed 255 bytes");
+      return true;
+
     F->setBundlePadding(static_cast<uint8_t>(RequiredBundlePadding));
     F->Offset += RequiredBundlePadding;
   }
+
+  return false;
 }
 
 void MCAssembler::registerSymbol(const MCSymbol &Symbol, bool *Created) {
@@ -732,24 +747,31 @@ void MCAssembler::Finish(unsigned int &KsError) {
   layout(Layout, KsError);
 
   // Write the object file.
-  if (!KsError)
+  if (!KsError) {
       getWriter().writeObject(*this, Layout);
-  KsError = getError();
+      KsError = getError();
+  }
 }
 
 bool MCAssembler::fixupNeedsRelaxation(const MCFixup &Fixup,
                                        const MCRelaxableFragment *DF,
-                                       const MCAsmLayout &Layout) const {
+                                       const MCAsmLayout &Layout, unsigned &KsError) const
+{
   MCValue Target;
   uint64_t Value;
-  unsigned int KsError = 0;
   bool Resolved = evaluateFixup(Layout, Fixup, DF, Target, Value, KsError);
+  if (KsError) {
+      KsError = KS_ERR_ASM_FIXUP_INVALID;
+      // return a dummy value
+      return false;
+  }
   return getBackend().fixupNeedsRelaxationAdvanced(Fixup, Resolved, Value, DF,
                                                    Layout);
 }
 
 bool MCAssembler::fragmentNeedsRelaxation(const MCRelaxableFragment *F,
-                                          const MCAsmLayout &Layout) const {
+                                          const MCAsmLayout &Layout, unsigned &KsError) const
+{
   // If this inst doesn't ever need relaxation, ignore it. This occurs when we
   // are intentionally pushing out inst fragments, or because we relaxed a
   // previous instruction to one that doesn't need relaxation.
@@ -757,7 +779,7 @@ bool MCAssembler::fragmentNeedsRelaxation(const MCRelaxableFragment *F,
     return false;
 
   for (const MCFixup &Fixup : F->getFixups())
-    if (fixupNeedsRelaxation(Fixup, F, Layout))
+    if (fixupNeedsRelaxation(Fixup, F, Layout, KsError))
       return true;
 
   return false;
@@ -766,7 +788,8 @@ bool MCAssembler::fragmentNeedsRelaxation(const MCRelaxableFragment *F,
 bool MCAssembler::relaxInstruction(MCAsmLayout &Layout,
                                    MCRelaxableFragment &F)
 {
-  if (!fragmentNeedsRelaxation(&F, Layout))
+  unsigned KsError = 0;
+  if (!fragmentNeedsRelaxation(&F, Layout, KsError))
     return false;
 
   // FIXME-PERF: We could immediately lower out instructions if we can tell
@@ -784,7 +807,6 @@ bool MCAssembler::relaxInstruction(MCAsmLayout &Layout,
   SmallVector<MCFixup, 4> Fixups;
   SmallString<256> Code;
   raw_svector_ostream VecOS(Code);
-  unsigned int KsError = 0;
   getEmitter().encodeInstruction(Relaxed, VecOS, Fixups, F.getSubtargetInfo(), KsError);
 
   // Update the fragment.

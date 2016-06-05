@@ -73,7 +73,8 @@ bool MCAsmLayout::ensureValid(const MCFragment *F) const
     //assert(I != Sec->end() && "Layout bookkeeping error");
     if (I == Sec->end())
         return false;
-    const_cast<MCAsmLayout *>(this)->layoutFragment(&*I);
+    if (const_cast<MCAsmLayout *>(this)->layoutFragment(&*I))
+        return false;
     ++I;
   }
 

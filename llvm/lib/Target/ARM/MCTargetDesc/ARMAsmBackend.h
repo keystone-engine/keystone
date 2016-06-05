@@ -61,7 +61,7 @@ public:
 
   bool fixupNeedsRelaxation(const MCFixup &Fixup, uint64_t Value,
                             const MCRelaxableFragment *DF,
-                            const MCAsmLayout &Layout) const override;
+                            const MCAsmLayout &Layout, unsigned &KsError) const override;
 
   void relaxInstruction(const MCInst &Inst, MCInst &Res) const override;
 

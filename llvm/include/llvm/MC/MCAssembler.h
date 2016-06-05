@@ -171,11 +171,11 @@ private:
   /// Check whether a fixup can be satisfied, or whether it needs to be relaxed
   /// (increased in size, in order to hold its value correctly).
   bool fixupNeedsRelaxation(const MCFixup &Fixup, const MCRelaxableFragment *DF,
-                            const MCAsmLayout &Layout) const;
+                            const MCAsmLayout &Layout, unsigned &KsError) const;
 
   /// Check whether the given fragment needs relaxation.
   bool fragmentNeedsRelaxation(const MCRelaxableFragment *IF,
-                               const MCAsmLayout &Layout) const;
+                               const MCAsmLayout &Layout, unsigned &KsError) const;
 
   /// \brief Perform one layout iteration and return true if any offsets
   /// were adjusted.
