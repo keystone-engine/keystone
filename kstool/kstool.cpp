@@ -68,6 +68,8 @@ static void usage(char *prog)
     if (ks_arch_supported(KS_ARCH_SYSTEMZ)) {
         printf("        systemz:   SystemZ (S390x)\n");
     }
+
+    printf("\n");
 }
 
 int main(int argc, char **argv)
@@ -85,7 +87,7 @@ int main(int argc, char **argv)
         mode = argv[1];
 
         int flags;
-        if (-1 == (flags = fcntl(STDIN_FILENO, F_GETFL, 0)))
+        if ((flags = fcntl(STDIN_FILENO, F_GETFL, 0)) == -1)
             flags = 0;
 
         fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
@@ -93,7 +95,7 @@ int main(int argc, char **argv)
         size_t index = 0;
 
         char buf[1024];
-        while( fgets(buf, sizeof(buf), stdin) ) {
+        while(fgets(buf, sizeof(buf), stdin)) {
             input = (char*)realloc(assembly, index + strlen(buf));
             if (!input) {
                 printf("Failed to allocate memory.");
@@ -104,7 +106,13 @@ int main(int argc, char **argv)
             index += strlen(buf);
         }
 
+        fcntl(STDIN_FILENO, F_SETFL, flags);
+
         assembly = input;
+        if (!assembly) {
+            usage(argv[0]);
+            return -1;
+        }
     } else if (argc == 3) {
 #else
     if (argc == 3) {
