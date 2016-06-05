@@ -107,8 +107,9 @@ typedef enum ks_err {
     KS_ERR_ASM_DIRECTIVE_RELOC_TOKEN, // unexpected token in .reloc directive
     KS_ERR_ASM_DIRECTIVE_FPOINT,    // invalid floating point in directive
     KS_ERR_ASM_DIRECTIVE_UNKNOWN,    // unknown directive
-    KS_ERR_ASM_VARIANT_INVALID, // invalid variant
     KS_ERR_ASM_DIRECTIVE_EQU,   // invalid equal directive
+    KS_ERR_ASM_DIRECTIVE_INVALID,   // (generic) invalid directive
+    KS_ERR_ASM_VARIANT_INVALID, // invalid variant
     KS_ERR_ASM_EXPR_BRACKET,    // brackets expression not supported on this target
     KS_ERR_ASM_SYMBOL_MODIFIER, // unexpected symbol modifier following '@'
     KS_ERR_ASM_SYMBOL_REDEFINED, // invalid symbol redefinition
@@ -122,6 +123,7 @@ typedef enum ks_err {
     KS_ERR_ASM_MACRO_ARGS,      // too many positional arguments
     KS_ERR_ASM_MACRO_LEVELS_EXCEED, // macros cannot be nested more than 20 levels deep
     KS_ERR_ASM_MACRO_STR,    // invalid macro string
+    KS_ERR_ASM_MACRO_INVALID,    // invalid macro (generic error)
     KS_ERR_ASM_ESC_BACKSLASH,   // unexpected backslash at end of escaped string
     KS_ERR_ASM_ESC_OCTAL,       // invalid octal escape sequence  (out of range)
     KS_ERR_ASM_ESC_SEQUENCE,         // invalid escape sequence (unrecognized character)

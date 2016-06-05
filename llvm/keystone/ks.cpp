@@ -116,6 +116,8 @@ const char *ks_strerror(ks_err code)
             return "Macros cannot be nested more than 20 levels deep (KS_ERR_ASM_MACRO_LEVELS_EXCEED)";
         case KS_ERR_ASM_MACRO_STR:         // invalid macro string
             return "Invalid macro string (KS_ERR_ASM_MACRO_STR)";
+        case KS_ERR_ASM_MACRO_INVALID:         // invalid macro string
+            return "Invalid macro (KS_ERR_ASM_MACRO_INVALID)";
         case KS_ERR_ASM_ESC_BACKSLASH:   // unexpected backslash at end of escaped string
             return "Unexpected backslash at end of escaped string (KS_ERR_ASM_ESC_BACKSLASH)";
         case KS_ERR_ASM_ESC_OCTAL:       // invalid octal escape sequence (out of range)
@@ -136,6 +138,8 @@ const char *ks_strerror(ks_err code)
             return "Invalid label (KS_ERR_ASM_LABEL_INVALID)";
         case KS_ERR_ASM_FRAGMENT_INVALID:
             return "Invalid fragment (KS_ERR_ASM_FRAGMENT_INVALID)";
+        case KS_ERR_ASM_DIRECTIVE_INVALID:
+            return "Invalid directive (KS_ERR_ASM_DIRECTIVE_INVALID)";
     }
 }
 
