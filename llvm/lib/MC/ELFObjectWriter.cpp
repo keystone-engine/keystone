@@ -365,7 +365,8 @@ uint64_t ELFObjectWriter::SymbolValue(const MCSymbol &Sym,
     return Sym.getCommonAlignment();
 
   uint64_t Res;
-  if (!Layout.getSymbolOffset(Sym, Res))
+  bool valid;
+  if (!Layout.getSymbolOffset(Sym, Res, valid))
     return 0;
 
   if (Layout.getAssembler().isThumbFunc(&Sym))
@@ -657,7 +658,8 @@ void ELFObjectWriter::recordRelocation(MCAssembler &Asm,
       return;
     }
 
-    uint64_t SymBOffset = Layout.getSymbolOffset(SymB);
+    bool valid;
+    uint64_t SymBOffset = Layout.getSymbolOffset(SymB, valid);
     uint64_t K = SymBOffset - FixupOffset;
     IsPCRel = true;
     C -= K;
@@ -680,8 +682,10 @@ void ELFObjectWriter::recordRelocation(MCAssembler &Asm,
 
   unsigned Type = getRelocType(Ctx, Target, Fixup, IsPCRel);
   bool RelocateWithSymbol = shouldRelocateWithSymbol(Asm, RefA, SymA, C, Type);
-  if (!RelocateWithSymbol && SymA && !SymA->isUndefined())
-    C += Layout.getSymbolOffset(*SymA);
+  if (!RelocateWithSymbol && SymA && !SymA->isUndefined()) {
+    bool valid;
+    C += Layout.getSymbolOffset(*SymA, valid);
+  }
 
   uint64_t Addend = 0;
   if (hasRelocationAddend()) {

@@ -115,15 +115,20 @@ static bool getLabelOffset(const MCAsmLayout &Layout, const MCSymbol &S,
 }
 
 static bool getSymbolOffsetImpl(const MCAsmLayout &Layout, const MCSymbol &S,
-                                bool ReportError, uint64_t &Val) {
+                                bool ReportError, uint64_t &Val, bool &valid)
+{
+  valid = true;
   if (!S.isVariable())
     return getLabelOffset(Layout, S, ReportError, Val);
 
   // If SD is a variable, evaluate it.
   MCValue Target;
-  if (!S.getVariableValue()->evaluateAsValue(Target, Layout))
-    report_fatal_error("unable to evaluate offset for variable '" +
-                       S.getName() + "'");
+  if (!S.getVariableValue()->evaluateAsValue(Target, Layout)) {
+    //report_fatal_error("unable to evaluate offset for variable '" +
+    //                   S.getName() + "'");
+    valid = false;
+    return false;
+  }
 
   uint64_t Offset = Target.getConstant();
 
@@ -147,13 +152,15 @@ static bool getSymbolOffsetImpl(const MCAsmLayout &Layout, const MCSymbol &S,
   return true;
 }
 
-bool MCAsmLayout::getSymbolOffset(const MCSymbol &S, uint64_t &Val) const {
-  return getSymbolOffsetImpl(*this, S, false, Val);
+bool MCAsmLayout::getSymbolOffset(const MCSymbol &S, uint64_t &Val, bool &valid) const
+{
+  return getSymbolOffsetImpl(*this, S, false, Val, valid);
 }
 
-uint64_t MCAsmLayout::getSymbolOffset(const MCSymbol &S) const {
+uint64_t MCAsmLayout::getSymbolOffset(const MCSymbol &S, bool &valid) const
+{
   uint64_t Val;
-  getSymbolOffsetImpl(*this, S, true, Val);
+  getSymbolOffsetImpl(*this, S, true, Val, valid);
   return Val;
 }
 

@@ -194,17 +194,28 @@ bool MCAssembler::evaluateFixup(const MCAsmLayout &Layout,
 
   if (const MCSymbolRefExpr *A = Target.getSymA()) {
     const MCSymbol &Sym = A->getSymbol();
-    if (Sym.isDefined())
-      Value += Layout.getSymbolOffset(Sym);
-    else {
+    bool valid;
+    if (Sym.isDefined()) {
+      Value += Layout.getSymbolOffset(Sym, valid);
+      if (!valid) {
+        KsError = KS_ERR_ASM_FIXUP_INVALID;
+        return false;
+      }
+    } else {
         KsError = KS_ERR_ASM_SYMBOL_MISSING;
         return false;
     }
   }
   if (const MCSymbolRefExpr *B = Target.getSymB()) {
     const MCSymbol &Sym = B->getSymbol();
-    if (Sym.isDefined())
-      Value -= Layout.getSymbolOffset(Sym);
+    bool valid;
+    if (Sym.isDefined()) {
+      Value -= Layout.getSymbolOffset(Sym, valid);
+      if (!valid) {
+        KsError = KS_ERR_ASM_FIXUP_INVALID;
+        return false;
+      }
+    }
   }
 
   bool ShouldAlignPC = Backend.getFixupKindInfo(Fixup.getKind()).Flags &
@@ -289,7 +300,7 @@ uint64_t MCAssembler::computeFragmentSize(const MCAsmLayout &Layout,
     int64_t TargetLocation = Value.getConstant();
     if (const MCSymbolRefExpr *A = Value.getSymA()) {
       uint64_t Val;
-      if (!Layout.getSymbolOffset(A->getSymbol(), Val)) {
+      if (!Layout.getSymbolOffset(A->getSymbol(), Val, valid)) {
         //report_fatal_error("expected absolute expression");
         valid = false;
         return 0;
