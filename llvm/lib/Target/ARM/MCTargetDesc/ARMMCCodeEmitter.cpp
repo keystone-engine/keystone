@@ -653,7 +653,8 @@ getThumbBLXTargetOpValue(const MCInst &MI, unsigned OpIdx,
   if (MO.isExpr())
     return ::getBranchTargetOpValue(MI, OpIdx, ARM::fixup_arm_thumb_blx,
                                     Fixups, STI);
-  return encodeThumbBLOffset(MO.getImm() - MI.getAddress() - 4);
+  // target address is rounded down to 4 byte aligned
+  return encodeThumbBLOffset(MO.getImm() - ((MI.getAddress() + 4) & -4));
 }
 
 /// getThumbBRTargetOpValue - Return encoding info for Thumb branch target.
