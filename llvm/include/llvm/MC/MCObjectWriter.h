@@ -95,7 +95,7 @@ public:
   bool isSymbolRefDifferenceFullyResolved(const MCAssembler &Asm,
                                           const MCSymbolRefExpr *A,
                                           const MCSymbolRefExpr *B,
-                                          bool InSet) const;
+                                          bool InSet, bool &valid) const;
 
   virtual bool isSymbolRefDifferenceFullyResolvedImpl(const MCAssembler &Asm,
                                                       const MCSymbol &A,
