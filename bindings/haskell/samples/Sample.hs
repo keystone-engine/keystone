@@ -15,12 +15,12 @@ testKs :: Architecture
        -> String
        -> Maybe OptionValue
        -> IO ()
-testKs arch mode assembly syntax = do
+testKs arch mode assembly maybeSyntax = do
     result <- runAssembler $ do
         ks <- open arch mode
-        case syntax of
-            Just syn -> option ks OptSyntax syn
-            Nothing  -> return ()
+        case maybeSyntax of
+            Just syntax -> option ks OptSyntax syntax
+            Nothing     -> return ()
         (encode, count) <- assemble ks assembly Nothing
         return (encode, count)
     case result of
