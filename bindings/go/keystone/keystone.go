@@ -4,7 +4,7 @@
 
 package keystone
 
-// #include "keystone.h"
+// #include <keystone/keystone.h>
 import "C"
 
 type Architecture uint
