@@ -1,12 +1,6 @@
 # keystone 
 Go bindings for the [keystone](http://www.keystone-engine.org/) engine.
 
-## Configuration
-```
-export CGO_CFLAGS -I../../../include/keystone/
-export CGO_LDFLAGS "-L../../../build/llvm/lib/ -lkeystone"
-```
-
 ## Sample
 ```go
 package main
