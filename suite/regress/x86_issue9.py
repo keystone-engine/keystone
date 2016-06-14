@@ -26,7 +26,7 @@ class TestX86(regress.RegressTest):
         encoding, _ = ks.asm(b"MOV DWORD PTR [ESP-0x218],0x2080000")
         self.assertEqual(encoding, [ 0xC7, 0x84, 0x24, 0xE8, 0xFD, 0xFF, 0xFF, 0x00, 0x00, 0x08, 0x02 ])
 
-        encoding, _ = ks.asm(b"JMP 0x7FFCAA022104", 0x7FFCAA022104)
+        encoding, _ = ks.asm(b"JMP 0xAA022104", 0xAA022104)
         self.assertEqual(encoding, [ 0xeb, 0xfe ])
 
 

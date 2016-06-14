@@ -293,19 +293,12 @@ static bool HasSecRelSymbolRef(const MCExpr *Expr) {
 }
 
 // return false if Imm value is invalid for a given size
-static bool validImmRange(uint64_t Imm, unsigned int Size)
+static bool validImmRange(int64_t Imm, unsigned int Size)
 {
+    if (Imm > 0 && Imm > 0xffffffff)
+        return false;
+
     return true;
-    switch(Size) {
-        default:
-            return true;
-        case 1:
-            return (Imm <= 0xff);
-        case 2:
-            return (Imm <= 0xffff);
-        case 4:
-            return (Imm <= 0xffffffff);
-    }
 }
 
 void X86MCCodeEmitter::
@@ -1432,7 +1425,7 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
     break;
 
   case X86II::AddRegFrm:
-    //printf(">> hh\n");
+    //printf(">> hh = %x\n", BaseOpcode + GetX86RegNum(MI.getOperand(CurOp)));
     EmitByte(BaseOpcode + GetX86RegNum(MI.getOperand(CurOp++)), CurByte, OS);
     break;
 

@@ -1235,7 +1235,8 @@ bool X86AsmParser::VerifyAndAdjustOperands(OperandVector &OrigOperands,
   return false;
 }
 
-std::unique_ptr<X86Operand> X86AsmParser::ParseOperand(std::string Mnem, unsigned int &KsError) {
+std::unique_ptr<X86Operand> X86AsmParser::ParseOperand(std::string Mnem, unsigned int &KsError)
+{
   if (isParsingIntelSyntax())
     return ParseIntelOperand(Mnem, KsError);
   return ParseATTOperand(KsError);
