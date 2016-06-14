@@ -71,6 +71,7 @@ roundtrip_tests = [
     ("x64", "vpblendmq zmm26 {k7}, zmm7, zmmword ptr [rdi - 0x40]"),
     ("x64", "vpcmpeqd k1 {k3}, zmm9, zmmword ptr [rax + 0xe80]"),
     ("x64", "vpcmpgtd k7 {k4}, zmm9, zmmword ptr [r13 - 0x1e80]"),
+    ("x64", "vpermi2d zmm30 {k5}, zmm26, zmmword ptr [r13 - 0x19c0]"),
     ("x64", "vpermi2pd zmm30 {k2} {z}, zmm19, zmmword ptr [rcx + 0x200]"),
     ("x64", "vpermi2ps zmm3 {k3} {z}, zmm28, zmmword ptr [r8 + 0xcc0]"),
     ("x64", "vpermi2q zmm3 {k4}, zmm6, zmmword ptr [r11 + 0x1b00]"),
@@ -99,6 +100,7 @@ roundtrip_tests = [
     ("x64", "vpxorq zmm21 {k2}, zmm1, zmmword ptr [rbx - 0x1180]"),
     ("x64", "vsubpd zmm6 {k1}, zmm19, zmmword ptr [rdi - 0x1100]"),
     ("x64", "vsubps zmm15 {k1} {z}, zmm0, zmmword ptr [r15 - 0x640]"),
+    ("x64", "vunpcklpd zmm8, zmm15, zmmword ptr [r8 + 0x1600]"),
     ("x64", "xchg rax, rax"),
     ("x64", "xor qword ptr [esi + 0x1df54066], 0x6c"),
 ]
