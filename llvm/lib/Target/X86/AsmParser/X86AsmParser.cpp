@@ -2127,7 +2127,8 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseATTOperand(unsigned int &KsError)
 }
 
 bool X86AsmParser::HandleAVX512Operand(OperandVector &Operands,
-                                       const MCParsedAsmOperand &Op) {
+                                       const MCParsedAsmOperand &Op)
+{
   MCAsmParser &Parser = getParser();
   if(getSTI().getFeatureBits()[X86::FeatureAVX512]) {
     if (getLexer().is(AsmToken::LCurly)) {

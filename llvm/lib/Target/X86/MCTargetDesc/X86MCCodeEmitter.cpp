@@ -161,7 +161,7 @@ public:
                            const MCInst &MI, const MCInstrDesc &Desc,
                            raw_ostream &OS) const;
 
-  void EmitSegmentOverridePrefix(unsigned &CurByte, unsigned SegOperand,
+  bool EmitSegmentOverridePrefix(unsigned &CurByte, unsigned SegOperand,
                                  const MCInst &MI, raw_ostream &OS, int BaseReg = 0) const;
 
   void EmitOpcodePrefix(uint64_t TSFlags, unsigned &CurByte, int MemOperand,
@@ -1144,14 +1144,19 @@ static unsigned DetermineREXPrefix(const MCInst &MI, uint64_t TSFlags,
 }
 
 /// EmitSegmentOverridePrefix - Emit segment override opcode prefix as needed
-void X86MCCodeEmitter::EmitSegmentOverridePrefix(unsigned &CurByte,
+// return true on error
+bool X86MCCodeEmitter::EmitSegmentOverridePrefix(unsigned &CurByte,
                                                  unsigned SegOperand,
                                                  const MCInst &MI,
                                                  raw_ostream &OS,
-                                                 int BaseReg) const {
+                                                 int BaseReg) const
+{
+  if (!MI.getOperand(SegOperand).isReg())
+      return true;
+
   // Check for explicit segment override on memory operand.
   switch (MI.getOperand(SegOperand).getReg()) {
-  default: llvm_unreachable("Unknown segment register!");
+  default: return true;
   case 0: break;
   case X86::CS: EmitByte(0x2E, CurByte, OS); break;
   case X86::SS:
@@ -1164,6 +1169,8 @@ void X86MCCodeEmitter::EmitSegmentOverridePrefix(unsigned &CurByte,
   case X86::FS: EmitByte(0x64, CurByte, OS); break;
   case X86::GS: EmitByte(0x65, CurByte, OS); break;
   }
+
+  return false;
 }
 
 /// EmitOpcodePrefix - Emit all instruction prefixes prior to the opcode.
@@ -1274,8 +1281,11 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
     SegReg = Seg.getReg();
 
     if ((SegReg != X86::SS) || (BaseReg != X86::ESP && BaseReg != X86::EBP)) {
-        EmitSegmentOverridePrefix(CurByte, MemoryOperand+X86::AddrSegmentReg,
-                MI, OS);
+        if (EmitSegmentOverridePrefix(CurByte, MemoryOperand+X86::AddrSegmentReg,
+                MI, OS)) {
+            KsError = KS_ERR_ASM_INVALIDOPERAND;
+            return;
+        }
     }
   }
 

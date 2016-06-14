@@ -761,7 +761,8 @@ size_t AsmParser::Run(bool NoInitialTextSection, uint64_t Address, bool NoFinali
   return count;
 }
 
-void AsmParser::checkForValidSection() {
+void AsmParser::checkForValidSection()
+{
 #if 0
   if (!ParsingInlineAsm && !getStreamer().getCurrentSection().first) {
     TokError("expected section directive before assembly directive");
@@ -771,7 +772,8 @@ void AsmParser::checkForValidSection() {
 }
 
 /// \brief Throw away the rest of the line for testing purposes.
-void AsmParser::eatToEndOfStatement() {
+void AsmParser::eatToEndOfStatement()
+{
   while (Lexer.isNot(AsmToken::EndOfStatement) && Lexer.isNot(AsmToken::Eof))
     Lex();
 
@@ -1947,7 +1949,8 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
 
 /// eatToEndOfLine uses the Lexer to eat the characters to the end of the line
 /// since they may not be able to be tokenized to get to the end of line token.
-void AsmParser::eatToEndOfLine() {
+void AsmParser::eatToEndOfLine()
+{
   if (!Lexer.is(AsmToken::EndOfStatement))
     Lexer.LexUntilEndOfLine();
   // Eat EOL.
