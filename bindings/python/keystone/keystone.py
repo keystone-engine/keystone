@@ -110,9 +110,12 @@ _setup_prototype(_ks, "ks_free", None, POINTER(c_ubyte))
 class KsError(Exception):
     def __init__(self, errno):
         self.errno = errno
+        self.message = _ks.ks_strerror(self.errno)
+        if not isinstance(self.message, str) and isinstance(self.message, bytes):
+            self.message = self.message.decode('utf-8')
 
     def __str__(self):
-        return _ks.ks_strerror(self.errno)
+        return self.message
 
 
 # return the core's version
@@ -189,6 +192,9 @@ class Ks(object):
         encode = POINTER(c_ubyte)()
         encode_size = c_size_t()
         stat_count = c_size_t()
+        if not isinstance(string, bytes) and isinstance(string, str):
+            string = string.encode('ascii')
+
         status = _ks.ks_asm(self._ksh, string, addr, byref(encode), byref(encode_size), byref(stat_count))
         if (status != 0):
             errno = _ks.ks_errno(self._ksh)
