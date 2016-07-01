@@ -167,7 +167,7 @@ private:
       InfixOperatorStack.push_back(Op);
     }
 
-    int64_t execute(unsigned int &KsError) { // qq
+    int64_t execute(unsigned int &KsError) {
       // Push any remaining operators onto the postfix stack.
       while (!InfixOperatorStack.empty()) {
         InfixCalculatorTok StackOp = InfixOperatorStack.pop_back_val();
@@ -2584,8 +2584,14 @@ bool X86AsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
          Parser.eatToEndOfStatement();
          return true;
       }
-      // check for comma and eat it
-      if (getLexer().is(AsmToken::Comma))
+      // for LJMP, check for ':'. otherwise, check for comma and eat it
+      if (Name.startswith("ljmp") || Name.startswith("ljmp")) {
+          if (getLexer().is(AsmToken::Colon)) {
+              //Parser.Lex();
+              Operands.push_back(X86Operand::CreateToken(":", consumeToken()));
+          } else
+              break;
+      } else if (getLexer().is(AsmToken::Comma))
         Parser.Lex();
       else
         break;
