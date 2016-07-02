@@ -2584,8 +2584,8 @@ bool X86AsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
          Parser.eatToEndOfStatement();
          return true;
       }
-      // for LJMP, check for ':'. otherwise, check for comma and eat it
-      if (Name.startswith("ljmp") || Name.startswith("ljmp")) {
+      // for LJMP/LCALL, check for ':'. otherwise, check for comma and eat it
+      if (Name.startswith("ljmp") || Name.startswith("lcall")) {
           if (getLexer().is(AsmToken::Colon)) {
               //Parser.Lex();
               Operands.push_back(X86Operand::CreateToken(":", consumeToken()));
