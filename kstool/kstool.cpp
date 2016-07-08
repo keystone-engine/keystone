@@ -15,7 +15,7 @@
 static void usage(char *prog)
 {
     printf("Kstool v%s for Keystone Assembler Engine (www.keystone-engine.org)\nBy Nguyen Anh Quynh, 2016\n\n", VERSION);
-    printf("Syntax: %s <arch+mode> <assembly-string> or cat <asmfile> | %s <arch+mode> \n", prog, prog);
+    printf("Syntax: %s <arch+mode> <assembly-string> <start-address> or cat <asmfile> | %s <arch+mode> <start-address>\n", prog, prog);
     printf("\nThe following <arch+mode> options are supported:\n");
 
     if (ks_arch_supported(KS_ARCH_X86)) {
@@ -77,13 +77,14 @@ int main(int argc, char **argv)
     ks_engine *ks;
     ks_err err = KS_ERR_ARCH;
     char *mode, *assembly = NULL;
+    uint64_t start_addr;
     char *input = NULL;
     size_t count;
     unsigned char *insn;
     size_t size;
 
 #if !defined(WIN32) && !defined(WIN64) && !defined(_WIN32) && !defined(_WIN64)
-    if (argc == 2) {
+    if (argc == 2) {	//only assembly
         mode = argv[1];
 
         int flags;
@@ -113,13 +114,18 @@ int main(int argc, char **argv)
             usage(argv[0]);
             return -1;
         }
-    } else if (argc == 3) {
+    } else if (argc == 3 || argc == 4) {//assembly + line to be loaded
 #else
     if (argc == 3) {
 #endif
-        mode = argv[1];
-        assembly = argv[2];
-    } else {
+        mode = argv[1];		//the architecture would be argument 1
+        assembly = argv[2];	//the assembly string would be argument 2
+	start_addr = 0;
+    } else if (argc == 4) {
+	mode = argv[1];
+	assembly = argv[2];
+	start_addr = strtoull(argv[3], NULL,16);
+    }else {
         usage(argv[0]);
         return -1;
     }
@@ -250,7 +256,7 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    if (ks_asm(ks, assembly, 0, &insn, &size, &count)) {
+    if (ks_asm(ks, assembly, start_addr, &insn, &size, &count)) {
         printf("ERROR: failed on ks_asm() with count = %lu, error = '%s' (code = %u)\n", count, ks_strerror(ks_errno(ks)), ks_errno(ks));
     } else {
         size_t i;
