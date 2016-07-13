@@ -14,7 +14,7 @@
 
 #include <keystone/keystone.h>
 
-#define VERSION "0.9"
+#define VERSION "0.9.1"
 
 static void usage(char *prog)
 {
