@@ -19,7 +19,7 @@
 static void usage(char *prog)
 {
     printf("Kstool v%s for Keystone Assembler Engine (www.keystone-engine.org)\nBy Nguyen Anh Quynh, 2016\n\n", VERSION);
-    printf("Syntax: %s <arch+mode> <assembly-string> [start-address-in-hex-format] or cat <asmfile> | %s <arch+mode> [start-address-in-hex-format]\n", prog, prog);
+    printf("Syntax: %s <arch+mode> <assembly-string> [start-address-in-hex-format]\n", prog);
     printf("\nThe following <arch+mode> options are supported:\n");
 
     if (ks_arch_supported(KS_ARCH_X86)) {
