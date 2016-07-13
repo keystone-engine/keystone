@@ -56,6 +56,9 @@ rust: FORCE
 go: FORCE
 	cd go && $(MAKE)
 
+ocaml: FORCE
+	cd ocaml && $(MAKE)
+
 sample_diff: FORCE
 	$(DIFF) $(SAMPLE_ARM)_e $(SAMPLE_ARM)_o
 	$(DIFF) $(SAMPLE_ARM64)_e $(SAMPLE_ARM64)_o
@@ -71,6 +74,7 @@ clean:
 	cd go && $(MAKE) clean
 	cd nodejs && $(MAKE) clean
 	cd ruby && $(MAKE) clean
+	cd ocaml && $(MAKE) clean
 
 check:
 	cd python && $(MAKE) check
