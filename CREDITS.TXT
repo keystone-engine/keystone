@@ -44,4 +44,4 @@ Sascha Schirra: Ruby binding.
 Remco Verhoef: Go & Rust bindings.
 Adrian Herrera: Haskell binding.
 practicalswift: Various cool bugs found by fuzzing.
-Aziem Chawdhary: Ocaml binding.
+Aziem Chawdhary: OCaml binding.
