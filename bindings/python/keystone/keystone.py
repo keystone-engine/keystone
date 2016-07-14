@@ -18,18 +18,12 @@ if not hasattr(sys.modules[__name__], '__file__'):
 
 _lib_path = split(__file__)[0]
 _all_libs = ('keystone.dll', 'libkeystone.so', 'libkeystone.dylib')
-# Windows DLL in dependency order
-_all_windows_dlls = ("libwinpthread-1.dll", "libgcc_s_seh-1.dll", "libgcc_s_dw2-1.dll",  "libiconv-2.dll", "libintl-8.dll", "libglib-2.0-0.dll")
 _found = False
 
 for _lib in _all_libs:
     try:
-        if _lib == 'keystone.dll':
-            for dll in _all_windows_dlls:    # load all the rest DLLs first
-                _lib_file = join(_lib_path, dll)
-                if exists(_lib_file):
-                    cdll.LoadLibrary(_lib_file)
         _lib_file = join(_lib_path, _lib)
+        #print(">> 2: Trying to load %s" %_lib_file);
         _ks = cdll.LoadLibrary(_lib_file)
         _found = True
         break
@@ -52,12 +46,6 @@ if _found == False:
     _lib_path = distutils.sysconfig.get_python_lib()
     for _lib in _all_libs:
         try:
-            if _lib == 'keystone.dll':
-                for dll in _all_windows_dlls:    # load all the rest DLLs first
-                    _lib_file = join(_lib_path, 'keystone', dll)
-                    if exists(_lib_file):
-                        #print(">> 2: Trying to load %s" %_lib_file);
-                        cdll.LoadLibrary(_lib_file)
             _lib_file = join(_lib_path, 'keystone', _lib)
             #print(">> 2: Trying to load %s" %_lib_file);
             _ks = cdll.LoadLibrary(_lib_file)
