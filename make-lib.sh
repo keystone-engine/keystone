@@ -3,7 +3,7 @@
 # Build static library of Keystone Engine
 # syntax: make-lib.sh [debug] [macos-universal]
 
-function usage()
+usage()
 {
   echo ""
   echo "Syntax:  make-lib.sh [debug] [macos-universal]"

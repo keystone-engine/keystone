@@ -3,7 +3,7 @@
 # Build shared library of Keystone Engine
 # syntax: make-share.sh [debug] [macos-universal]
 
-function usage()
+usage()
 {
   echo ""
   echo "Syntax:  make-share.sh [debug] [macos-universal]"
