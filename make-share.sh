@@ -21,10 +21,9 @@ while [ "$1" != "" ]; do
   case $1 in
     debug)
       BUILDTYPE='Debug'
-      ARCH=''	# do not build MacOS universal binaries in debug mode
       ;;
     macos-no-universal)
-      ARCH=''	# do not build MacOS universal binaries in debug mode
+      ARCH=''	# do not build MacOS universal binaries
       ;;
     *)
       echo "ERROR: unknown parameter \"$1\""
