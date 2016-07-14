@@ -8,21 +8,23 @@ usage()
   echo ""
   echo "Syntax:  make-share.sh [debug] [macos-universal]"
   echo "\tdebug:           build with debug info"
-  echo "\tmacos-universal: build MacOS universal binaries"
+  echo "\tmacos-no-universal: do not build MacOS universal binaries"
   echo ""
 }
 
 BUILDTYPE='Release'
-MACOS_UNIVERSAL=''
-ARCH=''
+
+# on MacOS, build universal binaries by default
+ARCH='i386;x86_64'
 
 while [ "$1" != "" ]; do
   case $1 in
     debug)
       BUILDTYPE='Debug'
+      ARCH=''	# do not build MacOS universal binaries in debug mode
       ;;
-    macos-universal)
-      ARCH='i386;x86_64'
+    macos-no-universal)
+      ARCH=''	# do not build MacOS universal binaries in debug mode
       ;;
     *)
       echo "ERROR: unknown parameter \"$1\""

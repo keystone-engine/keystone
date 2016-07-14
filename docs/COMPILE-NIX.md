@@ -22,11 +22,6 @@ For Windows, see [COMPILE-WINDOWS.md](COMPILE-WINDOWS.md)
         $ cd build
         $ ../make-share.sh
 
-   On Mac OS, to build universal binaries including both 32-bit & 64-bit code,
-   replace the last line with:
-
-        $ ../make-share.sh macos-universal
-
    In the case you want to compile with all the debug information, replace the
    last line with:
 
@@ -45,11 +40,6 @@ For Windows, see [COMPILE-WINDOWS.md](COMPILE-WINDOWS.md)
         $ mkdir build
         $ cd build
         $ ../make-lib.sh
-
-   On Mac OS, to build universal binaries including both 32-bit & 64-bit code,
-   replace the last line with:
-
-        $ ../make-lib.sh macos-universal
 
    In the case you want to compile with all the debug information, replace the
    last line with:
