@@ -3,6 +3,9 @@ import sys
 _python2 = sys.version_info[0] < 3
 if _python2:
     range = xrange
+
+PY_EXTRA_VERSION = ".1"
+
 from . import arm_const, arm64_const, mips_const, sparc_const, hexagon_const, ppc_const, systemz_const, x86_const
 from .keystone_const import *
 
@@ -71,7 +74,7 @@ if (_found == False) and (system() == 'Darwin'):
 if _found == False:
     raise ImportError("ERROR: fail to load the dynamic library.")
 
-__version__ = "%s.%s" %(KS_API_MAJOR, KS_API_MINOR) 
+__version__ = "%s.%s%s" %(KS_API_MAJOR, KS_API_MINOR, PY_EXTRA_VERSION)
 
 # setup all the function prototype
 def _setup_prototype(lib, fname, restype, *argtypes):
