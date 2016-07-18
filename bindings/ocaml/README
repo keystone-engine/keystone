@@ -12,13 +12,16 @@ correct location. The default location is
 
 To Build:
 
-1. Install opam
+1. Install opam. Make sure to run eval `opam config env` to make sure
+   environment variables are set properly. 
 
 2. Install necessary packages:
 
    opam install ctypes ctypes-foreign uchar result ocamlfind
 
 4. Run make
+
+5. Test the bindings by running ./test-bindings.native
 
 To rebuild the build files (make, configure etc) run oasis setup
 
