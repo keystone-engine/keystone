@@ -159,7 +159,6 @@ class MipsAsmParser : public MCTargetAsmParser {
   OperandMatchResultTy parseImm(OperandVector &Operands);
   OperandMatchResultTy parseJumpTarget(OperandVector &Operands);
   OperandMatchResultTy parseInvNum(OperandVector &Operands);
-  OperandMatchResultTy parseLSAImm(OperandVector &Operands);
   OperandMatchResultTy parseRegisterPair(OperandVector &Operands);
   OperandMatchResultTy parseMovePRegPair(OperandVector &Operands);
   OperandMatchResultTy parseRegisterList(OperandVector &Operands);
@@ -308,8 +307,6 @@ class MipsAsmParser : public MCTargetAsmParser {
 
   int matchHWRegsRegisterName(StringRef Symbol);
 
-  int matchRegisterByNumber(unsigned RegNum, unsigned RegClass);
-
   int matchFPURegisterName(StringRef Name);
 
   int matchFCCRegisterName(StringRef Name);
@@ -321,8 +318,6 @@ class MipsAsmParser : public MCTargetAsmParser {
   int matchMSA128CtrlRegisterName(StringRef Name);
 
   unsigned getReg(int RC, int RegNo);
-
-  unsigned getGPR(int RegNo);
 
   /// Returns the internal register number for the current AT. Also checks if
   /// the current AT is unavailable (set to $0) and gives an error if it is.
@@ -4042,19 +4037,6 @@ unsigned MipsAsmParser::getReg(int RC, int RegNo) {
   return *(getContext().getRegisterInfo()->getRegClass(RC).begin() + RegNo);
 }
 
-unsigned MipsAsmParser::getGPR(int RegNo) {
-  return getReg(isGP64bit() ? Mips::GPR64RegClassID : Mips::GPR32RegClassID,
-                RegNo);
-}
-
-int MipsAsmParser::matchRegisterByNumber(unsigned RegNum, unsigned RegClass) {
-  if (RegNum >
-      getContext().getRegisterInfo()->getRegClass(RegClass).getNumRegs() - 1)
-    return -1;
-
-  return getReg(RegClass, RegNum);
-}
-
 bool MipsAsmParser::parseOperand(OperandVector &Operands, StringRef Mnemonic, unsigned int &ErrorCode)
 {
   MCAsmParser &Parser = getParser();
@@ -4613,46 +4595,6 @@ MipsAsmParser::parseInvNum(OperandVector &Operands) {
   SMLoc E = SMLoc::getFromPointer(Parser.getTok().getLoc().getPointer() - 1);
   Operands.push_back(MipsOperand::CreateImm(
       MCConstantExpr::create(0 - Val, getContext()), S, E, *this));
-  return MatchOperand_Success;
-}
-
-MipsAsmParser::OperandMatchResultTy
-MipsAsmParser::parseLSAImm(OperandVector &Operands) {
-  MCAsmParser &Parser = getParser();
-  switch (getLexer().getKind()) {
-  default:
-    return MatchOperand_NoMatch;
-  case AsmToken::LParen:
-  case AsmToken::Plus:
-  case AsmToken::Minus:
-  case AsmToken::Integer:
-    break;
-  }
-
-  const MCExpr *Expr;
-  SMLoc S = Parser.getTok().getLoc();
-
-  if (getParser().parseExpression(Expr))
-    return MatchOperand_ParseFail;
-
-  int64_t Val;
-  if (!Expr->evaluateAsAbsolute(Val)) {
-    Error(S, "expected immediate value");
-    return MatchOperand_ParseFail;
-  }
-
-  // The LSA instruction allows a 2-bit unsigned immediate. For this reason
-  // and because the CPU always adds one to the immediate field, the allowed
-  // range becomes 1..4. We'll only check the range here and will deal
-  // with the addition/subtraction when actually decoding/encoding
-  // the instruction.
-  if (Val < 1 || Val > 4) {
-    Error(S, "immediate not in range (1..4)");
-    return MatchOperand_ParseFail;
-  }
-
-  Operands.push_back(
-      MipsOperand::CreateImm(Expr, S, Parser.getTok().getLoc(), *this));
   return MatchOperand_Success;
 }
 

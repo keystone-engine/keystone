@@ -69,7 +69,6 @@ public:
 };
 
 class ELFObjectWriter : public MCObjectWriter {
-    static bool isFixupKindPCRel(const MCAssembler &Asm, unsigned Kind);
     static uint64_t SymbolValue(const MCSymbol &Sym, const MCAsmLayout &Layout);
     static bool isInSymtab(const MCAsmLayout &Layout, const MCSymbolELF &Symbol,
                            bool Used, bool Renamed);
@@ -165,8 +164,6 @@ class ELFObjectWriter : public MCObjectWriter {
       else
         support::endian::Writer<support::big>(getStream()).write(Val);
     }
-
-    void writeHeader(const MCAssembler &Asm);
 
     void writeSymbol(SymbolTableWriter &Writer, uint32_t StringIndex,
                      ELFSymbolData &MSD, const MCAsmLayout &Layout);
@@ -296,68 +293,8 @@ void SymbolTableWriter::writeSymbol(uint32_t name, uint8_t info, uint64_t value,
   ++NumWritten;
 }
 
-bool ELFObjectWriter::isFixupKindPCRel(const MCAssembler &Asm, unsigned Kind) {
-  const MCFixupKindInfo &FKI =
-    Asm.getBackend().getFixupKindInfo((MCFixupKind) Kind);
-
-  return FKI.Flags & MCFixupKindInfo::FKF_IsPCRel;
-}
-
 ELFObjectWriter::~ELFObjectWriter()
 {}
-
-// Emit the ELF header.
-void ELFObjectWriter::writeHeader(const MCAssembler &Asm) {
-  // ELF Header
-  // ----------
-  //
-  // Note
-  // ----
-  // emitWord method behaves differently for ELF32 and ELF64, writing
-  // 4 bytes in the former and 8 in the latter.
-
-  writeBytes(ELF::ElfMagic); // e_ident[EI_MAG0] to e_ident[EI_MAG3]
-
-  write8(is64Bit() ? ELF::ELFCLASS64 : ELF::ELFCLASS32); // e_ident[EI_CLASS]
-
-  // e_ident[EI_DATA]
-  write8(isLittleEndian() ? ELF::ELFDATA2LSB : ELF::ELFDATA2MSB);
-
-  write8(ELF::EV_CURRENT);        // e_ident[EI_VERSION]
-  // e_ident[EI_OSABI]
-  write8(TargetObjectWriter->getOSABI());
-  write8(0);                  // e_ident[EI_ABIVERSION]
-
-  WriteZeros(ELF::EI_NIDENT - ELF::EI_PAD);
-
-  write16(ELF::ET_REL);             // e_type
-
-  write16(TargetObjectWriter->getEMachine()); // e_machine = target
-
-  write32(ELF::EV_CURRENT);         // e_version
-  WriteWord(0);                    // e_entry, no entry point in .o file
-  WriteWord(0);                    // e_phoff, no program header for .o
-  WriteWord(0);                     // e_shoff = sec hdr table off in bytes
-
-  // e_flags = whatever the target wants
-  write32(Asm.getELFHeaderEFlags());
-
-  // e_ehsize = ELF header size
-  write16(is64Bit() ? sizeof(ELF::Elf64_Ehdr) : sizeof(ELF::Elf32_Ehdr));
-
-  write16(0);                  // e_phentsize = prog header entry size
-  write16(0);                  // e_phnum = # prog header entries = 0
-
-  // e_shentsize = Section header entry size
-  write16(is64Bit() ? sizeof(ELF::Elf64_Shdr) : sizeof(ELF::Elf32_Shdr));
-
-  // e_shnum     = # of section header ents
-  write16(0);
-
-  // e_shstrndx  = Section # of '.shstrtab'
-  assert(StringTableIndex < ELF::SHN_LORESERVE);
-  write16(StringTableIndex);
-}
 
 uint64_t ELFObjectWriter::SymbolValue(const MCSymbol &Sym,
                                       const MCAsmLayout &Layout) {
@@ -1172,9 +1109,6 @@ void ELFObjectWriter::writeObject(MCAssembler &Asm,
   SectionIndexMapTy SectionIndexMap;
 
   std::map<const MCSymbol *, std::vector<const MCSectionELF *>> GroupMembers;
-
-  // Write out the ELF header ...
-  //writeHeader(Asm); // qq
 
   // ... then the sections ...
   SectionOffsetsTy SectionOffsets;
