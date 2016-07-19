@@ -14,7 +14,7 @@ usage()
   echo ""
 }
 
-source "$(dirname "$0")"/make-common.sh
+. "$(dirname "$0")"/make-common.sh
 
 cmake -DLLVM_LIBDIR_SUFFIX="$LLVM_LIBDIR_SUFFIX" -DCMAKE_OSX_ARCHITECTURES="$ARCH" -DCMAKE_BUILD_TYPE=$BUILDTYPE -DBUILD_SHARED_LIBS=ON -DLLVM_TARGETS_TO_BUILD="all" -G "Unix Makefiles" ..
 
