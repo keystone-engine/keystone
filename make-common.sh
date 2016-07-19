@@ -5,12 +5,12 @@ ARCH='i386;x86_64'
 
 # Linux FHS wants to install x64 libraries in "lib64"
 # Examples are Fedora, Redhat, Suse.
-LIB_SUFFIX=''
+LLVM_LIBDIR_SUFFIX=''
 
 while [ "$1" != "" ]; do
   case $1 in
-    fhs)
-      LIB_SUFFIX='64'
+    lib64)
+      LLVM_LIBDIR_SUFFIX='64'
       ;;
     debug)
       BUILDTYPE='Debug'

@@ -42,7 +42,7 @@ add_library(keystone
   ks.cpp
 )
 
-install(TARGETS keystone DESTINATION lib)
+install(TARGETS keystone DESTINATION lib${LLVM_LIBDIR_SUFFIX})
 
 set_target_properties(
   keystone
