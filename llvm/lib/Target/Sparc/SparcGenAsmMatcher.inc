@@ -16,7 +16,6 @@
                        const OperandVector &Operands);
   void convertToMapAndConstraints(unsigned Kind,
                            const OperandVector &Operands) override;
-  bool mnemonicIsValid(StringRef Mnemonic, unsigned VariantID);
   unsigned MatchInstructionImpl(const OperandVector &Operands,
                                 MCInst &Inst,
                                 uint64_t &ErrorInfo, bool matchingInlineAsm,
@@ -3614,19 +3613,6 @@ static const MatchEntry MatchTable0[] = {
   { 3152 /* xorcc */, Sparc::XORCCrr, Convert__Reg1_2__Reg1_0__Reg1_1, 0, { MCK_IntRegs, MCK_IntRegs, MCK_IntRegs }, },
   { 3152 /* xorcc */, Sparc::XORCCri, Convert__Reg1_2__Reg1_0__Imm1_1, 0, { MCK_IntRegs, MCK_Imm, MCK_IntRegs }, },
 };
-
-bool SparcAsmParser::
-mnemonicIsValid(StringRef Mnemonic, unsigned VariantID) {
-  // Find the appropriate table for this asm variant.
-  const MatchEntry *Start, *End;
-  switch (VariantID) {
-  default: llvm_unreachable("invalid variant!");
-  case 0: Start = std::begin(MatchTable0); End = std::end(MatchTable0); break;
-  }
-  // Search the table.
-  auto MnemonicRange = std::equal_range(Start, End, Mnemonic, LessOpcode());
-  return MnemonicRange.first != MnemonicRange.second;
-}
 
 unsigned SparcAsmParser::
 MatchInstructionImpl(const OperandVector &Operands,

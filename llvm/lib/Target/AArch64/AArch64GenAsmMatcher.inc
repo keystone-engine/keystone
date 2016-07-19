@@ -16,7 +16,6 @@
                        const OperandVector &Operands);
   void convertToMapAndConstraints(unsigned Kind,
                            const OperandVector &Operands) override;
-  bool mnemonicIsValid(StringRef Mnemonic, unsigned VariantID);
   unsigned MatchInstructionImpl(const OperandVector &Operands,
                                 MCInst &Inst,
                                 uint64_t &ErrorInfo, bool matchingInlineAsm,
@@ -14563,20 +14562,6 @@ static const MatchEntry MatchTable1[] = {
   { 4039 /* zip2 */, AArch64::ZIP2v8i8, Convert__VectorReg641_1__VectorReg641_2__VectorReg641_3, Feature_HasNEON, { MCK__DOT_8b, MCK_VectorReg64, MCK_VectorReg64, MCK_VectorReg64 }, },
   { 4039 /* zip2 */, AArch64::ZIP2v8i16, Convert__VectorReg1281_1__VectorReg1281_2__VectorReg1281_3, Feature_HasNEON, { MCK__DOT_8h, MCK_VectorReg128, MCK_VectorReg128, MCK_VectorReg128 }, },
 };
-
-bool AArch64AsmParser::
-mnemonicIsValid(StringRef Mnemonic, unsigned VariantID) {
-  // Find the appropriate table for this asm variant.
-  const MatchEntry *Start, *End;
-  switch (VariantID) {
-  default: llvm_unreachable("invalid variant!");
-  case 0: Start = std::begin(MatchTable0); End = std::end(MatchTable0); break;
-  case 1: Start = std::begin(MatchTable1); End = std::end(MatchTable1); break;
-  }
-  // Search the table.
-  auto MnemonicRange = std::equal_range(Start, End, Mnemonic, LessOpcode());
-  return MnemonicRange.first != MnemonicRange.second;
-}
 
 unsigned AArch64AsmParser::
 MatchInstructionImpl(const OperandVector &Operands,

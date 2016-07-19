@@ -16,7 +16,6 @@
                        const OperandVector &Operands);
   void convertToMapAndConstraints(unsigned Kind,
                            const OperandVector &Operands) override;
-  bool mnemonicIsValid(StringRef Mnemonic, unsigned VariantID);
   unsigned MatchInstructionImpl(const OperandVector &Operands,
                                 MCInst &Inst,
                                 uint64_t &ErrorInfo, bool matchingInlineAsm,
@@ -2702,19 +2701,6 @@ static const MatchEntry MatchTable0[] = {
   { 6331 /* xrk */, SystemZ::XRK, Convert__GR321_0__GR321_1__GR321_2, Feature_FeatureDistinctOps, { MCK_GR32, MCK_GR32, MCK_GR32 }, },
   { 6335 /* xy */, SystemZ::XY, Convert__GR321_0__Tie0__BDXAddr64Disp203_1, 0, { MCK_GR32, MCK_BDXAddr64Disp20 }, },
 };
-
-bool SystemZAsmParser::
-mnemonicIsValid(StringRef Mnemonic, unsigned VariantID) {
-  // Find the appropriate table for this asm variant.
-  const MatchEntry *Start, *End;
-  switch (VariantID) {
-  default: llvm_unreachable("invalid variant!");
-  case 0: Start = std::begin(MatchTable0); End = std::end(MatchTable0); break;
-  }
-  // Search the table.
-  auto MnemonicRange = std::equal_range(Start, End, Mnemonic, LessOpcode());
-  return MnemonicRange.first != MnemonicRange.second;
-}
 
 unsigned SystemZAsmParser::
 MatchInstructionImpl(const OperandVector &Operands,
