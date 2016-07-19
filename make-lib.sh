@@ -1,39 +1,20 @@
 #!/bin/sh -e
 
 # Build static library of Keystone Engine
-# syntax: make-lib.sh [debug] [macos-universal]
+# syntax: make-lib.sh [debug] [macos-universal] [fhs]
 
 usage()
 {
   echo ""
-  echo "Syntax:  make-lib.sh [debug] [macos-universal]"
+  echo "Syntax:\tmake-lib.sh [debug] [macos-universal] [fhs]\n"
   echo "\tdebug:           build with debug info"
   echo "\tmacos-no-universal: do not build MacOS universal binaries"
+  echo "\tfhs: install Linux x64 libraries in \$PREFIX/lib64"
   echo ""
 }
 
-BUILDTYPE='Release'
+source "$(dirname "$0")"/make-common.sh
 
-# on MacOS, build universal binaries by default
-ARCH='i386;x86_64'
-
-while [ "$1" != "" ]; do
-  case $1 in
-    debug)
-      BUILDTYPE='Debug'
-      ;;
-    macos-no-universal)
-      ARCH=''	# do not build MacOS universal binaries
-      ;;
-    *)
-      echo "ERROR: unknown parameter \"$1\""
-      usage
-      exit 1
-      ;;
-  esac
-  shift
-done
-
-cmake -DCMAKE_OSX_ARCHITECTURES="$ARCH" -DCMAKE_BUILD_TYPE=$BUILDTYPE -DBUILD_SHARED_LIBS=OFF -DLLVM_TARGETS_TO_BUILD="all" -G "Unix Makefiles" ..
+cmake -DLIB_SUFFIX="$LIB_SUFFIX" -DCMAKE_OSX_ARCHITECTURES="$ARCH" -DCMAKE_BUILD_TYPE=$BUILDTYPE -DBUILD_SHARED_LIBS=OFF -DLLVM_TARGETS_TO_BUILD="all" -G "Unix Makefiles" ..
 
 time make -j8
