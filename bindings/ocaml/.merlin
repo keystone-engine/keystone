@@ -1,0 +1,3 @@
+S .
+B ./_build
+PKG ctypes ctypes.foreign

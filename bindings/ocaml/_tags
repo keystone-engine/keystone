@@ -1,0 +1,51 @@
+# OASIS_START
+# DO NOT EDIT (digest: 56649e18999b9e9fdb9cc2eb938aa836)
+# Ignore VCS directories, you can use the same kind of rule outside
+# OASIS_START/STOP if you want to exclude directories that contains
+# useless stuff for the build process
+true: annot, bin_annot
+<**/.svn>: -traverse
+<**/.svn>: not_hygienic
+".bzr": -traverse
+".bzr": not_hygienic
+".hg": -traverse
+".hg": not_hygienic
+".git": -traverse
+".git": not_hygienic
+"_darcs": -traverse
+"_darcs": not_hygienic
+# Library keystone
+"keystone.cmxs": use_keystone
+<*.ml{,i,y}>: oasis_library_keystone_ccopt
+"ffi_generated_stubs.c": oasis_library_keystone_ccopt
+"keystone.cmxa": oasis_library_keystone_cclib
+"libkeystone_stubs.lib": oasis_library_keystone_cclib
+"dllkeystone_stubs.dll": oasis_library_keystone_cclib
+"libkeystone_stubs.a": oasis_library_keystone_cclib
+"dllkeystone_stubs.so": oasis_library_keystone_cclib
+"keystone.cmxa": use_libkeystone_stubs
+"ffi_generated_stubs.c": package(ctypes)
+"ffi_generated_stubs.c": package(ctypes.foreign)
+"ffi_generated_stubs.c": package(ctypes.stubs)
+"ffi_generated_stubs.c": package(result)
+"ffi_generated_stubs.c": package(uchar)
+# Executable ffi_types_stubgen
+"ffi_types_stubgen.native": package(ctypes.stubs)
+# Executable ffi_stubgen
+"ffi_stubgen.native": package(ctypes.foreign)
+"ffi_stubgen.native": package(ctypes.stubs)
+# Executable test_bindings
+"test_bindings.native": oasis_executable_test_bindings_cclib
+"test_bindings.native": package(ctypes)
+"test_bindings.native": package(ctypes.foreign)
+"test_bindings.native": package(ctypes.stubs)
+"test_bindings.native": package(result)
+"test_bindings.native": package(uchar)
+"test_bindings.native": use_keystone
+<*.ml{,i,y}>: package(ctypes)
+<*.ml{,i,y}>: package(ctypes.foreign)
+<*.ml{,i,y}>: package(ctypes.stubs)
+<*.ml{,i,y}>: package(result)
+<*.ml{,i,y}>: package(uchar)
+<*.ml{,i,y}>: use_keystone
+# OASIS_STOP
