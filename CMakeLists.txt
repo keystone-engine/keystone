@@ -44,7 +44,9 @@ if (NOT BUILD_SHARED_LIBS)
     add_subdirectory(kstool)
 endif()
 else()
+if (NOT BUILD_LIBS_ONLY)
     add_subdirectory(kstool)
+endif()
 endif()
 
 # generate and install pkg-config.pc
