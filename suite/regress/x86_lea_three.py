@@ -20,7 +20,7 @@ class TestX86Nasm(regress.RegressTest):
 
         # [eax + b - a] should assemble to [eax + length], or [eax + 6] here
         encoding, count = ks.asm(b"a:\nlea eax, [eax + b - a]\nb:")
-        self.assertEqual(encoding, [ 141, 128, 6, 0, 0, 0 ])
+        self.assertEqual(encoding, [ 0x8d, 0x80, 6, 0, 0, 0 ])
 
 if __name__ == '__main__':
     regress.main()
