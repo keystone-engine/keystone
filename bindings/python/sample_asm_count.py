@@ -6,7 +6,6 @@
 # This shows how to get out of KsError the number of
 # assembly instructions successfully compiled when error occur
 
-
 from keystone import *
 
 CODE = b"INC ecx; yyy; DEC edx" # input assembly with an invalid instruction
@@ -23,7 +22,3 @@ except KsError as e:
     if count is not None:
         # print out the number of instructions succesfully compiled
         print("asmcount = %u" %e.get_asm_count())
-
-
-
-
