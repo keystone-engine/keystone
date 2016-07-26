@@ -1793,7 +1793,8 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelMemOperand(std::string Mnem,
   assert(ImmDisp == 0);
 
   const MCExpr *Val;
-  if (Mnem == "loop" || Mnem == "call" || Mnem.c_str()[0] == 'j') {
+  if (Mnem == "loop" || Mnem == "loope" || Mnem == "loopne" ||
+      Mnem == "call" || Mnem.c_str()[0] == 'j') {
       // CALL/JMP/Jxx <immediate> (Keystone)
       if (getParser().parsePrimaryExpr(Val, End))
           return ErrorOperand(Tok.getLoc(), "unknown token in expression");
