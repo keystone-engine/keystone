@@ -98,12 +98,18 @@ _setup_prototype(_ks, "ks_free", None, POINTER(c_ubyte))
 
 
 # access to error code via @errno of KsError
+# this also includes the @stat_count returned by ks_asm
 class KsError(Exception):
-    def __init__(self, errno):
+    def __init__(self, errno, count=None):
+        self.stat_count = count
         self.errno = errno
         self.message = _ks.ks_strerror(self.errno)
         if not isinstance(self.message, str) and isinstance(self.message, bytes):
             self.message = self.message.decode('utf-8')
+
+    # retrieve @stat_count value returned by ks_asm()
+    def get_asm_count(self):
+        return self.stat_count
 
     def __str__(self):
         return self.message
@@ -189,7 +195,7 @@ class Ks(object):
         status = _ks.ks_asm(self._ksh, string, addr, byref(encode), byref(encode_size), byref(stat_count))
         if (status != 0):
             errno = _ks.ks_errno(self._ksh)
-            raise KsError(errno)
+            raise KsError(errno, stat_count.value)
         else:
             if stat_count.value == 0:
                 return (None, 0)
