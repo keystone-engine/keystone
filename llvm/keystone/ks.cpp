@@ -250,18 +250,18 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
 
     if (arch < KS_ARCH_MAX) {
         ks = new (std::nothrow) ks_struct();
+        
+        if (!ks) {
+            // memory insufficient
+            return KS_ERR_NOMEM;
+        }
+        
         ks->TheTarget = NULL;
         ks->MAB = NULL;
         ks->MRI = NULL;
         ks->MAI = NULL;
         ks->MCII = NULL;
         ks->STI = NULL;
-
-        if (!ks) {
-            // memory insufficient
-            return KS_ERR_NOMEM;
-        }
-
         ks->errnum = KS_ERR_OK;
         ks->arch = arch;
         ks->mode = mode;
@@ -539,14 +539,27 @@ int ks_asm(ks_engine *ks,
     MCContext Ctx(ks->MAI, ks->MRI, &ks->MOFI, &ks->SrcMgr, true, address);
     ks->MOFI.InitMCObjectFileInfo(Triple(ks->TripleName), Ctx);
     CE = ks->TheTarget->createMCCodeEmitter(*ks->MCII, *ks->MRI, Ctx);
-
+    if (!CE) {
+        // memory insufficient
+        // TODO: set error
+        return -1;
+    }
     Streamer = ks->TheTarget->createMCObjectStreamer(
             Triple(ks->TripleName), Ctx, *ks->MAB, OS, CE, *ks->STI, ks->MCOptions.MCRelaxAll,
             /*DWARFMustBeAtTheEnd*/ false);
+            
+    if (!Streamer) {
+        // memory insufficient
+        delete CE;
+        // TODO: set error
+        return -1;
+    }
 
     // Tell SrcMgr about this buffer, which is what the parser will pick up.
     ErrorOr<std::unique_ptr<MemoryBuffer>> BufferPtr = MemoryBuffer::getMemBuffer(assembly);
     if (BufferPtr.getError()) {
+        delete Streamer;
+        delete CE;
         // TODO: set error
         return -1;
     }
@@ -555,7 +568,22 @@ int ks_asm(ks_engine *ks,
     ks->SrcMgr.AddNewSourceBuffer(std::move(*BufferPtr), SMLoc());
 
     MCAsmParser *Parser = createMCAsmParser(ks->SrcMgr, Ctx, *Streamer, *ks->MAI);
+    if (!Parser) {
+        delete Streamer;
+        delete CE;
+        // memory insufficient
+        // TODO: set error
+        return -1;
+    }
     MCTargetAsmParser *TAP = ks->TheTarget->createMCAsmParser(*ks->STI, *Parser, *ks->MCII, ks->MCOptions);
+    if (!TAP) { 
+        // memory insufficient
+        delete Parser;
+        delete Streamer;
+        delete CE;
+        // TODO: set error
+        return -1;
+    }
     TAP->KsSyntax = ks->syntax;
 
     Parser->setTargetParser(*TAP);
@@ -584,6 +612,10 @@ int ks_asm(ks_engine *ks,
     else {
         *insn_size = Msg.size();
         encoding = (unsigned char *)malloc(*insn_size);
+        if (!encoding) {
+            // TODO: set error
+            return -1;
+        }
         memcpy(encoding, Msg.data(), *insn_size);
         *insn = encoding;
         return 0;
