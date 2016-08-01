@@ -541,8 +541,7 @@ int ks_asm(ks_engine *ks,
     CE = ks->TheTarget->createMCCodeEmitter(*ks->MCII, *ks->MRI, Ctx);
     if (!CE) {
         // memory insufficient
-        // TODO: set error
-        return -1;
+        return KS_ERR_NOMEM;
     }
     Streamer = ks->TheTarget->createMCObjectStreamer(
             Triple(ks->TripleName), Ctx, *ks->MAB, OS, CE, *ks->STI, ks->MCOptions.MCRelaxAll,
@@ -551,8 +550,7 @@ int ks_asm(ks_engine *ks,
     if (!Streamer) {
         // memory insufficient
         delete CE;
-        // TODO: set error
-        return -1;
+        return KS_ERR_NOMEM;
     }
 
     // Tell SrcMgr about this buffer, which is what the parser will pick up.
@@ -560,8 +558,7 @@ int ks_asm(ks_engine *ks,
     if (BufferPtr.getError()) {
         delete Streamer;
         delete CE;
-        // TODO: set error
-        return -1;
+        return KS_ERR_NOMEM;
     }
 
     ks->SrcMgr.clearBuffers();
@@ -572,8 +569,7 @@ int ks_asm(ks_engine *ks,
         delete Streamer;
         delete CE;
         // memory insufficient
-        // TODO: set error
-        return -1;
+        return KS_ERR_NOMEM;
     }
     MCTargetAsmParser *TAP = ks->TheTarget->createMCAsmParser(*ks->STI, *Parser, *ks->MCII, ks->MCOptions);
     if (!TAP) { 
@@ -581,8 +577,7 @@ int ks_asm(ks_engine *ks,
         delete Parser;
         delete Streamer;
         delete CE;
-        // TODO: set error
-        return -1;
+        return KS_ERR_NOMEM;
     }
     TAP->KsSyntax = ks->syntax;
 
@@ -613,8 +608,7 @@ int ks_asm(ks_engine *ks,
         *insn_size = Msg.size();
         encoding = (unsigned char *)malloc(*insn_size);
         if (!encoding) {
-            // TODO: set error
-            return -1;
+            return KS_ERR_NOMEM;
         }
         memcpy(encoding, Msg.data(), *insn_size);
         *insn = encoding;
