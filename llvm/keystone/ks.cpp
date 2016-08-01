@@ -250,6 +250,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
 
     if (arch < KS_ARCH_MAX) {
         ks = new (std::nothrow) ks_struct();
+        ks->size = sizeof(ks_struct);
         ks->TheTarget = NULL;
         ks->MAB = NULL;
         ks->MRI = NULL;
@@ -472,6 +473,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
 KEYSTONE_EXPORT
 ks_err ks_close(ks_engine *ks)
 {
+    ks->size = 0;
     delete ks->STI;
     delete ks->MCII;
     delete ks->MAI;
@@ -488,6 +490,9 @@ ks_err ks_close(ks_engine *ks)
 KEYSTONE_EXPORT
 ks_err ks_option(ks_engine *ks, ks_opt_type type, size_t value)
 {
+    if(ks->size != sizeof(ks_struct))
+        return KS_ERR_HANDLE;
+
     switch(type) {
         case KS_OPT_SYNTAX:
             if (ks->arch != KS_ARCH_X86)
@@ -527,6 +532,9 @@ int ks_asm(ks_engine *ks,
         unsigned char **insn, size_t *insn_size,
         size_t *stat_count)
 {
+    if(ks->size != sizeof(ks_struct))
+        return KS_ERR_HANDLE;
+    
     MCCodeEmitter *CE;
     MCStreamer *Streamer;
     unsigned char *encoding;

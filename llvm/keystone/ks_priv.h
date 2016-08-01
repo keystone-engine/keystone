@@ -38,6 +38,7 @@ struct ks_struct;
 typedef void (*ks_args_ks_t)(struct ks_struct*);
 
 struct ks_struct {
+    size_t size;
     ks_arch arch;
     int mode;
     unsigned int errnum;
