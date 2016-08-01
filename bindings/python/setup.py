@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # Python binding for Keystone engine. Nguyen Anh Quynh <aquynh@gmail.com>
 
+# upload TestPyPi package with: $ python setup.py sdist upload -r pypitest
+# upload PyPi package with: $ python setup.py sdist upload -r pypi
+
 import glob
 import os
 import platform
