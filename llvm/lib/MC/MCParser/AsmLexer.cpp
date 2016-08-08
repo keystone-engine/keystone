@@ -313,7 +313,7 @@ AsmToken AsmLexer::LexDigit()
     return intToken(Result, Value);
   }
 
-  if (*CurPtr == 'x') {
+  if (*CurPtr == 'x' || *CurPtr == 'X') {
     ++CurPtr;
     const char *NumStart = CurPtr;
     while (isxdigit(CurPtr[0]))
