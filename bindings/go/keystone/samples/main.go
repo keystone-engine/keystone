@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"os"
 
-	keystone "github.com/keystone-engine/beta/bindings/go/keystone"
+	"github.com/keystone-engine/keystone/bindings/go/keystone"
 )
 
 func main() {
