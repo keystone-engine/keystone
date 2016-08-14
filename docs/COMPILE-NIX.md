@@ -77,13 +77,13 @@ For Windows, see [COMPILE-WINDOWS.md](COMPILE-WINDOWS.md)
 
         $ sudo make install
 
-   Keystone is installed in '/usr/local', depending on your distribution (eg. Ubuntu) you might
-   need to add '/usr/local/lib' to '/etc/ld.so.conf'. Then update the dynamic linker
+   Keystone is installed in `/usr/local`, depending on your distribution (eg. Ubuntu) you might
+   need to add `/usr/local/lib` to `/etc/ld.so.conf`. Then update the dynamic linker
    with:
         
         $ sudo ldconfig
    
-   Besides the libraries & C header files under  thedirectory "include/keystone",
+   Besides the libraries & C header files under directory "include/keystone",
    this step also installs a tool named "kstool" on the system.
    (The source of "kstool" is in the directory "kstool/kstool")
 
