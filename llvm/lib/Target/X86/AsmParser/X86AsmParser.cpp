@@ -167,7 +167,7 @@ private:
       InfixOperatorStack.push_back(Op);
     }
 
-    int64_t execute(unsigned int &KsError) { // qq
+    int64_t execute(unsigned int &KsError) {
       // Push any remaining operators onto the postfix stack.
       while (!InfixOperatorStack.empty()) {
         InfixCalculatorTok StackOp = InfixOperatorStack.pop_back_val();
@@ -1793,7 +1793,8 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelMemOperand(std::string Mnem,
   assert(ImmDisp == 0);
 
   const MCExpr *Val;
-  if (Mnem == "call" || Mnem.c_str()[0] == 'j') {
+  if (Mnem == "loop" || Mnem == "loope" || Mnem == "loopne" ||
+      Mnem == "call" || Mnem.c_str()[0] == 'j') {
       // CALL/JMP/Jxx <immediate> (Keystone)
       if (getParser().parsePrimaryExpr(Val, End))
           return ErrorOperand(Tok.getLoc(), "unknown token in expression");
@@ -2424,6 +2425,22 @@ bool X86AsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
 {
   MCAsmParser &Parser = getParser();
   InstInfo = &Info;
+
+  // Nasm accepts JMP/CALL, but not LJMP/LCALL
+  if (KsSyntax == KS_OPT_SYNTAX_NASM) {
+      if (Name == "jmp" || Name == "call") {
+          AsmToken Tokens[3];
+          MutableArrayRef<AsmToken> Buf(Tokens);
+          size_t count = getLexer().peekTokens(Buf);
+          if (count == 3 && Tokens[0].getString() == ":") {
+              if (Name == "jmp")
+                  Name = "ljmp";
+              else if (Name == "call")
+                  Name = "lcall";
+          }
+      }
+  }
+
   StringRef PatchedName = Name;
 
   // FIXME: Hack to recognize setneb as setne.
@@ -2584,12 +2601,18 @@ bool X86AsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
          Parser.eatToEndOfStatement();
          return true;
       }
-      // check for comma and eat it
-      if (getLexer().is(AsmToken::Comma))
-        Parser.Lex();
+
+      if (getLexer().is(AsmToken::Colon)) {
+          // for LJMP/LCALL, check for ':'. otherwise, check for comma and eat it
+          if (Name.startswith("ljmp") || Name.startswith("lcall"))
+              Operands.push_back(X86Operand::CreateToken(":", consumeToken()));
+          else
+              break;
+      } else if (getLexer().is(AsmToken::Comma))
+          Parser.Lex();
       else
-        break;
-     }
+          break;
+    }
 
     if (getLexer().isNot(AsmToken::EndOfStatement) && getLexer().isNot(AsmToken::Eof)) {
       //return ErrorAndEatStatement(getLexer().getLoc(),
@@ -2769,7 +2792,8 @@ bool X86AsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
   return false;
 }
 
-bool X86AsmParser::processInstruction(MCInst &Inst, const OperandVector &Ops) {
+bool X86AsmParser::processInstruction(MCInst &Inst, const OperandVector &Ops)
+{
   switch (Inst.getOpcode()) {
   default: return false;
   case X86::VMOVZPQILo2PQIrr:

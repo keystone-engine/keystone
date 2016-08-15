@@ -14,7 +14,7 @@ For *nix OS, see [COMPILE-NIX.md](COMPILE-NIX.md)
   https://www.python.org
 
 
-2. Open the Visual Studio Command Promplt, and from the root directory
+2. Open the Visual Studio Command Prompt, and from the root directory
   of Keystone source, do:
 
         $ mkdir build

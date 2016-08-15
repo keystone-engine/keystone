@@ -3,6 +3,9 @@ import sys
 _python2 = sys.version_info[0] < 3
 if _python2:
     range = xrange
+
+PY_EXTRA_VERSION = ".1"
+
 from . import arm_const, arm64_const, mips_const, sparc_const, hexagon_const, ppc_const, systemz_const, x86_const
 from .keystone_const import *
 
@@ -18,18 +21,12 @@ if not hasattr(sys.modules[__name__], '__file__'):
 
 _lib_path = split(__file__)[0]
 _all_libs = ('keystone.dll', 'libkeystone.so', 'libkeystone.dylib')
-# Windows DLL in dependency order
-_all_windows_dlls = ("libwinpthread-1.dll", "libgcc_s_seh-1.dll", "libgcc_s_dw2-1.dll",  "libiconv-2.dll", "libintl-8.dll", "libglib-2.0-0.dll")
 _found = False
 
 for _lib in _all_libs:
     try:
-        if _lib == 'keystone.dll':
-            for dll in _all_windows_dlls:    # load all the rest DLLs first
-                _lib_file = join(_lib_path, dll)
-                if exists(_lib_file):
-                    cdll.LoadLibrary(_lib_file)
         _lib_file = join(_lib_path, _lib)
+        #print(">> 2: Trying to load %s" %_lib_file);
         _ks = cdll.LoadLibrary(_lib_file)
         _found = True
         break
@@ -52,12 +49,6 @@ if _found == False:
     _lib_path = distutils.sysconfig.get_python_lib()
     for _lib in _all_libs:
         try:
-            if _lib == 'keystone.dll':
-                for dll in _all_windows_dlls:    # load all the rest DLLs first
-                    _lib_file = join(_lib_path, 'keystone', dll)
-                    if exists(_lib_file):
-                        #print(">> 2: Trying to load %s" %_lib_file);
-                        cdll.LoadLibrary(_lib_file)
             _lib_file = join(_lib_path, 'keystone', _lib)
             #print(">> 2: Trying to load %s" %_lib_file);
             _ks = cdll.LoadLibrary(_lib_file)
@@ -83,7 +74,7 @@ if (_found == False) and (system() == 'Darwin'):
 if _found == False:
     raise ImportError("ERROR: fail to load the dynamic library.")
 
-__version__ = "%s.%s" %(KS_API_MAJOR, KS_API_MINOR) 
+__version__ = "%s.%s%s" %(KS_API_MAJOR, KS_API_MINOR, PY_EXTRA_VERSION)
 
 # setup all the function prototype
 def _setup_prototype(lib, fname, restype, *argtypes):
@@ -107,12 +98,18 @@ _setup_prototype(_ks, "ks_free", None, POINTER(c_ubyte))
 
 
 # access to error code via @errno of KsError
+# this also includes the @stat_count returned by ks_asm
 class KsError(Exception):
-    def __init__(self, errno):
+    def __init__(self, errno, count=None):
+        self.stat_count = count
         self.errno = errno
         self.message = _ks.ks_strerror(self.errno)
         if not isinstance(self.message, str) and isinstance(self.message, bytes):
             self.message = self.message.decode('utf-8')
+
+    # retrieve @stat_count value returned by ks_asm()
+    def get_asm_count(self):
+        return self.stat_count
 
     def __str__(self):
         return self.message
@@ -198,7 +195,7 @@ class Ks(object):
         status = _ks.ks_asm(self._ksh, string, addr, byref(encode), byref(encode_size), byref(stat_count))
         if (status != 0):
             errno = _ks.ks_errno(self._ksh)
-            raise KsError(errno)
+            raise KsError(errno, stat_count.value)
         else:
             if stat_count.value == 0:
                 return (None, 0)

@@ -1,0 +1,12 @@
+# OASIS_START
+# DO NOT EDIT (digest: 9d9362d9b53fea8a38e6075c4d45bb6a)
+version = "0.1"
+description = "Ctypes bindings to Keystone assembler for OCaml"
+requires = "ctypes uchar ctypes.stubs ctypes.foreign result"
+archive(byte) = "keystone.cma"
+archive(byte, plugin) = "keystone.cma"
+archive(native) = "keystone.cmxa"
+archive(native, plugin) = "keystone.cmxs"
+exists_if = "keystone.cmxa"
+# OASIS_STOP
+

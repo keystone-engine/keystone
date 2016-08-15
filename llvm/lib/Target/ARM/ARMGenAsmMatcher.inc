@@ -16,7 +16,6 @@
                        const OperandVector &Operands);
   void convertToMapAndConstraints(unsigned Kind,
                            const OperandVector &Operands) override;
-  bool mnemonicIsValid(StringRef Mnemonic, unsigned VariantID);
   unsigned MatchInstructionImpl(const OperandVector &Operands,
                                 MCInst &Inst,
                                 uint64_t &ErrorInfo, bool matchingInlineAsm,
@@ -10451,19 +10450,6 @@ static const MatchEntry MatchTable0[] = {
   { 2676 /* yield */, ARM::tHINT, Convert__imm_95_1__CondCode2_0, Feature_IsThumb|Feature_HasV6M, { MCK_CondCode }, },
   { 2676 /* yield */, ARM::t2HINT, Convert__imm_95_1__CondCode2_0, Feature_IsThumb2, { MCK_CondCode, MCK__DOT_w }, },
 };
-
-bool ARMAsmParser::
-mnemonicIsValid(StringRef Mnemonic, unsigned VariantID) {
-  // Find the appropriate table for this asm variant.
-  const MatchEntry *Start, *End;
-  switch (VariantID) {
-  default: llvm_unreachable("invalid variant!");
-  case 0: Start = std::begin(MatchTable0); End = std::end(MatchTable0); break;
-  }
-  // Search the table.
-  auto MnemonicRange = std::equal_range(Start, End, Mnemonic, LessOpcode());
-  return MnemonicRange.first != MnemonicRange.second;
-}
 
 unsigned ARMAsmParser::
 MatchInstructionImpl(const OperandVector &Operands,

@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # Python binding for Keystone engine. Nguyen Anh Quynh <aquynh@gmail.com>
 
+# upload TestPyPi package with: $ python setup.py sdist upload -r pypitest
+# upload PyPi package with: $ python setup.py sdist upload -r pypi
+
 import glob
 import os
 import platform
@@ -19,12 +22,12 @@ from distutils.sysconfig import get_python_lib
 PATH_LIB64 = "prebuilt/win64/keystone.dll"
 PATH_LIB32 = "prebuilt/win32/keystone.dll"
 
-# package name can be 'keystone' or 'keystone-windows'
-PKG_NAME = 'keystone'
+# package name can be 'keystone-engine' or 'keystone-engine-windows'
+PKG_NAME = 'keystone-engine'
 if os.path.exists(PATH_LIB64) and os.path.exists(PATH_LIB32):
-    PKG_NAME = 'keystone-windows'
+    PKG_NAME = 'keystone-engine-windows'
 
-VERSION = '0.9'
+VERSION = '0.9.1-3'
 SYSTEM = sys.platform
 
 # virtualenv breaks import, but get_python_lib() will work.
@@ -55,7 +58,7 @@ def copy_sources():
     except (IOError, OSError):
         pass
 
-    dir_util.copy_tree("../../arch", "src/arch/")
+    dir_util.copy_tree("../../llvm", "src/llvm/")
     dir_util.copy_tree("../../include", "src/include/")
 
     src.extend(glob.glob("../../*.h"))
@@ -63,12 +66,20 @@ def copy_sources():
     src.extend(glob.glob("../../*.inc"))
     src.extend(glob.glob("../../*.def"))
 
-    src.extend(glob.glob("../../Makefile"))
+    src.extend(glob.glob("../../CMakeLists.txt"))
+    src.extend(glob.glob("../../CMakeUninstall.in"))
     src.extend(glob.glob("../../*.txt"))
     src.extend(glob.glob("../../*.TXT"))
+    src.extend(glob.glob("../../COPYING"))
     src.extend(glob.glob("../../LICENSE*"))
+    src.extend(glob.glob("../../EXCEPTIONS-CLIENT"))
     src.extend(glob.glob("../../README.md"))
     src.extend(glob.glob("../../RELEASE_NOTES"))
+    src.extend(glob.glob("../../ChangeLog"))
+    src.extend(glob.glob("../../SPONSORS.TXT"))
+    src.extend(glob.glob("../../*.cmake"))
+    src.extend(glob.glob("../../*.sh"))
+    src.extend(glob.glob("../../*.bat"))
 
     for filename in src:
         outpath = os.path.join("./src/", os.path.basename(filename))
@@ -125,7 +136,10 @@ class custom_build_clib(build_clib):
             for (lib_name, build_info) in libraries:
                 log.info("building '%s' library", lib_name)
 
+                # cd src/build
                 os.chdir("src")
+                os.mkdir("build")
+                os.chdir("build")
 
                 # platform description refers at https://docs.python.org/2/library/sys.html#sys.platform
                 if SYSTEM == "cygwin":
@@ -134,16 +148,17 @@ class custom_build_clib(build_clib):
                         os.system("KEYSTONE_BUILD_CORE_ONLY=yes ./make.sh cygwin-mingw64")
                     else:
                         os.system("KEYSTONE_BUILD_CORE_ONLY=yes ./make.sh cygwin-mingw32")
-                    SETUP_DATA_FILES.append("src/keystone.dll")
+                    SETUP_DATA_FILES.append("src/build/keystone.dll")
                 else:   # Unix
-                    os.chmod("make.sh", stat.S_IREAD|stat.S_IEXEC)
-                    os.system("KEYSTONE_BUILD_CORE_ONLY=yes ./make.sh")
+                    os.chmod("../make-share.sh", stat.S_IREAD|stat.S_IEXEC)
+                    os.system("../make-share.sh lib_only")
                     if SYSTEM == "darwin":
-                        SETUP_DATA_FILES.append("src/libkeystone.dylib")
+                        SETUP_DATA_FILES.append("src/build/llvm/lib/libkeystone.dylib")
                     else:   # Non-OSX
-                        SETUP_DATA_FILES.append("src/libkeystone.so")
+                        SETUP_DATA_FILES.append("src/build/llvm/lib/libkeystone.so")
 
-                os.chdir("..")
+                # back to root dir
+                os.chdir("../..")
         except:
             pass
 

@@ -5889,6 +5889,7 @@ bool ARMAsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
     parseDirectiveReq(Name, NameLoc);
     // We always return 'error' for this, as we're done with this
     // statement and don't need to match the 'instruction."
+    ErrorCode = KS_ERR_ASM_DIRECTIVE_INVALID;
     return true;
   }
 
@@ -5908,6 +5909,7 @@ bool ARMAsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
   if (isThumbOne() && PredicationCode != ARMCC::AL && Mnemonic != "b") {
     Parser.eatToEndOfStatement();
     //return Error(NameLoc, "conditional execution not supported in Thumb1");
+    ErrorCode = KS_ERR_ASM_MNEMONICFAIL;
     return true;
   }
 
@@ -5923,6 +5925,7 @@ bool ARMAsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
     if (ITMask.size() > 3) {
       Parser.eatToEndOfStatement();
       //return Error(Loc, "too many conditions on IT instruction");
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return true;
     }
     unsigned Mask = 8;
@@ -5931,6 +5934,7 @@ bool ARMAsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
       if (pos != 't' && pos != 'e') {
         Parser.eatToEndOfStatement();
         //return Error(Loc, "illegal IT block condition mask '" + ITMask + "'");
+        ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
         return true;
       }
       Mask >>= 1;
@@ -5959,6 +5963,7 @@ bool ARMAsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
     Parser.eatToEndOfStatement();
     //return Error(NameLoc, "instruction '" + Mnemonic +
     //             "' can not set flags, but 's' suffix specified");
+    ErrorCode = KS_ERR_ASM_MNEMONICFAIL;
     return true;
   }
   // If we had a predication code on an instruction that can't do that, issue an
@@ -5967,6 +5972,7 @@ bool ARMAsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
     Parser.eatToEndOfStatement();
     //return Error(NameLoc, "instruction '" + Mnemonic +
     //             "' is not predicable, but condition code specified");
+    ErrorCode = KS_ERR_ASM_MNEMONICFAIL;
     return true;
   }
 
@@ -5992,6 +5998,7 @@ bool ARMAsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
                                  NameLoc, NameLoc));
   } else if (Mnemonic == "cps" && isMClass()) {
     //return Error(NameLoc, "instruction 'cps' requires effect for M-class");
+    ErrorCode = KS_ERR_ASM_MNEMONICFAIL;
     return true;
   }
 
@@ -6013,6 +6020,7 @@ bool ARMAsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
       Parser.eatToEndOfStatement();
       //return Error(Loc, "instruction with .n (narrow) qualifier not allowed in "
       //             "arm mode");
+      ErrorCode = KS_ERR_ASM_MNEMONICFAIL;
       return true;
     }
 
@@ -6030,6 +6038,7 @@ bool ARMAsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
     // Read the first operand.
     if (parseOperand(Operands, Mnemonic, ErrorCode)) {
       Parser.eatToEndOfStatement();
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return true;
     }
 
@@ -6039,6 +6048,7 @@ bool ARMAsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
       // Parse and remember the operand.
       if (parseOperand(Operands, Mnemonic, ErrorCode)) {
         Parser.eatToEndOfStatement();
+        ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
         return true;
       }
     }
@@ -6048,6 +6058,7 @@ bool ARMAsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
     //SMLoc Loc = getLexer().getLoc();
     Parser.eatToEndOfStatement();
     //return Error(Loc, "unexpected token in argument list");
+    ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
     return true;
   }
 
@@ -6055,14 +6066,18 @@ bool ARMAsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
 
   if (RequireVFPRegisterListCheck) {
     ARMOperand &Op = static_cast<ARMOperand &>(*Operands.back());
-    if (AcceptSinglePrecisionOnly && !Op.isSPRRegList())
+    if (AcceptSinglePrecisionOnly && !Op.isSPRRegList()) {
       //return Error(Op.getStartLoc(),
       //             "VFP/Neon single precision register expected");
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return true;
-    if (AcceptDoublePrecisionOnly && !Op.isDPRRegList())
+    }
+    if (AcceptDoublePrecisionOnly && !Op.isDPRRegList()) {
       //return Error(Op.getStartLoc(),
       //             "VFP/Neon double precision register expected");
+      ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
       return true;
+    }
   }
 
   tryConvertingToTwoOperandForm(Mnemonic, CarrySetting, Operands);
@@ -6120,6 +6135,7 @@ bool ARMAsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
         //Error(Op2.getStartLoc(), isLoad
         //                             ? "destination operands must be sequential"
         //                             : "source operands must be sequential");
+        ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
         return true;
       }
       unsigned NewReg = MRI->getMatchingSuperReg(Reg1, ARM::gsub_0,
@@ -6132,6 +6148,10 @@ bool ARMAsmParser::ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
 
   // GNU Assembler extension (compatibility)
   if ((Mnemonic == "ldrd" || Mnemonic == "strd")) {
+    if (Operands.size() < 4) {
+        ErrorCode = KS_ERR_ASM_INVALIDOPERAND;
+        return true;
+    }
     ARMOperand &Op2 = static_cast<ARMOperand &>(*Operands[2]);
     ARMOperand &Op3 = static_cast<ARMOperand &>(*Operands[3]);
     if (Op3.isMem()) {

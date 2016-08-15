@@ -1931,6 +1931,7 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
   // Canonicalize the opcode to lower case.
   std::string OpcodeStr = IDVal.lower();
   ParseInstructionInfo IInfo(Info.AsmRewrites);
+  //printf(">> Going to ParseInstruction()\n");
   bool HadError = getTargetParser().ParseInstruction(IInfo, OpcodeStr, ID,
                                                      Info.ParsedOperands, Info.KsError);
   Info.ParseError = HadError;
@@ -1938,6 +1939,7 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
   // If parsing succeeded, match the instruction.
   if (!HadError) {
     uint64_t ErrorInfo;
+    //printf(">> Going to MatchAndEmitInstruction()\n");
     return getTargetParser().MatchAndEmitInstruction(IDLoc, Info.Opcode,
                                               Info.ParsedOperands, Out,
                                               ErrorInfo, ParsingInlineAsm,
@@ -3219,10 +3221,11 @@ bool AsmParser::parseDirectiveAlign(bool IsPow2, unsigned ValueSize)
     // up to one.
     if (Alignment == 0)
       Alignment = 1;
-    if (!isPowerOf2_64(Alignment))
+    if (!isPowerOf2_64(Alignment)) {
       //Error(AlignmentLoc, "alignment must be a power of 2");
       KsError = KS_ERR_ASM_DIRECTIVE_INVALID;
       return true;
+    }
   }
 
   // Diagnose non-sensical max bytes to align.

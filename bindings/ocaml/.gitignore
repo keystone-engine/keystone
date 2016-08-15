@@ -1,0 +1,6 @@
+ffi_stubgen.native
+ffi_types_stubgen.native
+setup.data
+setup.log
+test_bindings.native
+_build

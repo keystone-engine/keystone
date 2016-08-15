@@ -1,0 +1,30 @@
+OCaml bindings to the Keystone library (www.keytone-engine.org)
+
+Make sure Keystone is built and installed.
+
+Requires OCaml (>= 4.01.0) and Opam (optionally Oasis)
+
+If Keystone was not installed in the default location then the
+keystone_header_loc variable in config.ml needs to be set to the
+correct location. The default location is
+"/usr/local/include/keystone/keystone.h"
+
+
+To Build:
+
+1. Install opam. Make sure to run eval `opam config env` to make sure
+   environment variables are set properly. 
+
+2. Install necessary packages:
+
+   opam install ctypes ctypes-foreign uchar result ocamlfind
+
+4. Run make
+
+5. Test the bindings by running ./test-bindings.native
+
+To rebuild the build files (make, configure etc) run oasis setup
+
+To install the bindings run make install
+
+To build documentation run make doc

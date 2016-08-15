@@ -2,6 +2,10 @@
 // By Nguyen Anh Quynh, 2016
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <inttypes.h>
+#include <errno.h>
+#include <limits.h>
 #if !defined(WIN32) && !defined(WIN64) && !defined(_WIN32) && !defined(_WIN64)
 #include <unistd.h>
 #else
@@ -10,12 +14,12 @@
 
 #include <keystone/keystone.h>
 
-#define VERSION "0.9"
+#define VERSION "0.9.1"
 
 static void usage(char *prog)
 {
     printf("Kstool v%s for Keystone Assembler Engine (www.keystone-engine.org)\nBy Nguyen Anh Quynh, 2016\n\n", VERSION);
-    printf("Syntax: %s <arch+mode> <assembly-string> <start-address> or cat <asmfile> | %s <arch+mode> <start-address>\n", prog, prog);
+    printf("Syntax: %s <arch+mode> <assembly-string> [start-address-in-hex-format]\n", prog);
     printf("\nThe following <arch+mode> options are supported:\n");
 
     if (ks_arch_supported(KS_ARCH_X86)) {
@@ -77,25 +81,26 @@ int main(int argc, char **argv)
     ks_engine *ks;
     ks_err err = KS_ERR_ARCH;
     char *mode, *assembly = NULL;
-    uint64_t start_addr;
+    uint64_t start_addr = 0;
     char *input = NULL;
     size_t count;
     unsigned char *insn;
     size_t size;
 
+    if (argc == 2) {
+        // handle code from stdin
 #if !defined(WIN32) && !defined(WIN64) && !defined(_WIN32) && !defined(_WIN64)
-    if (argc == 2) {	//only assembly
+        int flags;
+        size_t index = 0;
+        char buf[1024];
+
         mode = argv[1];
 
-        int flags;
         if ((flags = fcntl(STDIN_FILENO, F_GETFL, 0)) == -1)
             flags = 0;
 
         fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
 
-        size_t index = 0;
-
-        char buf[1024];
         while(fgets(buf, sizeof(buf), stdin)) {
             input = (char*)realloc(assembly, index + strlen(buf));
             if (!input) {
@@ -114,18 +119,25 @@ int main(int argc, char **argv)
             usage(argv[0]);
             return -1;
         }
-    } else if (argc == 3 || argc == 4) {//assembly + line to be loaded
-#else
-    if (argc == 3) {
+#else   // Windows does not handle code from stdin
+        usage(argv[0]);
+        return -1;
 #endif
-        mode = argv[1];		//the architecture would be argument 1
-        assembly = argv[2];	//the assembly string would be argument 2
-	start_addr = 0;
+    } else if (argc == 3) {
+        // kstool <arch> <assembly>
+        mode = argv[1];
+        assembly = argv[2];
     } else if (argc == 4) {
-	mode = argv[1];
-	assembly = argv[2];
-	start_addr = strtoull(argv[3], NULL,16);
-    }else {
+        // kstool <arch> <assembly> <address>
+        char *temp;
+        mode = argv[1];
+        assembly = argv[2];
+        start_addr = strtoull(argv[3], &temp, 16);
+        if (temp == argv[3] || *temp != '\0' || errno == ERANGE) {
+            printf("ERROR: invalid address argument, quit!\n");
+            return -2;
+        }
+    } else {
         usage(argv[0]);
         return -1;
     }
@@ -257,7 +269,7 @@ int main(int argc, char **argv)
     }
 
     if (ks_asm(ks, assembly, start_addr, &insn, &size, &count)) {
-        printf("ERROR: failed on ks_asm() with count = %lu, error = '%s' (code = %u)\n", count, ks_strerror(ks_errno(ks)), ks_errno(ks));
+        printf("ERROR: failed on ks_asm() with count = %zu, error = '%s' (code = %u)\n", count, ks_strerror(ks_errno(ks)), ks_errno(ks));
     } else {
         size_t i;
         //printf("Kstool v%s for Keystone Engine (www.keystone-engine.org)\n\n", VERSION);

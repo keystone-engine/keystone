@@ -1,0 +1,39 @@
+This file details the changelog of Keystone.
+
+---------------------------------
+Version 0.9.1: July 27th, 2016
+
+[ Core & tool ]
+
+- Fix a segfault in kstool (on missing assembly input).
+- kstool now allows to specify instruction address.
+- Build Mac libraries in universal format by default.
+- Add "lib32" option to cross-compile to 32-bit *nix (on 64-bit system).
+- Add "lib_only" option to only build libraries (skip kstool).
+- New bindings: Haskell & OCaml.
+
+[ X86 ]
+
+- Fix instructions: LJMP, LCALL, CDQE, SHR, SHL, SAR, SAL, LOOP, LOOPE, LOOPNE
+- Better handling a lot of tricky input caught by assert() before.
+- Better support for Nasm syntax.
+
+[ Arm ]
+
+- Fix BLX instruction.
+
+[ Python binding ]
+
+- Better Python3 support.
+- Expose @stat_count in KsError class when ks_asm() returns with error.
+  See sample code in bindings/python/sample_asm_count.py
+
+[ Go binding ]
+
+- Fix Go binding for 32-bit
+
+----------------------------------
+Version 0.9: May 31th, 2016
+
+- Initial public release.
+

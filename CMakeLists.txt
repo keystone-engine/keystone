@@ -44,7 +44,9 @@ if (NOT BUILD_SHARED_LIBS)
     add_subdirectory(kstool)
 endif()
 else()
+if (NOT BUILD_LIBS_ONLY)
     add_subdirectory(kstool)
+endif()
 endif()
 
 # generate and install pkg-config.pc
@@ -53,7 +55,7 @@ SET(PKG_CONFIG_FILE_PATH
     "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc"
 )
 SET(PKG_CONFIG_LIBDIR
-    "${CMAKE_INSTALL_PREFIX}/lib"
+    "${CMAKE_INSTALL_PREFIX}/lib${LLVM_LIBDIR_SUFFIX}"
 )
 SET(PKG_CONFIG_INCLUDEDIR
     "${CMAKE_INSTALL_PREFIX}/include"
@@ -69,7 +71,7 @@ CONFIGURE_FILE(
     "${PKG_CONFIG_FILE_PATH}"
 )
 INSTALL(FILES "${PKG_CONFIG_FILE_PATH}"
-        DESTINATION lib/pkgconfig)
+        DESTINATION lib${LLVM_LIBDIR_SUFFIX}/pkgconfig)
 
 # uninstall target
 configure_file(
