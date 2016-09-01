@@ -26,7 +26,7 @@ _found = False
 for _lib in _all_libs:
     try:
         _lib_file = join(_lib_path, _lib)
-        #print(">> 2: Trying to load %s" %_lib_file);
+        #print(">> 0: Trying to load %s" %_lib_file);
         _ks = cdll.LoadLibrary(_lib_file)
         _found = True
         break
