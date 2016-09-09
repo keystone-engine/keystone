@@ -149,11 +149,12 @@ typedef enum ks_opt_type {
 
 // Runtime option value (associated with ks_opt_type above)
 typedef enum ks_opt_value {
-	KS_OPT_SYNTAX_INTEL = 1 << 0, // X86 Intel syntax - default on X86 (KS_OPT_SYNTAX).
-	KS_OPT_SYNTAX_ATT   = 1 << 1, // X86 ATT asm syntax (KS_OPT_SYNTAX).
-	KS_OPT_SYNTAX_NASM  = 1 << 2, // X86 Nasm syntax (KS_OPT_SYNTAX).
-	KS_OPT_SYNTAX_MASM  = 1 << 3, // X86 Masm syntax (KS_OPT_SYNTAX) - unsupported yet.
-	KS_OPT_SYNTAX_GAS   = 1 << 4, // X86 GNU GAS syntax (KS_OPT_SYNTAX).
+	KS_OPT_SYNTAX_INTEL =   1 << 0, // X86 Intel syntax - default on X86 (KS_OPT_SYNTAX).
+	KS_OPT_SYNTAX_ATT   =   1 << 1, // X86 ATT asm syntax (KS_OPT_SYNTAX).
+	KS_OPT_SYNTAX_NASM  =   1 << 2, // X86 Nasm syntax (KS_OPT_SYNTAX).
+	KS_OPT_SYNTAX_MASM  =   1 << 3, // X86 Masm syntax (KS_OPT_SYNTAX) - unsupported yet.
+	KS_OPT_SYNTAX_GAS   =   1 << 4, // X86 GNU GAS syntax (KS_OPT_SYNTAX).
+	KS_OPT_SYNTAX_RADIX16 = 1 << 5, // All immediates are in hex format (i.e 12 is 0x12)
 } ks_opt_value;
 
 

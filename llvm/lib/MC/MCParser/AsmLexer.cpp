@@ -25,6 +25,7 @@ AsmLexer::AsmLexer(const MCAsmInfo &MAI) : MAI(MAI) {
   CurPtr = nullptr;
   isAtStartOfLine = true;
   AllowAtInIdentifier = !StringRef(MAI.getCommentString()).startswith("@");
+  defaultRadix = MAI.getRadix();
 }
 
 AsmLexer::~AsmLexer() {
@@ -259,6 +260,10 @@ AsmToken AsmLexer::LexDigit()
   // Decimal integer: [1-9][0-9]*
   if (CurPtr[-1] != '0' || CurPtr[0] == '.') {
     unsigned Radix = doLookAhead(CurPtr, 10);
+
+    if (defaultRadix == 16)
+      Radix = 16;
+
     bool isHex = Radix == 16;
     // Check for floating point literals.
     if (!isHex && (*CurPtr == '.' || *CurPtr == 'e')) {
@@ -274,8 +279,10 @@ AsmToken AsmLexer::LexDigit()
                            "invalid hexdecimal number");
 
     // Consume the [bB][hH].
-    if (Radix == 2 || Radix == 16)
-      ++CurPtr;
+    if (defaultRadix != 16) {
+      if (Radix == 2 || Radix == 16)
+        ++CurPtr;
+    }
 
     // The darwin/x86 (and x86-64) assembler accepts and ignores type
     // suffices on integer literals.

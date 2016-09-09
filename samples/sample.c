@@ -53,6 +53,15 @@ int main(int argc, char **argv)
     test_ks(KS_ARCH_X86, KS_MODE_32, "add %ecx, %eax", KS_OPT_SYNTAX_ATT);
     test_ks(KS_ARCH_X86, KS_MODE_64, "add %rcx, %rax", KS_OPT_SYNTAX_ATT);
 
+    test_ks(KS_ARCH_X86, KS_MODE_32, "add eax, 0x15", 0);
+    test_ks(KS_ARCH_X86, KS_MODE_32, "add eax, 15h", 0);
+    test_ks(KS_ARCH_X86, KS_MODE_32, "add eax, 15", 0);
+
+    // RADIX16 syntax Intel (default syntax)
+    test_ks(KS_ARCH_X86, KS_MODE_32, "add eax, 15", KS_OPT_SYNTAX_RADIX16);
+    // RADIX16 syntax for AT&T
+    test_ks(KS_ARCH_X86, KS_MODE_32, "add $15, %eax", KS_OPT_SYNTAX_RADIX16 | KS_OPT_SYNTAX_ATT);
+
     // ARM
     test_ks(KS_ARCH_ARM, KS_MODE_ARM, "sub r1, r2, r5", 0);
     test_ks(KS_ARCH_ARM, KS_MODE_ARM + KS_MODE_BIG_ENDIAN, "sub r1, r2, r5", 0);

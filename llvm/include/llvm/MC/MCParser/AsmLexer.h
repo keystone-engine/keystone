@@ -30,6 +30,7 @@ class AsmLexer : public MCAsmLexer {
   const char *CurPtr;
   StringRef CurBuf;
   bool isAtStartOfLine;
+  unsigned defaultRadix;
 
   void operator=(const AsmLexer&) = delete;
   AsmLexer(const AsmLexer&) = delete;
