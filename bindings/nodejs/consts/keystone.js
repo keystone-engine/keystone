@@ -83,3 +83,4 @@ module.exports.OPT_SYNTAX_ATT = 2
 module.exports.OPT_SYNTAX_NASM = 4
 module.exports.OPT_SYNTAX_MASM = 8
 module.exports.OPT_SYNTAX_GAS = 16
+module.exports.OPT_SYNTAX_RADIX16 = 32

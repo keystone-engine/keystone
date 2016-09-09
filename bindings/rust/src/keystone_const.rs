@@ -93,6 +93,7 @@ bitflags! {
 		const OPT_SYNTAX_NASM = 4,
 		const OPT_SYNTAX_MASM = 8,
 		const OPT_SYNTAX_GAS = 16,
+		const OPT_SYNTAX_RADIX16 = 32,
 	}
 }
 

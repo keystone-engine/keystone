@@ -50,6 +50,7 @@ const (
 	OPT_SYNTAX_NASM OptionValue = 4
 	OPT_SYNTAX_MASM OptionValue = 8
 	OPT_SYNTAX_GAS OptionValue = 16
+	OPT_SYNTAX_RADIX16 OptionValue = 32
 )
 
 const (
