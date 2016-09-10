@@ -28,6 +28,15 @@ if __name__ == '__main__':
     test_ks(KS_ARCH_X86, KS_MODE_32, b"add %ecx, %eax", KS_OPT_SYNTAX_ATT)
     test_ks(KS_ARCH_X86, KS_MODE_64, b"add %rcx, %rax", KS_OPT_SYNTAX_ATT)
 
+    test_ks(KS_ARCH_X86, KS_MODE_32, b"add eax, 0x15")
+    test_ks(KS_ARCH_X86, KS_MODE_32, b"add eax, 15h");
+    test_ks(KS_ARCH_X86, KS_MODE_32, b"add eax, 15")
+
+    # RADIX16 syntax Intel (default syntax)
+    test_ks(KS_ARCH_X86, KS_MODE_32, b"add eax, 15", KS_OPT_SYNTAX_RADIX16)
+    # RADIX16 syntax for AT&T
+    test_ks(KS_ARCH_X86, KS_MODE_32, b"add $15, %eax", KS_OPT_SYNTAX_RADIX16 | KS_OPT_SYNTAX_ATT)
+
     # ARM
     test_ks(KS_ARCH_ARM, KS_MODE_ARM, b"sub r1, r2, r5")
     test_ks(KS_ARCH_ARM, KS_MODE_ARM + KS_MODE_BIG_ENDIAN, b"sub r1, r2, r5")
