@@ -349,6 +349,7 @@ module Types (F: Cstubs.Types.TYPE) =
       | KS_OPT_SYNTAX_NASM
       | KS_OPT_SYNTAX_MASM
       | KS_OPT_SYNTAX_GAS
+      | KS_OPT_SYNTAX_RADIX16
 
 
     let ks_opt_syntax_intel = constant "KS_OPT_SYNTAX_INTEL" int64_t
@@ -356,6 +357,7 @@ module Types (F: Cstubs.Types.TYPE) =
     let ks_opt_syntax_nasm = constant "KS_OPT_SYNTAX_NASM" int64_t
     let ks_opt_syntax_masm = constant "KS_OPT_SYNTAX_MASM" int64_t
     let ks_opt_syntax_gas = constant "KS_OPT_SYNTAX_GAS" int64_t
+    let ks_opt_syntax_radix16 = constant "KS_OPT_SYNTAX_RADIX16" int64_t
 
     let ks_opt_value = enum "ks_opt_value" [
                               KS_OPT_SYNTAX_INTEL, ks_opt_syntax_intel;
@@ -363,6 +365,7 @@ module Types (F: Cstubs.Types.TYPE) =
                               KS_OPT_SYNTAX_NASM, ks_opt_syntax_nasm;
                               KS_OPT_SYNTAX_MASM, ks_opt_syntax_masm;
                               KS_OPT_SYNTAX_GAS, ks_opt_syntax_gas;
+                              KS_OPT_SYNTAX_RADIX16, ks_opt_syntax_radix16
                             ]
 
 
