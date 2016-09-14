@@ -3,6 +3,7 @@ open Keystone
 module T = Keystone.Types
 
 let test_ks arch mode ?(syntax=T.KS_OPT_SYNTAX_INTEL) ?(endian=T.KS_MODE_LITTLE_ENDIAN) asm  =
+  Printf.printf "ASSEMBLING %s\n" asm; flush stdout;
   match (ks_open arch ~endian:endian mode) with
   | Result.Ok engine ->
      begin
@@ -16,7 +17,8 @@ let test_ks arch mode ?(syntax=T.KS_OPT_SYNTAX_INTEL) ?(endian=T.KS_MODE_LITTLE_
                         result.stat_count;
           ignore(ks_close engine)
 
-       | Result.Error s -> Printf.printf "ERROR: failed on ks_asm with: %s\n" s
+       | Result.Error s -> ignore (ks_close engine);
+                           Printf.printf "ERROR: failed on ks_asm with: %s\n" s
      end
 
   | Result.Error e -> Printf.printf "ERROR: failed on ks_open: %s\n" e
@@ -28,6 +30,7 @@ let _ =
   test_ks T.KS_ARCH_X86 T.KS_MODE_64 "add rax, rcx";
   test_ks T.KS_ARCH_X86 T.KS_MODE_32 ~syntax:T.KS_OPT_SYNTAX_ATT "add %ecx, %eax";
   test_ks T.KS_ARCH_X86 T.KS_MODE_64 ~syntax:T.KS_OPT_SYNTAX_ATT "add %rcx, %rax";
+  test_ks T.KS_ARCH_X86 T.KS_MODE_32 ~syntax:T.KS_OPT_SYNTAX_RADIX16 "add eax, 15";
 
   test_ks T.KS_ARCH_ARM T.KS_MODE_ARM  "sub r1, r2, r5";
   test_ks T.KS_ARCH_ARM T.KS_MODE_ARM  "sub r1, r2, r5";
@@ -52,4 +55,4 @@ let _ =
   test_ks T.KS_ARCH_SPARC T.KS_MODE_SPARC32 "add %g1, %g2, %g3";
   test_ks T.KS_ARCH_SPARC T.KS_MODE_SPARC32 ~endian:T.KS_MODE_BIG_ENDIAN "add %g1, %g2, %g3";
 
-  test_ks T.KS_ARCH_SYSTEMZ T.KS_MODE_BIG_ENDIAN "a %r0, 4092(%r15, %r1)"
+  test_ks T.KS_ARCH_SYSTEMZ T.KS_MODE_BIG_ENDIAN "a %r0, 4095(%r15, %r1)"

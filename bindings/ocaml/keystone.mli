@@ -75,6 +75,7 @@ module Types : sig
     | KS_OPT_SYNTAX_NASM
     | KS_OPT_SYNTAX_MASM
     | KS_OPT_SYNTAX_GAS
+    | KS_OPT_SYNTAX_RADIX16
 
   type ks_mode =
     | KS_MODE_ARM
