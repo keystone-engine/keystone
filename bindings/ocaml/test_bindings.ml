@@ -30,7 +30,7 @@ let _ =
   test_ks T.KS_ARCH_X86 T.KS_MODE_64 "add rax, rcx";
   test_ks T.KS_ARCH_X86 T.KS_MODE_32 ~syntax:T.KS_OPT_SYNTAX_ATT "add %ecx, %eax";
   test_ks T.KS_ARCH_X86 T.KS_MODE_64 ~syntax:T.KS_OPT_SYNTAX_ATT "add %rcx, %rax";
-  test_ks T.KS_ARCH_X86 T.KS_MODE_32 ~syntax:T.KS_OPT_SYNTAX_RADIX16 "add eax, 0x15";
+  test_ks T.KS_ARCH_X86 T.KS_MODE_32 ~syntax:T.KS_OPT_SYNTAX_RADIX16 "add eax, 15";
 
   test_ks T.KS_ARCH_ARM T.KS_MODE_ARM  "sub r1, r2, r5";
   test_ks T.KS_ARCH_ARM T.KS_MODE_ARM  "sub r1, r2, r5";
