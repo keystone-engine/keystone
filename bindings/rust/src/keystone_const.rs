@@ -88,6 +88,7 @@ impl OptionType {
 
 bitflags! {
 	pub flags OptionValue : libc::size_t {
+		const OPT_SYM_RESOLVER = 2,
 		const OPT_SYNTAX_INTEL = 1,
 		const OPT_SYNTAX_ATT = 2,
 		const OPT_SYNTAX_NASM = 4,

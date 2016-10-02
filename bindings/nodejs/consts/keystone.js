@@ -78,6 +78,7 @@ module.exports.ERR_ASM_INVALIDOPERAND = 512
 module.exports.ERR_ASM_MISSINGFEATURE = 513
 module.exports.ERR_ASM_MNEMONICFAIL = 514
 module.exports.OPT_SYNTAX = 1
+module.exports.OPT_SYM_RESOLVER = 2
 module.exports.OPT_SYNTAX_INTEL = 1
 module.exports.OPT_SYNTAX_ATT = 2
 module.exports.OPT_SYNTAX_NASM = 4

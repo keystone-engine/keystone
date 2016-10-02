@@ -20,6 +20,33 @@ def test_ks(arch, mode, code, syntax=0):
     print("]")
 
 
+# test symbol resolver
+def test_sym_resolver():
+    def sym_resolver(symbol, value):
+        # is this the missing symbol we want to handle?
+        if symbol == "_l1":
+            # put value of this symbol in @value
+            value = 0x1002
+            # we handled this symbol, so return true
+            return True
+
+        # we did not handle this symbol, so return false
+        return False
+
+    ks = Ks(KS_ARCH_X86, KS_MODE_32)
+
+    # register callback for symbol resolver
+    ks.sym_resolver = sym_resolver
+
+    CODE = b"jmp _l1; nop; _l1:"
+    encoding, count = ks.asm(CODE, 0x1000)
+
+    print("%s = [ " % CODE, end='')
+    for i in encoding:
+        print("%02x " % i, end='')
+    print("]")
+
+
 if __name__ == '__main__':
     # X86
     test_ks(KS_ARCH_X86, KS_MODE_16, b"add eax, ecx")
@@ -66,3 +93,6 @@ if __name__ == '__main__':
 
     # SystemZ
     test_ks(KS_ARCH_SYSTEMZ, KS_MODE_BIG_ENDIAN, b"a %r0, 4095(%r15,%r1)")
+
+    # test symbol resolver
+    test_sym_resolver()
