@@ -1,5 +1,6 @@
 // Sample code for Keystone Assembler Engine (www.keystone-enigne.org).
 // By Nguyen Anh Quynh, 2016
+
 #include <stdio.h>
 #include <string.h>
 
@@ -8,7 +9,7 @@
 static int test_ks(ks_arch arch, int mode, const char *assembly, int syntax)
 {
     ks_engine *ks;
-    ks_err err = KS_ERR_ARCH;
+    ks_err err;
     size_t count;
     unsigned char *encode;
     size_t size;
@@ -23,6 +24,62 @@ static int test_ks(ks_arch arch, int mode, const char *assembly, int syntax)
         ks_option(ks, KS_OPT_SYNTAX, syntax);
 
     if (ks_asm(ks, assembly, 0, &encode, &size, &count)) {
+        printf("ERROR: failed on ks_asm() with count = %lu, error code = %u\n", count, ks_errno(ks));
+    } else {
+        size_t i;
+
+        printf("%s = ", assembly);
+        for (i = 0; i < size; i++) {
+            printf("%02x ", encode[i]);
+        }
+        printf("\n");
+        printf("Assembled: %lu bytes, %lu statements\n\n", size, count);
+    }
+
+    // NOTE: free encode after usage to avoid leaking memory
+    ks_free(encode);
+
+    // close Keystone instance when done
+    ks_close(ks);
+
+    return 0;
+}
+
+// symbol resolver callback
+static bool sym_resolver(const char *symbol, uint64_t *value)
+{
+    // is this the missing symbol "_l1" that we want to handle?
+    if (!strcmp(symbol, "_l1")) {
+        // put value of this symbol in @value
+        *value = 0x1002;
+        // we handled this symbol, so return true
+        return true;
+    }
+
+    // we did not handle this symbol, so return false
+    return false;
+}
+
+// test symbol resolver to handle missing symbols
+static int test_sym_resolver()
+{
+    ks_engine *ks;
+    ks_err err;
+    size_t count;
+    unsigned char *encode;
+    size_t size;
+    const char *assembly = "jmp _l1; nop";
+
+    err = ks_open(KS_ARCH_X86, KS_MODE_32, &ks);
+    if (err != KS_ERR_OK) {
+        printf("ERROR: failed on ks_open(), quit\n");
+        return -1;
+    }
+
+    // register callback for symbol resolver
+    ks_option(ks, KS_OPT_SYM_RESOLVER, (size_t)sym_resolver);
+
+    if (ks_asm(ks, assembly, 0x1000, &encode, &size, &count)) {
         printf("ERROR: failed on ks_asm() with count = %lu, error code = %u\n", count, ks_errno(ks));
     } else {
         size_t i;
@@ -91,6 +148,9 @@ int main(int argc, char **argv)
 
     // SystemZ
     test_ks(KS_ARCH_SYSTEMZ, KS_MODE_BIG_ENDIAN, "a %r0, 4095(%r15,%r1)", 0);
+
+    // Test Symbol Resolver
+    test_sym_resolver();
 
     return 0;
 }
