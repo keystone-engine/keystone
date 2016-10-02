@@ -55,6 +55,7 @@ struct ks_struct {
     std::string FeaturesStr;
     MCSubtargetInfo *STI;
     MCObjectFileInfo MOFI;
+    ks_sym_resolver sym_resolver;
 };
 
 

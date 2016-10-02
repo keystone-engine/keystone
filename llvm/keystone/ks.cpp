@@ -515,6 +515,9 @@ ks_err ks_option(ks_engine *ks, ks_opt_type type, size_t value)
             }
 
             return KS_ERR_OK;
+        case KS_OPT_SYM_RESOLVER:
+            ks->sym_resolver = (ks_sym_resolver)value;
+            return KS_ERR_OK;
     }
 
     return KS_ERR_OPT_INVALID;
@@ -570,6 +573,8 @@ int ks_asm(ks_engine *ks,
 
     ks->SrcMgr.clearBuffers();
     ks->SrcMgr.AddNewSourceBuffer(std::move(*BufferPtr), SMLoc());
+
+    Streamer->setSymResolver((void *)(ks->sym_resolver));
 
     MCAsmParser *Parser = createMCAsmParser(ks->SrcMgr, Ctx, *Streamer, *ks->MAI);
     if (!Parser) {

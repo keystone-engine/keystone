@@ -630,13 +630,13 @@ void MCELFStreamer::EmitBundleUnlock() {
     Sec.setBundleLockState(MCSection::NotBundleLocked);
 }
 
-unsigned int MCELFStreamer::FinishImpl() {
+unsigned int MCELFStreamer::FinishImpl()
+{
   // Ensure the last section gets aligned if necessary.
   MCSection *CurSection = getCurrentSectionOnly();
   setSectionAlignmentForBundling(getAssembler(), CurSection);
 
   EmitFrames(nullptr);
-
   return this->MCObjectStreamer::FinishImpl();
 }
 

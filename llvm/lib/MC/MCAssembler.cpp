@@ -202,10 +202,27 @@ bool MCAssembler::evaluateFixup(const MCAsmLayout &Layout,
         return false;
       }
     } else {
-        KsError = KS_ERR_ASM_SYMBOL_MISSING;
-        return false;
+        // a missing symbol. is there any resolver registered?
+        if (KsSymResolver) {
+            uint64_t imm;
+            ks_sym_resolver resolver = (ks_sym_resolver)KsSymResolver;
+            if (resolver(Sym.getName().str().c_str(), &imm)) {
+                // resolver handled this symbol
+                Value = imm;
+                IsResolved = true;
+            } else {
+                // resolver did not handle this symbol
+                KsError = KS_ERR_ASM_SYMBOL_MISSING;
+                return false;
+            }
+        } else {
+            // no resolver registered
+            KsError = KS_ERR_ASM_SYMBOL_MISSING;
+            return false;
+        }
     }
   }
+
   if (const MCSymbolRefExpr *B = Target.getSymB()) {
     const MCSymbol &Sym = B->getSymbol();
     bool valid;

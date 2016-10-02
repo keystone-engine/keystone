@@ -510,7 +510,8 @@ void MCObjectStreamer::EmitFill(uint64_t NumBytes, uint8_t FillValue) {
   insert(new MCFillFragment(FillValue, NumBytes));
 }
 
-unsigned int MCObjectStreamer::FinishImpl() {
+unsigned int MCObjectStreamer::FinishImpl()
+{
   unsigned int KsError = 0;
   // If we are generating dwarf for assembly source files dump out the sections.
   //if (getContext().getGenDwarfForAssembly())
@@ -520,6 +521,7 @@ unsigned int MCObjectStreamer::FinishImpl() {
   //MCDwarfLineTable::Emit(this, getAssembler().getDWARFLinetableParams());
 
   flushPendingLabels(nullptr);
+  getAssembler().setSymResolver(getSymResolver());
   getAssembler().Finish(KsError);
 
   return KsError;

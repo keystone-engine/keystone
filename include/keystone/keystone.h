@@ -140,10 +140,20 @@ typedef enum ks_err {
     KS_ERR_ASM_MNEMONICFAIL,
 } ks_err;
 
+// Resolver callback to provide value for a missing symbol in @symbol.
+// To handle a symbol, the resolver must put value of the symbol in @value,
+// then returns True.
+// If we do not resolve a missing symbol, this function must return False.
+// In that case, ks_asm() would eventually return with error KS_ERR_ASM_SYMBOL_MISSING.
+
+// To register the resolver, pass its function address to ks_option(), using
+// option KS_OPT_SYM_RESOLVER. For example, see samples/sample.c.
+typedef bool (*ks_sym_resolver)(const char *symbol, uint64_t *value);
 
 // Runtime option for the Keystone engine
 typedef enum ks_opt_type {
-	KS_OPT_SYNTAX = 1,	// Choose syntax for input assembly
+	KS_OPT_SYNTAX = 1,    // Choose syntax for input assembly
+	KS_OPT_SYM_RESOLVER,  // Set symbol resolver callback
 } ks_opt_type;
 
 
@@ -257,7 +267,7 @@ const char *ks_strerror(ks_err code);
  Set option for Keystone engine at runtime
 
  @ks: handle returned by ks_open()
- @type: type of option to be set
+ @type: type of option to be set. See ks_opt_type
  @value: option value corresponding with @type
 
  @return: KS_ERR_OK on success, or other value on failure.

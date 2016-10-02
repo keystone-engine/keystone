@@ -23,6 +23,8 @@
 #include "llvm/MC/MCSubtargetInfo.h"
 #include "llvm/MC/MCSymbol.h"
 
+#include "keystone/keystone.h"
+
 namespace llvm {
 class raw_ostream;
 class MCAsmLayout;
@@ -56,10 +58,15 @@ struct DataRegionData {
 class MCAssembler {
   friend class MCAsmLayout;
   mutable unsigned KsError;
+  mutable void *KsSymResolver;
 
 public:
   void setError(unsigned E) const { KsError = E; }
   unsigned getError() const { return KsError; }
+
+  void setSymResolver(void *h) const { KsSymResolver = h; }
+  void *getSymResolver() const { return KsSymResolver; }
+
   typedef std::vector<MCSection *> SectionListType;
   typedef std::vector<const MCSymbol *> SymbolDataListType;
 

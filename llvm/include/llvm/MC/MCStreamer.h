@@ -156,6 +156,7 @@ private:
 /// a .s file, and implementations that write out .o files of various formats.
 ///
 class MCStreamer {
+  mutable void *KsSymResolver;
   MCContext &Context;
   std::unique_ptr<MCTargetStreamer> TargetStreamer;
 
@@ -196,6 +197,9 @@ protected:
 
 public:
   virtual ~MCStreamer();
+
+  void setSymResolver(void *h) const { KsSymResolver = h; }
+  void *getSymResolver() const { return KsSymResolver; }
 
   void visitUsedExpr(const MCExpr &Expr);
   virtual void visitUsedSymbol(const MCSymbol &Sym);
