@@ -249,22 +249,12 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
     std::string TripleName = "";
 
     if (arch < KS_ARCH_MAX) {
-        ks = new (std::nothrow) ks_struct();
+        ks = new (std::nothrow) ks_struct(arch, mode, KS_ERR_OK, KS_OPT_SYNTAX_INTEL);
         
         if (!ks) {
             // memory insufficient
             return KS_ERR_NOMEM;
         }
-        
-        ks->TheTarget = NULL;
-        ks->MAB = NULL;
-        ks->MRI = NULL;
-        ks->MAI = NULL;
-        ks->MCII = NULL;
-        ks->STI = NULL;
-        ks->errnum = KS_ERR_OK;
-        ks->arch = arch;
-        ks->mode = mode;
 
         switch(arch) {
             default: break;
