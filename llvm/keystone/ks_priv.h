@@ -43,19 +43,22 @@ struct ks_struct {
     unsigned int errnum;
     ks_opt_value syntax;
 
-    ks_args_ks_t init_arch;
-    const Target *TheTarget;
+    ks_args_ks_t init_arch = nullptr;
+    const Target *TheTarget = nullptr;
     std::string TripleName;
     SourceMgr SrcMgr;
-    MCAsmBackend *MAB;
+    MCAsmBackend *MAB = nullptr;
     MCTargetOptions MCOptions;
-    MCRegisterInfo *MRI;
-    MCAsmInfo *MAI;
-    MCInstrInfo *MCII;
+    MCRegisterInfo *MRI = nullptr;
+    MCAsmInfo *MAI = nullptr;
+    MCInstrInfo *MCII = nullptr;
     std::string FeaturesStr;
-    MCSubtargetInfo *STI;
+    MCSubtargetInfo *STI = nullptr;
     MCObjectFileInfo MOFI;
-    ks_sym_resolver sym_resolver;
+    ks_sym_resolver sym_resolver = nullptr;
+
+    ks_struct(ks_arch arch, int mode, unsigned int errnum, ks_opt_value syntax)
+        : arch(arch), mode(mode), errnum(errnum), syntax(syntax) { }
 };
 
 
