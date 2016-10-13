@@ -706,7 +706,7 @@ void ARMAsmBackend::processFixupValue(const MCAssembler &Asm,
   // a symbol to reference, as the linker relies on knowing the destination
   // symbol's thumb-ness to get interworking right.
   if (A && ((unsigned)Fixup.getKind() == ARM::fixup_arm_thumb_blx ||
-            (unsigned)Fixup.getKind() == ARM::fixup_arm_blx ||
+            //(unsigned)Fixup.getKind() == ARM::fixup_arm_blx ||
             //(unsigned)Fixup.getKind() == ARM::fixup_arm_uncondbl ||
             (unsigned)Fixup.getKind() == ARM::fixup_arm_condbl))
     IsResolved = false;
