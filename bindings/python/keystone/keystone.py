@@ -12,7 +12,7 @@ from .keystone_const import *
 from ctypes import *
 from platform import system
 from os.path import split, join, dirname, exists
-import distutils.sysconfig, sys
+import sys
 
 
 import inspect
@@ -46,6 +46,7 @@ if _found == False:
 
 if _found == False:
     # last try: loading from python lib directory
+    import distutils.sysconfig
     _lib_path = distutils.sysconfig.get_python_lib()
     for _lib in _all_libs:
         try:
