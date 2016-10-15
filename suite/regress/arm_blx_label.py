@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# Test BL <label> instruction for ARM32
+# Test BLX <label> instruction for ARM32
 
 # Github issue: #248
 # Author: dmxcsnsbh
