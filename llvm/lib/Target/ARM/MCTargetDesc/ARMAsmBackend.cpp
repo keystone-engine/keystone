@@ -705,7 +705,8 @@ void ARMAsmBackend::processFixupValue(const MCAssembler &Asm,
   // We must always generate a relocation for BL/BLX instructions if we have
   // a symbol to reference, as the linker relies on knowing the destination
   // symbol's thumb-ness to get interworking right.
-  if (A && ((unsigned)Fixup.getKind() == ARM::fixup_arm_thumb_blx ||
+  if (A && (
+            // (unsigned)Fixup.getKind() == ARM::fixup_arm_thumb_blx ||
             //(unsigned)Fixup.getKind() == ARM::fixup_arm_blx ||
             //(unsigned)Fixup.getKind() == ARM::fixup_arm_uncondbl ||
             (unsigned)Fixup.getKind() == ARM::fixup_arm_condbl))
