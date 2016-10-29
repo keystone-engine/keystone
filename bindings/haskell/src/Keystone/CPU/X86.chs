@@ -19,7 +19,7 @@ module Keystone.CPU.X86
 
 -- | X86 errors.
 {# enum ks_err_asm_x86 as Error
-   {underscoreToCase}
+   { underscoreToCase }
    with prefix = "KS_ERR_ASM_X86_"
    deriving (Show, Eq, Bounded)
 #}

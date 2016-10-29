@@ -19,7 +19,7 @@ module Keystone.CPU.Mips
 
 -- | MIPS errors.
 {# enum ks_err_asm_mips as Error
-   {underscoreToCase}
+   { underscoreToCase }
    with prefix = "KS_ERR_ASM_MIPS_"
    deriving (Show, Eq, Bounded)
 #}

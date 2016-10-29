@@ -45,28 +45,28 @@ import Keystone.Internal.Util
 
 -- | CPU architecture.
 {# enum ks_arch as Architecture
-   {underscoreToCase}
+   { underscoreToCase }
    with prefix = "KS_"
    deriving (Show, Eq, Bounded)
 #}
 
 -- | CPU hardware mode.
 {# enum ks_mode as Mode
-   {underscoreToCase}
+   { underscoreToCase }
    with prefix = "KS_"
    deriving (Show, Eq, Bounded)
 #}
 
 -- | Runtime option types.
 {# enum ks_opt_type as OptionType
-   {underscoreToCase}
+   { underscoreToCase }
    with prefix = "KS_"
    deriving (Show, Eq, Bounded)
 #}
 
 -- | Runtime option values.
 {# enum ks_opt_value as OptionValue
-   {underscoreToCase}
+   { underscoreToCase }
    with prefix = "KS_OPT_"
    deriving (Show, Eq, Bounded)
 #}

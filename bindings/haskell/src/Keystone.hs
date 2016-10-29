@@ -33,11 +33,9 @@ module Keystone
 
 import Control.Monad.Trans.Class (lift)
 import Control.Monad.Trans.Either (left, right, runEitherT)
-import Data.ByteString (packCStringLen)
+import Data.ByteString (ByteString, packCStringLen)
 import Data.List (intercalate)
 import Foreign
-
-import Data.ByteString (ByteString)
 
 import Keystone.Internal.Core
 import Keystone.Internal.Keystone

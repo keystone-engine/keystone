@@ -41,7 +41,7 @@ mkEngine ptr =
 -- | Errors encountered by the Keystone API. These values are returned by
 -- 'errno'.
 {# enum ks_err as Error
-   {underscoreToCase}
+   { underscoreToCase }
    with prefix = "KS_"
    deriving (Show, Eq, Bounded)
 #}

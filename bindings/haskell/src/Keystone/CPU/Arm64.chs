@@ -19,7 +19,7 @@ module Keystone.CPU.Arm64
 
 -- | ARM64 errors.
 {# enum ks_err_asm_arm64 as Error
-   {underscoreToCase}
+   { underscoreToCase }
    with prefix = "KS_ERR_ASM_ARM64_"
    deriving (Show, Eq, Bounded)
 #}

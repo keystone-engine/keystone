@@ -19,7 +19,7 @@ module Keystone.CPU.Hexagon
 
 -- | Hexagon errors.
 {# enum ks_err_asm_hexagon as Error
-   {underscoreToCase}
+   { underscoreToCase }
    with prefix = "KS_ERR_ASM_HEXAGON_"
    deriving (Show, Eq, Bounded)
 #}

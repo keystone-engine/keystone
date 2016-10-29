@@ -19,7 +19,7 @@ module Keystone.CPU.SystemZ
 
 -- | SystemZ errors.
 {# enum ks_err_asm_systemz as Error
-   {underscoreToCase}
+   { underscoreToCase }
    with prefix = "KS_ERR_ASM_SYSTEMZ_"
    deriving (Show, Eq, Bounded)
 #}
