@@ -34,6 +34,7 @@ module Keystone
 import Control.Monad.Trans.Class (lift)
 import Control.Monad.Trans.Either (left, right, runEitherT)
 import Data.ByteString (packCStringLen)
+import Data.List (intercalate)
 import Foreign
 
 import Data.ByteString (ByteString)
@@ -79,17 +80,17 @@ option ks optType optValue = do
     else
         left err
 
--- | Assemble a string given its buffer and start address.
+-- | Assemble a list of statements.
 assemble :: Engine                      -- ^ 'Keystone' engine handle
-         -> String                      -- ^ String to assemble. Use ';' or
-                                        -- '\n' to separate statements.
+         -> [String]                    -- ^ List of statements to assemble.
          -> Maybe Word64                -- ^ Optional address of the first
                                         -- assembly instruction
          -> Assembler (ByteString, Int) -- ^ Returns the encoded input assembly
                                         -- string and the number of statements
                                         -- successfully processed. Returns an
                                         -- 'Error' on failure
-assemble ks string addr = do
+assemble ks stmts addr = do
+    let string = intercalate ";" stmts
     (res, encPtr, encSize, statCount) <- lift $ ksAsm ks string (maybeZ addr)
     if res == 0 then do
         -- If ksAsm completed successfully, pack the encoded bytes into a
