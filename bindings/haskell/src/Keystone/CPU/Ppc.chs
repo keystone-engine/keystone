@@ -8,16 +8,18 @@ License     : GPL-2
 
 Definitions for the PPC architecture.
 -}
-module Keystone.CPU.Ppc (
-    Error(..),
-) where
+module Keystone.CPU.Ppc
+    (
+      Error(..)
+    ) where
 
-{# context lib="keystone" #}
+{# context lib = "keystone" #}
 
 #include <keystone/ppc.h>
 
 -- | PPC errors.
 {# enum ks_err_asm_ppc as Error
-    {underscoreToCase}
-    with prefix="KS_ERR_ASM_PPC_"
-    deriving (Show, Eq, Bounded) #}
+   {underscoreToCase}
+   with prefix = "KS_ERR_ASM_PPC_"
+   deriving (Show, Eq, Bounded)
+#}

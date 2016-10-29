@@ -9,27 +9,27 @@ framework.
 
 Further information is available at <http://www.keystone-engine.org>.
 -}
-module Keystone (
-    -- * Assembler control
-    Assembler,
-    Engine,
-    Architecture(..),
-    Mode(..),
-    OptionType(..),
-    OptionValue(..),
-    runAssembler,
-    open,
-    option,
-    assemble,
+module Keystone
+    ( -- * Assembler control
+      Assembler
+    , Engine
+    , Architecture(..)
+    , Mode(..)
+    , OptionType(..)
+    , OptionValue(..)
+    , runAssembler
+    , open
+    , option
+    , assemble
 
-    -- * Error handling
-    Error(..),
-    errno,
-    strerror,
+      -- * Error handling
+    , Error(..)
+    , errno
+    , strerror
 
-    -- * Misc.
-    version,
-) where
+      -- * Misc.
+    , version
+    ) where
 
 import Control.Monad.Trans.Class (lift)
 import Control.Monad.Trans.Either (left, right, runEitherT)

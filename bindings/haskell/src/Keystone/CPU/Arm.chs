@@ -8,16 +8,18 @@ License     : GPL-2
 
 Definitions for the ARM architecture.
 -}
-module Keystone.CPU.Arm (
-    Error(..),
-) where
+module Keystone.CPU.Arm
+    (
+      Error(..)
+    ) where
 
-{# context lib="keystone" #}
+{# context lib = "keystone" #}
 
 #include <keystone/arm.h>
 
 -- | ARM errors.
 {# enum ks_err_asm_arm as Error
-    {underscoreToCase}
-    with prefix="KS_ERR_ASM_ARM_"
-    deriving (Show, Eq, Bounded) #}
+   {underscoreToCase}
+   with prefix = "KS_ERR_ASM_ARM_"
+   deriving (Show, Eq, Bounded)
+#}
