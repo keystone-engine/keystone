@@ -40,6 +40,10 @@ static void usage(char *prog)
         printf("        armbe:     ARM - big endian\n");
         printf("        thumb:     Thumb - little endian\n");
         printf("        thumbbe:   Thumb - big endian\n");
+        printf("        armv8:     ARM V8 - little endian\n");
+        printf("        armv8be:   ARM V8 - big endian\n");
+        printf("        thumbv8:   Thumb V8 - little endian\n");
+        printf("        thumbv8be: Thumb V8 - big endian\n");
     }
 
     if (ks_arch_supported(KS_ARCH_ARM64)) {
@@ -205,6 +209,22 @@ int main(int argc, char **argv)
 
     if (!strcmp(mode, "thumbbe")) {
         err = ks_open(KS_ARCH_ARM, KS_MODE_THUMB+KS_MODE_BIG_ENDIAN, &ks);
+    }
+
+    if (!strcmp(mode, "armv8")) {
+        err = ks_open(KS_ARCH_ARM, KS_MODE_ARM+KS_MODE_LITTLE_ENDIAN+KS_MODE_V8, &ks);
+    }
+
+    if (!strcmp(mode, "armv8be")) {
+        err = ks_open(KS_ARCH_ARM, KS_MODE_ARM+KS_MODE_BIG_ENDIAN+KS_MODE_V8, &ks);
+    }
+
+    if (!strcmp(mode, "thumbv8")) {
+        err = ks_open(KS_ARCH_ARM, KS_MODE_THUMB+KS_MODE_LITTLE_ENDIAN+KS_MODE_V8, &ks);
+    }
+
+    if (!strcmp(mode, "thumbv8be")) {
+        err = ks_open(KS_ARCH_ARM, KS_MODE_THUMB+KS_MODE_BIG_ENDIAN+KS_MODE_V8, &ks);
     }
 
     if (!strcmp(mode, "arm64")) {

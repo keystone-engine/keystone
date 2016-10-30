@@ -266,16 +266,36 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
                     return KS_ERR_MODE;
                 }
 
-                if (mode & KS_MODE_THUMB) {
-                    if (mode & KS_MODE_BIG_ENDIAN)
-                        TripleName = "thumbebv7";
-                    else
-                        TripleName = "thumbv7";
-                } else {
-                    if (mode & KS_MODE_BIG_ENDIAN)
+                switch(mode) {
+                    default:
+                        return KS_ERR_MODE;
+                    // big-endian
+                    case KS_MODE_BIG_ENDIAN | KS_MODE_V8 | KS_MODE_ARM:
+                        TripleName = "armv8eb";
+                        break;
+                    case KS_MODE_BIG_ENDIAN | KS_MODE_V8 | KS_MODE_THUMB:
+                        TripleName = "thumbv8eb";
+                        break;
+                    case KS_MODE_BIG_ENDIAN | KS_MODE_ARM:
                         TripleName = "armv7eb";
-                    else
+                        break;
+                    case KS_MODE_BIG_ENDIAN | KS_MODE_THUMB:
+                        TripleName = "thumbebv7";
+                        break;
+
+                    // little-endian
+                    case KS_MODE_LITTLE_ENDIAN | KS_MODE_V8 | KS_MODE_ARM:
+                        TripleName = "armv8";
+                        break;
+                    case KS_MODE_LITTLE_ENDIAN | KS_MODE_V8 | KS_MODE_THUMB:
+                        TripleName = "thumbv8";
+                        break;
+                    case KS_MODE_LITTLE_ENDIAN | KS_MODE_ARM:
                         TripleName = "armv7";
+                        break;
+                    case KS_MODE_LITTLE_ENDIAN | KS_MODE_THUMB:
+                        TripleName = "thumbv7";
+                        break;
                 }
 
                 InitKs(arch, ks, TripleName);
