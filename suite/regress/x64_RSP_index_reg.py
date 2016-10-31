@@ -21,3 +21,4 @@ class TestX86(regress.RegressTest):
         self.assertEqual(encoding, [ 0x48, 0x89, 0x34, 0x04 ])
 
 if __name__ == '__main__':
+    regress.main()
