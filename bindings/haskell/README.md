@@ -3,7 +3,7 @@ source.
 
 1. Install the core Keystone Assembler as a dependency:
 
-    Follow docs/COMPILE.md in the root directory to compile & install the core.
+   Follow docs/COMPILE.md in the root directory to compile & install the core.
 2. Change into the Haskell bindings directory, build and install:
 
     ```
