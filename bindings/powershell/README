@@ -1,0 +1,19 @@
+Usage
+
+Invoke-Keystone is ready for use, there are two options to access the keystone library from PowerShell:
+
+  * Script dot sourcing:
+
+     PS C:\> . .\Invoke-Keystone.ps1
+
+  * Adding the script to one of the PowerShell module directories:
+
+     # Global PSModulePath path
+     %Windir%\System32\WindowsPowerShell\v1.0\Modules
+
+     # User PSModulePath path
+     %UserProfile%\Documents\WindowsPowerShell\Modules
+
+Notes
+
+Invoke-Keystone drops the Keystone DLL, x32/64 respectively, to the user's temporary folder the first time it runs.
