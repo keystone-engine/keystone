@@ -2,7 +2,7 @@ Documention of Keystone assembler engine.
 
 * How to compile & install Keystone from source.
 
-    COMPILE.md
+    [COMPILE.md](COMPILE.md)
 
 * How to compile & install Keystone from packages.
 
