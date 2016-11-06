@@ -1,26 +1,16 @@
 Usage
 
-Invoke-Keystone requires an architecture appropriate (x32/64) compiled Keystone DLL.
-A pre-compiled version can be found on the Keystone download page at the following
-URL:
+To use the PowerShell binding, the Keystone folder should be added to one of the PowerShell module directories:
 
-  * http://www.keystone-engine.org/download/
+  # Global PSModulePath path
+  %Windir%\System32\WindowsPowerShell\v1.0\Modules
 
-Once downloaded, the DLL should be placed in a directory which is part of the SafeDllSearchMode search order. In practice, any folder which is part of the Windows PATH environment variable will work.
+  # User PSModulePath path
+  %UserProfile%\Documents\WindowsPowerShell\Modules
 
-The Invoke-Keystone function itself can be initialized using one of the following methods:
+Once this is done the module can be initialized by typing “Import-Module Keystone” in a new PowerShell terminal. Further information on the usage of the binding can be obtained with the following command:
 
-  * Script dot sourcing:
-
-     PS C:\> . .\Invoke-Keystone.ps1
-
-  * Adding the script to one of the PowerShell module directories:
-
-     # Global PSModulePath path
-     %Windir%\System32\WindowsPowerShell\v1.0\Modules
-
-     # User PSModulePath path
-     %UserProfile%\Documents\WindowsPowerShell\Modules
+  Get-Help Get-KeystoneAssembly -Full
 
 Notes
 
