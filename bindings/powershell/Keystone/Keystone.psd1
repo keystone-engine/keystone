@@ -11,9 +11,6 @@ GUID = 'd34db33f-7f65-4681-9cfb-0cf4929a8e68'
 # Author of this module
 Author = 'Ruben Boonen'
 
-# Copyright statement for this module
-Copyright = 'see COPYING'
-
 # Description of the functionality provided by this module
 Description = 'Keystone Engine Binding Module'
 

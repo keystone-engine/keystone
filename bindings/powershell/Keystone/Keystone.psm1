@@ -33,7 +33,7 @@ function Get-KeystoneAssembly {
 	>> pop ecx
 	>> ret
 	>> "@
-	PS C:\> Get-KeystoneAssembly -Architecture X86 -Mode 32 -Code $Code
+	PS C:\> Get-KeystoneAssembly -Architecture KS_ARCH_X86 -Mode KS_MODE_32 -Code $Code
 
 	Bytes        : 9
 	Instructions : 4
@@ -50,7 +50,7 @@ function Get-KeystoneAssembly {
 	>> pop ecx
 	>> ret
 	>> "@
-	PS C:\> $Object = Get-KeystoneAssembly -Architecture X86 -Mode 32 -Code $Code
+	PS C:\> $Object = Get-KeystoneAssembly -Architecture KS_ARCH_X86 -Mode KS_MODE_32 -Code $Code
 	PS C:\> $Object.RawArray -join ""
 	81ECC80000005859C3
 	PS C:\> $Object.CArray -join ""
