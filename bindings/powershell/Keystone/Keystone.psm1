@@ -61,8 +61,8 @@ function Get-KeystoneAssembly {
 #>
 
 	param(
-        [Parameter(ParameterSetName='Keystone', Mandatory = $True)]
-        [ValidateSet(
+		[Parameter(ParameterSetName='Keystone', Mandatory = $True)]
+		[ValidateSet(
 			'KS_ARCH_ARM',
 			'KS_ARCH_ARM64',
 			'KS_ARCH_MIPS',
@@ -73,10 +73,10 @@ function Get-KeystoneAssembly {
 			'KS_ARCH_HEXAGON',
 			'KS_ARCH_MAX')
 		]
-        [String]$Architecture,
+		[String]$Architecture,
 		
-        [Parameter(ParameterSetName='Keystone', Mandatory = $True)]
-        [ValidateSet(
+		[Parameter(ParameterSetName='Keystone', Mandatory = $True)]
+		[ValidateSet(
 			'KS_MODE_LITTLE_ENDIAN',
 			'KS_MODE_BIG_ENDIAN',
 			'KS_MODE_ARM',
@@ -97,14 +97,14 @@ function Get-KeystoneAssembly {
 			'KS_MODE_SPARC64',
 			'KS_MODE_V9')
 		]
-        [String]$Mode,
-
+		[String]$Mode,
+		
 		[Parameter(ParameterSetName='Keystone', Mandatory = $True)]
 		[ValidateNotNullOrEmpty()]
 		[string]$Code,
-
+		
 		[Parameter(ParameterSetName='Keystone', Mandatory = $False)]
-        [ValidateSet(
+		[ValidateSet(
 			'KS_OPT_SYNTAX_INTEL',
 			'KS_OPT_SYNTAX_ATT',
 			'KS_OPT_SYNTAX_NASM',
@@ -112,38 +112,10 @@ function Get-KeystoneAssembly {
 			'KS_OPT_SYNTAX_GAS')
 		]
 		[String]$Syntax = "KS_OPT_SYNTAX_INTEL",
-
+		
 		[Parameter(ParameterSetName='Version', Mandatory = $False)]
 		[switch]$Version = $null
     )
-
-	if ($Version){
-		$Banner = @"
-
-                ;#                 
-             #########             
-           ######""   ;;           
-     ###";#### ;##############     
-   ##### ### ##""   "## ""######   
-   #### ###           ""### "###   
-   #### ##               "### "#   
-   "### \#               ; ####    
-    "### "               ##"####   
-   ## \###               ## ####   
-   #### "###;           ### ####   
-   ######## "#"   ;### ###"#####   
-     "#############" ####"/##"     
-           "    ;#######           
-             "#######"             
-                 #                 	
-                                     
-    -=[Keystone Engine v0.9.1]=-
-
-"@
-		# Mmm ASCII version banner!
-		$Banner
-		Return
-	}
 
 	# Compatibility for PS v2 / PS v3+
 	if(!$PSScriptRoot) {
@@ -224,8 +196,42 @@ function Get-KeystoneAssembly {
 		[DllImport("$DllPath")]
 		public static extern void ks_free(
 			IntPtr handle);
+
+		[DllImport("$DllPath")]
+		public static extern int ks_version(
+			uint major,
+			uint minor);
 	}
 "@
+
+	if ($Version){
+		$VerCount = [System.BitConverter]::GetBytes($([Keystone]::ks_version($null,$null)))
+		$Banner = @"
+
+                ;#                 
+             #########             
+           ######""   ;;           
+     ###";#### ;##############     
+   ##### ### ##""   "## ""######   
+   #### ###           ""### "###   
+   #### ##               "### "#   
+   "### \#               ; ####    
+    "### "               ##"####   
+   ## \###               ## ####   
+   #### "###;           ### ####   
+   ######## "#"   ;### ###"#####   
+     "#############" ####"/##"     
+           "    ;#######           
+             "#######"             
+                 #                 
+
+     -=[Keystone Engine v$($VerCount[1]).$($VerCount[0])]=-
+
+"@
+		# Mmm ASCII version banner!
+		$Banner
+		Return
+	}
 
 	# Asm Handle
 	$AsmHandle = [IntPtr]::Zero
