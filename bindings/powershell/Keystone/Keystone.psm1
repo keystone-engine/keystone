@@ -130,10 +130,10 @@ function Get-KeystoneAssembly {
 	}
 
 	# Load C# constants
-	$ks_err = Get-Content $($PSScriptRoot + '\Const\ks_err_cons.cs')
-	$ks_arch = Get-Content $($PSScriptRoot + '\Const\ks_arch_cons.cs')
-	$ks_mode = Get-Content $($PSScriptRoot + '\Const\ks_mode_cons.cs')
-	$ks_opt_value = Get-Content $($PSScriptRoot + '\Const\ks_opt_value_cons.cs')
+	$ks_err = Select-String "KS_ERR_" $($PSScriptRoot + '\Const\keystone_h.cs') |select -exp line
+	$ks_arch = Select-String "KS_ARCH_" $($PSScriptRoot + '\Const\keystone_h.cs') |select -exp line
+	$ks_mode = Select-String "KS_MODE_" $($PSScriptRoot + '\Const\keystone_h.cs') |select -exp line
+	$ks_opt_value = Select-String "KS_OPT_SYNTAX_" $($PSScriptRoot + '\Const\keystone_h.cs') |select -exp line
 
 	# Inline C# to parse the unmanaged keystone DLL
 	Add-Type -TypeDefinition @"
