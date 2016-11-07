@@ -123,11 +123,7 @@ function Get-KeystoneAssembly {
 	}
 	
 	# Set the keystone DLL path
-	if ([IntPtr]::Size -eq 4){
-		$DllPath = $($PSScriptRoot + '\Lib\Keystone\x86\keystone.dll').Replace('\','\\')
-	} else {
-		$DllPath = $($PSScriptRoot + '\Lib\Keystone\x64\keystone.dll').Replace('\','\\')
-	}
+	$DllPath = $($PSScriptRoot + '\Lib\Keystone\keystone.dll').Replace('\','\\')
 
 	# Make sure the user didn't forget the DLL
 	if (![IO.File]::Exists($DllPath)) {

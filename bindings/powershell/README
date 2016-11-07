@@ -1,6 +1,6 @@
 Usage
 
-Compile the x86/x64 versions of “keystone.dll” and place them in their respective folder in “./Keystone/Lib/Keystone/”. Alternatively, pre-compiled DLL’s can be obtained from the Keystone-Engine download page:
+Compile the relevant version (x86/x64) of “keystone.dll” and place it in “./Keystone/Lib/Keystone/”. Alternatively, pre-compiled DLL’s can be obtained from the Keystone-Engine download page:
 
   * http://www.keystone-engine.org/download/
 
