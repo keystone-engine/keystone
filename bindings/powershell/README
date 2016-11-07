@@ -1,6 +1,10 @@
 Usage
 
-To use the PowerShell binding, the Keystone folder should be added to one of the PowerShell module directories:
+Compile the x86/x64 versions of “keystone.dll” and place them in their respective folder in “./Keystone/Lib/Keystone/”. Alternatively, pre-compiled DLL’s can be obtained from the Keystone-Engine download page:
+
+  * http://www.keystone-engine.org/download/
+
+To use the PowerShell binding, the entire Keystone folder should be added to one of the PowerShell module directories:
 
   # Global PSModulePath path
   %Windir%\System32\WindowsPowerShell\v1.0\Modules
