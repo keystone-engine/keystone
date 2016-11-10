@@ -1,3 +1,4 @@
+/// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [keystone_h.cs]
 KS_API_MAJOR = 0,
 KS_API_MINOR = 9,
 KS_VERSION_MAJOR = 0,

@@ -252,6 +252,8 @@ def gen(lang):
 
     templ = template[lang]
     for target in include:
+        if target not in templ:
+            continue
         prefix = templ[target]
         if target == 'keystone.h':
             prefix = 'keystone'
