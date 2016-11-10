@@ -45,3 +45,4 @@ Remco Verhoef: Go & Rust bindings.
 Adrian Herrera: Haskell binding.
 practicalswift: Various cool bugs found by fuzzing.
 Aziem Chawdhary: OCaml binding.
+Ruben Boonen: PowerShell binding.
