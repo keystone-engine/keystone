@@ -15,6 +15,22 @@ def CamelCase(s):
     return ''.join(''.join([w[0].upper(), w[1:].lower()]) for w in s.split('_'))
 
 template = {
+    'powershell': {
+            'header': "/// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [%s_h.cs]\n",
+            'footer': "",
+            'out_file': './powershell/Keystone/Const/%s_h.cs',
+            # prefixes for constant filenames of all archs - case sensitive
+            'keystone.h': 'keystone',
+            'comment_open': '///',
+            'comment_close': '',
+            'rules': [
+                {
+                    'regex': r'.*',
+                    'line_format': 'KS_{0} = {1},\n',
+                    'fn': (lambda x: x),
+                },
+            ]
+        },
     'rust': {
             'header': "// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [%s_const.rs]\nextern crate libc;\n\n",
             'footer': "",

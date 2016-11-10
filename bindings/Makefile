@@ -19,6 +19,7 @@ all:
 	python const_generator.py rust
 	python const_generator.py go
 	cd ruby && $(MAKE) gen_const
+	python const_generator.py powershell
 
 samples: expected python
 
