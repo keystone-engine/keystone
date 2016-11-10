@@ -4,11 +4,11 @@ This documentation explains how to install & use PowerShell binding for Keystone
 Install
 ------
 
-Compile the relevant version (x86/x64) of “keystone.dll” and place it in
-“./Keystone/Lib/Keystone/”.
+Compile the relevant version (x86/x64) of `keystone.dll` and place it in
+`./Keystone/Lib/Keystone/`.
 
 Alternatively, pre-compiled DLL’s can be obtained from the Keystone homepage
-at http://www.keystone-engine.org/download/
+at http://keystone-engine.org/download
 
 
 Usage
@@ -35,4 +35,4 @@ Notes
 
 The Keystone engine requires the Visual C++ Redistributable Packages for Visual
 Studio 2013. The architecture relevant installer can be downloaded at the
-URL: https://www.microsoft.com/en-gb/download/confirmation.aspx?id=40784
+URL https://www.microsoft.com/en-gb/download/confirmation.aspx?id=40784
