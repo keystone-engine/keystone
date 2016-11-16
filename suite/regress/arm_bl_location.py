@@ -20,7 +20,7 @@ class TestARM(regress.RegressTest):
                     bl #0xfffe5068
                     """)
         # Assert the result
-        self.assertEqual(encoding[:4], [ 0x16, 0x94, 0xff, 0xeb ])
+        self.assertEqual(encoding[-4:], [ 0x16, 0x94, 0xff, 0xeb ])
 
 if __name__ == '__main__':
     regress.main()
