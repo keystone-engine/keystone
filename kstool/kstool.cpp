@@ -290,8 +290,7 @@ int main(int argc, char **argv)
     }
 
     if (ks_asm(ks, assembly, start_addr, &insn, &size, &count)) {
-        printf("ERROR: failed on ks_asm() with count = %zu, error = %s (code = %zu)\n",
-                count, ks_strerror(ks_errno(ks)), ks_errno(ks));
+        printf("ERROR: failed on ks_asm() with count = %zu, error = '%s' (code = %u)\n", count, ks_strerror(ks_errno(ks)), ks_errno(ks));
     } else {
         size_t i;
         //printf("Kstool v%s for Keystone Engine (www.keystone-engine.org)\n\n", VERSION);
