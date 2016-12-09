@@ -16,9 +16,11 @@ class TestX86(regress.RegressTest):
         # Assemble to get back insn encoding & statement count
         encoding1, _ = ks.asm(b"push 0xd")
         encoding2, _ = ks.asm(b"push word 0xd")
+        encoding3, _ = ks.asm(b"push word 0x1234")
         # Assert the result
         self.assertEqual(encoding1, [ 0x6a, 0x0d ])
         self.assertEqual(encoding2, [ 0x66, 0x6a, 0x0d ])
+        self.assertEqual(encoding3, [ 0x66, 0x68, 0x34, 0x12 ])
 
 if __name__ == '__main__':
     regress.main()
