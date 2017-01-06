@@ -20,9 +20,6 @@ class TestX86Nasm(regress.RegressTest):
     def runTest(self):
         ks = Ks(KS_ARCH_X86, KS_MODE_32)
         ks.syntax = KS_OPT_SYNTAX_NASM
-
-        dir(sym_resolver)
-
         ks.sym_resolver = sym_resolver
         encoding, count = ks.asm(b"call [GetPhoneBuildString]")
         self.assertEqual(encoding, [ 0xff, 0x15, 0x00, 0xb0, 0x41, 0x00 ])
