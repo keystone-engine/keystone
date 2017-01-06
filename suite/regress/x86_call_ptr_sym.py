@@ -12,9 +12,8 @@ import regress
 
 def sym_resolver(symbol, p_value):
     if symbol == b'GetPhoneBuildString':
-        p_value.contents.value = 0x41b000
-        return True
-    return False
+        return 0x41b000
+    return None
 
 class TestX86Nasm(regress.RegressTest):
     def runTest(self):

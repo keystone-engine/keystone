@@ -14,14 +14,11 @@ class TestX86(regress.RegressTest):
         def sym_resolver(symbol, p_value):
             # is this the missing symbol we want to handle?
             if symbol == b"ZwQueryInformationProcess":
-                # put value of this symbol in @value
-                p_value.contents.value = 0x7FF98A050840
-                # we handled this symbol, so return true
                 print('sym_resolver called!')
-                return True
+                return 0x7FF98A050840
  
-            # we did not handle this symbol, so return false
-            return False
+            # we did not handle this symbol, so return None
+            return None
 
         # Initialize Keystone engine
         ks = Ks(KS_ARCH_X86, KS_MODE_64)

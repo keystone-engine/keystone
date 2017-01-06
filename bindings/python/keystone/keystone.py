@@ -191,12 +191,21 @@ class Ks(object):
 
     @sym_resolver.setter
     def sym_resolver(self, resolver):
-        callback = KS_SYM_RESOLVER(resolver)
+        def _wrapper_resolver(symbol, p_value):
+            v = self._sym_resolver(symbol)
+            if v is None:   # we did not handle this symbol
+                return False
+
+            # we handled this symbol, so set value and return True
+            p_value.contents.value = v
+            return True
+
+        # save resolver
+        self._sym_resolver = resolver
+        callback = KS_SYM_RESOLVER(_wrapper_resolver)
         status = _ks.ks_option(self._ksh, KS_OPT_SYM_RESOLVER, callback)
         if status != KS_ERR_OK:
             raise KsError(status)
-        # save resolver
-        self._sym_resolver = callback
 
 
     # assemble a string of assembly
