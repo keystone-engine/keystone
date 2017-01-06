@@ -11,7 +11,7 @@ import regress
 
 class TestX86(regress.RegressTest):
     def runTest(self):
-        def sym_resolver(symbol, p_value):
+        def sym_resolver(symbol):
             # is this the missing symbol we want to handle?
             if symbol == b"ZwQueryInformationProcess":
                 print('sym_resolver called!')

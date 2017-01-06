@@ -10,7 +10,7 @@
 from keystone import *
 import regress
 
-def sym_resolver(symbol, p_value):
+def sym_resolver(symbol):
     if symbol == b'GetPhoneBuildString':
         return 0x41b000
     return None
