@@ -26,7 +26,7 @@ def test_sym_resolver():
         # is this the missing symbol we want to handle?
         if symbol == "_l1":
             # we handled this symbol
-            return 0x1002
+            return 0x1005
 
         # we did not handle this symbol, so return None
         return None
@@ -36,7 +36,7 @@ def test_sym_resolver():
     # register callback for symbol resolver
     ks.sym_resolver = sym_resolver
 
-    CODE = b"jmp _l1; nop; _l1:"
+    CODE = b"jmp _l1; nop"
     encoding, count = ks.asm(CODE, 0x1000)
 
     print("%s = [ " % CODE, end='')

@@ -51,7 +51,7 @@ static bool sym_resolver(const char *symbol, uint64_t *value)
     // is this the missing symbol "_l1" that we want to handle?
     if (!strcmp(symbol, "_l1")) {
         // put value of this symbol in @value
-        *value = 0x1002;
+        *value = 0x1005;
         // we handled this symbol, so return true
         return true;
     }

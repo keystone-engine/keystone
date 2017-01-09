@@ -203,7 +203,7 @@ class Ks(object):
         # save resolver
         self._sym_resolver = resolver
         callback = KS_SYM_RESOLVER(_wrapper_resolver)
-        status = _ks.ks_option(self._ksh, KS_OPT_SYM_RESOLVER, callback)
+        status = _ks.ks_option(self._ksh, KS_OPT_SYM_RESOLVER, cast(callback, c_void_p))
         if status != KS_ERR_OK:
             raise KsError(status)
 
