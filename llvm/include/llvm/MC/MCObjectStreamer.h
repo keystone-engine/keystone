@@ -150,6 +150,7 @@ public:
                               unsigned Size) override;
 
   bool mayHaveInstructions(MCSection &Sec) const override;
+  uint64_t getCurrentFragmentSize() override;
 };
 
 } // end namespace llvm

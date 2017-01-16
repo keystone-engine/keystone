@@ -463,7 +463,7 @@ void MCObjectStreamer::EmitGPRel32Value(const MCExpr *Value) {
   MCDataFragment *DF = getOrCreateDataFragment();
   flushPendingLabels(DF, DF->getContents().size());
 
-  DF->getFixups().push_back(MCFixup::create(DF->getContents().size(), 
+  DF->getFixups().push_back(MCFixup::create(DF->getContents().size(),
                                             Value, FK_GPRel_4));
   DF->getContents().resize(DF->getContents().size() + 4, 0);
 }
@@ -473,7 +473,7 @@ void MCObjectStreamer::EmitGPRel64Value(const MCExpr *Value) {
   MCDataFragment *DF = getOrCreateDataFragment();
   flushPendingLabels(DF, DF->getContents().size());
 
-  DF->getFixups().push_back(MCFixup::create(DF->getContents().size(), 
+  DF->getFixups().push_back(MCFixup::create(DF->getContents().size(),
                                             Value, FK_GPRel_4));
   DF->getContents().resize(DF->getContents().size() + 8, 0);
 }
@@ -525,4 +525,11 @@ unsigned int MCObjectStreamer::FinishImpl()
   getAssembler().Finish(KsError);
 
   return KsError;
+}
+
+uint64_t MCObjectStreamer::getCurrentFragmentSize() {
+  auto *F = dyn_cast_or_null<MCDataFragment>(getCurrentFragment());
+  if (nullptr != F)
+      return F->getContents().size();
+  return 0;
 }
