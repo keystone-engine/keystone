@@ -20,7 +20,6 @@ bl #3230052712
 """
 
     def runTest(self):
-        return
         ks = Ks(KS_ARCH_ARM, KS_MODE_ARM)
         encoding, count = ks.asm(self.asm, 0xc0000000)
         expected_encoding = [48, 0, 160, 227, 91, 172, 33, 235, 16,
@@ -39,7 +38,6 @@ bl 0xc008;
 """
 
     def runTest(self):
-        return
         ks = Ks(KS_ARCH_PPC, KS_MODE_PPC32 + KS_MODE_BIG_ENDIAN)
         encoding, count = ks.asm(self.asm, 0xc0000000)
         expected_encoding = [56, 128, 0, 1, 56, 132, 0, 1, 72, 0, 191, 249, 56,
