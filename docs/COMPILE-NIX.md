@@ -29,7 +29,7 @@ For Windows, see [COMPILE-WINDOWS.md](COMPILE-WINDOWS.md)
 
    For Linux distributions following the "Filesystem Hierarchy Standard" and
    put x64 libraries under $PREFIX/lib64, such as Fedora, Redhat & Suse,
-   add "fhs" option at the end of make-share.sh script, like below.
+   add "lib64" option at the end of make-share.sh script, like below.
 
         $ ../make-share.sh lib64
 
@@ -54,7 +54,7 @@ For Windows, see [COMPILE-WINDOWS.md](COMPILE-WINDOWS.md)
 
    For Linux distributions following the "Filesystem Hierarchy Standard" and
    put x64 libraries under $PREFIX/lib64, such as Fedora, Redhat & Suse,
-   add "fhs" option at the end of make-share.sh script, like below.
+   add "lib64" option at the end of make-share.sh script, like below.
 
         $ ../make-lib.sh lib64
 
