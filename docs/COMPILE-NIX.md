@@ -29,9 +29,9 @@ For Windows, see [COMPILE-WINDOWS.md](COMPILE-WINDOWS.md)
 
    For Linux distributions following the "Filesystem Hierarchy Standard" and
    put x64 libraries under $PREFIX/lib64, such as Fedora, Redhat & Suse,
-   add "fhs" option at the end of make-share.sh script, like below.
+   add "lib64" option at the end of make-share.sh script, like below.
 
-        $ ../make-share.sh fhs
+        $ ../make-share.sh lib64
 
    By default, this builds all architectures, which is: AArch64, ARM, Hexagon,
    Mips, PowerPC, Sparc, SystemZ & X86. To compile just some selected ones,
@@ -54,9 +54,9 @@ For Windows, see [COMPILE-WINDOWS.md](COMPILE-WINDOWS.md)
 
    For Linux distributions following the "Filesystem Hierarchy Standard" and
    put x64 libraries under $PREFIX/lib64, such as Fedora, Redhat & Suse,
-   add "fhs" option at the end of make-share.sh script, like below.
+   add "lib64" option at the end of make-share.sh script, like below.
 
-        $ ../make-lib.sh fhs
+        $ ../make-lib.sh lib64
 
    Like above, this builds all architectures. To compile just some selected ones,
    pass a semicolon-separated list of targets to LLVM_TARGETS_TO_BUILD,
