@@ -24,7 +24,7 @@ namespace Keystone
         public static extern string ks_strerror(Constants.ks_err code);
 
         [DllImport("keystone.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern Constants.ks_err ks_option(IntPtr ks, Constants.ks_opt_type type, UIntPtr value);
+        public static extern Constants.ks_err ks_option(IntPtr ks, Constants.ks_opt_type type, IntPtr value);
 
         [DllImport("keystone.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
         public static extern int ks_asm(IntPtr ks, 

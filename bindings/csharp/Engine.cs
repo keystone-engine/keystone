@@ -13,6 +13,11 @@ namespace Keystone
             return engine;
         }
 
+        public bool IsReady()
+        {
+            return (engine != IntPtr.Zero);
+        }
+
         public uint Version(ref int major, ref int minor)
         {
             return (uint) Import.ks_version(ref major, ref minor);
@@ -43,9 +48,14 @@ namespace Keystone
             return Import.ks_strerror(code);
         }
 
-        public Constants.ks_err Option(Constants.ks_opt_type type, uint value)
+        public Constants.ks_err SetSymbolResolver(Constants.ks_sym_resolver resolver)
         {
-            return Import.ks_option(engine, type, new UIntPtr(value));
+            return Import.ks_option(engine, Constants.ks_opt_type.KS_OPT_SYM_RESOLVER, Marshal.GetFunctionPointerForDelegate(resolver));
+        }
+
+        public Constants.ks_err SetSyntax(Constants.ks_opt_value syntax)
+        {
+            return Import.ks_option(engine, Constants.ks_opt_type.KS_OPT_SYNTAX, new IntPtr((int) syntax));
         }
 
         public int Assemble(string str, UInt64 address, ref List<byte> encoding, ref ulong statCount)

@@ -1,4 +1,6 @@
-﻿namespace Keystone
+﻿using System.Runtime.InteropServices;
+
+namespace Keystone
 {
     public class Constants
     {
@@ -189,5 +191,9 @@
             KS_ERR_ASM_X86_MISSINGFEATURE,
             KS_ERR_ASM_X86_MNEMONICFAIL,
         }
+
+        // Delegate
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate bool ks_sym_resolver([In, MarshalAs(UnmanagedType.LPStr)] string symbol, ref ulong value);
     }
 }
