@@ -230,6 +230,10 @@ public:
 
   void generateCompactUnwindEncodings(MCAsmBackend *MAB);
 
+  // \brief Returns the current size of the fragment to which the streamer
+  // is emitting code to.
+  virtual uint64_t getCurrentFragmentSize() {return 0; }
+
   /// \name Assembly File Formatting.
   /// @{
 

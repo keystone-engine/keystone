@@ -1680,8 +1680,13 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
 
     // First query the target-specific parser. It will return 'true' if it
     // isn't interested in this directive.
-    if (!getTargetParser().ParseDirective(ID))
-      return false;
+      uint64_t BytesInFragment = getStreamer().getCurrentFragmentSize();
+      if (!getTargetParser().ParseDirective(ID)){
+        // increment the address for the next statement if the directive
+        // has emitted any value to the streamer.
+        Address += getStreamer().getCurrentFragmentSize() - BytesInFragment;
+        return false;
+        }
 
     // Next, check the extension directive map to see if any extension has
     // registered itself to parse this directive.
