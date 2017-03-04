@@ -768,9 +768,7 @@ public:
     if (!MCE)
       return true;
     int64_t Val = MCE->getValue();
-    if (Val & 0x3)
-      return false;
-    return (Val >= -(0x2000000 << 2) && Val <= (0x1ffffff << 2));
+    return !(Val & 0x3)
   }
   bool isPCRelLabel19() const {
     if (!isImm())
@@ -790,9 +788,7 @@ public:
     if (!MCE)
       return true;
     int64_t Val = MCE->getValue();
-    if (Val & 0x3)
-      return false;
-    return (Val >= -(0x2000 << 2) && Val <= (0x1fff << 2));
+    return !(Val & 0x3);
   }
 
   bool
