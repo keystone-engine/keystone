@@ -288,7 +288,7 @@ AArch64MCCodeEmitter::getLoadLiteralOpValue(const MCInst &MI, unsigned OpIdx,
 
   // If the destination is an immediate, we have nothing to do.
   if (MO.isImm())
-    return MO.getImm();
+    return (MO.getImm() * 4 - MI.getAddress()) / 4;
   assert(MO.isExpr() && "Unexpected target type!");
 
   MCFixupKind Kind = MCFixupKind(AArch64::fixup_aarch64_ldr_pcrel_imm19);
