@@ -2939,7 +2939,7 @@ bool AArch64AsmParser::parseRegister(OperandVector &Operands)
       bool valid;
       int64_t Val = Tok.getIntVal(valid);
       if (!valid)
-        return MatchOperand_ParseFail;
+        return true;
       if (Val == 1) {
         Parser.Lex();
         if (getLexer().getKind() == AsmToken::RBrac) {
@@ -4493,7 +4493,7 @@ bool AArch64AsmParser::parseDirectiveLOH(StringRef IDVal, SMLoc Loc)
     bool valid;
     int64_t Id = getParser().getTok().getIntVal(valid);
     if (!valid)
-      return MatchOperand_ParseFail;
+      return true;
     if (Id <= -1U && !isValidMCLOHType(Id))
       //return TokError("invalid numeric identifier in directive");
       return true;
