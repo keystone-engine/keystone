@@ -241,7 +241,7 @@ template = {
             ]
     },
     'csharp': {
-            'header': "/// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [%s.cs]\nnamespace KeystoneNET\n{",
+            'header': "// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [%sConstants.cs]\nnamespace KeystoneNET\n{",
             'footer': "}",
             'out_file': './csharp/KeystoneNET/KeystoneNET/Constants/%sConstants.cs',
             # prefixes for constant filenames of all archs - case sensitive
@@ -274,21 +274,21 @@ template = {
                 },
                 {
                     'regex': r'(ERR)_.*',
-                    'pre': '\n\tpublic enum {0}Error : uint\n\t{{\n',
+                    'pre': '\n\tpublic enum {0}Error : short\n\t{{\n',
                     'post': '\t}',
                     'line_format': '\t\tKS_{0} = {1},\n',
                     'fn': (lambda x: x),
                 },
                 {
                     'regex': r'((OPT_([A-Z]+))|(OPT_SYM_RESOLVER))$',
-                    'pre': '\n\tpublic enum KeystoneOptionType : uint\n\t{{\n',
+                    'pre': '\n\tpublic enum KeystoneOptionType : short\n\t{{\n',
                     'post': '\t}',
                     'line_format': '\t\tKS_{0} = {1},\n',
                     'fn': (lambda x: x),
                 },
                 {
                     'regex': r'OPT_(?!SYM)([A-Z]+\_)+[A-Z]+',
-                    'pre': '\n\tpublic enum KeystoneOptionValue : uint\n\t{{\n',
+                    'pre': '\n\tpublic enum KeystoneOptionValue : short\n\t{{\n',
                     'post': '\t}',
                     'line_format': '\t\tKS_{0} = {1},\n',
                     'fn': (lambda x: x),

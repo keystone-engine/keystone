@@ -53,7 +53,7 @@ namespace KeystoneNET
         internal extern static bool IsArchitectureSupported(KeystoneArchitecture arch);
 
         [DllImport("keystone.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ks_option")]
-        internal extern static KeystoneError SetOption(IntPtr ks, OptionType type, IntPtr value);
+        internal extern static KeystoneError SetOption(IntPtr ks, KeystoneOptionType type, IntPtr value);
 
         [DllImport("keystone.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ks_asm")]
         internal extern static int Assemble(IntPtr ks, 

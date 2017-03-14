@@ -22,6 +22,9 @@
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>x86</PlatformTarget>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -42,21 +45,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArchitectureErrors\ARM.cs" />
-    <Compile Include="ArchitectureErrors\ARM64.cs" />
-    <Compile Include="ArchitectureErrors\Heaxgon.cs" />
-    <Compile Include="ArchitectureErrors\MIPS.cs" />
-    <Compile Include="ArchitectureErrors\PPC.cs" />
-    <Compile Include="ArchitectureErrors\SPARC.cs" />
-    <Compile Include="ArchitectureErrors\SystemZ.cs" />
-    <Compile Include="ArchitectureErrors\X86.cs" />
+    <Compile Include="Constants\ARM64Constants.cs" />
+    <Compile Include="Constants\ARMConstants.cs" />
+    <Compile Include="Constants\HexagonConstants.cs" />
+    <Compile Include="Constants\KeystoneConstants.cs" />
+    <Compile Include="Constants\MipsConstants.cs" />
+    <Compile Include="Constants\PPCConstants.cs" />
+    <Compile Include="Constants\SPARCConstants.cs" />
+    <Compile Include="Constants\SystemZConstants.cs" />
+    <Compile Include="Constants\X86Constants.cs" />
     <Compile Include="Keystone.cs" />
     <Compile Include="KeystoneEncoded.cs" />
     <Compile Include="KeystoneImports.cs" />
-    <Compile Include="KeystoneArchitecture.cs" />
-    <Compile Include="KeystoneError.cs" />
-    <Compile Include="KeystoneMode.cs" />
-    <Compile Include="OptionType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -10,8 +10,6 @@ namespace KeystoneNET
     /// </summary>
     public class Keystone : IDisposable
     {
-        public delegate bool Resolver(string symbol, ref ulong value);
-
         IntPtr engine = IntPtr.Zero;
         bool throwOnError;
         bool addedResolveSymbol;
@@ -22,6 +20,17 @@ namespace KeystoneNET
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         delegate bool ResolverInternal(IntPtr symbol, ref ulong value);
 
+        /// <summary>
+        /// Delegate for defining symbol resolvers.
+        /// </summary>
+        /// <param name="symbol">Symbol to resolve</param>
+        /// <param name="value">Address</param>
+        /// <returns>True if the symbol was recognized.</returns>
+        public delegate bool Resolver(string symbol, ref ulong value);
+
+        /// <summary>
+        /// Event raised when keystone is resolving a symbol.
+        /// </summary>
         public event Resolver ResolveSymbol
         {
             add
@@ -29,7 +38,7 @@ namespace KeystoneNET
                 resolvers.Add(value);
                 if (!addedResolveSymbol)
                 {
-                    KeystoneImports.SetOption(engine, OptionType.KS_OPT_SYM_RESOLVER, Marshal.GetFunctionPointerForDelegate(internalImpl));
+                    KeystoneImports.SetOption(engine, KeystoneOptionType.KS_OPT_SYM_RESOLVER, Marshal.GetFunctionPointerForDelegate(internalImpl));
                     addedResolveSymbol = true;
                 }
             }
@@ -38,14 +47,20 @@ namespace KeystoneNET
                 resolvers.Remove(value);
                 if (addedResolveSymbol && resolvers.Count == 0)
                 {
-                    KeystoneImports.SetOption(engine, OptionType.KS_OPT_SYM_RESOLVER, IntPtr.Zero);
+                    KeystoneImports.SetOption(engine, KeystoneOptionType.KS_OPT_SYM_RESOLVER, IntPtr.Zero);
                     addedResolveSymbol = false;
                 }
             }
         }
 
 
-        public bool SymbolResolver(IntPtr symbolPtr, ref ulong value)
+        /// <summary>
+        /// Method used for symbol resolving.
+        /// </summary>
+        /// <param name="symbolPtr">Name of the symbol</param>
+        /// <param name="value">Address</param>
+        /// <returns>True if the symbol is recognized</returns>
+        private bool SymbolResolver(IntPtr symbolPtr, ref ulong value)
         {
             string symbol = Marshal.PtrToStringAnsi(symbolPtr);
             foreach (var item in resolvers)
@@ -62,6 +77,7 @@ namespace KeystoneNET
         /// </summary>
         /// <param name="architecture">Architecture</param>
         /// <param name="mode">Mode, i.e. endianess, word size etc.</param>
+        /// <param name="throwOnKeystoneError">Throw when there are errors</param>
         /// <remarks>
         /// Some architectures are not supported.
         /// Check with <see cref="IsArchitectureSupported(KeystoneArchitecture)"/> if the engine
@@ -82,9 +98,9 @@ namespace KeystoneNET
         /// </summary>
         /// <param name="type">Type of option</param>
         /// <param name="value">Value</param>
-        /// <returns>True is the option is correctly setted, False otherwise && throwOnError is false.</returns>
-        /// <exception cref="InvalidOperationException">If Keystone return an error && throwOnError is true</exception>
-        public bool SetOption(OptionType type, uint value)
+        /// <returns>True is the option is correctly setted, False otherwise &amp;&amp; throwOnError is false.</returns>
+        /// <exception cref="InvalidOperationException">If Keystone return an error &amp;&amp; throwOnError is true</exception>
+        public bool SetOption(KeystoneOptionType type, uint value)
         {
             var result = KeystoneImports.SetOption(engine, type, (IntPtr)value);
 
@@ -116,8 +132,8 @@ namespace KeystoneNET
         /// </summary>
         /// <param name="toEncode">String that contains the statements to encode</param>
         /// <param name="address">Address of the first instruction.</param>
-        /// <returns>Result of the assemble operation or null if it failed && throwOnError is false.</returns>
-        /// <exception cref="InvalidOperationException">If keystone return an error && throwOnError is true</exception>
+        /// <returns>Result of the assemble operation or null if it failed &amp;&amp; throwOnError is false.</returns>
+        /// <exception cref="InvalidOperationException">If keystone return an error &amp;&amp; throwOnError is true</exception>
         public KeystoneEncoded Assemble(string toEncode, ulong address)
         {
             IntPtr encoding;
@@ -155,10 +171,10 @@ namespace KeystoneNET
         /// <param name="address">Address of the first instruction in input to this function</param>
         /// <param name="size">Size of the result of this operation</param>
         /// <param name="statements">Number of statement found</param>
-        /// <returns>True if the compilation is successful, False otherwise && throwOnError is False.</returns>
+        /// <returns>True if the compilation is successful, False otherwise &amp;&amp;throwOnError is False.</returns>
         /// <exception cref="ArgumentNullException">String to encode is null or collection is null</exception>
         /// <exception cref="ArgumentException">Collection is read-only</exception>
-        /// <exception cref="InvalidOperationException">If keystone return an error && throwOnError is true</exception>
+        /// <exception cref="InvalidOperationException">If keystone return an error &amp;&amp; throwOnError is true</exception>
         public bool AppendAssemble(string toEncode, ICollection<byte> encoded, ulong address, out int size, out uint statements)
         {
             if (encoded == null)
@@ -194,10 +210,10 @@ namespace KeystoneNET
         /// <param name="encoded">Collection of bytes</param>
         /// <param name="address">Address of the first instruction in input to this function</param>
         /// <param name="size">Size of the result of this operation</param>
-        /// <returns>True if the compilation is successful, False otherwise && throwOnError is True.</returns>
+        /// <returns>True if the compilation is successful, False otherwise &amp;&amp; throwOnError is True.</returns>
         /// <exception cref="ArgumentNullException">String to encode is null or collection is null</exception>
         /// <exception cref="ArgumentException">Collection is read-only</exception>
-        /// <exception cref="InvalidOperationException">If keystone return an error && throwOnError is true</exception>
+        /// <exception cref="InvalidOperationException">If keystone return an error &amp;&amp; throwOnError is true</exception>
         public bool AppendAssemble(string toEncode, ICollection<byte> encoded, ulong address, out int size)
         {
             uint unused;
@@ -210,10 +226,10 @@ namespace KeystoneNET
         /// <param name="toEncode">String to encode</param>
         /// <param name="encoded">Collection of bytes</param>
         /// <param name="address">Address of the first instruction in input to this function</param>
-        /// <returns>True if the compilation is successful, False otherwise && throwOnError is True.</returns>
+        /// <returns>True if the compilation is successful, False otherwise &amp;&amp;throwOnError is True.</returns>
         /// <exception cref="ArgumentNullException">String to encode is null or collection is null</exception>
         /// <exception cref="ArgumentException">Collection is read-only</exception>
-        /// <exception cref="InvalidOperationException">If keystone return an error && throwOnError is true</exception>
+        /// <exception cref="InvalidOperationException">If keystone return an error &amp;&amp; throwOnError is true</exception>
         public bool AppendAssemble(string toEncode, ICollection<byte> encoded, ulong address)
         {
             uint unused1;
@@ -227,10 +243,10 @@ namespace KeystoneNET
         /// </summary>
         /// <param name="toEncode">String to encode</param>
         /// <param name="encoded">Collection of bytes</param>
-        /// <returns>True if the compilation is successful, False otherwise && throwOnError is True.</returns>
+        /// <returns>True if the compilation is successful, False otherwise &amp;&amp;throwOnError is True.</returns>
         /// <exception cref="ArgumentNullException">String to encode is null or collection is null</exception>
         /// <exception cref="ArgumentException">Collection is read-only</exception>
-        /// <exception cref="InvalidOperationException">If keystone return an error && throwOnError is true</exception>
+        /// <exception cref="InvalidOperationException">If keystone return an error &amp;&amp; throwOnError is true</exception>
         public bool AppendAssemble(string toEncode, ICollection<byte> encoded)
         {
             uint unused1;
