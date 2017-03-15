@@ -72,5 +72,13 @@ namespace KeystoneNET.Tests
             var engine = ScenarioContext.Current["keystoneInstance"] as Keystone;
             Assert.AreEqual(engine.GetLastKeystoneError(), errorType);
         }
+
+        [AfterScenario]
+        public void ReleaseKeystone()
+        {
+            var engine = ScenarioContext.Current["keystoneInstance"] as Keystone;
+            if (engine != null)
+                engine.Dispose();
+        }
     }
 }
