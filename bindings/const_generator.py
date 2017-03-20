@@ -56,7 +56,7 @@ template = {
                     'post': '\n',
                 },
                 {   'regex': r'MODE_.*',
-                    'pre': 'bitflags! {\n\tpub flags Mode : u32 {\n',
+                    'pre': 'bitflags! {{\n\tpub flags Mode : u32 {{\n',
                     'line_format': '\t\tconst {0} = {1},\n',
                     'fn': (lambda x: x),
                     'post': '\t}\n}\n',
@@ -64,13 +64,13 @@ template = {
                 {
                     'regex': r'ARCH_.*',
                     'pre': '#[derive(Debug, PartialEq, Clone, Copy)]\n' + 
-                            'pub enum Arch {\n',
+                            'pub enum Arch {{\n',
                     'line_format': '\t{0},\n',
                     'fn': (lambda x: '_'.join(x.split('_')[1:])),
                     'post': '}\n\n',
                 },
                 {   'regex': r'ARCH_.*',
-                    'pre': 'impl Arch {\n\t#[inline]\n\tpub fn val(&self) -> u32 {\n\t\tmatch *self {\n',
+                    'pre': 'impl Arch {{\n\t#[inline]\n\tpub fn val(&self) -> u32 {{\n\t\tmatch *self {{\n',
                     'line_format': '\t\t\tArch::{0} => {1},\n',
                     'fn': (lambda x: '_'.join(x.split('_')[1:])),
                     'post': '\t\t}\n\t}\n}\n',
@@ -78,7 +78,7 @@ template = {
                 {
                     'regex': r'OPT_([A-Z]+)$',
                     'pre': '#[derive(Debug, PartialEq, Clone, Copy)]\n' + 
-                            'pub enum OptionType {\n',
+                            'pub enum OptionType {{\n',
                     'line_format': '\t{0},\n',
                     'fn': (lambda x: '_'.join(x.split('_')[1:])),
                     'post': '\tMAX,\n' +
@@ -86,7 +86,7 @@ template = {
                 },
                 {   
                     'regex': r'OPT_([A-Z]+)$',
-                    'pre': 'impl OptionType {\n\t#[inline]\n\tpub fn val(&self) -> u32 {\n\t\tmatch *self {\n',
+                    'pre': 'impl OptionType {{\n\t#[inline]\n\tpub fn val(&self) -> u32 {{\n\t\tmatch *self {{\n',
                     'line_format': '\t\t\tOptionType::{0} => {1},\n',
                     'fn': (lambda x: '_'.join(x.split('_')[1:])),
                     'post': '\t\t\tOptionType::MAX => 99\n' +
@@ -94,14 +94,14 @@ template = {
                 },
                 {
                     'regex': r'OPT_([A-Z]+\_)+[A-Z]+',
-                    'pre': 'bitflags! {\n\tpub flags OptionValue : libc::size_t {\n',
+                    'pre': 'bitflags! {{\n\tpub flags OptionValue : libc::size_t {{\n',
                     'line_format': '\t\tconst {0} = {1},\n',
                     'fn': (lambda x: x),
                     'post': '\t}\n}\n',
                 },
                 {
                     'regex': r'ERR_.*',
-                    'pre': 'bitflags! {\n\tpub flags Error : u32 {\n',
+                    'pre': 'bitflags! {{\n\tpub flags Error : u32 {{\n',
                     'line_format': '\t\tconst {0} = {1},\n',
                     'fn': (lambda x: x),
                     'post': '\t}\n}\n',
@@ -240,6 +240,61 @@ template = {
                 },
             ]
     },
+    'csharp': {
+            'header': "// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [%sConstants.cs]\nnamespace KeystoneNET\n{",
+            'footer': "}",
+            'out_file': './csharp/KeystoneNET/KeystoneNET/Constants/%sConstants.cs',
+            # prefixes for constant filenames of all archs - case sensitive
+            'keystone.h': 'keystone',
+            'arm.h': 'arm',
+            'arm64.h': 'arm64',
+            'mips.h': 'mips',
+            'x86.h': 'x86',
+            'sparc.h': 'sparc',
+            'systemz.h': 'systemz',
+            'ppc.h': 'ppc',
+            'hexagon.h': 'hexagon',
+            'keystone.h': 'keystone',
+            'comment_open': '//',
+            'comment_close': '',
+            'rules': [
+                {
+                    'regex': r'(ARCH)_.*',
+                    'pre': '\n\tpublic enum KeystoneArchitecture : int\n\t{{\n',
+                    'post': '\t}',
+                    'line_format': '\t\tKS_{0} = {1},\n',
+                    'fn': (lambda x: x),
+                },
+                {
+                    'regex': r'(MODE)_.*',
+                    'pre': '\n\tpublic enum KeystoneMode : uint\n\t{{\n',
+                    'post': '\t}',
+                    'line_format': '\t\tKS_{0} = {1},\n',
+                    'fn': (lambda x: x),
+                },
+                {
+                    'regex': r'(ERR)_.*',
+                    'pre': '\n\tpublic enum {0}Error : short\n\t{{\n',
+                    'post': '\t}',
+                    'line_format': '\t\tKS_{0} = {1},\n',
+                    'fn': (lambda x: x),
+                },
+                {
+                    'regex': r'((OPT_([A-Z]+))|(OPT_SYM_RESOLVER))$',
+                    'pre': '\n\tpublic enum KeystoneOptionType : short\n\t{{\n',
+                    'post': '\t}',
+                    'line_format': '\t\tKS_{0} = {1},\n',
+                    'fn': (lambda x: x),
+                },
+                {
+                    'regex': r'OPT_(?!SYM)([A-Z]+\_)+[A-Z]+',
+                    'pre': '\n\tpublic enum KeystoneOptionValue : short\n\t{{\n',
+                    'post': '\t}',
+                    'line_format': '\t\tKS_{0} = {1},\n',
+                    'fn': (lambda x: x),
+                },
+            ]
+    },
 }
 
 # markup for comments to be added to autogen files
@@ -348,7 +403,7 @@ def gen(lang):
                 continue
 
             if rule.get('pre'):
-                outfile.write (rule.get('pre'))
+                outfile.write(rule.get('pre').format(CamelCase(prefix)))
 
             for const in consts2:
                 lhs_strip = const[0]

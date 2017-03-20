@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeystoneNET", "KeystoneNET\KeystoneNET.csproj", "{2FE3B804-90F7-4632-B6F4-F72548E26984}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeystoneNET.Tests", "KeystoneNET.Tests\KeystoneNET.Tests.csproj", "{B9B98FF9-CA76-4DDA-868C-04E8EB151465}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2FE3B804-90F7-4632-B6F4-F72548E26984}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FE3B804-90F7-4632-B6F4-F72548E26984}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FE3B804-90F7-4632-B6F4-F72548E26984}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FE3B804-90F7-4632-B6F4-F72548E26984}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9B98FF9-CA76-4DDA-868C-04E8EB151465}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9B98FF9-CA76-4DDA-868C-04E8EB151465}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9B98FF9-CA76-4DDA-868C-04E8EB151465}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9B98FF9-CA76-4DDA-868C-04E8EB151465}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
