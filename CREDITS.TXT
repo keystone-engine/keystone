@@ -1,4 +1,4 @@
-This file credits all the contributors of Keystone Engine (keystone-engine.org).
+﻿This file credits all the contributors of Keystone Engine (keystone-engine.org).
 
 
 Beta testers (in no particular order)
@@ -46,3 +46,4 @@ Adrian Herrera: Haskell binding.
 practicalswift: Various cool bugs found by fuzzing.
 Aziem Chawdhary: OCaml binding.
 Ruben Boonen: PowerShell binding.
+Marco Fornaro: C# binding.

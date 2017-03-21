@@ -10,7 +10,7 @@ Except Python, all other bindings are contributed by community.
 - Haskell binding: by Adrian Herrera
 - OCaml binding: by Aziem Chawdhary
 - PowerShell binding: by Ruben Boonen
-
+- C# binding: by Marco Fornaro
 
 Other bindings maintained externally by community:
 
