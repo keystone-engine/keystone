@@ -219,7 +219,7 @@ AArch64MCCodeEmitter::getAdrLabelOpValue(const MCInst &MI, unsigned OpIdx,
 
   // If the destination is an immediate, we have nothing to do.
   if (MO.isImm())
-    return MO.getImm();
+      return (MO.getImm() * 4096 - MI.getAddress()) / 4096;
   assert(MO.isExpr() && "Unexpected target type!");
   const MCExpr *Expr = MO.getExpr();
 
@@ -268,7 +268,7 @@ uint32_t AArch64MCCodeEmitter::getCondBranchTargetOpValue(
 
   // If the destination is an immediate, we have nothing to do.
   if (MO.isImm())
-    return MO.getImm();
+    return (MO.getImm() * 4 - MI.getAddress()) / 4;
   assert(MO.isExpr() && "Unexpected target type!");
 
   MCFixupKind Kind = MCFixupKind(AArch64::fixup_aarch64_pcrel_branch19);
@@ -332,7 +332,7 @@ uint32_t AArch64MCCodeEmitter::getTestBranchTargetOpValue(
 
   // If the destination is an immediate, we have nothing to do.
   if (MO.isImm())
-    return MO.getImm();
+    return (MO.getImm() * 4 - MI.getAddress()) / 4;
   assert(MO.isExpr() && "Unexpected ADR target type!");
 
   MCFixupKind Kind = MCFixupKind(AArch64::fixup_aarch64_pcrel_branch14);

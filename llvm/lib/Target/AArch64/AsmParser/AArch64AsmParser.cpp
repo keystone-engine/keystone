@@ -1133,7 +1133,7 @@ public:
         return false;
 
     if (const MCConstantExpr *CE = dyn_cast<MCConstantExpr>(Imm.Val)) {
-      int64_t Val = CE->getValue();
+      int64_t Val = CE->getValue() - Ctx.getBaseAddress();
       int64_t Min = - (4096 * (1LL << (21 - 1)));
       int64_t Max = 4096 * ((1LL << (21 - 1)) - 1);
       return (Val % 4096) == 0 && Val >= Min && Val <= Max;
