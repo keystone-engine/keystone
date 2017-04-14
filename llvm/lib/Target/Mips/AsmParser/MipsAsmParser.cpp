@@ -1691,7 +1691,7 @@ bool MipsAsmParser::processInstruction(MCInst &Inst, SMLoc IDLoc,
   // This expansion is not in a function called by tryExpandInstruction()
   // because the pseudo-instruction doesn't have a distinct opcode.
   if ((Inst.getOpcode() == Mips::JAL || Inst.getOpcode() == Mips::JAL_MM) &&
-      inPicMode()) {
+      inPicMode() && Inst.getOperand(0).isExpr()) {
     warnIfNoMacro(IDLoc);
 
     const MCExpr *JalExpr = Inst.getOperand(0).getExpr();
