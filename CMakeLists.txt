@@ -7,6 +7,8 @@ project(keystone)
 set(KEYSTONE_VERSION_MAJOR 0)
 set(KEYSTONE_VERSION_MINOR 9)
 
+option(KEYSTONE_BUILD_STATIC_RUNTIME "Embed static runtime" ON)
+
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "No build type selected, default to Debug")
   set(CMAKE_BUILD_TYPE "Debug")
@@ -37,6 +39,20 @@ if (${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /EHsc")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /EHsc")
 endif()
+
+# Force static runtime libraries
+if (KEYSTONE_BUILD_STATIC_RUNTIME)
+    FOREACH(flag
+        CMAKE_C_FLAGS_RELEASE CMAKE_C_FLAGS_RELWITHDEBINFO
+        CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_DEBUG_INIT
+        CMAKE_CXX_FLAGS_RELEASE  CMAKE_CXX_FLAGS_RELWITHDEBINFO
+        CMAKE_CXX_FLAGS_DEBUG  CMAKE_CXX_FLAGS_DEBUG_INIT)
+        if (MSVC)
+            STRING(REPLACE "/MD"  "/MT" "${flag}" "${${flag}}")
+            SET("${flag}" "${${flag}} /EHsc")
+        endif (MSVC)
+    ENDFOREACH()
+endif ()
 
 add_subdirectory(llvm)
 
