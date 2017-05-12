@@ -12,5 +12,12 @@ compiler:
         - clang
         - gcc
 
-os:
-        - osx
+
+
+matrix.include:
+        - os: osx
+          compiler:
+            - clang
+            - gcc
+        - os: linux
+          dist: trusty
