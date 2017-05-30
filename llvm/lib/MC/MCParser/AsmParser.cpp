@@ -712,12 +712,13 @@ size_t AsmParser::Run(bool NoInitialTextSection, uint64_t Address, bool NoFinali
     //printf(">> 222 error = %u\n", Info.KsError);
     if (!KsError)
         KsError = Info.KsError;
+        return 0;
 
     // We had an error, validate that one was emitted and recover by skipping to
     // the next line.
     // assert(HadError && "Parse statement returned an error, but none emitted!");
 
-    eatToEndOfStatement();
+    //eatToEndOfStatement();
   }
 
   if (TheCondState.TheCond != StartingCondState.TheCond ||
