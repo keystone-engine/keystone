@@ -6,17 +6,15 @@
 
 import glob
 import os
-import platform
 import shutil
 import stat
 import sys
-
+from distutils import dir_util, file_util
 from distutils import log
-from distutils import dir_util
 from distutils.command.build_clib import build_clib
+from distutils.command.install_lib import install_lib
 from distutils.command.sdist import sdist
 from distutils.core import setup
-from distutils.sysconfig import get_python_lib
 
 # prebuilt libraries for Windows - for sdist
 PATH_LIB64 = "prebuilt/win64/keystone.dll"
@@ -30,21 +28,12 @@ if os.path.exists(PATH_LIB64) and os.path.exists(PATH_LIB32):
 VERSION = '0.9.1-3'
 SYSTEM = sys.platform
 
-# virtualenv breaks import, but get_python_lib() will work.
-SITE_PACKAGES = os.path.join(get_python_lib(), "keystone")
-if "--user" in sys.argv:
-    try:
-        from site import getusersitepackages
-        SITE_PACKAGES = os.path.join(getusersitepackages(), "keystone")
-    except ImportError:
-        pass
-
-
 SETUP_DATA_FILES = []
 
 # adapted from commit e504b81 of Nguyen Tan Cong
 # Reference: https://docs.python.org/2/library/platform.html#cross-platform
-is_64bits = sys.maxsize > 2**32
+is_64bits = sys.maxsize > 2 ** 32
+
 
 def copy_sources():
     """Copy the C sources into the source directory.
@@ -119,6 +108,9 @@ class custom_build_clib(build_clib):
         build_clib.finalize_options(self)
 
     def build_libraries(self, libraries):
+
+        cur_dir = os.path.realpath(os.curdir)
+
         if SYSTEM in ("win32", "cygwin"):
             # if Windows prebuilt library is available, then include it
             if is_64bits and os.path.exists(PATH_LIB64):
@@ -138,29 +130,41 @@ class custom_build_clib(build_clib):
 
                 # cd src/build
                 os.chdir("src")
-                os.mkdir("build")
+                if not os.path.isdir('build'):
+                    os.mkdir('build')
                 os.chdir("build")
 
                 # platform description refers at https://docs.python.org/2/library/sys.html#sys.platform
                 if SYSTEM == "cygwin":
-                    os.chmod("make.sh", stat.S_IREAD|stat.S_IEXEC)
+                    os.chmod("make.sh", stat.S_IREAD | stat.S_IEXEC)
                     if is_64bits:
                         os.system("KEYSTONE_BUILD_CORE_ONLY=yes ./make.sh cygwin-mingw64")
                     else:
                         os.system("KEYSTONE_BUILD_CORE_ONLY=yes ./make.sh cygwin-mingw32")
                     SETUP_DATA_FILES.append("src/build/keystone.dll")
-                else:   # Unix
-                    os.chmod("../make-share.sh", stat.S_IREAD|stat.S_IEXEC)
+                else:  # Unix
+                    os.chmod("../make-share.sh", stat.S_IREAD | stat.S_IEXEC)
                     os.system("../make-share.sh lib_only")
                     if SYSTEM == "darwin":
                         SETUP_DATA_FILES.append("src/build/llvm/lib/libkeystone.dylib")
-                    else:   # Non-OSX
+                    else:  # Non-OSX
                         SETUP_DATA_FILES.append("src/build/llvm/lib/libkeystone.so")
 
                 # back to root dir
-                os.chdir("../..")
-        except:
-            pass
+                os.chdir(cur_dir)
+
+        except Exception as e:
+            log.error(e)
+        finally:
+            os.chdir(cur_dir)
+
+
+class custom_install(install_lib):
+    def install(self):
+        install_lib.install(self)
+        ks_install_dir = os.path.join(self.install_dir, 'keystone')
+        for lib_file in SETUP_DATA_FILES:
+            file_util.copy_file(lib_file, ks_install_dir)
 
 
 def dummy_src():
@@ -185,6 +189,7 @@ setup(
     cmdclass=dict(
         build_clib=custom_build_clib,
         sdist=custom_sdist,
+        install_lib=custom_install,
     ),
 
     libraries=[(
@@ -193,6 +198,4 @@ setup(
             sources=dummy_src()
         ),
     )],
-
-    data_files=[(SITE_PACKAGES, SETUP_DATA_FILES)],
 )
