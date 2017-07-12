@@ -1,0 +1,93 @@
+
+vb sample output:
+
+arch	         asm	        bytes	
+--------------------------------------------------
+KS_ARCH_X86	add eax, ecx	66 01 C8	
+KS_ARCH_X86	add eax, ecx	01 C8	
+KS_ARCH_X86	add rax, rcx	48 01 C8	
+KS_ARCH_X86	add %ecx, %eax	01 C8	
+KS_ARCH_X86	add %rcx, %rax	48 01 C8	
+KS_ARCH_ARM	sub r1, r2, r5	05 10 42 E0	
+KS_ARCH_ARM	sub r1, r2, r5	E0 42 10 05	
+KS_ARCH_ARM	movs r4, #0xf0	F0 24	
+KS_ARCH_ARM	movs r4, #0xf0	24 F0	
+KS_ARCH_ARM64	ldr w1, [sp, #0x8]	E1 0B 40 B9	
+KS_ARCH_HEXAGON	v23.w=vavg(v11.w,v2.w):rnd	D7 CB E2 1C	
+KS_ARCH_MIPS	and $9, $6, $7	24 48 C7 00	
+KS_ARCH_MIPS	and $9, $6, $7	00 C7 48 24	
+KS_ARCH_MIPS	and $9, $6, $7	24 48 C7 00	
+KS_ARCH_MIPS	and $9, $6, $7	00 C7 48 24	
+KS_ARCH_PPC	add 1, 2, 3	7C 22 1A 14	
+KS_ARCH_PPC	add 1, 2, 3	14 1A 22 7C	
+KS_ARCH_PPC	add 1, 2, 3	7C 22 1A 14	
+KS_ARCH_SPARC	add %g1, %g2, %g3	02 40 00 86	
+KS_ARCH_SPARC	add %g1, %g2, %g3	86 00 40 02	
+KS_ARCH_SYSTEMZ	a %r0, 4095(%r15,%r1)	5A 0F 1F FF				
+
+
+c_sample output:
+----------------------------------------------------
+
+add eax, ecx = 66 01 c8
+Assembled: 3 bytes, 1 statements
+
+add eax, ecx = 01 c8
+Assembled: 2 bytes, 1 statements
+
+add rax, rcx = 48 01 c8
+Assembled: 3 bytes, 1 statements
+
+add %ecx, %eax = 01 c8
+Assembled: 2 bytes, 1 statements
+
+add %rcx, %rax = 48 01 c8
+Assembled: 3 bytes, 1 statements
+
+sub r1, r2, r5 = 05 10 42 e0
+Assembled: 4 bytes, 1 statements
+
+sub r1, r2, r5 = e0 42 10 05
+Assembled: 4 bytes, 1 statements
+
+movs r4, #0xf0 = f0 24
+Assembled: 2 bytes, 1 statements
+
+movs r4, #0xf0 = 24 f0
+Assembled: 2 bytes, 1 statements
+
+ldr w1, [sp, #0x8] = e1 0b 40 b9
+Assembled: 4 bytes, 1 statements
+
+v23.w=vavg(v11.w,v2.w):rnd = d7 cb e2 1c
+Assembled: 4 bytes, 1 statements
+
+and $9, $6, $7 = 24 48 c7 00
+Assembled: 4 bytes, 1 statements
+
+and $9, $6, $7 = 00 c7 48 24
+Assembled: 4 bytes, 1 statements
+
+and $9, $6, $7 = 24 48 c7 00
+Assembled: 4 bytes, 1 statements
+
+and $9, $6, $7 = 00 c7 48 24
+Assembled: 4 bytes, 1 statements
+
+add 1, 2, 3 = 7c 22 1a 14
+Assembled: 4 bytes, 1 statements
+
+add 1, 2, 3 = 14 1a 22 7c
+Assembled: 4 bytes, 1 statements
+
+add 1, 2, 3 = 7c 22 1a 14
+Assembled: 4 bytes, 1 statements
+
+add %g1, %g2, %g3 = 02 40 00 86
+Assembled: 4 bytes, 1 statements
+
+add %g1, %g2, %g3 = 86 00 40 02
+Assembled: 4 bytes, 1 statements
+
+a %r0, 4095(%r15,%r1) = 5a 0f 1f ff
+Assembled: 4 bytes, 1 statements
