@@ -1,0 +1,10 @@
+EXPORTS
+   ks_arch_supported
+   ks_asm
+   ks_close
+   ks_errno
+   ks_free
+   ks_open
+   ks_option
+   ks_strerror
+   ks_version
