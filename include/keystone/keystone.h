@@ -65,6 +65,7 @@ typedef enum ks_mode {
     KS_MODE_ARM = 1 << 0,              // ARM mode
     KS_MODE_THUMB = 1 << 4,       // THUMB mode (including Thumb-2)
     KS_MODE_V8 = 1 << 6,          // ARMv8 A32 encodings for ARM
+    KS_MODE_V8 = 1 << 5,          // ARMv5
     // mips
     KS_MODE_MICRO = 1 << 4,       // MicroMips mode
     KS_MODE_MIPS3 = 1 << 5,       // Mips III ISA
@@ -75,7 +76,7 @@ typedef enum ks_mode {
     KS_MODE_16 = 1 << 1,          // 16-bit mode
     KS_MODE_32 = 1 << 2,          // 32-bit mode
     KS_MODE_64 = 1 << 3,          // 64-bit mode
-    // ppc 
+    // ppc
     KS_MODE_PPC32 = 1 << 2,       // 32-bit mode
     KS_MODE_PPC64 = 1 << 3,       // 64-bit mode
     KS_MODE_QPX = 1 << 4,         // Quad Processing eXtensions mode
