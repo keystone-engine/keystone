@@ -65,7 +65,7 @@ typedef enum ks_mode {
     KS_MODE_ARM = 1 << 0,              // ARM mode
     KS_MODE_THUMB = 1 << 4,       // THUMB mode (including Thumb-2)
     KS_MODE_V8 = 1 << 6,          // ARMv8 A32 encodings for ARM
-    KS_MODE_V8 = 1 << 5,          // ARMv5
+    KS_MODE_V5 = 1 << 5,          // ARMv5
     // mips
     KS_MODE_MICRO = 1 << 4,       // MicroMips mode
     KS_MODE_MIPS3 = 1 << 5,       // Mips III ISA

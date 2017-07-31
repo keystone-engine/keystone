@@ -303,10 +303,10 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
                         TripleName = "thumbv7";
                         break;
                     case KS_MODE_LITTLE_ENDIAN | KS_MODE_V5 | KS_MODE_ARM:
-                        TripleName = "armv7";
+                        TripleName = "armv5";
                         break;
                     case KS_MODE_LITTLE_ENDIAN | KS_MODE_V5 | KS_MODE_THUMB:
-                        TripleName = "thumbv7";
+                        TripleName = "thumbv5";
                         break;
                 }
 
