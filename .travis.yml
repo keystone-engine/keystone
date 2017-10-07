@@ -3,14 +3,15 @@ language: cpp
 sudo: false
 
 script:
-        - mkdir build
-        - cd build
-        - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DLLVM_TARGETS_TO_BUILD="all" -G "Unix Makefiles" ..
-        - make -j 8
+  - mkdir build
+  - cd build
+  - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DLLVM_TARGETS_TO_BUILD="all" -G "Unix Makefiles" ..
+  - make -j 8
 
 compiler:
-        - clang
-        - gcc
+  - clang
+  - gcc
 
 os:
-        - osx
+  - linux
+  - osx
