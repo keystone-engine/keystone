@@ -1,0 +1,15 @@
+;-----------------------------------------------------------------------------------------------------
+; Keystone Additions
+;
+; Paste this text at the end of \Radasm\Masm\masmApiCall.api to add these to Radasm
+;
+;-----------------------------------------------------------------------------------------------------
+ks_version,dwMajor,dwMinor
+ks_arch_supported,dwArch
+ks_open,dwArch,dwMode,lpdwEngine
+ks_close,dwEngine
+ks_errno,dwEngine
+ks_strerror,dwErrCode
+ks_option,dwEngine,dwOptType,dwOptTypeValue
+ks_asm,dwEngine,lpszString,dwAddress,lpEncoding,dwEncodingSize,dwStatCount
+ks_free,lpEncoding

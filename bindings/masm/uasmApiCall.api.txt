@@ -1,0 +1,15 @@
+;-----------------------------------------------------------------------------------------------------
+; Keystone Additions
+;
+; Paste this text at the end of \Radasm\Uasm\uasmApiCall.api to add these to Radasm
+;
+;-----------------------------------------------------------------------------------------------------
+ks_version,dqMajor,dqMinor
+ks_arch_supported,dqArch
+ks_open,dqArch,dqMode,lpdqEngine
+ks_close,dqEngine
+ks_errno,dqEngine
+ks_strerror,dqErrCode
+ks_option,dqEngine,dqOptType,dqOptTypeValue
+ks_asm,dqEngine,lpszString,dqAddress,lpEncoding,dqEncodingSize,dqStatCount
+ks_free,lpEncoding
