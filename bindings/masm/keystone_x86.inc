@@ -136,7 +136,7 @@ ks_close                        PROTO C :DWORD ; ks_engine* ks
 ks_errno                        PROTO C :DWORD ; ks_engine* ks
 ks_strerror                     PROTO C :DWORD ; ks_err code
 ks_option                       PROTO C :DWORD, :DWORD, :DWORD ; ks_engine* ks, ks_opt_type type, size_t value
-ks_asm                          PROTO C :DWORD, :DWORD, :DWORD, :DWORD, :DWORD, :DWORD ; ks_engine* ks, const char* string, int64_t address, unsigned char** encoding, size_t* encoding_size, size_t* stat_count
+ks_asm                          PROTO C :DWORD, :DWORD, :QWORD, :DWORD, :DWORD, :DWORD ; ks_engine* ks, const char* string, int64_t address, unsigned char** encoding, size_t* encoding_size, size_t* stat_count
 ks_free                         PROTO C :DWORD ; unsigned char* p
 
 ; Resolver callback to provide value for a missing symbol in @symbol.
@@ -151,29 +151,3 @@ ks_free                         PROTO C :DWORD ; unsigned char* p
 ; Invoke ks_option, ks, KS_OPT_SYM_RESOLVER, Addr ks_sym_resolver
 ;
 ks_sym_resolver                 PROTO C :DWORD, :DWORD ; const char* symbol, uint64_t* value
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

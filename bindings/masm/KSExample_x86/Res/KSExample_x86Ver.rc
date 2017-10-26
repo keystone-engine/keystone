@@ -1,0 +1,23 @@
+#define VERINF1 1
+VERINF1 VERSIONINFO
+FILEVERSION 1,0,0,0
+PRODUCTVERSION 1,0,0,0
+FILEOS 0x00000004
+FILETYPE 0x00000001
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904B0"
+    BEGIN
+      VALUE "FileVersion", "1.0.0.0\0"
+      VALUE "InternalName", "KSExample_x86\0"
+      VALUE "OriginalFilename", "KSExample_x86\0"
+      VALUE "ProductName", "KSExample_x86\0"
+      VALUE "ProductVersion", "1.0.0.0\0"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x0409, 0x04B0
+  END
+END

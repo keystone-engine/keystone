@@ -1,0 +1,4 @@
+#include "Res/KSExample_x64Mnu.rc"
+#include "Res/KSExample_x64Ver.rc"
+#include "Res/KSExample_x64Dlg.rc"
+#include "Res/KSExample_x64Res.rc"

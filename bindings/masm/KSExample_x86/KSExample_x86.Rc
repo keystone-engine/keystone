@@ -1,0 +1,4 @@
+#include "Res/KSExample_x86Mnu.rc"
+#include "Res/KSExample_x86Ver.rc"
+#include "Res/KSExample_x86Dlg.rc"
+#include "Res/KSExample_x86Res.rc"

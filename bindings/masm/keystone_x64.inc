@@ -152,29 +152,3 @@ ks_free                         PROTO :QWORD ; unsigned char* p
 ;
 
 ks_sym_resolver                 PROTO :QWORD, :QWORD ; const char* symbol, uint64_t* value
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
