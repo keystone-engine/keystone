@@ -21,10 +21,9 @@ includelib keystone_x86.lib
 ;-----------------------------------------------------------------------------------------
 ; KSExample_x86 Prototypes
 ;-----------------------------------------------------------------------------------------
-WinMain					PROTO :DWORD,:DWORD,:DWORD,:DWORD
-WndProc					PROTO :DWORD,:DWORD,:DWORD,:DWORD
+WinMain                 PROTO :DWORD,:DWORD,:DWORD,:DWORD
+WndProc                 PROTO :DWORD,:DWORD,:DWORD,:DWORD
 DoEncode                PROTO :DWORD
-
 
 .CONST
 ;-----------------------------------------------------------------------------------------
@@ -34,28 +33,26 @@ ICO_MAIN                equ 101
 
 ; Main Dialog
 ;KSExample_x86.dlg
-IDD_DIALOG				equ 1000
-IDC_TxtAsmToEncode		equ 1001
-IDC_TxtEncodedBytes		equ 1002
-IDC_LblAsmToEncode  	equ 1003
-IDC_LblEncodedBytes		equ 1004
-IDC_BtnExit				equ 1005
-IDC_BtnEncode			equ 1006
+IDD_DIALOG              equ 1000
+IDC_TxtAsmToEncode      equ 1001
+IDC_TxtEncodedBytes     equ 1002
+IDC_LblAsmToEncode      equ 1003
+IDC_LblEncodedBytes     equ 1004
+IDC_BtnExit             equ 1005
+IDC_BtnEncode           equ 1006
 
 ; Main Menu 
-IDM_MENU				EQU 10000
-IDM_FILE_EXIT			EQU 10001
-IDM_HELP_ABOUT			EQU 10101
-
-
+IDM_MENU                EQU 10000
+IDM_FILE_EXIT           EQU 10001
+IDM_HELP_ABOUT          EQU 10101
 
 .DATA
 ;-----------------------------------------------------------------------------------------
 ; KSExample_x86 Initialized Data
 ;-----------------------------------------------------------------------------------------
-ClassName				DB 'DLGCLASS',0
-AppName					DB 'LTLI Dialog',0
-AboutMsg				DB 'www.LetTheLight.in',13,10,'Copyright © fearless 2014',0
+ClassName               DB 'DLGCLASS',0
+AppName                 DB 'LTLI Dialog',0
+AboutMsg                DB 'www.LetTheLight.in',13,10,'Copyright © fearless 2014',0
 
 szNull                  DB 0,0
 szFmt                   DB '%02X ',0
@@ -69,30 +66,22 @@ Address                 DQ 0 ; Note has to be QWORD sized as a parameter for ks_
 Encode                  DD 0
 EncodeSize              DD 0
 Count                   DD 0
-
 ks_err                  DD 0
-
 
 szKSError               DB 'Keystone Error',0
 szKSCodeEmpty           DB 'Please enter some assembly code to encode.',0
 szKSOpenFail            DB 'ERROR: failed on ks_open',0
 szKSAsmFail             DB 'ERROR: ks_asm failed',0
 
-
-
 .DATA?
 ;-----------------------------------------------------------------------------------------
 ; KSExample_x86 Uninitialized Data
 ;-----------------------------------------------------------------------------------------
-icc 					INITCOMMONCONTROLSEX <>
-hInstance				DD ?
-CommandLine				DD ?
-hWnd					DD ?
+icc                     INITCOMMONCONTROLSEX <>
+hInstance               DD ?
+CommandLine             DD ?
+hWnd                    DD ?
 hIcoMain                DD ?
 hWhiteBrush             DD ?
-hTxtAsmToEncode			DD ?
-hTxtEncodedBytes		DD ?
-
-
-
-
+hTxtAsmToEncode         DD ?
+hTxtEncodedBytes        DD ?
