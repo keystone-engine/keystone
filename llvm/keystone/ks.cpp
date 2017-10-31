@@ -555,6 +555,8 @@ int ks_asm(ks_engine *ks,
     uint64_t BaseAddr;
     int MemSts = 0;
 
+    encoding = nullptr;
+    BaseAddr = 0;
     *insn = NULL;
     *insn_size = 0;
 
