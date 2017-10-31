@@ -552,64 +552,64 @@ int ks_asm(ks_engine *ks,
     unsigned char *encoding;
     SmallString<1024> Msg;
     raw_svector_ostream OS(Msg);
-	uint64_t BaseAddr;
-	int MemSts = 0;
+    uint64_t BaseAddr;
+    int MemSts = 0;
 
     *insn = NULL;
     *insn_size = 0;
 
-	//If no address is specified by the user then allocate memory
-	//and give it some space In order to enhance its chances
-	//of remaining in the same location after reallocation is done
-	BaseAddr = address ? address : [&](){ encoding = (unsigned char *)malloc(1024); return (uint64_t)encoding; }();
+    //If no address is specified by the user then allocate memory
+    //and give it some space In order to enhance its chances
+    //of remaining in the same location after reallocation is done
+    BaseAddr = address ? address : [&](){ encoding = (unsigned char *)malloc(1024); return (uint64_t)encoding; }();
     if (!BaseAddr)
         // memory insufficient
-		return KS_ERR_NOMEM;
+	return KS_ERR_NOMEM;
 
-	MCContext Ctx(ks->MAI, ks->MRI, &ks->MOFI, &ks->SrcMgr, true, BaseAddr);
+    MCContext Ctx(ks->MAI, ks->MRI, &ks->MOFI, &ks->SrcMgr, true, BaseAddr);
     ks->MOFI.InitMCObjectFileInfo(Triple(ks->TripleName), Ctx);
     CE = ks->TheTarget->createMCCodeEmitter(*ks->MCII, *ks->MRI, Ctx);
     if (!CE) {
         // memory insufficient
-		MemSts = KS_ERR_NOMEM;
-		goto MemoryInsufficient;
+	MemSts = KS_ERR_NOMEM;
+	goto MemoryInsufficient;
     }
 
     Streamer = ks->TheTarget->createMCObjectStreamer(
             Triple(ks->TripleName), Ctx, *ks->MAB, OS, CE, *ks->STI, ks->MCOptions.MCRelaxAll,
             /*DWARFMustBeAtTheEnd*/ false);
     if (!Streamer) {
-		// memory insufficient
-		MemSts = KS_ERR_NOMEM;
-		goto MemoryInsufficient;
+	// memory insufficient
+	MemSts = KS_ERR_NOMEM;
+        goto MemoryInsufficient;
     }
+    
+    {   // Tell SrcMgr about this buffer, which is what the parser will pick up.
+   	ErrorOr<std::unique_ptr<MemoryBuffer>> BufferPtr = MemoryBuffer::getMemBuffer(assembly);
+	if (BufferPtr.getError()) {
+        // memory insufficient
+            MemSts = KS_ERR_NOMEM;
+            goto MemoryInsufficient;
+          }
 
-	{   // Tell SrcMgr about this buffer, which is what the parser will pick up.
-		ErrorOr<std::unique_ptr<MemoryBuffer>> BufferPtr = MemoryBuffer::getMemBuffer(assembly);
-		if (BufferPtr.getError()) {
-			// memory insufficient
-			MemSts = KS_ERR_NOMEM;
-			goto MemoryInsufficient;
-		}
-
-		ks->SrcMgr.clearBuffers();
-		ks->SrcMgr.AddNewSourceBuffer(std::move(*BufferPtr), SMLoc());
-	}
+	ks->SrcMgr.clearBuffers();
+	ks->SrcMgr.AddNewSourceBuffer(std::move(*BufferPtr), SMLoc());
+    }
 
     Streamer->setSymResolver((void *)(ks->sym_resolver));
     
     MCAsmParser *Parser = createMCAsmParser(ks->SrcMgr, Ctx, *Streamer, *ks->MAI);
     if (!Parser) {
-		// memory insufficient
-		MemSts = KS_ERR_NOMEM;
-		goto MemoryInsufficient;
+	// memory insufficient
+	MemSts = KS_ERR_NOMEM;
+	goto MemoryInsufficient;
     }
     
     MCTargetAsmParser *TAP = ks->TheTarget->createMCAsmParser(*ks->STI, *Parser, *ks->MCII, ks->MCOptions);
     if (!TAP) {
-		// memory insufficient
-		MemSts = KS_ERR_NOMEM;
-		goto MemoryInsufficient;
+	// memory insufficient
+	MemSts = KS_ERR_NOMEM;
+	goto MemoryInsufficient;
     }    
     TAP->KsSyntax = ks->syntax;
 
@@ -621,7 +621,7 @@ int ks_asm(ks_engine *ks,
         ks->MAI->setCommentString(";");
     }
 
-	*stat_count = Parser->Run(false, BaseAddr);
+    *stat_count = Parser->Run(false, BaseAddr);
 
     // PPC counts empty statement
     if (ks->arch == KS_ARCH_PPC)
@@ -637,21 +637,21 @@ MemoryInsufficient: // Clean up
 	if (!Streamer) delete Streamer;
 
 	if (ks->errnum >= KS_ERR_ASM || MemSts == KS_ERR_NOMEM)
-	{
-		if (encoding != nullptr)
-			free(encoding);
-		return MemSts ? MemSts : -1;
+        {
+           if (encoding != nullptr)
+               free(encoding);
+	    return MemSts ? MemSts : -1;
 	}
     else {
         *insn_size = Msg.size();
         //Reallocate the correct amount of memory
-        unsigned char *ext_encoding = (unsigned car *) realloc(encoding, *insn_size);        
-		if (!ext_encoding) {
-			if (encoding)
-				free(encoding);
-            return KS_ERR_NOMEM;
+        unsigned char *ext_encoding = (unsigned car *) realloc(encoding, *insn_size);
+        if (!ext_encoding) {
+           if (encoding != nullptr)
+               free(encoding);
+          return KS_ERR_NOMEM;
         }
-		encoding = ext_encoding;
+	encoding = ext_encoding;
         memcpy(encoding, Msg.data(), *insn_size);
         *insn = encoding;
         return 0;
