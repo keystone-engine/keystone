@@ -602,14 +602,14 @@ int ks_asm(ks_engine *ks,
 
     Streamer->setSymResolver((void *)(ks->sym_resolver));
     
-    MCAsmParser *Parser = createMCAsmParser(ks->SrcMgr, Ctx, *Streamer, *ks->MAI);
+    Parser = createMCAsmParser(ks->SrcMgr, Ctx, *Streamer, *ks->MAI);
     if (!Parser) {
 	// memory insufficient
 	MemSts = KS_ERR_NOMEM;
 	goto MemoryInsufficient;
     }
     
-    MCTargetAsmParser *TAP = ks->TheTarget->createMCAsmParser(*ks->STI, *Parser, *ks->MCII, ks->MCOptions);
+    TAP = ks->TheTarget->createMCAsmParser(*ks->STI, *Parser, *ks->MCII, ks->MCOptions);
     if (!TAP) {
 	// memory insufficient
 	MemSts = KS_ERR_NOMEM;
