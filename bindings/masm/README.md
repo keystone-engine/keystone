@@ -13,7 +13,7 @@ These files are a conversion of the original files: `keystone.h`, & `x86.h` to a
 * (Optional) Rename the x86 version of `keystone.dll` to `keystone_x86.dll`, and the x64 version of `keystone.dll` to `keystone_x64.dll` - depending on which versions you might be linking with in your projects.
 * Copy the `keystone.dll` (or `keystone_x86.dll` / `keystone_x64.dll`) to your assembly projects folder or a `%PATH%` folder.
 
-Alternatively, static libraries and pre-compiled DLL’s can be obtained from the Keystone homepage
+Alternatively, static libraries and pre-compiled DLLâ€™s can be obtained from the Keystone homepage
 at http://keystone-engine.org/download. Select the appropriate package to download under the Windows Core engine section: Win-32 and/or Win-64
 
 
