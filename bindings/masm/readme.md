@@ -64,8 +64,6 @@ Additional files are included for use with RadASM's auto-complete / intelliSense
 
 * `masmApiCall.api.txt` - _RadASM code completion file for api calls (for MASM x86)_
 * `masmApiConst.api.txt` - _RadASM code completion file for constants (for MASM x86)_
-* `uasmApiCall.api.txt` - _RadASM code completion file for api calls (for UASM x64)_
-* `uasmApiConst.api.txt` - _RadASM code completion file for constants (for UASM x64)_
 
 Basic installation instructions:
 
@@ -78,8 +76,8 @@ Instructions are included in the text files themselves as to which file it is re
 ## Examples
 
 Included are two keystone example RadASM projects, for MASM x86 and UASM x64 assemblers:
-* `KSExample_x86.zip`
-* `KSExample_x64.zip`
+* `KSExample_x86`
+* `KSExample_x64`
 
 
 ## Resources
