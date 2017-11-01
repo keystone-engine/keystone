@@ -547,13 +547,15 @@ int ks_asm(ks_engine *ks,
         unsigned char **insn, size_t *insn_size,
         size_t *stat_count)
 {
-    MCCodeEmitter *CE;
-    MCStreamer *Streamer;
-    unsigned char *encoding;
-    SmallString<1024> Msg;
-    raw_svector_ostream OS(Msg);
-    uint64_t BaseAddr;
-    int MemSts = 0;
+    MCCodeEmitter        *CE;
+    MCStreamer           *Streamer;
+    MCAsmParser          *Parser;
+    MCTargetAsmParser    *TAP;
+    unsigned char        *encoding;
+    SmallString<1024>    Msg;
+    raw_svector_ostream  OS(Msg);
+    uint64_t             BaseAddr;
+    int32_t              MemSts = 0;
 
     encoding = nullptr;
     BaseAddr = 0;
@@ -647,7 +649,7 @@ MemoryInsufficient: // Clean up
     else {
         *insn_size = Msg.size();
         //Reallocate the correct amount of memory
-        unsigned char *ext_encoding = (unsigned car *) realloc(encoding, *insn_size);
+        unsigned char *ext_encoding = (unsigned char *) realloc(encoding, *insn_size);
         if (!ext_encoding) {
            if (encoding != nullptr)
                free(encoding);
