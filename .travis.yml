@@ -15,3 +15,14 @@ compiler:
 os:
   - linux
   - osx
+
+matrix:
+  include:
+    - if: branch = master
+      os: osx
+      compiler: clang
+      script: brew update && brew install --HEAD keystone
+    - if: branch = master
+      os: osx
+      compiler: gcc
+      script: brew update && brew install --HEAD keystone
