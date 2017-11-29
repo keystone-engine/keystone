@@ -11,6 +11,7 @@
 *.class
 *.jar
 *.pyc
+*.egg-info
 *.tgz
 *.tar.gz
 *.github.io
