@@ -770,7 +770,7 @@ getUnconditionalBranchTargetOpValue(const MCInst &MI, unsigned OpIdx,
   if(MO.isExpr())
     return ::getBranchTargetOpValue(MI, OpIdx, ARM::fixup_t2_uncondbranch, Fixups, STI);
   else 
-    Val = MO.getImm() >> 1;
+    Val = (MO.getImm() - MI.getAddress() - 4) >> 1;
 
   bool I  = (Val & 0x800000);
   bool J1 = (Val & 0x400000);
