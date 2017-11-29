@@ -200,7 +200,7 @@ class Ks(object):
 
 
     # assemble a string of assembly
-    def asm(self, string, addr = 0):
+    def asm(self, string, addr=0, as_bytes=False):
         encode = POINTER(c_ubyte)()
         encode_size = c_size_t()
         stat_count = c_size_t()
@@ -215,9 +215,13 @@ class Ks(object):
             if stat_count.value == 0:
                 return (None, 0)
             else:
-                encoding = []
-                for i in range(encode_size.value):
-                    encoding.append(encode[i])
+                if as_bytes:
+                    encoding = string_at(encode, encode_size.value)
+                else:
+                    encoding = []
+                    for i in range(encode_size.value):
+                        encoding.append(encode[i])
+
                 _ks.ks_free(encode)
                 return (encoding, stat_count.value)
 
