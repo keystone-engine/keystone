@@ -839,7 +839,7 @@ getT2AdrLabelOpValue(const MCInst &MI, unsigned OpIdx,
   if (MO.isExpr())
     return ::getBranchTargetOpValue(MI, OpIdx, ARM::fixup_t2_adr_pcrel_12,
                                     Fixups, STI);
-  int32_t Val = MO.getImm();
+  int32_t Val = (MO.getImm() - ((MI.getAddress() + 4) & -4));
   if (Val == INT32_MIN)
     Val = 0x1000;
   else if (Val < 0) {
