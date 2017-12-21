@@ -14,4 +14,4 @@ Documention of Keystone assembler engine.
 
 * Compare Keystone & LLVM.
 
-	http://keystone-engine.org/docs/beyond_qemu.html
+	http://keystone-engine.org/docs/beyond_llvm.html
