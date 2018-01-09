@@ -16,7 +16,7 @@
 #include "llvm/MC/MCSubtargetInfo.h"
 #include "llvm/Support/TargetRegistry.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 #define GET_INSTRINFO_MC_DESC
 #include "SystemZGenInstrInfo.inc"

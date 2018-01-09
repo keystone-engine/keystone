@@ -14,7 +14,7 @@
 #include "llvm/MC/MCExpr.h"
 #include "llvm/MC/MCValue.h"
 
-namespace llvm {
+namespace llvm_ks {
 
 class MipsMCExpr : public MCTargetExpr {
 public:
@@ -62,6 +62,6 @@ public:
     return E->getKind() == MCExpr::Target;
   }
 };
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

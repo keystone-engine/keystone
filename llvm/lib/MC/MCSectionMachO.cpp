@@ -11,7 +11,7 @@
 #include "llvm/MC/MCContext.h"
 #include "llvm/Support/raw_ostream.h"
 #include <cctype>
-using namespace llvm;
+using namespace llvm_ks;
 
 /// SectionTypeDescriptors - These are strings that describe the various section
 /// types.  This *must* be kept in order with and stay synchronized with the

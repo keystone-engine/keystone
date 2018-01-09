@@ -21,7 +21,7 @@
 #include "llvm/Support/ErrorHandling.h"
 #include "llvm/Support/MachO.h"
 #include "llvm/Support/TargetRegistry.h"
-using namespace llvm;
+using namespace llvm_ks;
 
 static uint64_t adjustFixupValue(unsigned Kind, uint64_t Value) {
   switch (Kind) {
@@ -213,7 +213,7 @@ namespace {
 
 } // end anonymous namespace
 
-MCAsmBackend *llvm::createPPCAsmBackend(const Target &T,
+MCAsmBackend *llvm_ks::createPPCAsmBackend(const Target &T,
                                         const MCRegisterInfo &MRI,
                                         const Triple &TT, StringRef CPU) {
   uint8_t OSABI = MCELFObjectTargetWriter::getOSABI(TT.getOS());

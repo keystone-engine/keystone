@@ -37,7 +37,7 @@
 #include "keystone/arm64.h"
 
 #include <cstdio>
-using namespace llvm;
+using namespace llvm_ks;
 
 namespace {
 

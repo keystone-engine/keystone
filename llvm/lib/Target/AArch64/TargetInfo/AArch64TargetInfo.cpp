@@ -9,13 +9,13 @@
 
 #include "llvm/ADT/Triple.h"
 #include "llvm/Support/TargetRegistry.h"
-using namespace llvm;
+using namespace llvm_ks;
 
-namespace llvm {
+namespace llvm_ks {
 Target TheAArch64leTarget;
 Target TheAArch64beTarget;
 Target TheARM64Target;
-} // end namespace llvm
+} // end namespace llvm_ks
 
 extern "C" void LLVMInitializeAArch64TargetInfo() {
   // Now register the "arm64" name for use with "-march". We don't want it to

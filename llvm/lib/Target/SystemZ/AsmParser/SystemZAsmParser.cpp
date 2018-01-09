@@ -20,7 +20,7 @@
 
 #include "keystone/systemz.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 // Return true if Expr is in the range [MinValue, MaxValue].
 static bool inRange(const MCExpr *Expr, int64_t MinValue, int64_t MaxValue) {

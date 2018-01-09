@@ -22,7 +22,7 @@
 #include "llvm/Support/Debug.h"
 #include "llvm/Support/raw_ostream.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 static bool RelaxNVChecks = false;
 
@@ -143,19 +143,19 @@ void HexagonMCChecker::init(MCInst const& MCI) {
       else if (HexagonMCInstrInfo::isPredicateLate(MCII, MCI) && isPredicateRegister(*SRI))
         // Some insns produce predicates too late to be used in the same packet.
         LatePreds.insert(*SRI);
-      else if (i == 0 && llvm::HexagonMCInstrInfo::getType(MCII, MCI) == HexagonII::TypeCVI_VM_CUR_LD)
+      else if (i == 0 && llvm_ks::HexagonMCInstrInfo::getType(MCII, MCI) == HexagonII::TypeCVI_VM_CUR_LD)
         // Current loads should be used in the same packet.
         // TODO: relies on the impossibility of a current and a temporary loads
         // in the same packet.
         CurDefs.insert(*SRI), Defs[*SRI].insert(PredSense(PredReg, isTrue));
-      else if (i == 0 && llvm::HexagonMCInstrInfo::getType(MCII, MCI) == HexagonII::TypeCVI_VM_TMP_LD)
+      else if (i == 0 && llvm_ks::HexagonMCInstrInfo::getType(MCII, MCI) == HexagonII::TypeCVI_VM_TMP_LD)
         // Temporary loads should be used in the same packet, but don't commit
         // results, so it should be disregarded if another insn changes the same
         // register.
         // TODO: relies on the impossibility of a current and a temporary loads
         // in the same packet.
         TmpDefs.insert(*SRI);
-      else if (i <= 1 && llvm::HexagonMCInstrInfo::hasNewValue2(MCII, MCI) )
+      else if (i <= 1 && llvm_ks::HexagonMCInstrInfo::hasNewValue2(MCII, MCI) )
         // vshuff(Vx, Vy, Rx) <- Vx(0) and Vy(1) are both source and
         // destination registers with this instruction. same for vdeal(Vx,Vy,Rx)
         Uses.insert(*SRI);
@@ -210,7 +210,7 @@ void HexagonMCChecker::init(MCInst const& MCI) {
     if (!MCSubRegIterator(N, &RI).isValid()) {
       // Super-registers cannot use new values.
       if (MCID.isBranch())
-        NewUses[N] = NewSense::Jmp(llvm::HexagonMCInstrInfo::getType(MCII, MCI) == HexagonII::TypeNV);
+        NewUses[N] = NewSense::Jmp(llvm_ks::HexagonMCInstrInfo::getType(MCII, MCI) == HexagonII::TypeNV);
       else
         NewUses[N] = NewSense::Use(PredReg, HexagonMCInstrInfo::isPredicatedTrue(MCII, MCI));
     }
@@ -460,7 +460,7 @@ bool HexagonMCChecker::checkRegisters() {
       // special case for vhist
       bool vHistFound = false;
       for (auto const&HMI : HexagonMCInstrInfo::bundleInstructions(MCB)) {
-        if(llvm::HexagonMCInstrInfo::getType(MCII, *HMI.getInst()) == HexagonII::TypeCVI_HIST) {
+        if(llvm_ks::HexagonMCInstrInfo::getType(MCII, *HMI.getInst()) == HexagonII::TypeCVI_HIST) {
           vHistFound = true;  // vhist() implicitly uses ALL REGxx.tmp
           break;
         }
@@ -483,7 +483,7 @@ bool HexagonMCChecker::checkSolo() {
   if (HexagonMCInstrInfo::isBundle(MCB) &&
       HexagonMCInstrInfo::bundleSize(MCB) > 1) {
     for (auto const&I : HexagonMCInstrInfo::bundleInstructions(MCB)) {
-      if (llvm::HexagonMCInstrInfo::isSolo(MCII, *I.getInst())) {
+      if (llvm_ks::HexagonMCInstrInfo::isSolo(MCII, *I.getInst())) {
         errInfo.setError(HexagonMCErrInfo::CHECK_ERROR_SOLO);
         addErrInfo(errInfo);
         return false;

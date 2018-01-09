@@ -20,9 +20,9 @@
 #include <queue>
 #include "MCTargetDesc/HexagonMCShuffler.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
-namespace llvm {
+namespace llvm_ks {
 class MCOperandInfo;
 
 typedef struct {
@@ -85,8 +85,8 @@ class HexagonMCChecker {
   typedef std::multiset<PredSense> PredSet;
   typedef std::multiset<PredSense>::iterator PredSetIterator;
 
-  typedef llvm::DenseMap<unsigned, PredSet>::iterator DefsIterator;
-  llvm::DenseMap<unsigned, PredSet> Defs;
+  typedef llvm_ks::DenseMap<unsigned, PredSet>::iterator DefsIterator;
+  llvm_ks::DenseMap<unsigned, PredSet> Defs;
 
   /// Information about how a new-value register is defined or used:
   ///   PredReg = predicate register, 0 if use/def not predicated,
@@ -116,9 +116,9 @@ class HexagonMCChecker {
     }
   };
   /// Set of definitions that produce new register:
-  typedef llvm::SmallVector<NewSense,2> NewSenseList;
-  typedef llvm::DenseMap<unsigned, NewSenseList>::iterator NewDefsIterator;
-  llvm::DenseMap<unsigned, NewSenseList> NewDefs;
+  typedef llvm_ks::SmallVector<NewSense,2> NewSenseList;
+  typedef llvm_ks::DenseMap<unsigned, NewSenseList>::iterator NewDefsIterator;
+  llvm_ks::DenseMap<unsigned, NewSenseList> NewDefs;
 
   /// Set of weak definitions whose clashes should be enforced selectively.
   typedef std::set<unsigned>::iterator SoftDefsIterator;
@@ -145,8 +145,8 @@ class HexagonMCChecker {
   std::set<unsigned> Uses;
 
   /// Set of new values used: new register, if new-value jump.
-  typedef llvm::DenseMap<unsigned, NewSense>::iterator NewUsesIterator;
-  llvm::DenseMap<unsigned, NewSense> NewUses;
+  typedef llvm_ks::DenseMap<unsigned, NewSense>::iterator NewUsesIterator;
+  llvm_ks::DenseMap<unsigned, NewSense> NewUses;
 
   /// Pre-defined set of read-only registers.
   typedef std::set<unsigned>::iterator ReadOnlyIterator;

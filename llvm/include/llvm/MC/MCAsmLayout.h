@@ -13,7 +13,7 @@
 #include "llvm/ADT/DenseMap.h"
 #include "llvm/ADT/SmallVector.h"
 
-namespace llvm {
+namespace llvm_ks {
 class MCAssembler;
 class MCFragment;
 class MCSection;
@@ -30,7 +30,7 @@ class MCAsmLayout {
   MCAssembler &Assembler;
 
   /// List of sections in layout order.
-  llvm::SmallVector<MCSection *, 16> SectionOrder;
+  llvm_ks::SmallVector<MCSection *, 16> SectionOrder;
 
   /// The last fragment which was laid out, or 0 if nothing has been laid
   /// out. Fragments are always laid out in order, so all fragments with a
@@ -63,8 +63,8 @@ public:
   /// \name Section Access (in layout order)
   /// @{
 
-  llvm::SmallVectorImpl<MCSection *> &getSectionOrder() { return SectionOrder; }
-  const llvm::SmallVectorImpl<MCSection *> &getSectionOrder() const {
+  llvm_ks::SmallVectorImpl<MCSection *> &getSectionOrder() { return SectionOrder; }
+  const llvm_ks::SmallVectorImpl<MCSection *> &getSectionOrder() const {
     return SectionOrder;
   }
 
@@ -102,6 +102,6 @@ public:
   /// @}
 };
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

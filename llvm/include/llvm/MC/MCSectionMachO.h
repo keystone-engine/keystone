@@ -18,7 +18,7 @@
 #include "llvm/MC/MCSection.h"
 #include "llvm/Support/MachO.h"
 
-namespace llvm {
+namespace llvm_ks {
 
 /// This represents a section on a Mach-O system (used by Mac OS X).  On a Mac
 /// system, these are also described in /usr/include/mach-o/loader.h.
@@ -86,6 +86,6 @@ public:
   }
 };
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

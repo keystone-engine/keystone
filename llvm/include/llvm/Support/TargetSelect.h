@@ -35,7 +35,7 @@ extern "C" {
 #include "llvm/Config/AsmParsers.def"
 }
 
-namespace llvm {
+namespace llvm_ks {
   /// InitializeAllTargetInfos - The main program should call this function if
   /// it wants access to all available targets that LLVM is configured to
   /// support, to make them available via the TargetRegistry.

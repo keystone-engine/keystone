@@ -27,7 +27,7 @@
 #include <intrin.h>
 #endif
 
-using namespace llvm;
+using namespace llvm_ks;
 
 #define GET_REGINFO_MC_DESC
 #include "X86GenRegisterInfo.inc"
@@ -184,7 +184,7 @@ extern "C" void LLVMInitializeX86TargetMC() {
                                        createX86_64AsmBackend);
 }
 
-unsigned llvm::getX86SubSuperRegisterOrZero(unsigned Reg, unsigned Size,
+unsigned llvm_ks::getX86SubSuperRegisterOrZero(unsigned Reg, unsigned Size,
                                             bool High) {
   switch (Size) {
   default: return 0;
@@ -357,7 +357,7 @@ unsigned llvm::getX86SubSuperRegisterOrZero(unsigned Reg, unsigned Size,
   }
 }
 
-unsigned llvm::getX86SubSuperRegister(unsigned Reg, unsigned Size, bool High) {
+unsigned llvm_ks::getX86SubSuperRegister(unsigned Reg, unsigned Size, bool High) {
   unsigned Res = getX86SubSuperRegisterOrZero(Reg, Size, High);
   assert(Res != 0 && "Unexpected register or VT");
   return Res;

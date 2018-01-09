@@ -17,7 +17,7 @@
 #include "llvm/MC/MCExpr.h"
 #include "llvm/MC/MCStreamer.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 enum AsmWriterVariantTy {
   Default = -1,

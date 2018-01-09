@@ -16,7 +16,7 @@
 #include "llvm/ADT/StringExtras.h"
 #include "llvm/Support/Regex.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 StringRef AArch64NamedImmMapper::toString(uint32_t Value,
           const FeatureBitset& FeatureBits, bool &Valid) const {
@@ -268,7 +268,7 @@ const AArch64NamedImmMapper::Mapping AArch64SysReg::MRSMapper::MRSMappings[] = {
 
 AArch64SysReg::MRSMapper::MRSMapper() {
     InstMappings = &MRSMappings[0];
-    NumInstMappings = llvm::array_lengthof(MRSMappings);
+    NumInstMappings = llvm_ks::array_lengthof(MRSMappings);
 }
 
 const AArch64NamedImmMapper::Mapping AArch64SysReg::MSRMapper::MSRMappings[] = {
@@ -291,7 +291,7 @@ const AArch64NamedImmMapper::Mapping AArch64SysReg::MSRMapper::MSRMappings[] = {
 
 AArch64SysReg::MSRMapper::MSRMapper() {
     InstMappings = &MSRMappings[0];
-    NumInstMappings = llvm::array_lengthof(MSRMappings);
+    NumInstMappings = llvm_ks::array_lengthof(MSRMappings);
 }
 
 

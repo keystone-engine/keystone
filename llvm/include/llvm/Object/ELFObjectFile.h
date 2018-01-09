@@ -32,7 +32,7 @@
 #include <limits>
 #include <utility>
 
-namespace llvm {
+namespace llvm_ks {
 namespace object {
 
 class elf_symbol_iterator;

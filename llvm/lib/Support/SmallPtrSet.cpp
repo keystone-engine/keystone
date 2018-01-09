@@ -18,7 +18,7 @@
 #include <algorithm>
 #include <cstdlib>
 
-using namespace llvm;
+using namespace llvm_ks;
 
 void SmallPtrSetImplBase::shrink_and_clear() {
   assert(!isSmall() && "Can't shrink a small set!");

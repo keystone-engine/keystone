@@ -9,7 +9,7 @@
 
 #ifdef GET_SUBTARGETINFO_ENUM
 #undef GET_SUBTARGETINFO_ENUM
-namespace llvm {
+namespace llvm_ks {
 namespace AArch64 {
 enum : uint64_t {
   FeatureCRC = 0,
@@ -38,9 +38,9 @@ enum : uint64_t {
 
 #ifdef GET_SUBTARGETINFO_MC_DESC
 #undef GET_SUBTARGETINFO_MC_DESC
-namespace llvm {
+namespace llvm_ks {
 // Sorted (by key) array of values for CPU features.
-extern const llvm::SubtargetFeatureKV AArch64FeatureKV[] = {
+extern const llvm_ks::SubtargetFeatureKV AArch64FeatureKV[] = {
   { "a35", "Cortex-A35 ARM processors", { AArch64::ProcA35 }, { AArch64::FeatureFPARMv8, AArch64::FeatureNEON, AArch64::FeatureCrypto, AArch64::FeatureCRC, AArch64::FeaturePerfMon } },
   { "a53", "Cortex-A53 ARM processors", { AArch64::ProcA53 }, { AArch64::FeatureFPARMv8, AArch64::FeatureNEON, AArch64::FeatureCrypto, AArch64::FeatureCRC, AArch64::FeaturePerfMon } },
   { "a57", "Cortex-A57 ARM processors", { AArch64::ProcA57 }, { AArch64::FeatureFPARMv8, AArch64::FeatureNEON, AArch64::FeatureCrypto, AArch64::FeatureCRC, AArch64::FeaturePerfMon } },
@@ -62,7 +62,7 @@ extern const llvm::SubtargetFeatureKV AArch64FeatureKV[] = {
 };
 
 // Sorted (by key) array of values for CPU subtype.
-extern const llvm::SubtargetFeatureKV AArch64SubTypeKV[] = {
+extern const llvm_ks::SubtargetFeatureKV AArch64SubTypeKV[] = {
   { "cortex-a35", "Select the cortex-a35 processor", { AArch64::ProcA35 }, { } },
   { "cortex-a53", "Select the cortex-a53 processor", { AArch64::ProcA53 }, { } },
   { "cortex-a57", "Select the cortex-a57 processor", { AArch64::ProcA57 }, { } },
@@ -99,7 +99,7 @@ static inline MCSubtargetInfo *createAArch64MCSubtargetInfoImpl(const Triple &TT
 #include "llvm/Support/raw_ostream.h"
 // ParseSubtargetFeatures - Parses features string setting specified
 // subtarget options.
-void llvm::AArch64Subtarget::ParseSubtargetFeatures(StringRef CPU, StringRef FS) {
+void llvm_ks::AArch64Subtarget::ParseSubtargetFeatures(StringRef CPU, StringRef FS) {
   DEBUG(dbgs() << "\nFeatures:" << FS);
   DEBUG(dbgs() << "\nCPU:" << CPU << "\n\n");
   InitMCProcessorInfo(CPU, FS);

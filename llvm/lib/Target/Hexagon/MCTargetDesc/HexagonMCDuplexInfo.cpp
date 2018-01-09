@@ -20,7 +20,7 @@
 
 #include <map>
 
-using namespace llvm;
+using namespace llvm_ks;
 using namespace Hexagon;
 
 #define DEBUG_TYPE "hexagon-mcduplex-info"

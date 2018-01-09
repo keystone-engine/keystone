@@ -23,7 +23,7 @@
 #include "llvm/Support/FileSystem.h"
 #include "llvm/Support/MemoryBuffer.h"
 #include "llvm/Support/SourceMgr.h"
-using namespace llvm;
+using namespace llvm_ks;
 
 namespace {
 
@@ -670,7 +670,7 @@ bool DarwinAsmParser::parseDirectiveSecureLogUnique(StringRef, SMLoc IDLoc) {
   raw_fd_ostream *OS = getContext().getSecureLog();
   if (!OS) {
     std::error_code EC;
-    auto NewOS = llvm::make_unique<raw_fd_ostream>(
+    auto NewOS = llvm_ks::make_unique<raw_fd_ostream>(
         SecureLogFile, EC, sys::fs::F_Append | sys::fs::F_Text);
     if (EC)
        return Error(IDLoc, Twine("can't open secure log file: ") +
@@ -959,7 +959,7 @@ bool DarwinAsmParser::parseVersionMin(StringRef Directive, SMLoc Loc) {
   return false;
 }
 
-namespace llvm {
+namespace llvm_ks {
 
 MCAsmParserExtension *createDarwinAsmParser() {
   return new DarwinAsmParser;

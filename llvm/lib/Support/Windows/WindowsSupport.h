@@ -82,7 +82,7 @@ inline bool MakeErrMsg(std::string* ErrMsg, const std::string& prefix) {
     *ErrMsg = prefix + ": " + buffer;
   else
     *ErrMsg = prefix + ": Unknown error";
-  *ErrMsg += " (0x" + llvm::utohexstr(LastError) + ")";
+  *ErrMsg += " (0x" + llvm_ks::utohexstr(LastError) + ")";
 
   LocalFree(buffer);
   return R != 0;
@@ -182,7 +182,7 @@ typedef ScopedHandle<CryptContextTraits> ScopedCryptContext;
 typedef ScopedHandle<FindHandleTraits>   ScopedFindHandle;
 typedef ScopedHandle<JobHandleTraits>    ScopedJobHandle;
 
-namespace llvm {
+namespace llvm_ks {
 template <class T>
 class SmallVectorImpl;
 
@@ -209,6 +209,6 @@ std::error_code UTF16ToCurCP(const wchar_t *utf16, size_t utf16_len,
                              SmallVectorImpl<char> &utf8);
 } // end namespace windows
 } // end namespace sys
-} // end namespace llvm.
+} // end namespace llvm_ks.
 
 #endif

@@ -10,7 +10,7 @@
 #include "llvm/ADT/StringRef.h"
 #include "llvm/MC/MCTargetOptions.h"
 
-namespace llvm {
+namespace llvm_ks {
 
 MCTargetOptions::MCTargetOptions()
     : MCRelaxAll(false),
@@ -21,4 +21,4 @@ StringRef MCTargetOptions::getABIName() const {
   return ABIName;
 }
 
-} // end namespace llvm
+} // end namespace llvm_ks

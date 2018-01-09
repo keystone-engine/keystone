@@ -22,7 +22,7 @@
 #include <system_error>
 #include <type_traits>
 
-namespace llvm {
+namespace llvm_ks {
 template<class T, class V>
 typename std::enable_if< std::is_constructible<T, V>::value
                        , typename std::remove_reference<V>::type>::type &&
@@ -292,6 +292,6 @@ typename std::enable_if<std::is_error_code_enum<E>::value ||
 operator==(const ErrorOr<T> &Err, E Code) {
   return Err.getError() == Code;
 }
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif // LLVM_SUPPORT_ERROROR_H

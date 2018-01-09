@@ -17,7 +17,7 @@
 #include "llvm/MC/MCAsmInfoDarwin.h"
 #include "llvm/MC/MCAsmInfoELF.h"
 
-namespace llvm {
+namespace llvm_ks {
 class MCStreamer;
 class Target;
 class Triple;
@@ -33,6 +33,6 @@ struct AArch64MCAsmInfoELF : public MCAsmInfoELF {
   explicit AArch64MCAsmInfoELF(const Triple &T);
 };
 
-} // namespace llvm
+} // namespace llvm_ks
 
 #endif

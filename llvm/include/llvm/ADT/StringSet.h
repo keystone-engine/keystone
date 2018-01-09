@@ -16,12 +16,12 @@
 
 #include "llvm/ADT/StringMap.h"
 
-namespace llvm {
+namespace llvm_ks {
 
   /// StringSet - A wrapper for StringMap that provides set-like functionality.
-  template <class AllocatorTy = llvm::MallocAllocator>
-  class StringSet : public llvm::StringMap<char, AllocatorTy> {
-    typedef llvm::StringMap<char, AllocatorTy> base;
+  template <class AllocatorTy = llvm_ks::MallocAllocator>
+  class StringSet : public llvm_ks::StringMap<char, AllocatorTy> {
+    typedef llvm_ks::StringMap<char, AllocatorTy> base;
   public:
     StringSet() = default;
     StringSet(std::initializer_list<StringRef> S) {

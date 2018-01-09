@@ -30,7 +30,7 @@
 #else
 #include <io.h>
 #endif
-using namespace llvm;
+using namespace llvm_ks;
 
 //===----------------------------------------------------------------------===//
 // MemoryBuffer implementation itself.

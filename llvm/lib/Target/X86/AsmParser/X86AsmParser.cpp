@@ -40,7 +40,7 @@
 
 #include "keystone/x86.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 namespace {
 
@@ -779,8 +779,8 @@ private:
   unsigned GetSIDIForRegClass(unsigned RegClassID, unsigned Reg, bool IsSIReg);
   void
   AddDefaultSrcDestOperands(OperandVector &Operands,
-                            std::unique_ptr<llvm::MCParsedAsmOperand> &&Src,
-                            std::unique_ptr<llvm::MCParsedAsmOperand> &&Dst);
+                            std::unique_ptr<llvm_ks::MCParsedAsmOperand> &&Src,
+                            std::unique_ptr<llvm_ks::MCParsedAsmOperand> &&Dst);
   bool VerifyAndAdjustOperands(OperandVector &OrigOperands,
                                OperandVector &FinalOperands);
   std::unique_ptr<X86Operand> ParseOperand(std::string Mnem, unsigned int &KsError);
@@ -1139,8 +1139,8 @@ unsigned X86AsmParser::GetSIDIForRegClass(unsigned RegClassID, unsigned Reg,
 }
 
 void X86AsmParser::AddDefaultSrcDestOperands(
-    OperandVector& Operands, std::unique_ptr<llvm::MCParsedAsmOperand> &&Src,
-    std::unique_ptr<llvm::MCParsedAsmOperand> &&Dst) {
+    OperandVector& Operands, std::unique_ptr<llvm_ks::MCParsedAsmOperand> &&Src,
+    std::unique_ptr<llvm_ks::MCParsedAsmOperand> &&Dst) {
   if (isParsingIntelSyntax()) {
     Operands.push_back(std::move(Dst));
     Operands.push_back(std::move(Src));

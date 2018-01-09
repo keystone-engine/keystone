@@ -21,7 +21,7 @@
 #include <cassert>
 #include <vector>
 
-namespace llvm {
+namespace llvm_ks {
 class MCExpr;
 class MCSection;
 class MCStreamer;

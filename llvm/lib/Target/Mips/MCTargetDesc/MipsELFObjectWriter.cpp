@@ -20,7 +20,7 @@
 #include "llvm/Support/ErrorHandling.h"
 #include <list>
 
-using namespace llvm;
+using namespace llvm_ks;
 
 namespace {
 // A helper structure based on ELFRelocationEntry, used for sorting entries in
@@ -423,7 +423,7 @@ bool MipsELFObjectWriter::needsRelocateWithSymbol(const MCSymbol &Sym,
   }
 }
 
-MCObjectWriter *llvm::createMipsELFObjectWriter(raw_pwrite_stream &OS,
+MCObjectWriter *llvm_ks::createMipsELFObjectWriter(raw_pwrite_stream &OS,
                                                 uint8_t OSABI,
                                                 bool IsLittleEndian,
                                                 bool Is64Bit) {

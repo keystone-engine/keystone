@@ -17,7 +17,7 @@
 #ifndef LLVM_SUPPORT_MIPSABIFLAGS_H
 #define LLVM_SUPPORT_MIPSABIFLAGS_H
 
-namespace llvm {
+namespace llvm_ks {
 namespace Mips {
 
 // Values for the xxx_size bytes of an ABI flags structure.

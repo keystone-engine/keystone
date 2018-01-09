@@ -12,7 +12,7 @@
 #include "llvm/MC/MCFixupKindInfo.h"
 #include "llvm/Support/ELF.h"
 
-namespace llvm {
+namespace llvm_ks {
 
 namespace {
 enum {

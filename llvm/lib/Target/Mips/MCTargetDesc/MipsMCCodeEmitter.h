@@ -18,9 +18,9 @@
 #include "llvm/MC/MCCodeEmitter.h"
 #include "llvm/Support/DataTypes.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
-namespace llvm {
+namespace llvm_ks {
 class MCContext;
 class MCExpr;
 class MCInst;
@@ -240,6 +240,6 @@ public:
                                     SmallVectorImpl<MCFixup> &Fixups,
                                     const MCSubtargetInfo &STI) const;
 }; // class MipsMCCodeEmitter
-} // namespace llvm.
+} // namespace llvm_ks.
 
 #endif

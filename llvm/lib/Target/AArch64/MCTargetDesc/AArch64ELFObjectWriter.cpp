@@ -19,7 +19,7 @@
 #include "llvm/MC/MCValue.h"
 #include "llvm/Support/ErrorHandling.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 namespace {
 class AArch64ELFObjectWriter : public MCELFObjectTargetWriter {
@@ -249,7 +249,7 @@ unsigned AArch64ELFObjectWriter::getRelocType(MCContext &Ctx,
   llvm_unreachable("Unimplemented fixup -> relocation");
 }
 
-MCObjectWriter *llvm::createAArch64ELFObjectWriter(raw_pwrite_stream &OS,
+MCObjectWriter *llvm_ks::createAArch64ELFObjectWriter(raw_pwrite_stream &OS,
                                                    uint8_t OSABI,
                                                    bool IsLittleEndian) {
   MCELFObjectTargetWriter *MOTW =

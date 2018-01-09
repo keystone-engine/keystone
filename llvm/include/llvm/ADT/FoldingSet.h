@@ -22,7 +22,7 @@
 #include "llvm/Support/Allocator.h"
 #include "llvm/Support/DataTypes.h"
 
-namespace llvm {
+namespace llvm_ks {
 /// This folding set used for two purposes:
 ///   1. Given information about a node we want to create, look up the unique
 ///      instance of the node in the set.  If the node already exists, return
@@ -468,7 +468,7 @@ public:
 ///
 /// T must be a subclass of FoldingSetNode and implement a Profile
 /// function with signature
-///   void Profile(llvm::FoldingSetNodeID &, Ctx);
+///   void Profile(llvm_ks::FoldingSetNodeID &, Ctx);
 template <class T, class Ctx>
 class ContextualFoldingSet final : public FoldingSetImpl {
   // Unfortunately, this can't derive from FoldingSet<T> because the
@@ -739,11 +739,11 @@ template<typename T> struct FoldingSetTrait<T*> {
 template <typename T1, typename T2>
 struct FoldingSetTrait<std::pair<T1, T2>> {
   static inline void Profile(const std::pair<T1, T2> &P,
-                             llvm::FoldingSetNodeID &ID) {
+                             llvm_ks::FoldingSetNodeID &ID) {
     ID.Add(P.first);
     ID.Add(P.second);
   }
 };
-} // End of namespace llvm.
+} // End of namespace llvm_ks.
 
 #endif

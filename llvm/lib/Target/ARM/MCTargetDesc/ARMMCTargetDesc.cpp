@@ -24,14 +24,14 @@
 #include "llvm/Support/TargetParser.h"
 #include "llvm/Support/TargetRegistry.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 #define GET_REGINFO_MC_DESC
 #include "ARMGenRegisterInfo.inc"
 
 static bool getMCRDeprecationInfo(MCInst &MI, const MCSubtargetInfo &STI,
                                   std::string &Info) {
-  if (STI.getFeatureBits()[llvm::ARM::HasV7Ops] &&
+  if (STI.getFeatureBits()[llvm_ks::ARM::HasV7Ops] &&
       (MI.getOperand(0).isImm() && MI.getOperand(0).getImm() == 15) &&
       (MI.getOperand(1).isImm() && MI.getOperand(1).getImm() == 0) &&
       // Checks for the deprecated CP15ISB encoding:
@@ -63,7 +63,7 @@ static bool getMCRDeprecationInfo(MCInst &MI, const MCSubtargetInfo &STI,
 
 static bool getITDeprecationInfo(MCInst &MI, const MCSubtargetInfo &STI,
                                  std::string &Info) {
-  if (STI.getFeatureBits()[llvm::ARM::HasV8Ops] && MI.getOperand(1).isImm() &&
+  if (STI.getFeatureBits()[llvm_ks::ARM::HasV8Ops] && MI.getOperand(1).isImm() &&
       MI.getOperand(1).getImm() != 8) {
     Info = "applying IT instruction to more than one subsequent instruction is "
            "deprecated";
@@ -75,7 +75,7 @@ static bool getITDeprecationInfo(MCInst &MI, const MCSubtargetInfo &STI,
 
 static bool getARMStoreDeprecationInfo(MCInst &MI, const MCSubtargetInfo &STI,
                                        std::string &Info) {
-  assert(!STI.getFeatureBits()[llvm::ARM::ModeThumb] &&
+  assert(!STI.getFeatureBits()[llvm_ks::ARM::ModeThumb] &&
          "cannot predicate thumb instructions");
 
   assert(MI.getNumOperands() >= 4 && "expected >= 4 arguments");
@@ -92,7 +92,7 @@ static bool getARMStoreDeprecationInfo(MCInst &MI, const MCSubtargetInfo &STI,
 
 static bool getARMLoadDeprecationInfo(MCInst &MI, const MCSubtargetInfo &STI,
                                       std::string &Info) {
-  assert(!STI.getFeatureBits()[llvm::ARM::ModeThumb] &&
+  assert(!STI.getFeatureBits()[llvm_ks::ARM::ModeThumb] &&
          "cannot predicate thumb instructions");
 
   assert(MI.getNumOperands() >= 4 && "expected >= 4 arguments");

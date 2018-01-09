@@ -32,7 +32,7 @@
 #include "llvm/Support/SourceMgr.h"
 #include <map>
 
-using namespace llvm;
+using namespace llvm_ks;
 
 MCContext::MCContext(const MCAsmInfo *mai, const MCRegisterInfo *mri,
                      const MCObjectFileInfo *mofi, const SourceMgr *mgr,
@@ -44,7 +44,7 @@ MCContext::MCContext(const MCAsmInfo *mai, const MCRegisterInfo *mri,
       AllowTemporaryLabels(true), DwarfCompileUnitID(0),
       AutoReset(DoAutoReset), HadError(false), BaseAddress(BaseAddr) {
 
-  std::error_code EC = llvm::sys::fs::current_path(CompilationDir);
+  std::error_code EC = llvm_ks::sys::fs::current_path(CompilationDir);
   if (EC)
     CompilationDir.clear();
 

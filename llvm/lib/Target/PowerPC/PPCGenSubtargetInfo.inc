@@ -9,7 +9,7 @@
 
 #ifdef GET_SUBTARGETINFO_ENUM
 #undef GET_SUBTARGETINFO_ENUM
-namespace llvm {
+namespace llvm_ks {
 namespace PPC {
 enum : uint64_t {
   DeprecatedDST = 0,
@@ -85,9 +85,9 @@ enum : uint64_t {
 
 #ifdef GET_SUBTARGETINFO_MC_DESC
 #undef GET_SUBTARGETINFO_MC_DESC
-namespace llvm {
+namespace llvm_ks {
 // Sorted (by key) array of values for CPU features.
-extern const llvm::SubtargetFeatureKV PPCFeatureKV[] = {
+extern const llvm_ks::SubtargetFeatureKV PPCFeatureKV[] = {
   { "64bit", "Enable 64-bit instructions", { PPC::Feature64Bit }, { } },
   { "64bitregs", "Enable 64-bit registers usage for ppc32 [beta]", { PPC::Feature64BitRegs }, { } },
   { "altivec", "Enable Altivec instructions", { PPC::FeatureAltivec }, { } },
@@ -132,7 +132,7 @@ extern const llvm::SubtargetFeatureKV PPCFeatureKV[] = {
 };
 
 // Sorted (by key) array of values for CPU subtype.
-extern const llvm::SubtargetFeatureKV PPCSubTypeKV[] = {
+extern const llvm_ks::SubtargetFeatureKV PPCSubTypeKV[] = {
   { "440", "Select the 440 processor", { PPC::Directive440, PPC::FeatureISEL, PPC::FeatureFRES, PPC::FeatureFRSQRTE, PPC::FeatureICBT, PPC::FeatureBookE, PPC::FeatureMSYNC, PPC::FeatureMFTB }, { } },
   { "450", "Select the 450 processor", { PPC::Directive440, PPC::FeatureISEL, PPC::FeatureFRES, PPC::FeatureFRSQRTE, PPC::FeatureICBT, PPC::FeatureBookE, PPC::FeatureMSYNC, PPC::FeatureMFTB }, { } },
   { "601", "Select the 601 processor", { PPC::Directive601 }, { } },
@@ -193,7 +193,7 @@ static inline MCSubtargetInfo *createPPCMCSubtargetInfoImpl(const Triple &TT, St
 #include "llvm/Support/raw_ostream.h"
 // ParseSubtargetFeatures - Parses features string setting specified
 // subtarget options.
-void llvm::PPCSubtarget::ParseSubtargetFeatures(StringRef CPU, StringRef FS) {
+void llvm_ks::PPCSubtarget::ParseSubtargetFeatures(StringRef CPU, StringRef FS) {
   DEBUG(dbgs() << "\nFeatures:" << FS);
   DEBUG(dbgs() << "\nCPU:" << CPU << "\n\n");
   InitMCProcessorInfo(CPU, FS);

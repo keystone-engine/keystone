@@ -14,7 +14,7 @@
 #include "llvm/ADT/Triple.h"
 #include "llvm/MC/MCRegisterInfo.h"
 
-namespace llvm {
+namespace llvm_ks {
 
 class MCTargetOptions;
 class StringRef;

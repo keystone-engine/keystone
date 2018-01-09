@@ -15,7 +15,7 @@
 #include "llvm/MC/MCParser/AsmLexer.h"
 #include "llvm/Support/DataTypes.h"
 
-namespace llvm {
+namespace llvm_ks {
 class MCAsmInfo;
 class MCAsmLexer;
 class MCAsmParserExtension;

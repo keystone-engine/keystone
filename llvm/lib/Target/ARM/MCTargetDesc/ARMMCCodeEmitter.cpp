@@ -29,7 +29,7 @@
 
 #include "keystone/keystone.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 #define DEBUG_TYPE "mccodeemitter"
 
@@ -439,13 +439,13 @@ public:
 
 } // end anonymous namespace
 
-MCCodeEmitter *llvm::createARMLEMCCodeEmitter(const MCInstrInfo &MCII,
+MCCodeEmitter *llvm_ks::createARMLEMCCodeEmitter(const MCInstrInfo &MCII,
                                               const MCRegisterInfo &MRI,
                                               MCContext &Ctx) {
   return new ARMMCCodeEmitter(MCII, Ctx, true);
 }
 
-MCCodeEmitter *llvm::createARMBEMCCodeEmitter(const MCInstrInfo &MCII,
+MCCodeEmitter *llvm_ks::createARMBEMCCodeEmitter(const MCInstrInfo &MCII,
                                               const MCRegisterInfo &MRI,
                                               MCContext &Ctx) {
   return new ARMMCCodeEmitter(MCII, Ctx, false);

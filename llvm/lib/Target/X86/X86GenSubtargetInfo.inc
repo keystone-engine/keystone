@@ -9,7 +9,7 @@
 
 #ifdef GET_SUBTARGETINFO_ENUM
 #undef GET_SUBTARGETINFO_ENUM
-namespace llvm {
+namespace llvm_ks {
 namespace X86 {
 enum : uint64_t {
   Feature3DNow = 0,
@@ -106,9 +106,9 @@ enum : uint64_t {
 
 #ifdef GET_SUBTARGETINFO_MC_DESC
 #undef GET_SUBTARGETINFO_MC_DESC
-namespace llvm {
+namespace llvm_ks {
 // Sorted (by key) array of values for CPU features.
-extern const llvm::SubtargetFeatureKV X86FeatureKV[] = {
+extern const llvm_ks::SubtargetFeatureKV X86FeatureKV[] = {
   { "16bit-mode", "16-bit mode (i8086)", { X86::Mode16Bit }, { } },
   { "32bit-mode", "32-bit mode (80386)", { X86::Mode32Bit }, { } },
   { "3dnow", "Enable 3DNow! instructions", { X86::Feature3DNow }, { X86::FeatureMMX } },
@@ -198,7 +198,7 @@ extern const llvm::SubtargetFeatureKV X86FeatureKV[] = {
 };
 
 // Sorted (by key) array of values for CPU subtype.
-extern const llvm::SubtargetFeatureKV X86SubTypeKV[] = {
+extern const llvm_ks::SubtargetFeatureKV X86SubTypeKV[] = {
   { "amdfam10", "Select the amdfam10 processor", { X86::FeatureSSE4A, X86::Feature3DNowA, X86::FeatureFXSR, X86::FeatureCMPXCHG16B, X86::FeatureLZCNT, X86::FeaturePOPCNT, X86::FeatureSlowBTMem, X86::FeatureSlowSHLD, X86::FeatureLAHFSAHF }, { } },
   { "athlon", "Select the athlon processor", { X86::FeatureSlowUAMem16, X86::Feature3DNowA, X86::FeatureSlowBTMem, X86::FeatureSlowSHLD }, { } },
   { "athlon-4", "Select the athlon-4 processor", { X86::FeatureSlowUAMem16, X86::FeatureSSE1, X86::Feature3DNowA, X86::FeatureFXSR, X86::FeatureSlowBTMem, X86::FeatureSlowSHLD }, { } },
@@ -293,7 +293,7 @@ static inline MCSubtargetInfo *createX86MCSubtargetInfoImpl(const Triple &TT, St
 #include "llvm/Support/raw_ostream.h"
 // ParseSubtargetFeatures - Parses features string setting specified
 // subtarget options.
-void llvm::X86Subtarget::ParseSubtargetFeatures(StringRef CPU, StringRef FS) {
+void llvm_ks::X86Subtarget::ParseSubtargetFeatures(StringRef CPU, StringRef FS) {
   DEBUG(dbgs() << "\nFeatures:" << FS);
   DEBUG(dbgs() << "\nCPU:" << CPU << "\n\n");
   InitMCProcessorInfo(CPU, FS);

@@ -24,7 +24,7 @@
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Support/EndianStream.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 #define DEBUG_TYPE "mccodeemitter"
 
@@ -73,7 +73,7 @@ public:
 };
 } // end anonymous namespace
 
-MCCodeEmitter *llvm::createSparcMCCodeEmitter(const MCInstrInfo &MCII,
+MCCodeEmitter *llvm_ks::createSparcMCCodeEmitter(const MCInstrInfo &MCII,
                                               const MCRegisterInfo &MRI,
                                               MCContext &Ctx) {
   return new SparcMCCodeEmitter(Ctx);

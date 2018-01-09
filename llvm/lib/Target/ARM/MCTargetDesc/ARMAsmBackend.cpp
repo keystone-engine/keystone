@@ -37,7 +37,7 @@
 
 #include <keystone/keystone.h>
 
-using namespace llvm;
+using namespace llvm_ks;
 
 namespace {
 class ARMELFObjectWriter : public MCELFObjectTargetWriter {
@@ -884,7 +884,7 @@ enum CompactUnwindEncodings {
 
 } // end CU namespace
 
-MCAsmBackend *llvm::createARMAsmBackend(const Target &T,
+MCAsmBackend *llvm_ks::createARMAsmBackend(const Target &T,
                                         const MCRegisterInfo &MRI,
                                         const Triple &TheTriple, StringRef CPU,
                                         bool isLittle) {
@@ -898,25 +898,25 @@ MCAsmBackend *llvm::createARMAsmBackend(const Target &T,
   }
 }
 
-MCAsmBackend *llvm::createARMLEAsmBackend(const Target &T,
+MCAsmBackend *llvm_ks::createARMLEAsmBackend(const Target &T,
                                           const MCRegisterInfo &MRI,
                                           const Triple &TT, StringRef CPU) {
   return createARMAsmBackend(T, MRI, TT, CPU, true);
 }
 
-MCAsmBackend *llvm::createARMBEAsmBackend(const Target &T,
+MCAsmBackend *llvm_ks::createARMBEAsmBackend(const Target &T,
                                           const MCRegisterInfo &MRI,
                                           const Triple &TT, StringRef CPU) {
   return createARMAsmBackend(T, MRI, TT, CPU, false);
 }
 
-MCAsmBackend *llvm::createThumbLEAsmBackend(const Target &T,
+MCAsmBackend *llvm_ks::createThumbLEAsmBackend(const Target &T,
                                             const MCRegisterInfo &MRI,
                                             const Triple &TT, StringRef CPU) {
   return createARMAsmBackend(T, MRI, TT, CPU, true);
 }
 
-MCAsmBackend *llvm::createThumbBEAsmBackend(const Target &T,
+MCAsmBackend *llvm_ks::createThumbBEAsmBackend(const Target &T,
                                             const MCRegisterInfo &MRI,
                                             const Triple &TT, StringRef CPU) {
   return createARMAsmBackend(T, MRI, TT, CPU, false);

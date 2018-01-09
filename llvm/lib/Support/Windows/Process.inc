@@ -46,7 +46,7 @@
 #  define _HEAPOK (-2)
 #endif
 
-using namespace llvm;
+using namespace llvm_ks;
 using namespace sys;
 
 static TimeValue getTimeValueFromFILETIME(FILETIME Time) {
@@ -215,7 +215,7 @@ WildcardExpand(const wchar_t *Arg, SmallVectorImpl<const char *> &Args,
       break;
 
     // Push the filename onto Dir, and remove it afterwards.
-    llvm::sys::path::append(Dir, StringRef(FileName.data(), FileName.size()));
+    llvm_ks::sys::path::append(Dir, StringRef(FileName.data(), FileName.size()));
     AllocateAndPush(Dir, Args, Allocator);
     Dir.resize(DirSize);
   } while (FindNextFileW(FindHandle, &FileData));

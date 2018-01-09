@@ -13,7 +13,7 @@
 #include "llvm/Support/ErrorHandling.h"
 #include "llvm/Support/raw_ostream.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 void MCValue::print(raw_ostream &OS) const {
   if (isAbsolute()) {

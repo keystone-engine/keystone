@@ -9,7 +9,7 @@
 
 #include "llvm/MC/MCCodeEmitter.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 MCCodeEmitter::MCCodeEmitter() {
 }

@@ -16,7 +16,7 @@
 
 #include "llvm/Support/MemoryBuffer.h"
 
-namespace llvm {
+namespace llvm_ks {
 
 class Constant;
 class LLVMContext;

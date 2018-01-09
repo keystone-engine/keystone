@@ -12,7 +12,7 @@
 
 #include "llvm/Support/DataTypes.h"
 
-namespace llvm {
+namespace llvm_ks {
 
 class MCAsmBackend;
 class MCCodeEmitter;
@@ -88,7 +88,7 @@ MCAsmBackend *createSystemZMCAsmBackend(const Target &T,
                                         const Triple &TT, StringRef CPU);
 
 MCObjectWriter *createSystemZObjectWriter(raw_pwrite_stream &OS, uint8_t OSABI);
-} // end namespace llvm
+} // end namespace llvm_ks
 
 // Defines symbolic names for SystemZ registers.
 // This defines a mapping from register name to register number.

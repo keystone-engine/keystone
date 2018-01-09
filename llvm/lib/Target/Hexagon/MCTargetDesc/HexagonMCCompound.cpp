@@ -24,7 +24,7 @@
 #include "llvm/Support/Debug.h"
 #include "llvm/Support/raw_ostream.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 using namespace Hexagon;
 
 #define DEBUG_TYPE "hexagon-mccompound"
@@ -369,7 +369,7 @@ bool lookForCompound(MCInstrInfo const &MCII, MCContext &Context, MCInst &MCI) {
       JExtended = true;
       continue;
     }
-    if (llvm::HexagonMCInstrInfo::getType(MCII, *JumpInst) ==
+    if (llvm_ks::HexagonMCInstrInfo::getType(MCII, *JumpInst) ==
         HexagonII::TypeJ) {
       // Try to pair with another insn (B)undled with jump.
       bool BExtended = false;

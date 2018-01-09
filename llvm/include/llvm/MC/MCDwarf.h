@@ -28,7 +28,7 @@
 #include <utility>
 #include <vector>
 
-namespace llvm {
+namespace llvm_ks {
 class MCAsmBackend;
 class MCContext;
 class MCObjectStreamer;
@@ -518,6 +518,6 @@ public:
   static void EncodeAdvanceLoc(MCContext &Context, uint64_t AddrDelta,
                                raw_ostream &OS);
 };
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

@@ -9,9 +9,9 @@
 
 #include "MCTargetDesc/X86MCTargetDesc.h"
 #include "llvm/Support/TargetRegistry.h"
-using namespace llvm;
+using namespace llvm_ks;
 
-Target llvm::TheX86_32Target, llvm::TheX86_64Target;
+Target llvm_ks::TheX86_32Target, llvm_ks::TheX86_64Target;
 
 extern "C" void LLVMInitializeX86TargetInfo() {
   RegisterTarget<Triple::x86>

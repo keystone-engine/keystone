@@ -9,7 +9,7 @@
 
 #include "llvm/Support/StringSaver.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 const char *StringSaver::save(StringRef S) {
   char *P = Alloc.Allocate<char>(S.size() + 1);

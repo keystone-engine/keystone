@@ -12,7 +12,7 @@
 
 #include <string>
 
-namespace llvm {
+namespace llvm_ks {
 
 class StringRef;
 
@@ -36,6 +36,6 @@ public:
   MCTargetOptions();
 };
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

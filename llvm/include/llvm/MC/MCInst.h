@@ -21,7 +21,7 @@
 #include "llvm/Support/DataTypes.h"
 #include "llvm/Support/SMLoc.h"
 
-namespace llvm {
+namespace llvm_ks {
 class raw_ostream;
 class MCAsmInfo;
 class MCExpr;
@@ -197,6 +197,6 @@ inline raw_ostream& operator<<(raw_ostream &OS, const MCInst &MI) {
   return OS;
 }
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

@@ -21,7 +21,7 @@
 #include <map>
 #include <vector>
 
-namespace llvm {
+namespace llvm_ks {
 class MCContext;
 class MCObjectStreamer;
 class MCStreamer;
@@ -180,5 +180,5 @@ private:
   std::vector<MCCVLineEntry> MCCVLines;
 };
 
-} // end namespace llvm
+} // end namespace llvm_ks
 #endif

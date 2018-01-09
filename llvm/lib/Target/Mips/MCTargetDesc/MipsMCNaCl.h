@@ -12,7 +12,7 @@
 
 #include "llvm/MC/MCELFStreamer.h"
 
-namespace llvm {
+namespace llvm_ks {
 
 // Log2 of the NaCl MIPS sandbox's instruction bundle size.
 static const unsigned MIPS_NACL_BUNDLE_ALIGN = 4u;

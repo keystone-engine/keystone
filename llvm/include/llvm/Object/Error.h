@@ -16,7 +16,7 @@
 
 #include <system_error>
 
-namespace llvm {
+namespace llvm_ks {
 namespace object {
 
 const std::error_category &object_category();
@@ -42,11 +42,11 @@ inline std::error_code make_error_code(object_error e) {
 
 } // end namespace object.
 
-} // end namespace llvm.
+} // end namespace llvm_ks.
 
 namespace std {
 template <>
-struct is_error_code_enum<llvm::object::object_error> : std::true_type {};
+struct is_error_code_enum<llvm_ks::object::object_error> : std::true_type {};
 }
 
 #endif

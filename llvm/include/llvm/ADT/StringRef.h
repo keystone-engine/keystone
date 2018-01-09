@@ -18,7 +18,7 @@
 #include <string>
 #include <utility>
 
-namespace llvm {
+namespace llvm_ks {
   template <typename T>
   class SmallVectorImpl;
   class APInt;

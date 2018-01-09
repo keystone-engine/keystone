@@ -18,7 +18,7 @@
 #include "llvm/Support/DataTypes.h"
 #include "llvm/Support/ErrorHandling.h"
 
-namespace llvm {
+namespace llvm_ks {
 class MCAsmLayout;
 class MCAssembler;
 class MCELFObjectTargetWriter;

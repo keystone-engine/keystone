@@ -12,7 +12,7 @@
 
 #include "llvm/MC/MCFixup.h"
 
-namespace llvm {
+namespace llvm_ks {
 namespace AArch64 {
 
 enum Fixups {
@@ -71,6 +71,6 @@ enum Fixups {
 };
 
 } // end namespace AArch64
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

@@ -25,7 +25,7 @@
 
 #include <keystone/keystone.h>
 
-using namespace llvm;
+using namespace llvm_ks;
 
 namespace {
 
@@ -410,7 +410,7 @@ void ELFAArch64AsmBackend::processFixupValue(
 
 }
 
-MCAsmBackend *llvm::createAArch64leAsmBackend(const Target &T,
+MCAsmBackend *llvm_ks::createAArch64leAsmBackend(const Target &T,
                                               const MCRegisterInfo &MRI,
                                               const Triple &TheTriple,
                                               StringRef CPU) {
@@ -419,7 +419,7 @@ MCAsmBackend *llvm::createAArch64leAsmBackend(const Target &T,
   return new ELFAArch64AsmBackend(T, OSABI, /*IsLittleEndian=*/true);
 }
 
-MCAsmBackend *llvm::createAArch64beAsmBackend(const Target &T,
+MCAsmBackend *llvm_ks::createAArch64beAsmBackend(const Target &T,
                                               const MCRegisterInfo &MRI,
                                               const Triple &TheTriple,
                                               StringRef CPU) {

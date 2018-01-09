@@ -23,7 +23,7 @@
 
 #include "llvm/ADT/SmallVector.h"
 
-namespace llvm {
+namespace llvm_ks {
 
 class IntEqClasses {
   /// EC - When uncompressed, map each integer to a smaller member of its

@@ -26,7 +26,7 @@
 #include "llvm/Support/TargetRegistry.h"
 #include "llvm/Support/raw_ostream.h"
 #include <tuple>
-using namespace llvm;
+using namespace llvm_ks;
 
 MCAsmLayout::MCAsmLayout(MCAssembler &Asm)
   : Assembler(Asm), LastValidFragment()
@@ -218,7 +218,7 @@ uint64_t MCAsmLayout::getSectionFileSize(const MCSection *Sec) const {
   return getSectionAddressSize(Sec);
 }
 
-uint64_t llvm::computeBundlePadding(const MCAssembler &Assembler,
+uint64_t llvm_ks::computeBundlePadding(const MCAssembler &Assembler,
                                     const MCFragment *F,
                                     uint64_t FOffset, uint64_t FSize) {
   uint64_t BundleSize = Assembler.getBundleAlignSize();
@@ -328,7 +328,7 @@ void MCFragment::destroy() {
 
 // Debugging methods
 
-namespace llvm {
+namespace llvm_ks {
 
 raw_ostream &operator<<(raw_ostream &OS, const MCFixup &AF) {
   OS << "<MCFixup" << " Offset:" << AF.getOffset()
@@ -341,7 +341,7 @@ raw_ostream &operator<<(raw_ostream &OS, const MCFixup &AF) {
 
 #if !defined(NDEBUG) || defined(LLVM_ENABLE_DUMP)
 LLVM_DUMP_METHOD void MCFragment::dump() {
-  raw_ostream &OS = llvm::errs();
+  raw_ostream &OS = llvm_ks::errs();
 
   OS << "<";
   switch (getKind()) {
@@ -462,7 +462,7 @@ LLVM_DUMP_METHOD void MCFragment::dump() {
 }
 
 LLVM_DUMP_METHOD void MCAssembler::dump() {
-  raw_ostream &OS = llvm::errs();
+  raw_ostream &OS = llvm_ks::errs();
 
   OS << "<MCAssembler\n";
   OS << "  Sections:[\n    ";

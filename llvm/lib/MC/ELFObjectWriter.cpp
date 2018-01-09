@@ -34,7 +34,7 @@
 #include "llvm/Support/ErrorHandling.h"
 #include "llvm/Support/StringSaver.h"
 #include <vector>
-using namespace llvm;
+using namespace llvm_ks;
 
 #undef  DEBUG_TYPE
 #define DEBUG_TYPE "reloc-info"
@@ -98,7 +98,7 @@ class ELFObjectWriter : public MCObjectWriter {
 
     DenseMap<const MCSymbolELF *, const MCSymbolELF *> Renames;
 
-    llvm::DenseMap<const MCSectionELF *, std::vector<ELFRelocationEntry>>
+    llvm_ks::DenseMap<const MCSectionELF *, std::vector<ELFRelocationEntry>>
         Relocations;
 
     /// @}
@@ -1266,7 +1266,7 @@ bool ELFObjectWriter::isWeak(const MCSymbol &S) const {
   return Sec.getGroup();
 }
 
-MCObjectWriter *llvm::createELFObjectWriter(MCELFObjectTargetWriter *MOTW,
+MCObjectWriter *llvm_ks::createELFObjectWriter(MCELFObjectTargetWriter *MOTW,
                                             raw_pwrite_stream &OS,
                                             bool IsLittleEndian) {
   return new ELFObjectWriter(MOTW, OS, IsLittleEndian);

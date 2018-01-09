@@ -25,7 +25,7 @@
 #include <memory>
 #include <string>
 
-namespace llvm {
+namespace llvm_ks {
 class AsmPrinter;
 class MCAsmBackend;
 class MCAsmInfo;
@@ -186,7 +186,7 @@ private:
   ObjectTargetStreamerCtorTy ObjectTargetStreamerCtorFn;
 
   /// MCRelocationInfoCtorFn - Construction function for this target's
-  /// MCRelocationInfo, if registered (default = llvm::createMCRelocationInfo)
+  /// MCRelocationInfo, if registered (default = llvm_ks::createMCRelocationInfo)
   MCRelocationInfoCtorTy MCRelocationInfoCtorFn;
 
 public:
@@ -365,7 +365,7 @@ public:
                                 MCCodeEmitter *CE,
                                 MCAsmBackend *TAB) const {
     formatted_raw_ostream &OSRef = *OS;
-    MCStreamer *S = llvm::createAsmStreamer(Ctx, std::move(OS), CE, TAB);
+    MCStreamer *S = llvm_ks::createAsmStreamer(Ctx, std::move(OS), CE, TAB);
     createAsmTargetStreamer(*S, OSRef);
     return S;
   }
@@ -378,7 +378,7 @@ public:
   }
 
   MCStreamer *createNullStreamer(MCContext &Ctx) const {
-    MCStreamer *S = llvm::createNullStreamer(Ctx);
+    MCStreamer *S = llvm_ks::createNullStreamer(Ctx);
     return S;
   }
 
@@ -389,7 +389,7 @@ public:
   MCRelocationInfo *createMCRelocationInfo(StringRef TT, MCContext &Ctx) const {
     MCRelocationInfoCtorTy Fn = MCRelocationInfoCtorFn
                                     ? MCRelocationInfoCtorFn
-                                    : llvm::createMCRelocationInfo;
+                                    : llvm_ks::createMCRelocationInfo;
     return Fn(Triple(TT), Ctx);
   }
 

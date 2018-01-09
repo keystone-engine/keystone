@@ -26,7 +26,7 @@
 
 #include <keystone/keystone.h>
 
-using namespace llvm;
+using namespace llvm_ks;
 
 #define DEBUG_TYPE "mccodeemitter"
 
@@ -172,7 +172,7 @@ public:
 
 } // end anonymous namespace
 
-MCCodeEmitter *llvm::createX86MCCodeEmitter(const MCInstrInfo &MCII,
+MCCodeEmitter *llvm_ks::createX86MCCodeEmitter(const MCInstrInfo &MCII,
                                             const MCRegisterInfo &MRI,
                                             MCContext &Ctx) {
   return new X86MCCodeEmitter(MCII, Ctx);

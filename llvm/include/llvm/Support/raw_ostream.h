@@ -19,7 +19,7 @@
 #include "llvm/Support/DataTypes.h"
 #include <system_error>
 
-namespace llvm {
+namespace llvm_ks {
 class format_object_base;
 class FormattedString;
 class FormattedNumber;
@@ -184,7 +184,7 @@ public:
     return write(Str.data(), Str.length());
   }
 
-  raw_ostream &operator<<(const llvm::SmallVectorImpl<char> &Str) {
+  raw_ostream &operator<<(const llvm_ks::SmallVectorImpl<char> &Str) {
     return write(Str.data(), Str.size());
   }
 

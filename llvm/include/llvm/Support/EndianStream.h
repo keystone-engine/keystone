@@ -19,7 +19,7 @@
 #include "llvm/Support/Endian.h"
 #include "llvm/Support/raw_ostream.h"
 
-namespace llvm {
+namespace llvm_ks {
 namespace support {
 
 namespace endian {
@@ -64,6 +64,6 @@ inline void Writer<big>::write<double>(double Val) {
 } // end namespace endian
 
 } // end namespace support
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

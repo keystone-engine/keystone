@@ -12,7 +12,7 @@
 #include "llvm/Support/Debug.h"
 #include "llvm/Support/raw_ostream.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 void MCOperand::print(raw_ostream &OS) const {
   OS << "<MCOperand ";

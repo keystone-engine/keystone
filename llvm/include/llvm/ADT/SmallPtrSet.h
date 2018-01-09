@@ -25,7 +25,7 @@
 #include <iterator>
 #include <utility>
 
-namespace llvm {
+namespace llvm_ks {
 
 class SmallPtrSetIteratorImpl;
 
@@ -376,7 +376,7 @@ public:
 namespace std {
   /// Implement std::swap in terms of SmallPtrSet swap.
   template<class T, unsigned N>
-  inline void swap(llvm::SmallPtrSet<T, N> &LHS, llvm::SmallPtrSet<T, N> &RHS) {
+  inline void swap(llvm_ks::SmallPtrSet<T, N> &LHS, llvm_ks::SmallPtrSet<T, N> &RHS) {
     LHS.swap(RHS);
   }
 }

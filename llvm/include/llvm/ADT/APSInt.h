@@ -17,7 +17,7 @@
 
 #include "llvm/ADT/APInt.h"
 
-namespace llvm {
+namespace llvm_ks {
 
 class APSInt : public APInt {
   bool IsUnsigned;
@@ -337,6 +337,6 @@ inline raw_ostream &operator<<(raw_ostream &OS, const APSInt &I) {
   return OS;
 }
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

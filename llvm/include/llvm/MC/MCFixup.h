@@ -16,7 +16,7 @@
 #include "llvm/Support/SMLoc.h"
 #include <cassert>
 
-namespace llvm {
+namespace llvm_ks {
 class MCExpr;
 
 /// \brief Extensible enumeration to represent the type of a fixup.

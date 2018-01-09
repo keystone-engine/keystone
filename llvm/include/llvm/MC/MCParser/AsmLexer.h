@@ -19,7 +19,7 @@
 #include "llvm/Support/DataTypes.h"
 #include <string>
 
-namespace llvm {
+namespace llvm_ks {
 class MemoryBuffer;
 class MCAsmInfo;
 
@@ -70,6 +70,6 @@ private:
   AsmToken LexHexFloatLiteral(bool NoIntDigits);
 };
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

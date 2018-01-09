@@ -18,7 +18,7 @@
 #include <cassert>
 #include <cstring>
 
-namespace llvm {
+namespace llvm_ks {
 
 /// \brief A switch()-like statement whose cases are string literals.
 ///
@@ -161,6 +161,6 @@ public:
   }
 };
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif // LLVM_ADT_STRINGSWITCH_H

@@ -13,7 +13,7 @@
 
 #include "AArch64TargetStreamer.h"
 #include "llvm/MC/ConstantPools.h"
-using namespace llvm;
+using namespace llvm_ks;
 
 //
 // AArch64TargetStreamer Implemenation

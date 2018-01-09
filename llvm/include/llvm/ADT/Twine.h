@@ -17,7 +17,7 @@
 #include <cassert>
 #include <string>
 
-namespace llvm {
+namespace llvm_ks {
   class raw_ostream;
 
   /// Twine - A lightweight data structure for efficiently representing the
