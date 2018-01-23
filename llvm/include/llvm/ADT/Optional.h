@@ -23,7 +23,7 @@
 #include <new>
 #include <utility>
 
-namespace llvm {
+namespace llvm_ks {
 
 template<typename T>
 class Optional {

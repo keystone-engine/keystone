@@ -19,7 +19,7 @@
 #include "llvm/Support/DataTypes.h"
 #include "llvm/Support/Endian.h"
 
-namespace llvm {
+namespace llvm_ks {
 namespace Win64EH {
 
 /// UnwindOpcodes - Enumeration whose values specify a single operation in
@@ -142,6 +142,6 @@ struct UnwindInfo {
 
 
 } // End of namespace Win64EH
-} // End of namespace llvm
+} // End of namespace llvm_ks
 
 #endif

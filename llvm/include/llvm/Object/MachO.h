@@ -21,7 +21,7 @@
 #include "llvm/Object/ObjectFile.h"
 #include "llvm/Support/MachO.h"
 
-namespace llvm {
+namespace llvm_ks {
 namespace object {
 
 /// DiceRef - This is a value type class that represents a single
@@ -52,7 +52,7 @@ typedef content_iterator<DiceRef> dice_iterator;
 /// ExportEntry encapsulates the current-state-of-the-walk used when doing a
 /// non-recursive walk of the trie data structure.  This allows you to iterate
 /// across all exported symbols using:
-///      for (const llvm::object::ExportEntry &AnExport : Obj->exports()) {
+///      for (const llvm_ks::object::ExportEntry &AnExport : Obj->exports()) {
 ///      }
 class ExportEntry {
 public:
@@ -103,7 +103,7 @@ typedef content_iterator<ExportEntry> export_iterator;
 /// MachORebaseEntry encapsulates the current state in the decompression of
 /// rebasing opcodes. This allows you to iterate through the compressed table of
 /// rebasing using:
-///    for (const llvm::object::MachORebaseEntry &Entry : Obj->rebaseTable()) {
+///    for (const llvm_ks::object::MachORebaseEntry &Entry : Obj->rebaseTable()) {
 ///    }
 class MachORebaseEntry {
 public:
@@ -139,7 +139,7 @@ typedef content_iterator<MachORebaseEntry> rebase_iterator;
 /// MachOBindEntry encapsulates the current state in the decompression of
 /// binding opcodes. This allows you to iterate through the compressed table of
 /// bindings using:
-///    for (const llvm::object::MachOBindEntry &Entry : Obj->bindTable()) {
+///    for (const llvm_ks::object::MachOBindEntry &Entry : Obj->bindTable()) {
 ///    }
 class MachOBindEntry {
 public:

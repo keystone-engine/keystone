@@ -19,7 +19,7 @@
 #include <cerrno>
 #include <cstdio>
 #include <cstdlib>
-using namespace llvm;
+using namespace llvm_ks;
 
 AsmLexer::AsmLexer(const MCAsmInfo &MAI) : MAI(MAI) {
   CurPtr = nullptr;

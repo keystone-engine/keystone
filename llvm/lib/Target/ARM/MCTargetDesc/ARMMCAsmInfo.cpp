@@ -14,7 +14,7 @@
 #include "ARMMCAsmInfo.h"
 #include "llvm/ADT/Triple.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 ARMMCAsmInfoDarwin::ARMMCAsmInfoDarwin(const Triple &TheTriple) {
   if ((TheTriple.getArch() == Triple::armeb) ||

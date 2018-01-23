@@ -22,7 +22,7 @@
 #ifndef LLVM_SUPPORT_ARMEHABI_H
 #define LLVM_SUPPORT_ARMEHABI_H
 
-namespace llvm {
+namespace llvm_ks {
 namespace ARM {
 namespace EHABI {
   /// ARM exception handling table entry kinds

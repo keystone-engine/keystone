@@ -32,7 +32,7 @@
 
 #include "keystone/keystone.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 #define DEBUG_TYPE "assembler"
 
@@ -692,7 +692,7 @@ std::pair<uint64_t, bool> MCAssembler::handleFixup(const MCAsmLayout &Layout,
 void MCAssembler::layout(MCAsmLayout &Layout, unsigned int &KsError)
 {
   DEBUG_WITH_TYPE("mc-dump", {
-      llvm::errs() << "assembler backend - pre-layout\n--\n";
+      llvm_ks::errs() << "assembler backend - pre-layout\n--\n";
       dump(); });
 
   // Create dummy fragments and assign section ordinals.
@@ -721,14 +721,14 @@ void MCAssembler::layout(MCAsmLayout &Layout, unsigned int &KsError)
     continue;
 
   DEBUG_WITH_TYPE("mc-dump", {
-      llvm::errs() << "assembler backend - post-relaxation\n--\n";
+      llvm_ks::errs() << "assembler backend - post-relaxation\n--\n";
       dump(); });
 
   // Finalize the layout, including fragment lowering.
   finishLayout(Layout);
 
   DEBUG_WITH_TYPE("mc-dump", {
-      llvm::errs() << "assembler backend - final-layout\n--\n";
+      llvm_ks::errs() << "assembler backend - final-layout\n--\n";
       dump(); });
 
   // Allow the object writer a chance to perform post-layout binding (for

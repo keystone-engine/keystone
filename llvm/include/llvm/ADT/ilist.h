@@ -44,7 +44,7 @@
 #include <cstddef>
 #include <iterator>
 
-namespace llvm {
+namespace llvm_ks {
 
 template<typename NodeTy, typename Traits> class iplist;
 template<typename NodeTy> class ilist_iterator;
@@ -792,7 +792,7 @@ struct ilist : public iplist<NodeTy> {
 namespace std {
   // Ensure that swap uses the fast list swap...
   template<class Ty>
-  void swap(llvm::iplist<Ty> &Left, llvm::iplist<Ty> &Right) {
+  void swap(llvm_ks::iplist<Ty> &Left, llvm_ks::iplist<Ty> &Right) {
     Left.swap(Right);
   }
 }  // End 'std' extensions...

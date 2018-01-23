@@ -13,7 +13,7 @@
 #include <cstddef>
 #include <iterator>
 
-namespace llvm {
+namespace llvm_ks {
 
 /// \brief CRTP base class which implements the entire standard iterator facade
 /// in terms of a minimal subset of the interface.

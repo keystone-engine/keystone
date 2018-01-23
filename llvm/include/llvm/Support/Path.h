@@ -7,7 +7,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// This file declares the llvm::sys::path namespace. It is designed after
+// This file declares the llvm_ks::sys::path namespace. It is designed after
 // TR2/boost filesystem (v3), but modified to remove exception handling and the
 // path class.
 //
@@ -21,7 +21,7 @@
 #include "llvm/Support/DataTypes.h"
 #include <iterator>
 
-namespace llvm {
+namespace llvm_ks {
 namespace sys {
 namespace path {
 
@@ -432,6 +432,6 @@ bool remove_dots(SmallVectorImpl<char> &path, bool remove_dot_dot = false);
 
 } // end namespace path
 } // end namespace sys
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

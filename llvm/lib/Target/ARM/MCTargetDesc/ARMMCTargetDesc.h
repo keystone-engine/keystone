@@ -18,7 +18,7 @@
 #include "llvm/Support/DataTypes.h"
 #include <string>
 
-namespace llvm {
+namespace llvm_ks {
 class formatted_raw_ostream;
 class MCAsmBackend;
 class MCCodeEmitter;

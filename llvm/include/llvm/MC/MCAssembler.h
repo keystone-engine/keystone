@@ -25,7 +25,7 @@
 
 #include "keystone/keystone.h"
 
-namespace llvm {
+namespace llvm_ks {
 class raw_ostream;
 class MCAsmLayout;
 class MCAssembler;
@@ -430,6 +430,6 @@ public:
 uint64_t computeBundlePadding(const MCAssembler &Assembler, const MCFragment *F,
                               uint64_t FOffset, uint64_t FSize);
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

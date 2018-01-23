@@ -21,7 +21,7 @@ extern "C" {
 /**
  * Used to pass regions of memory through LLVM interfaces.
  *
- * @see llvm::MemoryBuffer
+ * @see llvm_ks::MemoryBuffer
  */
 typedef struct LLVMOpaqueMemoryBuffer *LLVMMemoryBufferRef;
 

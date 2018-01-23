@@ -27,12 +27,12 @@
 #include <io.h>
 #endif
 
-using namespace llvm;
-using namespace llvm::support::endian;
+using namespace llvm_ks;
+using namespace llvm_ks::support::endian;
 
 namespace {
-  using llvm::StringRef;
-  using llvm::sys::path::is_separator;
+  using llvm_ks::StringRef;
+  using llvm_ks::sys::path::is_separator;
 
 #ifdef LLVM_ON_WIN32
   const char *separators = "\\/";
@@ -225,7 +225,7 @@ retry_random_path:
   llvm_unreachable("Invalid Type");
 }
 
-namespace llvm {
+namespace llvm_ks {
 namespace sys  {
 namespace path {
 
@@ -676,7 +676,7 @@ static SmallString<256> remove_dots(StringRef path, bool remove_dot_dot) {
 
   // Skip the root path, then look for traversal in the components.
   StringRef rel = path::relative_path(path);
-  for (StringRef C : llvm::make_range(path::begin(rel), path::end(rel))) {
+  for (StringRef C : llvm_ks::make_range(path::begin(rel), path::end(rel))) {
     if (C == ".")
       continue;
     if (remove_dot_dot) {
@@ -733,7 +733,7 @@ std::error_code createUniqueFile(const Twine &Model,
 
 static std::error_code
 createTemporaryFile(const Twine &Model, int &ResultFD,
-                    llvm::SmallVectorImpl<char> &ResultPath, FSEntity Type) {
+                    llvm_ks::SmallVectorImpl<char> &ResultPath, FSEntity Type) {
   SmallString<128> Storage;
   StringRef P = Model.toNullTerminatedStringRef(Storage);
   assert(P.find_first_of(separators) == StringRef::npos &&
@@ -745,7 +745,7 @@ createTemporaryFile(const Twine &Model, int &ResultFD,
 
 static std::error_code
 createTemporaryFile(const Twine &Prefix, StringRef Suffix, int &ResultFD,
-                    llvm::SmallVectorImpl<char> &ResultPath, FSEntity Type) {
+                    llvm_ks::SmallVectorImpl<char> &ResultPath, FSEntity Type) {
   const char *Middle = Suffix.empty() ? "-%%%%%%" : "-%%%%%%.";
   return createTemporaryFile(Prefix + Middle + Suffix, ResultFD, ResultPath,
                              Type);
@@ -1132,7 +1132,7 @@ std::error_code directory_entry::status(file_status &result) const {
 
 } // end namespace fs
 } // end namespace sys
-} // end namespace llvm
+} // end namespace llvm_ks
 
 // Include the truly platform-specific parts.
 #if defined(LLVM_ON_UNIX)
@@ -1142,7 +1142,7 @@ std::error_code directory_entry::status(file_status &result) const {
 #include "Windows/Path.inc"
 #endif
 
-namespace llvm {
+namespace llvm_ks {
 namespace sys {
 namespace path {
 
@@ -1157,4 +1157,4 @@ bool user_cache_directory(SmallVectorImpl<char> &Result, const Twine &Path1,
 
 } // end namespace path
 } // end namsspace sys
-} // end namespace llvm
+} // end namespace llvm_ks

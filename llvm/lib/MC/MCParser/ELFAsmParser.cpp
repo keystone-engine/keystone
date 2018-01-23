@@ -18,7 +18,7 @@
 #include "llvm/MC/MCStreamer.h"
 #include "llvm/MC/MCSymbolELF.h"
 #include "llvm/Support/ELF.h"
-using namespace llvm;
+using namespace llvm_ks;
 
 namespace {
 
@@ -737,7 +737,7 @@ bool ELFAsmParser::ParseDirectiveSubsection(StringRef, SMLoc) {
   return false;
 }
 
-namespace llvm {
+namespace llvm_ks {
 
 MCAsmParserExtension *createELFAsmParser() {
   return new ELFAsmParser;

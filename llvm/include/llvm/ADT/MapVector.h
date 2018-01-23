@@ -21,13 +21,13 @@
 #include "llvm/ADT/SmallVector.h"
 #include <vector>
 
-namespace llvm {
+namespace llvm_ks {
 
 /// This class implements a map that also provides access to all stored values
 /// in a deterministic order. The values are kept in a std::vector and the
 /// mapping is done with DenseMap from Keys to indexes in that vector.
 template<typename KeyT, typename ValueT,
-         typename MapType = llvm::DenseMap<KeyT, unsigned>,
+         typename MapType = llvm_ks::DenseMap<KeyT, unsigned>,
          typename VectorType = std::vector<std::pair<KeyT, ValueT> > >
 class MapVector {
   typedef typename VectorType::size_type size_type;
@@ -195,6 +195,6 @@ struct SmallMapVector
                 SmallVector<std::pair<KeyT, ValueT>, N>> {
 };
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

@@ -25,20 +25,20 @@ DWORD getWindowsProtectionFlags(unsigned Flags) {
   switch (Flags) {
   // Contrary to what you might expect, the Windows page protection flags
   // are not a bitwise combination of RWX values
-  case llvm::sys::Memory::MF_READ:
+  case llvm_ks::sys::Memory::MF_READ:
     return PAGE_READONLY;
-  case llvm::sys::Memory::MF_WRITE:
+  case llvm_ks::sys::Memory::MF_WRITE:
     // Note: PAGE_WRITE is not supported by VirtualProtect
     return PAGE_READWRITE;
-  case llvm::sys::Memory::MF_READ|llvm::sys::Memory::MF_WRITE:
+  case llvm_ks::sys::Memory::MF_READ|llvm_ks::sys::Memory::MF_WRITE:
     return PAGE_READWRITE;
-  case llvm::sys::Memory::MF_READ|llvm::sys::Memory::MF_EXEC:
+  case llvm_ks::sys::Memory::MF_READ|llvm_ks::sys::Memory::MF_EXEC:
     return PAGE_EXECUTE_READ;
-  case llvm::sys::Memory::MF_READ |
-         llvm::sys::Memory::MF_WRITE |
-         llvm::sys::Memory::MF_EXEC:
+  case llvm_ks::sys::Memory::MF_READ |
+         llvm_ks::sys::Memory::MF_WRITE |
+         llvm_ks::sys::Memory::MF_EXEC:
     return PAGE_EXECUTE_READWRITE;
-  case llvm::sys::Memory::MF_EXEC:
+  case llvm_ks::sys::Memory::MF_EXEC:
     return PAGE_EXECUTE;
   default:
     llvm_unreachable("Illegal memory protection flag specified!");
@@ -58,7 +58,7 @@ size_t getAllocationGranularity() {
 
 } // namespace
 
-namespace llvm {
+namespace llvm_ks {
 namespace sys {
 
 //===----------------------------------------------------------------------===//
@@ -240,4 +240,4 @@ bool Memory::setRangeExecutable(const void *Addr, size_t Size) {
 }
 
 } // namespace sys
-} // namespace llvm
+} // namespace llvm_ks

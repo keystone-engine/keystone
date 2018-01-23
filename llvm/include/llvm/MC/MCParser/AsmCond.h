@@ -10,7 +10,7 @@
 #ifndef LLVM_MC_MCPARSER_ASMCOND_H
 #define LLVM_MC_MCPARSER_ASMCOND_H
 
-namespace llvm {
+namespace llvm_ks {
 
 /// AsmCond - Class to support conditional assembly
 ///
@@ -35,6 +35,6 @@ public:
   AsmCond() : TheCond(NoCond), CondMet(false), Ignore(false) {}
 };
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

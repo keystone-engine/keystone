@@ -49,7 +49,7 @@
 
 #include "keystone/arm.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 namespace {
 
@@ -8833,7 +8833,7 @@ unsigned ARMAsmParser::checkTargetMatchPredicate(MCInst &Inst) {
   return Match_Success;
 }
 
-namespace llvm {
+namespace llvm_ks {
 template <> inline bool IsCPSRDead<MCInst>(MCInst *Instr) {
   return true; // In an assembly source, no need to second-guess
 }

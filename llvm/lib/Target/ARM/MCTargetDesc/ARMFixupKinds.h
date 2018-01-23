@@ -12,7 +12,7 @@
 
 #include "llvm/MC/MCFixup.h"
 
-namespace llvm {
+namespace llvm_ks {
 namespace ARM {
 enum Fixups {
   // fixup_arm_ldst_pcrel_12 - 12-bit PC relative relocation for symbol

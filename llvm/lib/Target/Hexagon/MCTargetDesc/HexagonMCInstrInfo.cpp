@@ -22,7 +22,7 @@
 #include "llvm/MC/MCInstrInfo.h"
 #include "llvm/MC/MCSubtargetInfo.h"
 
-namespace llvm {
+namespace llvm_ks {
 void HexagonMCInstrInfo::addConstant(MCInst &MI, uint64_t Value,
                                      MCContext &Context) {
   MI.addOperand(MCOperand::createExpr(MCConstantExpr::create(Value, Context)));

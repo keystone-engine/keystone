@@ -9,7 +9,7 @@
 
 #ifdef GET_REGINFO_ENUM
 #undef GET_REGINFO_ENUM
-namespace llvm {
+namespace llvm_ks {
 
 class MCRegisterClass;
 extern const MCRegisterClass SystemZMCRegisterClasses[];
@@ -235,7 +235,7 @@ enum {
 
 #ifdef GET_REGINFO_MC_DESC
 #undef GET_REGINFO_MC_DESC
-namespace llvm {
+namespace llvm_ks {
 
 extern const MCPhysReg SystemZRegDiffLists[] = {
   /* 0 */ 64953, 1, 1, 1, 0,

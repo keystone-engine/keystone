@@ -18,7 +18,7 @@
 #include "llvm/MC/MCSectionMachO.h"
 #include "llvm/Support/COFF.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 static bool useCompactUnwind(const Triple &T) {
   // Only on darwin.

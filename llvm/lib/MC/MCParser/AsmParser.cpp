@@ -47,7 +47,7 @@
 #include <keystone/keystone.h>
 //#include <iostream>
 
-using namespace llvm;
+using namespace llvm_ks;
 
 MCAsmParserSemaCallback::~MCAsmParserSemaCallback() {}
 
@@ -529,7 +529,7 @@ private:
 };
 }
 
-namespace llvm {
+namespace llvm_ks {
 
 extern MCAsmParserExtension *createDarwinAsmParser();
 extern MCAsmParserExtension *createELFAsmParser();
@@ -6023,7 +6023,7 @@ bool AsmParser::parseMSInlineAsm(
   return false;
 }
 
-namespace llvm {
+namespace llvm_ks {
 namespace MCParserUtils {
 
 /// Returns whether the given symbol is used anywhere in the given expression,
@@ -6122,10 +6122,10 @@ bool parseAssignmentExpression(StringRef Name, bool allow_redef,
 }
 
 } // namespace MCParserUtils
-} // namespace llvm
+} // namespace llvm_ks
 
 /// \brief Create an MCAsmParser instance.
-MCAsmParser *llvm::createMCAsmParser(SourceMgr &SM, MCContext &C,
+MCAsmParser *llvm_ks::createMCAsmParser(SourceMgr &SM, MCContext &C,
                                      MCStreamer &Out, const MCAsmInfo &MAI) {
   return new AsmParser(SM, C, Out, MAI);
 }

@@ -28,7 +28,7 @@
 
 #include <keystone/keystone.h>
 
-using namespace llvm;
+using namespace llvm_ks;
 
 static unsigned getFixupKindLog2Size(unsigned Kind) {
   switch (Kind) {
@@ -768,7 +768,7 @@ public:
 
 } // end anonymous namespace
 
-MCAsmBackend *llvm::createX86_32AsmBackend(const Target &T,
+MCAsmBackend *llvm_ks::createX86_32AsmBackend(const Target &T,
                                            const MCRegisterInfo &MRI,
                                            const Triple &TheTriple,
                                            StringRef CPU) {
@@ -780,7 +780,7 @@ MCAsmBackend *llvm::createX86_32AsmBackend(const Target &T,
   return new ELFX86_32AsmBackend(T, OSABI, CPU);
 }
 
-MCAsmBackend *llvm::createX86_64AsmBackend(const Target &T,
+MCAsmBackend *llvm_ks::createX86_64AsmBackend(const Target &T,
                                            const MCRegisterInfo &MRI,
                                            const Triple &TheTriple,
                                            StringRef CPU) {

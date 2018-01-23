@@ -12,7 +12,7 @@
 
 #include "llvm/Support/Compiler.h"
 
-namespace llvm {
+namespace llvm_ks {
 class MCFixup;
 class MCInst;
 class MCSubtargetInfo;

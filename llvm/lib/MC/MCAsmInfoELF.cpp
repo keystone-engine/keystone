@@ -16,7 +16,7 @@
 #include "llvm/MC/MCContext.h"
 #include "llvm/MC/MCSectionELF.h"
 #include "llvm/Support/ELF.h"
-using namespace llvm;
+using namespace llvm_ks;
 
 MCSection *MCAsmInfoELF::getNonexecutableStackSection(MCContext &Ctx) const {
   if (!UsesNonexecutableStackSection)

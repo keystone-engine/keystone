@@ -12,7 +12,7 @@
 
 #include <vector>
 
-namespace llvm {
+namespace llvm_ks {
 class MCContext;
 class MCSection;
 class MCStreamer;

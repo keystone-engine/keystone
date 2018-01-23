@@ -92,7 +92,7 @@
 //   register as a frame register and temprorary override current CFA
 //   register.
 
-namespace llvm {
+namespace llvm_ks {
 
 X86AsmInstrumentation::X86AsmInstrumentation(const MCSubtargetInfo *&STI)
     : STI(STI), InitialFrameReg(0) {}

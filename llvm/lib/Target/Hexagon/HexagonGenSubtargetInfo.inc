@@ -9,7 +9,7 @@
 
 #ifdef GET_SUBTARGETINFO_ENUM
 #undef GET_SUBTARGETINFO_ENUM
-namespace llvm {
+namespace llvm_ks {
 namespace Hexagon {
 enum : uint64_t {
   ArchV4 = 0,
@@ -26,9 +26,9 @@ enum : uint64_t {
 
 #ifdef GET_SUBTARGETINFO_MC_DESC
 #undef GET_SUBTARGETINFO_MC_DESC
-namespace llvm {
+namespace llvm_ks {
 // Sorted (by key) array of values for CPU features.
-extern const llvm::SubtargetFeatureKV HexagonFeatureKV[] = {
+extern const llvm_ks::SubtargetFeatureKV HexagonFeatureKV[] = {
   { "hvx", "Hexagon HVX instructions", { Hexagon::ExtensionHVX }, { } },
   { "hvx-double", "Hexagon HVX Double instructions", { Hexagon::ExtensionHVXDbl }, { } },
   { "v4", "Hexagon V4", { Hexagon::ArchV4 }, { } },
@@ -38,7 +38,7 @@ extern const llvm::SubtargetFeatureKV HexagonFeatureKV[] = {
 };
 
 // Sorted (by key) array of values for CPU subtype.
-extern const llvm::SubtargetFeatureKV HexagonSubTypeKV[] = {
+extern const llvm_ks::SubtargetFeatureKV HexagonSubTypeKV[] = {
   { "hexagonv4", "Select the hexagonv4 processor", { Hexagon::ArchV4 }, { } },
   { "hexagonv5", "Select the hexagonv5 processor", { Hexagon::ArchV4, Hexagon::ArchV5 }, { } },
   { "hexagonv55", "Select the hexagonv55 processor", { Hexagon::ArchV4, Hexagon::ArchV5, Hexagon::ArchV55 }, { } },
@@ -90,66 +90,66 @@ namespace HexagonItinerariesV60FU {
   const unsigned CVI_ALL = 1 << 13;
 }
 
-extern const llvm::InstrStage HexagonStages[] = {
-  { 0, 0, 0, llvm::InstrStage::Required }, // No itinerary
-  { 1, HexagonItinerariesV4FU::SLOT2 | HexagonItinerariesV4FU::SLOT3, -1, (llvm::InstrStage::ReservationKinds)0 }, // 1
-  { 1, HexagonItinerariesV4FU::SLOT0 | HexagonItinerariesV4FU::SLOT1 | HexagonItinerariesV4FU::SLOT2 | HexagonItinerariesV4FU::SLOT3, -1, (llvm::InstrStage::ReservationKinds)0 }, // 2
-  { 1, HexagonItinerariesV4FU::SLOT3, -1, (llvm::InstrStage::ReservationKinds)0 }, // 3
-  { 1, HexagonItinerariesV4FU::SLOT2, -1, (llvm::InstrStage::ReservationKinds)0 }, // 4
-  { 1, HexagonItinerariesV4FU::SLOT0 | HexagonItinerariesV4FU::SLOT1, -1, (llvm::InstrStage::ReservationKinds)0 }, // 5
-  { 1, HexagonItinerariesV4FU::SLOT0, -1, (llvm::InstrStage::ReservationKinds)0 }, // 6
-  { 1, HexagonItinerariesV4FU::SLOT_ENDLOOP, -1, (llvm::InstrStage::ReservationKinds)0 }, // 7
-  { 1, HexagonItinerariesV4FU::SLOT2 | HexagonItinerariesV4FU::SLOT3, 0, (llvm::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV4FU::SLOT2 | HexagonItinerariesV4FU::SLOT3, -1, (llvm::InstrStage::ReservationKinds)0 }, // 8-9
-  { 2, HexagonItinerariesV55FU::SLOT2 | HexagonItinerariesV55FU::SLOT3, -1, (llvm::InstrStage::ReservationKinds)0 }, // 10
-  { 1, HexagonItinerariesV55FU::SLOT2 | HexagonItinerariesV55FU::SLOT3, -1, (llvm::InstrStage::ReservationKinds)0 }, // 11
-  { 1, HexagonItinerariesV55FU::SLOT0 | HexagonItinerariesV55FU::SLOT1 | HexagonItinerariesV55FU::SLOT2 | HexagonItinerariesV55FU::SLOT3, -1, (llvm::InstrStage::ReservationKinds)0 }, // 12
-  { 2, HexagonItinerariesV55FU::SLOT0 | HexagonItinerariesV55FU::SLOT1 | HexagonItinerariesV55FU::SLOT2 | HexagonItinerariesV55FU::SLOT3, -1, (llvm::InstrStage::ReservationKinds)0 }, // 13
-  { 3, HexagonItinerariesV55FU::SLOT3, -1, (llvm::InstrStage::ReservationKinds)0 }, // 14
-  { 3, HexagonItinerariesV55FU::SLOT2 | HexagonItinerariesV55FU::SLOT3, -1, (llvm::InstrStage::ReservationKinds)0 }, // 15
-  { 2, HexagonItinerariesV55FU::SLOT3, -1, (llvm::InstrStage::ReservationKinds)0 }, // 16
-  { 2, HexagonItinerariesV55FU::SLOT2, -1, (llvm::InstrStage::ReservationKinds)0 }, // 17
-  { 3, HexagonItinerariesV55FU::SLOT0 | HexagonItinerariesV55FU::SLOT1, -1, (llvm::InstrStage::ReservationKinds)0 }, // 18
-  { 1, HexagonItinerariesV55FU::SLOT0, -1, (llvm::InstrStage::ReservationKinds)0 }, // 19
-  { 2, HexagonItinerariesV55FU::SLOT_ENDLOOP, -1, (llvm::InstrStage::ReservationKinds)0 }, // 20
-  { 1, HexagonItinerariesV55FU::SLOT2 | HexagonItinerariesV55FU::SLOT3, 0, (llvm::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV55FU::SLOT2 | HexagonItinerariesV55FU::SLOT3, -1, (llvm::InstrStage::ReservationKinds)0 }, // 21-22
-  { 3, HexagonItinerariesV55FU::SLOT0, -1, (llvm::InstrStage::ReservationKinds)0 }, // 23
-  { 2, HexagonItinerariesV55FU::SLOT0 | HexagonItinerariesV55FU::SLOT1, -1, (llvm::InstrStage::ReservationKinds)0 }, // 24
-  { 1, HexagonItinerariesV55FU::SLOT0 | HexagonItinerariesV55FU::SLOT1, -1, (llvm::InstrStage::ReservationKinds)0 }, // 25
-  { 2, HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, -1, (llvm::InstrStage::ReservationKinds)0 }, // 26
-  { 1, HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, -1, (llvm::InstrStage::ReservationKinds)0 }, // 27
-  { 1, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1 | HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, -1, (llvm::InstrStage::ReservationKinds)0 }, // 28
-  { 2, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1 | HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, -1, (llvm::InstrStage::ReservationKinds)0 }, // 29
-  { 3, HexagonItinerariesV60FU::SLOT3, -1, (llvm::InstrStage::ReservationKinds)0 }, // 30
-  { 3, HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, -1, (llvm::InstrStage::ReservationKinds)0 }, // 31
-  { 2, HexagonItinerariesV60FU::SLOT3, -1, (llvm::InstrStage::ReservationKinds)0 }, // 32
-  { 2, HexagonItinerariesV60FU::SLOT2, -1, (llvm::InstrStage::ReservationKinds)0 }, // 33
-  { 3, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1, -1, (llvm::InstrStage::ReservationKinds)0 }, // 34
-  { 1, HexagonItinerariesV60FU::SLOT0, -1, (llvm::InstrStage::ReservationKinds)0 }, // 35
-  { 2, HexagonItinerariesV60FU::SLOT_ENDLOOP, -1, (llvm::InstrStage::ReservationKinds)0 }, // 36
-  { 4, HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, -1, (llvm::InstrStage::ReservationKinds)0 }, // 37
-  { 1, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1 | HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, 0, (llvm::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_XLANE | HexagonItinerariesV60FU::CVI_SHIFT | HexagonItinerariesV60FU::CVI_MPY0 | HexagonItinerariesV60FU::CVI_MPY1, -1, (llvm::InstrStage::ReservationKinds)0 }, // 38-39
-  { 1, HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, 0, (llvm::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, -1, (llvm::InstrStage::ReservationKinds)0 }, // 40-41
-  { 4, HexagonItinerariesV60FU::SLOT0, -1, (llvm::InstrStage::ReservationKinds)0 }, // 42
-  { 2, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1, -1, (llvm::InstrStage::ReservationKinds)0 }, // 43
-  { 3, HexagonItinerariesV60FU::SLOT0, -1, (llvm::InstrStage::ReservationKinds)0 }, // 44
-  { 1, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1, 0, (llvm::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_LD, 0, (llvm::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_XLANE | HexagonItinerariesV60FU::CVI_SHIFT | HexagonItinerariesV60FU::CVI_MPY0 | HexagonItinerariesV60FU::CVI_MPY1, -1, (llvm::InstrStage::ReservationKinds)0 }, // 45-47
-  { 1, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1, -1, (llvm::InstrStage::ReservationKinds)0 }, // 48
-  { 1, HexagonItinerariesV60FU::SLOT0, 0, (llvm::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_ST, 0, (llvm::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_XLANE | HexagonItinerariesV60FU::CVI_SHIFT | HexagonItinerariesV60FU::CVI_MPY0 | HexagonItinerariesV60FU::CVI_MPY1, -1, (llvm::InstrStage::ReservationKinds)0 }, // 49-51
-  { 1, HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, 0, (llvm::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_MPY0 | HexagonItinerariesV60FU::CVI_MPY1, -1, (llvm::InstrStage::ReservationKinds)0 }, // 52-53
-  { 1, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1 | HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, 0, (llvm::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_XLSHF | HexagonItinerariesV60FU::CVI_MPY01, -1, (llvm::InstrStage::ReservationKinds)0 }, // 54-55
-  { 1, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1 | HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, 0, (llvm::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_XLANE, -1, (llvm::InstrStage::ReservationKinds)0 }, // 56-57
-  { 1, HexagonItinerariesV60FU::SLOT0, 0, (llvm::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::SLOT1, 0, (llvm::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_LD, 0, (llvm::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_XLANE, -1, (llvm::InstrStage::ReservationKinds)0 }, // 58-61
-  { 1, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1, 0, (llvm::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_LD, -1, (llvm::InstrStage::ReservationKinds)0 }, // 62-63
-  { 1, HexagonItinerariesV60FU::SLOT0, 0, (llvm::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::SLOT1, 0, (llvm::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_ST, 0, (llvm::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_XLANE, -1, (llvm::InstrStage::ReservationKinds)0 }, // 64-67
-  { 1, HexagonItinerariesV60FU::SLOT0, 0, (llvm::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_ST, -1, (llvm::InstrStage::ReservationKinds)0 }, // 68-69
-  { 1, HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, 0, (llvm::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_MPY01, -1, (llvm::InstrStage::ReservationKinds)0 }, // 70-71
-  { 1, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1 | HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, 0, (llvm::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_SHIFT, -1, (llvm::InstrStage::ReservationKinds)0 }, // 72-73
-  { 1, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1 | HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, 0, (llvm::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_XLSHF, -1, (llvm::InstrStage::ReservationKinds)0 }, // 74-75
-  { 1, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1 | HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, 0, (llvm::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_ALL, -1, (llvm::InstrStage::ReservationKinds)0 }, // 76-77
-  { 0, 0, 0, llvm::InstrStage::Required } // End stages
+extern const llvm_ks::InstrStage HexagonStages[] = {
+  { 0, 0, 0, llvm_ks::InstrStage::Required }, // No itinerary
+  { 1, HexagonItinerariesV4FU::SLOT2 | HexagonItinerariesV4FU::SLOT3, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 1
+  { 1, HexagonItinerariesV4FU::SLOT0 | HexagonItinerariesV4FU::SLOT1 | HexagonItinerariesV4FU::SLOT2 | HexagonItinerariesV4FU::SLOT3, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 2
+  { 1, HexagonItinerariesV4FU::SLOT3, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 3
+  { 1, HexagonItinerariesV4FU::SLOT2, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 4
+  { 1, HexagonItinerariesV4FU::SLOT0 | HexagonItinerariesV4FU::SLOT1, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 5
+  { 1, HexagonItinerariesV4FU::SLOT0, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 6
+  { 1, HexagonItinerariesV4FU::SLOT_ENDLOOP, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 7
+  { 1, HexagonItinerariesV4FU::SLOT2 | HexagonItinerariesV4FU::SLOT3, 0, (llvm_ks::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV4FU::SLOT2 | HexagonItinerariesV4FU::SLOT3, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 8-9
+  { 2, HexagonItinerariesV55FU::SLOT2 | HexagonItinerariesV55FU::SLOT3, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 10
+  { 1, HexagonItinerariesV55FU::SLOT2 | HexagonItinerariesV55FU::SLOT3, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 11
+  { 1, HexagonItinerariesV55FU::SLOT0 | HexagonItinerariesV55FU::SLOT1 | HexagonItinerariesV55FU::SLOT2 | HexagonItinerariesV55FU::SLOT3, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 12
+  { 2, HexagonItinerariesV55FU::SLOT0 | HexagonItinerariesV55FU::SLOT1 | HexagonItinerariesV55FU::SLOT2 | HexagonItinerariesV55FU::SLOT3, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 13
+  { 3, HexagonItinerariesV55FU::SLOT3, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 14
+  { 3, HexagonItinerariesV55FU::SLOT2 | HexagonItinerariesV55FU::SLOT3, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 15
+  { 2, HexagonItinerariesV55FU::SLOT3, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 16
+  { 2, HexagonItinerariesV55FU::SLOT2, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 17
+  { 3, HexagonItinerariesV55FU::SLOT0 | HexagonItinerariesV55FU::SLOT1, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 18
+  { 1, HexagonItinerariesV55FU::SLOT0, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 19
+  { 2, HexagonItinerariesV55FU::SLOT_ENDLOOP, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 20
+  { 1, HexagonItinerariesV55FU::SLOT2 | HexagonItinerariesV55FU::SLOT3, 0, (llvm_ks::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV55FU::SLOT2 | HexagonItinerariesV55FU::SLOT3, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 21-22
+  { 3, HexagonItinerariesV55FU::SLOT0, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 23
+  { 2, HexagonItinerariesV55FU::SLOT0 | HexagonItinerariesV55FU::SLOT1, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 24
+  { 1, HexagonItinerariesV55FU::SLOT0 | HexagonItinerariesV55FU::SLOT1, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 25
+  { 2, HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 26
+  { 1, HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 27
+  { 1, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1 | HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 28
+  { 2, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1 | HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 29
+  { 3, HexagonItinerariesV60FU::SLOT3, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 30
+  { 3, HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 31
+  { 2, HexagonItinerariesV60FU::SLOT3, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 32
+  { 2, HexagonItinerariesV60FU::SLOT2, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 33
+  { 3, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 34
+  { 1, HexagonItinerariesV60FU::SLOT0, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 35
+  { 2, HexagonItinerariesV60FU::SLOT_ENDLOOP, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 36
+  { 4, HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 37
+  { 1, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1 | HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, 0, (llvm_ks::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_XLANE | HexagonItinerariesV60FU::CVI_SHIFT | HexagonItinerariesV60FU::CVI_MPY0 | HexagonItinerariesV60FU::CVI_MPY1, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 38-39
+  { 1, HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, 0, (llvm_ks::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 40-41
+  { 4, HexagonItinerariesV60FU::SLOT0, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 42
+  { 2, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 43
+  { 3, HexagonItinerariesV60FU::SLOT0, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 44
+  { 1, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1, 0, (llvm_ks::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_LD, 0, (llvm_ks::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_XLANE | HexagonItinerariesV60FU::CVI_SHIFT | HexagonItinerariesV60FU::CVI_MPY0 | HexagonItinerariesV60FU::CVI_MPY1, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 45-47
+  { 1, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 48
+  { 1, HexagonItinerariesV60FU::SLOT0, 0, (llvm_ks::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_ST, 0, (llvm_ks::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_XLANE | HexagonItinerariesV60FU::CVI_SHIFT | HexagonItinerariesV60FU::CVI_MPY0 | HexagonItinerariesV60FU::CVI_MPY1, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 49-51
+  { 1, HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, 0, (llvm_ks::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_MPY0 | HexagonItinerariesV60FU::CVI_MPY1, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 52-53
+  { 1, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1 | HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, 0, (llvm_ks::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_XLSHF | HexagonItinerariesV60FU::CVI_MPY01, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 54-55
+  { 1, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1 | HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, 0, (llvm_ks::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_XLANE, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 56-57
+  { 1, HexagonItinerariesV60FU::SLOT0, 0, (llvm_ks::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::SLOT1, 0, (llvm_ks::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_LD, 0, (llvm_ks::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_XLANE, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 58-61
+  { 1, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1, 0, (llvm_ks::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_LD, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 62-63
+  { 1, HexagonItinerariesV60FU::SLOT0, 0, (llvm_ks::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::SLOT1, 0, (llvm_ks::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_ST, 0, (llvm_ks::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_XLANE, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 64-67
+  { 1, HexagonItinerariesV60FU::SLOT0, 0, (llvm_ks::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_ST, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 68-69
+  { 1, HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, 0, (llvm_ks::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_MPY01, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 70-71
+  { 1, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1 | HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, 0, (llvm_ks::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_SHIFT, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 72-73
+  { 1, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1 | HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, 0, (llvm_ks::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_XLSHF, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 74-75
+  { 1, HexagonItinerariesV60FU::SLOT0 | HexagonItinerariesV60FU::SLOT1 | HexagonItinerariesV60FU::SLOT2 | HexagonItinerariesV60FU::SLOT3, 0, (llvm_ks::InstrStage::ReservationKinds)0 },   { 1, HexagonItinerariesV60FU::CVI_ALL, -1, (llvm_ks::InstrStage::ReservationKinds)0 }, // 76-77
+  { 0, 0, 0, llvm_ks::InstrStage::Required } // End stages
 };
 
-static const llvm::InstrItinerary HexagonItinerariesV4[] = {
+static const llvm_ks::InstrItinerary HexagonItinerariesV4[] = {
   { 0, 0, 0, 0, 0 }, // 0 NoInstrModel
   { 1, 1, 2, 0, 0 }, // 1 S_2op_tc_2_SLOT23
   { 1, 1, 2, 0, 0 }, // 2 S_2op_tc_1_SLOT23
@@ -227,7 +227,7 @@ static const llvm::InstrItinerary HexagonItinerariesV4[] = {
   { 0, ~0U, ~0U, ~0U, ~0U } // end marker
 };
 
-static const llvm::InstrItinerary HexagonItinerariesV55[] = {
+static const llvm_ks::InstrItinerary HexagonItinerariesV55[] = {
   { 0, 0, 0, 0, 0 }, // 0 NoInstrModel
   { 1, 10, 11, 0, 0 }, // 1 S_2op_tc_2_SLOT23
   { 1, 11, 12, 0, 0 }, // 2 S_2op_tc_1_SLOT23
@@ -305,7 +305,7 @@ static const llvm::InstrItinerary HexagonItinerariesV55[] = {
   { 0, ~0U, ~0U, ~0U, ~0U } // end marker
 };
 
-static const llvm::InstrItinerary HexagonItinerariesV60[] = {
+static const llvm_ks::InstrItinerary HexagonItinerariesV60[] = {
   { 0, 0, 0, 0, 0 }, // 0 NoInstrModel
   { 1, 26, 27, 0, 0 }, // 1 S_2op_tc_2_SLOT23
   { 1, 27, 28, 0, 0 }, // 2 S_2op_tc_1_SLOT23
@@ -386,7 +386,7 @@ static const llvm::InstrItinerary HexagonItinerariesV60[] = {
 // ===============================================================
 // Data tables for the new per-operand machine model.
 
-static const llvm::MCSchedModel HexagonModelV4 = {
+static const llvm_ks::MCSchedModel HexagonModelV4 = {
   4, // IssueWidth
   MCSchedModel::DefaultMicroOpBufferSize,
   MCSchedModel::DefaultLoopMicroOpBufferSize,
@@ -399,7 +399,7 @@ static const llvm::MCSchedModel HexagonModelV4 = {
   nullptr, nullptr, 0, 0, // No instruction-level machine model.
   HexagonItinerariesV4};
 
-static const llvm::MCSchedModel HexagonModelV55 = {
+static const llvm_ks::MCSchedModel HexagonModelV55 = {
   4, // IssueWidth
   MCSchedModel::DefaultMicroOpBufferSize,
   MCSchedModel::DefaultLoopMicroOpBufferSize,
@@ -412,7 +412,7 @@ static const llvm::MCSchedModel HexagonModelV55 = {
   nullptr, nullptr, 0, 0, // No instruction-level machine model.
   HexagonItinerariesV55};
 
-static const llvm::MCSchedModel HexagonModelV60 = {
+static const llvm_ks::MCSchedModel HexagonModelV60 = {
   4, // IssueWidth
   MCSchedModel::DefaultMicroOpBufferSize,
   MCSchedModel::DefaultLoopMicroOpBufferSize,
@@ -426,7 +426,7 @@ static const llvm::MCSchedModel HexagonModelV60 = {
   HexagonItinerariesV60};
 
 // Sorted (by key) array of itineraries for CPU subtype.
-extern const llvm::SubtargetInfoKV HexagonProcSchedKV[] = {
+extern const llvm_ks::SubtargetInfoKV HexagonProcSchedKV[] = {
   { "hexagonv4", (const void *)&HexagonModelV4 },
   { "hexagonv5", (const void *)&HexagonModelV4 },
   { "hexagonv55", (const void *)&HexagonModelV55 },
@@ -448,7 +448,7 @@ static inline MCSubtargetInfo *createHexagonMCSubtargetInfoImpl(const Triple &TT
 #include "llvm/Support/raw_ostream.h"
 // ParseSubtargetFeatures - Parses features string setting specified
 // subtarget options.
-void llvm::HexagonSubtarget::ParseSubtargetFeatures(StringRef CPU, StringRef FS) {
+void llvm_ks::HexagonSubtarget::ParseSubtargetFeatures(StringRef CPU, StringRef FS) {
   DEBUG(dbgs() << "\nFeatures:" << FS);
   DEBUG(dbgs() << "\nCPU:" << CPU << "\n\n");
   InitMCProcessorInfo(CPU, FS);

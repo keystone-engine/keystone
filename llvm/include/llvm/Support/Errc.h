@@ -1,4 +1,4 @@
-//===- llvm/Support/Errc.h - Defines the llvm::errc enum --------*- C++ -*-===//
+//===- llvm/Support/Errc.h - Defines the llvm_ks::errc enum --------*- C++ -*-===//
 //
 //                     The LLVM Compiler Infrastructure
 //
@@ -32,7 +32,7 @@
 
 #include <system_error>
 
-namespace llvm {
+namespace llvm_ks {
 enum class errc {
   argument_list_too_long = int(std::errc::argument_list_too_long),
   argument_out_of_domain = int(std::errc::argument_out_of_domain),
@@ -81,6 +81,6 @@ inline std::error_code make_error_code(errc E) {
 }
 
 namespace std {
-template <> struct is_error_code_enum<llvm::errc> : std::true_type {};
+template <> struct is_error_code_enum<llvm_ks::errc> : std::true_type {};
 }
 #endif

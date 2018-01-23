@@ -19,7 +19,7 @@
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/Support/SMLoc.h"
 
-namespace llvm {
+namespace llvm_ks {
 class MCContext;
 class MCExpr;
 class MCSection;
@@ -88,6 +88,6 @@ private:
   ConstantPool *getConstantPool(MCSection *Section);
   ConstantPool &getOrCreateConstantPool(MCSection *Section);
 };
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

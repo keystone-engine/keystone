@@ -12,7 +12,7 @@
 
 #include "llvm/MC/MCStreamer.h"
 
-namespace llvm {
+namespace llvm_ks {
 
 class AArch64TargetStreamer : public MCTargetStreamer {
 public:
@@ -37,6 +37,6 @@ private:
   std::unique_ptr<AssemblerConstantPools> ConstantPools;
 };
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

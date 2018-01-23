@@ -22,7 +22,7 @@
 #include <utility>
 #include <iterator>
 
-namespace llvm {
+namespace llvm_ks {
 
 /// \brief A range adaptor for a pair of iterators.
 ///

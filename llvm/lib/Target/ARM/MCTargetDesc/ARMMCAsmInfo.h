@@ -18,7 +18,7 @@
 #include "llvm/MC/MCAsmInfoDarwin.h"
 #include "llvm/MC/MCAsmInfoELF.h"
 
-namespace llvm {
+namespace llvm_ks {
 class Triple;
 
 class ARMMCAsmInfoDarwin : public MCAsmInfoDarwin {
@@ -43,6 +43,6 @@ public:
   explicit ARMCOFFMCAsmInfoGNU();
 };
 
-} // namespace llvm
+} // namespace llvm_ks
 
 #endif

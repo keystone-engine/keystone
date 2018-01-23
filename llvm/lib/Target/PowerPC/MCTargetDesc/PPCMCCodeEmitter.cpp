@@ -25,7 +25,7 @@
 #include "llvm/Support/ErrorHandling.h"
 #include "llvm/Support/raw_ostream.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 #define DEBUG_TYPE "mccodeemitter"
 
@@ -139,7 +139,7 @@ public:
   
 } // end anonymous namespace
 
-MCCodeEmitter *llvm::createPPCMCCodeEmitter(const MCInstrInfo &MCII,
+MCCodeEmitter *llvm_ks::createPPCMCCodeEmitter(const MCInstrInfo &MCII,
                                             const MCRegisterInfo &MRI,
                                             MCContext &Ctx) {
   return new PPCMCCodeEmitter(MCII, Ctx);

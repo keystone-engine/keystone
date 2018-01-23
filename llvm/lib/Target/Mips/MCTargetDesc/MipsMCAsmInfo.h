@@ -16,7 +16,7 @@
 
 #include "llvm/MC/MCAsmInfoELF.h"
 
-namespace llvm {
+namespace llvm_ks {
 class Triple;
 
 class MipsMCAsmInfo : public MCAsmInfoELF {
@@ -24,6 +24,6 @@ public:
   explicit MipsMCAsmInfo(const Triple &TheTriple);
 };
 
-} // namespace llvm
+} // namespace llvm_ks
 
 #endif

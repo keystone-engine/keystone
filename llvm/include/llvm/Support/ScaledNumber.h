@@ -30,7 +30,7 @@
 #include <tuple>
 #include <utility>
 
-namespace llvm {
+namespace llvm_ks {
 namespace ScaledNumbers {
 
 /// \brief Maximum scale; same as APFloat for easy debug printing.
@@ -412,9 +412,9 @@ inline std::pair<uint64_t, int16_t> getDifference64(uint64_t LDigits,
 }
 
 } // end namespace ScaledNumbers
-} // end namespace llvm
+} // end namespace llvm_ks
 
-namespace llvm {
+namespace llvm_ks {
 
 class raw_ostream;
 class ScaledNumberBase {
@@ -894,6 +894,6 @@ template <typename T> struct isPodLike<ScaledNumber<T>> {
   static const bool value = true;
 };
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

@@ -8,7 +8,7 @@
 //===----------------------------------------------------------------------===//
 
 #include "llvm/MC/MCParser/MCAsmParserExtension.h"
-using namespace llvm;
+using namespace llvm_ks;
 
 MCAsmParserExtension::MCAsmParserExtension() :
   BracketExpressionsSupported(false) {

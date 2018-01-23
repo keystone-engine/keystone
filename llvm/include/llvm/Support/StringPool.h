@@ -32,7 +32,7 @@
 #include "llvm/ADT/StringMap.h"
 #include <cassert>
 
-namespace llvm {
+namespace llvm_ks {
 
   class PooledStringPtr;
 

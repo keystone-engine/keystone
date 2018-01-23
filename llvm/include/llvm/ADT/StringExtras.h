@@ -18,7 +18,7 @@
 #include "llvm/Support/DataTypes.h"
 #include <iterator>
 
-namespace llvm {
+namespace llvm_ks {
 template<typename T> class SmallVectorImpl;
 
 /// hexdigit - Return the hexadecimal character for the

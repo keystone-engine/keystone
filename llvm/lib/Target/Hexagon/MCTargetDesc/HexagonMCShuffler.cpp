@@ -21,7 +21,7 @@
 #include "llvm/Support/Debug.h"
 #include "llvm/Support/raw_ostream.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 static bool DisableShuffle = false;
 
@@ -96,7 +96,7 @@ bool HexagonMCShuffler::reshuffleTo(MCInst &MCB) {
   return (!getError());
 }
 
-bool llvm::HexagonMCShuffle(MCInstrInfo const &MCII, MCSubtargetInfo const &STI,
+bool llvm_ks::HexagonMCShuffle(MCInstrInfo const &MCII, MCSubtargetInfo const &STI,
                             MCInst &MCB) {
   HexagonMCShuffler MCS(MCII, STI, MCB);
 
@@ -146,7 +146,7 @@ bool llvm::HexagonMCShuffle(MCInstrInfo const &MCII, MCSubtargetInfo const &STI,
 }
 
 unsigned
-llvm::HexagonMCShuffle(MCInstrInfo const &MCII, MCSubtargetInfo const &STI,
+llvm_ks::HexagonMCShuffle(MCInstrInfo const &MCII, MCSubtargetInfo const &STI,
                        MCContext &Context, MCInst &MCB,
                        SmallVector<DuplexCandidate, 8> possibleDuplexes) {
 
@@ -200,7 +200,7 @@ llvm::HexagonMCShuffle(MCInstrInfo const &MCII, MCSubtargetInfo const &STI,
   return HexagonShuffler::SHUFFLE_SUCCESS;
 }
 
-bool llvm::HexagonMCShuffle(MCInstrInfo const &MCII, MCSubtargetInfo const &STI,
+bool llvm_ks::HexagonMCShuffle(MCInstrInfo const &MCII, MCSubtargetInfo const &STI,
                             MCInst &MCB, MCInst const *AddMI, int fixupCount) {
   if (!HexagonMCInstrInfo::isBundle(MCB) || !AddMI)
     return false;

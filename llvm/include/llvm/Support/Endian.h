@@ -18,7 +18,7 @@
 #include "llvm/Support/Host.h"
 #include "llvm/Support/SwapByteOrder.h"
 
-namespace llvm {
+namespace llvm_ks {
 namespace support {
 enum endianness {big, little, native};
 
@@ -344,6 +344,6 @@ inline void write32be(void *P, uint32_t V) { write32<big>(P, V); }
 inline void write64be(void *P, uint64_t V) { write64<big>(P, V); }
 } // end namespace endian
 } // end namespace support
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

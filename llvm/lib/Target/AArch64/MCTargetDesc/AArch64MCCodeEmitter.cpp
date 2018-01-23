@@ -23,7 +23,7 @@
 #include "llvm/MC/MCSubtargetInfo.h"
 #include "llvm/Support/EndianStream.h"
 #include "llvm/Support/raw_ostream.h"
-using namespace llvm;
+using namespace llvm_ks;
 
 #define DEBUG_TYPE "mccodeemitter"
 
@@ -172,7 +172,7 @@ public:
 
 } // end anonymous namespace
 
-MCCodeEmitter *llvm::createAArch64MCCodeEmitter(const MCInstrInfo &MCII,
+MCCodeEmitter *llvm_ks::createAArch64MCCodeEmitter(const MCInstrInfo &MCII,
                                                 const MCRegisterInfo &MRI,
                                                 MCContext &Ctx) {
   return new AArch64MCCodeEmitter(MCII, Ctx);

@@ -41,18 +41,18 @@ namespace {
 
 int getPosixProtectionFlags(unsigned Flags) {
   switch (Flags) {
-  case llvm::sys::Memory::MF_READ:
+  case llvm_ks::sys::Memory::MF_READ:
     return PROT_READ;
-  case llvm::sys::Memory::MF_WRITE:
+  case llvm_ks::sys::Memory::MF_WRITE:
     return PROT_WRITE;
-  case llvm::sys::Memory::MF_READ|llvm::sys::Memory::MF_WRITE:
+  case llvm_ks::sys::Memory::MF_READ|llvm_ks::sys::Memory::MF_WRITE:
     return PROT_READ | PROT_WRITE;
-  case llvm::sys::Memory::MF_READ|llvm::sys::Memory::MF_EXEC:
+  case llvm_ks::sys::Memory::MF_READ|llvm_ks::sys::Memory::MF_EXEC:
     return PROT_READ | PROT_EXEC;
-  case llvm::sys::Memory::MF_READ | llvm::sys::Memory::MF_WRITE |
-      llvm::sys::Memory::MF_EXEC:
+  case llvm_ks::sys::Memory::MF_READ | llvm_ks::sys::Memory::MF_WRITE |
+      llvm_ks::sys::Memory::MF_EXEC:
     return PROT_READ | PROT_WRITE | PROT_EXEC;
-  case llvm::sys::Memory::MF_EXEC:
+  case llvm_ks::sys::Memory::MF_EXEC:
 #if defined(__FreeBSD__)
     // On PowerPC, having an executable page that has no read permission
     // can have unintended consequences.  The function InvalidateInstruction-
@@ -74,7 +74,7 @@ int getPosixProtectionFlags(unsigned Flags) {
 
 } // anonymous namespace
 
-namespace llvm {
+namespace llvm_ks {
 namespace sys {
 
 MemoryBlock
@@ -305,4 +305,4 @@ void Memory::InvalidateInstructionCache(const void *Addr,
 }
 
 } // namespace sys
-} // namespace llvm
+} // namespace llvm_ks

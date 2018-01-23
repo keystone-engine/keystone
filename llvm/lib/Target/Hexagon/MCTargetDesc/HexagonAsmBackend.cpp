@@ -23,7 +23,7 @@
 #include "llvm/Support/Debug.h"
 #include "llvm/Support/TargetRegistry.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 using namespace Hexagon;
 
 #define DEBUG_TYPE "hexagon-asm-backend"
@@ -182,10 +182,10 @@ public:
     const MCInstrDesc &MCID = HexagonMCInstrInfo::getDesc(*MCII, HMI);
     bool Relaxable = false;
     // Branches and loop-setup insns are handled as necessary by relaxation.
-    if (llvm::HexagonMCInstrInfo::getType(*MCII, HMI) == HexagonII::TypeJ ||
-        (llvm::HexagonMCInstrInfo::getType(*MCII, HMI) == HexagonII::TypeNV &&
+    if (llvm_ks::HexagonMCInstrInfo::getType(*MCII, HMI) == HexagonII::TypeJ ||
+        (llvm_ks::HexagonMCInstrInfo::getType(*MCII, HMI) == HexagonII::TypeNV &&
          MCID.isBranch()) ||
-        (llvm::HexagonMCInstrInfo::getType(*MCII, HMI) == HexagonII::TypeCR &&
+        (llvm_ks::HexagonMCInstrInfo::getType(*MCII, HMI) == HexagonII::TypeCR &&
          HMI.getOpcode() != Hexagon::C4_addipc))
       if (HexagonMCInstrInfo::isExtendable(*MCII, HMI))
         Relaxable = true;
@@ -351,7 +351,7 @@ public:
 };
 } // end anonymous namespace
 
-namespace llvm {
+namespace llvm_ks {
 MCAsmBackend *createHexagonAsmBackend(Target const &T,
                                       MCRegisterInfo const & /*MRI*/,
                                       const Triple &TT, StringRef CPU) {

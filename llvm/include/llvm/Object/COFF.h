@@ -20,7 +20,7 @@
 #include "llvm/Support/Endian.h"
 #include "llvm/Support/ErrorOr.h"
 
-namespace llvm {
+namespace llvm_ks {
 template <typename T> class ArrayRef;
 
 namespace object {
@@ -910,6 +910,6 @@ private:
 };
 
 } // end namespace object
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

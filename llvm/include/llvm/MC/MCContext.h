@@ -27,7 +27,7 @@
 #include <tuple>
 #include <vector> // FIXME: Shouldn't be needed.
 
-namespace llvm {
+namespace llvm_ks {
   class MCAsmInfo;
   class MCExpr;
   class MCSection;
@@ -566,7 +566,7 @@ namespace llvm {
                                                   const Twine &Msg);
   };
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 // operator new and delete aren't allowed inside namespaces.
 // The throw specifications are mandated by the standard.
@@ -592,7 +592,7 @@ namespace llvm {
 /// \param Alignment The alignment of the allocated memory (if the underlying
 ///                  allocator supports it).
 /// \return The allocated memory. Could be NULL.
-inline void *operator new(size_t Bytes, llvm::MCContext &C,
+inline void *operator new(size_t Bytes, llvm_ks::MCContext &C,
                           size_t Alignment = 8) LLVM_NOEXCEPT {
   return C.allocate(Bytes, Alignment);
 }
@@ -602,7 +602,7 @@ inline void *operator new(size_t Bytes, llvm::MCContext &C,
 /// invoking it directly; see the new operator for more details. This operator
 /// is called implicitly by the compiler if a placement new expression using
 /// the MCContext throws in the object constructor.
-inline void operator delete(void *Ptr, llvm::MCContext &C,
+inline void operator delete(void *Ptr, llvm_ks::MCContext &C,
                             size_t) LLVM_NOEXCEPT {
   C.deallocate(Ptr);
 }
@@ -626,7 +626,7 @@ inline void operator delete(void *Ptr, llvm::MCContext &C,
 /// \param Alignment The alignment of the allocated memory (if the underlying
 ///                  allocator supports it).
 /// \return The allocated memory. Could be NULL.
-inline void *operator new[](size_t Bytes, llvm::MCContext &C,
+inline void *operator new[](size_t Bytes, llvm_ks::MCContext &C,
                             size_t Alignment = 8) LLVM_NOEXCEPT {
   return C.allocate(Bytes, Alignment);
 }
@@ -637,7 +637,7 @@ inline void *operator new[](size_t Bytes, llvm::MCContext &C,
 /// invoking it directly; see the new[] operator for more details. This operator
 /// is called implicitly by the compiler if a placement new[] expression using
 /// the MCContext throws in the object constructor.
-inline void operator delete[](void *Ptr, llvm::MCContext &C) LLVM_NOEXCEPT {
+inline void operator delete[](void *Ptr, llvm_ks::MCContext &C) LLVM_NOEXCEPT {
   C.deallocate(Ptr);
 }
 

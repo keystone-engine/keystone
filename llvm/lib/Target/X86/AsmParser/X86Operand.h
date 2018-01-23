@@ -18,7 +18,7 @@
 #include "llvm/ADT/STLExtras.h"
 #include "MCTargetDesc/X86MCTargetDesc.h"
 
-namespace llvm {
+namespace llvm_ks {
 
 /// X86Operand - Instances of this class represent a parsed X86 machine
 /// instruction.
@@ -465,7 +465,7 @@ struct X86Operand : public MCParsedAsmOperand {
 
   static std::unique_ptr<X86Operand> CreateToken(StringRef Str, SMLoc Loc) {
     SMLoc EndLoc = SMLoc::getFromPointer(Loc.getPointer() + Str.size());
-    auto Res = llvm::make_unique<X86Operand>(Token, Loc, EndLoc);
+    auto Res = llvm_ks::make_unique<X86Operand>(Token, Loc, EndLoc);
     Res->Tok.Data = Str.data();
     Res->Tok.Length = Str.size();
     return Res;
@@ -475,7 +475,7 @@ struct X86Operand : public MCParsedAsmOperand {
   CreateReg(unsigned RegNo, SMLoc StartLoc, SMLoc EndLoc,
             bool AddressOf = false, SMLoc OffsetOfLoc = SMLoc(),
             StringRef SymName = StringRef(), void *OpDecl = nullptr) {
-    auto Res = llvm::make_unique<X86Operand>(Register, StartLoc, EndLoc);
+    auto Res = llvm_ks::make_unique<X86Operand>(Register, StartLoc, EndLoc);
     Res->Reg.RegNo = RegNo;
     Res->AddressOf = AddressOf;
     Res->OffsetOfLoc = OffsetOfLoc;
@@ -486,7 +486,7 @@ struct X86Operand : public MCParsedAsmOperand {
 
   static std::unique_ptr<X86Operand> CreateImm(const MCExpr *Val,
                                                SMLoc StartLoc, SMLoc EndLoc) {
-    auto Res = llvm::make_unique<X86Operand>(Immediate, StartLoc, EndLoc);
+    auto Res = llvm_ks::make_unique<X86Operand>(Immediate, StartLoc, EndLoc);
     Res->Imm.Val = Val;
     return Res;
   }
@@ -496,7 +496,7 @@ struct X86Operand : public MCParsedAsmOperand {
   CreateMem(unsigned ModeSize, const MCExpr *Disp, SMLoc StartLoc, SMLoc EndLoc,
             unsigned Size = 0, StringRef SymName = StringRef(),
             void *OpDecl = nullptr) {
-    auto Res = llvm::make_unique<X86Operand>(Memory, StartLoc, EndLoc);
+    auto Res = llvm_ks::make_unique<X86Operand>(Memory, StartLoc, EndLoc);
     Res->Mem.SegReg   = 0;
     Res->Mem.Disp     = Disp;
     Res->Mem.BaseReg  = 0;
@@ -523,7 +523,7 @@ struct X86Operand : public MCParsedAsmOperand {
     // The scale should always be one of {1,2,4,8}.
     assert(((Scale == 1 || Scale == 2 || Scale == 4 || Scale == 8)) &&
            "Invalid scale!");
-    auto Res = llvm::make_unique<X86Operand>(Memory, StartLoc, EndLoc);
+    auto Res = llvm_ks::make_unique<X86Operand>(Memory, StartLoc, EndLoc);
     Res->Mem.SegReg   = SegReg;
     Res->Mem.Disp     = Disp;
     Res->Mem.BaseReg  = BaseReg;
@@ -538,6 +538,6 @@ struct X86Operand : public MCParsedAsmOperand {
   }
 };
 
-} // End of namespace llvm
+} // End of namespace llvm_ks
 
 #endif

@@ -22,9 +22,9 @@
 #include "llvm/MC/MCInstrInfo.h"
 #include "llvm/MC/MCSubtargetInfo.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
-namespace llvm {
+namespace llvm_ks {
 // Insn resources.
 class HexagonResource {
   // Mask of the slots or units that may execute the insn and
@@ -56,7 +56,7 @@ public:
 class HexagonCVIResource : public HexagonResource {
 public:
   typedef std::pair<unsigned, unsigned> UnitsAndLanes;
-  typedef llvm::DenseMap<unsigned, UnitsAndLanes> TypeUnitsAndLanes;
+  typedef llvm_ks::DenseMap<unsigned, UnitsAndLanes> TypeUnitsAndLanes;
 
 private:
   // Available HVX slots.

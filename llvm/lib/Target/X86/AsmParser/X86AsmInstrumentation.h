@@ -14,7 +14,7 @@
 
 #include <memory>
 
-namespace llvm {
+namespace llvm_ks {
 
 class MCContext;
 class MCInst;

@@ -14,7 +14,7 @@
 #include "MipsMCAsmInfo.h"
 #include "llvm/ADT/Triple.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 MipsMCAsmInfo::MipsMCAsmInfo(const Triple &TheTriple) {
   if ((TheTriple.getArch() == Triple::mips) ||

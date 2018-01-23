@@ -20,7 +20,7 @@
 #include "llvm/Support/DataTypes.h"
 #include "llvm/Support/ErrorHandling.h"
 
-namespace llvm {
+namespace llvm_ks {
 
 /// MipsII - This namespace holds all of the target specific flags that
 /// instruction info tracks.

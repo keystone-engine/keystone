@@ -16,7 +16,7 @@
 #include "llvm/Support/ELF.h"
 #include "llvm/Support/ErrorHandling.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 namespace {
   class X86ELFObjectWriter : public MCELFObjectTargetWriter {
@@ -261,7 +261,7 @@ unsigned X86ELFObjectWriter::getRelocType(MCContext &Ctx, const MCValue &Target,
   return getRelocType32(Modifier, getType32(Type), IsPCRel);
 }
 
-MCObjectWriter *llvm::createX86ELFObjectWriter(raw_pwrite_stream &OS,
+MCObjectWriter *llvm_ks::createX86ELFObjectWriter(raw_pwrite_stream &OS,
                                                bool IsELF64, uint8_t OSABI,
                                                uint16_t EMachine) {
   MCELFObjectTargetWriter *MOTW =

@@ -22,7 +22,7 @@
 #include "llvm/ADT/StringSwitch.h"
 #include "llvm/Support/raw_ostream.h"
 
-namespace llvm {
+namespace llvm_ks {
 
 // Forward declarations.
 class MCAsmLayout;
@@ -148,6 +148,6 @@ public:
 typedef MCLOHDirective::LOHArgs MCLOHArgs;
 typedef MCLOHContainer::LOHDirectives MCLOHDirectives;
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

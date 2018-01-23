@@ -26,7 +26,7 @@
 
 #include <string>
 
-namespace llvm {
+namespace llvm_ks {
 class MCAsmBackend;
 class MCCodeEmitter;
 class MCContext;
@@ -774,6 +774,6 @@ MCStreamer *createAsmStreamer(MCContext &Ctx,
                               std::unique_ptr<formatted_raw_ostream> OS,
                               MCCodeEmitter *CE,
                               MCAsmBackend *TAB);
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

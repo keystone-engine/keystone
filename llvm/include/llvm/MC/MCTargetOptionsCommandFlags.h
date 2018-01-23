@@ -17,7 +17,7 @@
 
 #include "llvm/MC/MCTargetOptions.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 bool RelaxAll;
 

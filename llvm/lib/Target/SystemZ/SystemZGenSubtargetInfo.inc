@@ -9,7 +9,7 @@
 
 #ifdef GET_SUBTARGETINFO_ENUM
 #undef GET_SUBTARGETINFO_ENUM
-namespace llvm {
+namespace llvm_ks {
 namespace SystemZ {
 enum : uint64_t {
   FeatureDistinctOps = 0,
@@ -31,9 +31,9 @@ enum : uint64_t {
 
 #ifdef GET_SUBTARGETINFO_MC_DESC
 #undef GET_SUBTARGETINFO_MC_DESC
-namespace llvm {
+namespace llvm_ks {
 // Sorted (by key) array of values for CPU features.
-extern const llvm::SubtargetFeatureKV SystemZFeatureKV[] = {
+extern const llvm_ks::SubtargetFeatureKV SystemZFeatureKV[] = {
   { "distinct-ops", "Assume that the distinct-operands facility is installed", { SystemZ::FeatureDistinctOps }, { } },
   { "fast-serialization", "Assume that the fast-serialization facility is installed", { SystemZ::FeatureFastSerialization }, { } },
   { "fp-extension", "Assume that the floating-point extension facility is installed", { SystemZ::FeatureFPExtension }, { } },
@@ -48,7 +48,7 @@ extern const llvm::SubtargetFeatureKV SystemZFeatureKV[] = {
 };
 
 // Sorted (by key) array of values for CPU subtype.
-extern const llvm::SubtargetFeatureKV SystemZSubTypeKV[] = {
+extern const llvm_ks::SubtargetFeatureKV SystemZSubTypeKV[] = {
   { "generic", "Select the generic processor", { }, { } },
   { "z10", "Select the z10 processor", { }, { } },
   { "z13", "Select the z13 processor", { SystemZ::FeatureDistinctOps, SystemZ::FeatureLoadStoreOnCond, SystemZ::FeatureHighWord, SystemZ::FeatureFPExtension, SystemZ::FeaturePopulationCount, SystemZ::FeatureFastSerialization, SystemZ::FeatureInterlockedAccess1, SystemZ::FeatureTransactionalExecution, SystemZ::FeatureProcessorAssist, SystemZ::FeatureVector }, { } },
@@ -82,7 +82,7 @@ static inline MCSubtargetInfo *createSystemZMCSubtargetInfoImpl(const Triple &TT
 #include "llvm/Support/raw_ostream.h"
 // ParseSubtargetFeatures - Parses features string setting specified
 // subtarget options.
-void llvm::SystemZSubtarget::ParseSubtargetFeatures(StringRef CPU, StringRef FS) {
+void llvm_ks::SystemZSubtarget::ParseSubtargetFeatures(StringRef CPU, StringRef FS) {
   DEBUG(dbgs() << "\nFeatures:" << FS);
   DEBUG(dbgs() << "\nCPU:" << CPU << "\n\n");
   InitMCProcessorInfo(CPU, FS);

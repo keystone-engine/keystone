@@ -16,7 +16,7 @@
 #include "llvm/Support/Endian.h"
 #include "llvm/Support/ErrorOr.h"
 
-namespace llvm {
+namespace llvm_ks {
 namespace object {
 
 using support::endianness;
@@ -512,7 +512,7 @@ struct Elf_GnuHash_Impl {
 template <class ELFT>
 struct Elf_Mips_RegInfo;
 
-template <llvm::support::endianness TargetEndianness>
+template <llvm_ks::support::endianness TargetEndianness>
 struct Elf_Mips_RegInfo<ELFType<TargetEndianness, false>> {
   LLVM_ELF_IMPORT_TYPES(TargetEndianness, false)
   Elf_Word ri_gprmask;     // bit-mask of used general registers
@@ -520,7 +520,7 @@ struct Elf_Mips_RegInfo<ELFType<TargetEndianness, false>> {
   Elf_Addr ri_gp_value;    // gp register value
 };
 
-template <llvm::support::endianness TargetEndianness>
+template <llvm_ks::support::endianness TargetEndianness>
 struct Elf_Mips_RegInfo<ELFType<TargetEndianness, true>> {
   LLVM_ELF_IMPORT_TYPES(TargetEndianness, true)
   Elf_Word ri_gprmask;     // bit-mask of used general registers
@@ -539,7 +539,7 @@ template <class ELFT> struct Elf_Mips_Options {
   Elf_Word info;    // Kind-specific information
 
   const Elf_Mips_RegInfo<ELFT> &getRegInfo() const {
-    assert(kind == llvm::ELF::ODK_REGINFO);
+    assert(kind == llvm_ks::ELF::ODK_REGINFO);
     return *reinterpret_cast<const Elf_Mips_RegInfo<ELFT> *>(
                (const uint8_t *)this + sizeof(Elf_Mips_Options));
   }
@@ -562,6 +562,6 @@ template <class ELFT> struct Elf_Mips_ABIFlags {
 };
 
 } // end namespace object.
-} // end namespace llvm.
+} // end namespace llvm_ks.
 
 #endif

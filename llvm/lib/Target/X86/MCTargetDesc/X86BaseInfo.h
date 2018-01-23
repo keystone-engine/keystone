@@ -22,7 +22,7 @@
 #include "llvm/Support/DataTypes.h"
 #include "llvm/Support/ErrorHandling.h"
 
-namespace llvm {
+namespace llvm_ks {
 
 namespace X86 {
   // Enums for memory operand decoding.  Each memory operand is represented with
@@ -774,6 +774,6 @@ namespace X86II {
   }
 }
 
-} // end namespace llvm;
+} // end namespace llvm_ks;
 
 #endif

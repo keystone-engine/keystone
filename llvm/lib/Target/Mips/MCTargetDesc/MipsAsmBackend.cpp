@@ -27,7 +27,7 @@
 #include "llvm/Support/MathExtras.h"
 #include "llvm/Support/raw_ostream.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 // Prepare value for the target space for it
 static unsigned adjustFixupValue(const MCFixup &Fixup, uint64_t Value,
@@ -434,27 +434,27 @@ void MipsAsmBackend::processFixupValue(const MCAssembler &Asm,
 }
 
 // MCAsmBackend
-MCAsmBackend *llvm::createMipsAsmBackendEL32(const Target &T,
+MCAsmBackend *llvm_ks::createMipsAsmBackendEL32(const Target &T,
                                              const MCRegisterInfo &MRI,
                                              const Triple &TT, StringRef CPU) {
   return new MipsAsmBackend(T, TT.getOS(), /*IsLittle*/ true,
                             /*Is64Bit*/ false);
 }
 
-MCAsmBackend *llvm::createMipsAsmBackendEB32(const Target &T,
+MCAsmBackend *llvm_ks::createMipsAsmBackendEB32(const Target &T,
                                              const MCRegisterInfo &MRI,
                                              const Triple &TT, StringRef CPU) {
   return new MipsAsmBackend(T, TT.getOS(), /*IsLittle*/ false,
                             /*Is64Bit*/ false);
 }
 
-MCAsmBackend *llvm::createMipsAsmBackendEL64(const Target &T,
+MCAsmBackend *llvm_ks::createMipsAsmBackendEL64(const Target &T,
                                              const MCRegisterInfo &MRI,
                                              const Triple &TT, StringRef CPU) {
   return new MipsAsmBackend(T, TT.getOS(), /*IsLittle*/ true, /*Is64Bit*/ true);
 }
 
-MCAsmBackend *llvm::createMipsAsmBackendEB64(const Target &T,
+MCAsmBackend *llvm_ks::createMipsAsmBackendEB64(const Target &T,
                                              const MCRegisterInfo &MRI,
                                              const Triple &TT, StringRef CPU) {
   return new MipsAsmBackend(T, TT.getOS(), /*IsLittle*/ false,

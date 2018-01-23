@@ -16,7 +16,7 @@
 
 #include "llvm/ADT/Triple.h"
 
-namespace llvm {
+namespace llvm_ks {
 class MCContext;
 class MCSection;
 
@@ -350,6 +350,6 @@ public:
   const Triple &getTargetTriple() const { return TT; }
 };
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

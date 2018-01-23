@@ -20,7 +20,7 @@
 #include "llvm/Support/ErrorOr.h"
 #include <memory>
 
-namespace llvm {
+namespace llvm_ks {
 class MemoryBufferRef;
 
 /// This interface provides simple read-only access to a block of memory, and
@@ -168,6 +168,6 @@ public:
 // Create wrappers for C Binding types (see CBindingWrapping.h).
 DEFINE_SIMPLE_CONVERSION_FUNCTIONS(MemoryBuffer, LLVMMemoryBufferRef)
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

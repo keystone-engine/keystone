@@ -9,7 +9,7 @@
 
 #ifdef GET_SUBTARGETINFO_ENUM
 #undef GET_SUBTARGETINFO_ENUM
-namespace llvm {
+namespace llvm_ks {
 namespace Sparc {
 enum : uint64_t {
   FeatureHardQuad = 0,
@@ -27,9 +27,9 @@ enum : uint64_t {
 
 #ifdef GET_SUBTARGETINFO_MC_DESC
 #undef GET_SUBTARGETINFO_MC_DESC
-namespace llvm {
+namespace llvm_ks {
 // Sorted (by key) array of values for CPU features.
-extern const llvm::SubtargetFeatureKV SparcFeatureKV[] = {
+extern const llvm_ks::SubtargetFeatureKV SparcFeatureKV[] = {
   { "deprecated-v8", "Enable deprecated V8 instructions in V9 mode", { Sparc::FeatureV8Deprecated }, { } },
   { "hard-quad-float", "Enable quad-word floating point instructions", { Sparc::FeatureHardQuad }, { } },
   { "popc", "Use the popc (population count) instruction", { Sparc::UsePopc }, { } },
@@ -40,7 +40,7 @@ extern const llvm::SubtargetFeatureKV SparcFeatureKV[] = {
 };
 
 // Sorted (by key) array of values for CPU subtype.
-extern const llvm::SubtargetFeatureKV SparcSubTypeKV[] = {
+extern const llvm_ks::SubtargetFeatureKV SparcSubTypeKV[] = {
   { "f934", "Select the f934 processor", { }, { } },
   { "generic", "Select the generic processor", { }, { } },
   { "hypersparc", "Select the hypersparc processor", { }, { } },
@@ -87,7 +87,7 @@ static inline MCSubtargetInfo *createSparcMCSubtargetInfoImpl(const Triple &TT, 
 #include "llvm/Support/raw_ostream.h"
 // ParseSubtargetFeatures - Parses features string setting specified
 // subtarget options.
-void llvm::SparcSubtarget::ParseSubtargetFeatures(StringRef CPU, StringRef FS) {
+void llvm_ks::SparcSubtarget::ParseSubtargetFeatures(StringRef CPU, StringRef FS) {
   DEBUG(dbgs() << "\nFeatures:" << FS);
   DEBUG(dbgs() << "\nCPU:" << CPU << "\n\n");
   InitMCProcessorInfo(CPU, FS);

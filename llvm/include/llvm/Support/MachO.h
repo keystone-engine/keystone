@@ -18,12 +18,12 @@
 #include "llvm/Support/DataTypes.h"
 #include "llvm/Support/Host.h"
 
-namespace llvm {
+namespace llvm_ks {
   namespace MachO {
     // Enums from <mach-o/loader.h>
     enum : uint32_t {
-      // Constants for the "magic" field in llvm::MachO::mach_header and
-      // llvm::MachO::mach_header_64
+      // Constants for the "magic" field in llvm_ks::MachO::mach_header and
+      // llvm_ks::MachO::mach_header_64
       MH_MAGIC    = 0xFEEDFACEu,
       MH_CIGAM    = 0xCEFAEDFEu,
       MH_MAGIC_64 = 0xFEEDFACFu,
@@ -33,8 +33,8 @@ namespace llvm {
     };
 
     enum HeaderFileType {
-      // Constants for the "filetype" field in llvm::MachO::mach_header and
-      // llvm::MachO::mach_header_64
+      // Constants for the "filetype" field in llvm_ks::MachO::mach_header and
+      // llvm_ks::MachO::mach_header_64
       MH_OBJECT      = 0x1u,
       MH_EXECUTE     = 0x2u,
       MH_FVMLIB      = 0x3u,
@@ -49,8 +49,8 @@ namespace llvm {
     };
 
     enum {
-      // Constant bits for the "flags" field in llvm::MachO::mach_header and
-      // llvm::MachO::mach_header_64
+      // Constant bits for the "flags" field in llvm_ks::MachO::mach_header and
+      // llvm_ks::MachO::mach_header_64
       MH_NOUNDEFS                = 0x00000001u,
       MH_INCRLINK                = 0x00000002u,
       MH_DYLDLINK                = 0x00000004u,
@@ -80,12 +80,12 @@ namespace llvm {
     };
 
     enum : uint32_t {
-      // Flags for the "cmd" field in llvm::MachO::load_command
+      // Flags for the "cmd" field in llvm_ks::MachO::load_command
       LC_REQ_DYLD    = 0x80000000u
     };
 
     enum LoadCommandType : uint32_t {
-      // Constants for the "cmd" field in llvm::MachO::load_command
+      // Constants for the "cmd" field in llvm_ks::MachO::load_command
       LC_SEGMENT              = 0x00000001u,
       LC_SYMTAB               = 0x00000002u,
       LC_SYMSEG               = 0x00000003u,
@@ -138,14 +138,14 @@ namespace llvm {
     };
 
     enum : uint32_t {
-      // Constant bits for the "flags" field in llvm::MachO::segment_command
+      // Constant bits for the "flags" field in llvm_ks::MachO::segment_command
       SG_HIGHVM              = 0x1u,
       SG_FVMLIB              = 0x2u,
       SG_NORELOC             = 0x4u,
       SG_PROTECTED_VERSION_1 = 0x8u,
 
-      // Constant masks for the "flags" field in llvm::MachO::section and
-      // llvm::MachO::section_64
+      // Constant masks for the "flags" field in llvm_ks::MachO::section and
+      // llvm_ks::MachO::section_64
       SECTION_TYPE           = 0x000000ffu, // SECTION_TYPE
       SECTION_ATTRIBUTES     = 0xffffff00u, // SECTION_ATTRIBUTES
       SECTION_ATTRIBUTES_USR = 0xff000000u, // SECTION_ATTRIBUTES_USR
@@ -155,8 +155,8 @@ namespace llvm {
     /// These are the section type and attributes fields.  A MachO section can
     /// have only one Type, but can have any of the attributes specified.
     enum SectionType : uint32_t {
-      // Constant masks for the "flags[7:0]" field in llvm::MachO::section and
-      // llvm::MachO::section_64 (mask "flags" with SECTION_TYPE)
+      // Constant masks for the "flags[7:0]" field in llvm_ks::MachO::section and
+      // llvm_ks::MachO::section_64 (mask "flags" with SECTION_TYPE)
 
       /// S_REGULAR - Regular section.
       S_REGULAR                             = 0x00u,
@@ -216,8 +216,8 @@ namespace llvm {
     };
 
     enum : uint32_t {
-      // Constant masks for the "flags[31:24]" field in llvm::MachO::section and
-      // llvm::MachO::section_64 (mask "flags" with SECTION_ATTRIBUTES_USR)
+      // Constant masks for the "flags[31:24]" field in llvm_ks::MachO::section and
+      // llvm_ks::MachO::section_64 (mask "flags" with SECTION_ATTRIBUTES_USR)
 
       /// S_ATTR_PURE_INSTRUCTIONS - Section contains only true machine
       /// instructions.
@@ -238,8 +238,8 @@ namespace llvm {
       /// S_ATTR_DEBUG - A debug section.
       S_ATTR_DEBUG               = 0x02000000u,
 
-      // Constant masks for the "flags[23:8]" field in llvm::MachO::section and
-      // llvm::MachO::section_64 (mask "flags" with SECTION_ATTRIBUTES_SYS)
+      // Constant masks for the "flags[23:8]" field in llvm_ks::MachO::section and
+      // llvm_ks::MachO::section_64 (mask "flags" with SECTION_ATTRIBUTES_SYS)
 
       /// S_ATTR_SOME_INSTRUCTIONS - Section contains some machine instructions.
       S_ATTR_SOME_INSTRUCTIONS   = 0x00000400u,
@@ -336,8 +336,8 @@ namespace llvm {
     };
 
     enum {
-      // Constant masks for the "n_type" field in llvm::MachO::nlist and
-      // llvm::MachO::nlist_64
+      // Constant masks for the "n_type" field in llvm_ks::MachO::nlist and
+      // llvm_ks::MachO::nlist_64
       N_STAB = 0xe0,
       N_PEXT = 0x10,
       N_TYPE = 0x0e,
@@ -345,8 +345,8 @@ namespace llvm {
     };
 
     enum NListType {
-      // Constants for the "n_type & N_TYPE" llvm::MachO::nlist and
-      // llvm::MachO::nlist_64
+      // Constants for the "n_type & N_TYPE" llvm_ks::MachO::nlist and
+      // llvm_ks::MachO::nlist_64
       N_UNDF = 0x0u,
       N_ABS  = 0x2u,
       N_SECT = 0xeu,
@@ -355,15 +355,15 @@ namespace llvm {
     };
 
     enum SectionOrdinal {
-      // Constants for the "n_sect" field in llvm::MachO::nlist and
-      // llvm::MachO::nlist_64
+      // Constants for the "n_sect" field in llvm_ks::MachO::nlist and
+      // llvm_ks::MachO::nlist_64
       NO_SECT  = 0u,
       MAX_SECT = 0xffu
     };
 
     enum {
-      // Constant masks for the "n_desc" field in llvm::MachO::nlist and
-      // llvm::MachO::nlist_64
+      // Constant masks for the "n_desc" field in llvm_ks::MachO::nlist and
+      // llvm_ks::MachO::nlist_64
       // The low 3 bits are the for the REFERENCE_TYPE.
       REFERENCE_TYPE                            = 0x7,
       REFERENCE_FLAG_UNDEFINED_NON_LAZY         = 0,
@@ -389,8 +389,8 @@ namespace llvm {
     };
 
     enum StabType {
-      // Constant values for the "n_type" field in llvm::MachO::nlist and
-      // llvm::MachO::nlist_64 when "(n_type & N_STAB) != 0"
+      // Constant values for the "n_type" field in llvm_ks::MachO::nlist and
+      // llvm_ks::MachO::nlist_64 when "(n_type & N_STAB) != 0"
       N_GSYM    = 0x20u,
       N_FNAME   = 0x22u,
       N_FUN     = 0x24u,
@@ -426,17 +426,17 @@ namespace llvm {
 
     enum : uint32_t {
       // Constant values for the r_symbolnum field in an
-      // llvm::MachO::relocation_info structure when r_extern is 0.
+      // llvm_ks::MachO::relocation_info structure when r_extern is 0.
       R_ABS = 0,
 
       // Constant bits for the r_address field in an
-      // llvm::MachO::relocation_info structure.
+      // llvm_ks::MachO::relocation_info structure.
       R_SCATTERED = 0x80000000
     };
 
     enum RelocationInfoType {
       // Constant values for the r_type field in an
-      // llvm::MachO::relocation_info or llvm::MachO::scattered_relocation_info
+      // llvm_ks::MachO::relocation_info or llvm_ks::MachO::scattered_relocation_info
       // structure.
       GENERIC_RELOC_VANILLA        = 0,
       GENERIC_RELOC_PAIR           = 1,
@@ -446,7 +446,7 @@ namespace llvm {
       GENERIC_RELOC_TLV            = 5,
 
       // Constant values for the r_type field in a PowerPC architecture
-      // llvm::MachO::relocation_info or llvm::MachO::scattered_relocation_info
+      // llvm_ks::MachO::relocation_info or llvm_ks::MachO::scattered_relocation_info
       // structure.
       PPC_RELOC_VANILLA            = GENERIC_RELOC_VANILLA,
       PPC_RELOC_PAIR               = GENERIC_RELOC_PAIR,
@@ -466,7 +466,7 @@ namespace llvm {
       PPC_RELOC_LOCAL_SECTDIFF     = 15,
 
       // Constant values for the r_type field in an ARM architecture
-      // llvm::MachO::relocation_info or llvm::MachO::scattered_relocation_info
+      // llvm_ks::MachO::relocation_info or llvm_ks::MachO::scattered_relocation_info
       // structure.
       ARM_RELOC_VANILLA            = GENERIC_RELOC_VANILLA,
       ARM_RELOC_PAIR               = GENERIC_RELOC_PAIR,
@@ -480,7 +480,7 @@ namespace llvm {
       ARM_RELOC_HALF_SECTDIFF      = 9,
 
       // Constant values for the r_type field in an ARM64 architecture
-      // llvm::MachO::relocation_info or llvm::MachO::scattered_relocation_info
+      // llvm_ks::MachO::relocation_info or llvm_ks::MachO::scattered_relocation_info
       // structure.
 
       // For pointers.
@@ -507,7 +507,7 @@ namespace llvm {
       ARM64_RELOC_ADDEND              = 10,
 
       // Constant values for the r_type field in an x86_64 architecture
-      // llvm::MachO::relocation_info or llvm::MachO::scattered_relocation_info
+      // llvm_ks::MachO::relocation_info or llvm_ks::MachO::scattered_relocation_info
       // structure
       X86_64_RELOC_UNSIGNED        = 0,
       X86_64_RELOC_SIGNED          = 1,
@@ -1670,6 +1670,6 @@ namespace llvm {
       sizeof(x86_exception_state_t) / sizeof(uint32_t);
 
   } // end namespace MachO
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

@@ -21,7 +21,7 @@
 #include "llvm/Object/ELF.h"
 #include "llvm/Support/ErrorHandling.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 #define DEBUG_TYPE "aarch64symbolrefexpr"
 

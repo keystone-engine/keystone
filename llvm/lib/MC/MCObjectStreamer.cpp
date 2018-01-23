@@ -24,7 +24,7 @@
 
 //#include <iostream>
 
-using namespace llvm;
+using namespace llvm_ks;
 
 MCObjectStreamer::MCObjectStreamer(MCContext &Context, MCAsmBackend &TAB,
                                    raw_pwrite_stream &OS,

@@ -9,7 +9,7 @@
 
 #ifdef GET_INSTRINFO_ENUM
 #undef GET_INSTRINFO_ENUM
-namespace llvm {
+namespace llvm_ks {
 
 namespace PPC {
   enum {
@@ -1751,7 +1751,7 @@ namespace Sched {
 
 #ifdef GET_INSTRINFO_MC_DESC
 #undef GET_INSTRINFO_MC_DESC
-namespace llvm {
+namespace llvm_ks {
 
 static const MCPhysReg ImplicitList1[] = { PPC::CR0, 0 };
 static const MCPhysReg ImplicitList2[] = { PPC::CARRY, 0 };
@@ -3642,7 +3642,7 @@ static inline void InitPPCMCInstrInfo(MCInstrInfo *II) {
 
 #ifdef GET_INSTRINFO_HEADER
 #undef GET_INSTRINFO_HEADER
-namespace llvm {
+namespace llvm_ks {
 struct PPCGenInstrInfo : public TargetInstrInfo {
   explicit PPCGenInstrInfo(int CFSetupOpcode = -1, int CFDestroyOpcode = -1, int CatchRetOpcode = -1);
   ~PPCGenInstrInfo() override {}
@@ -3653,7 +3653,7 @@ struct PPCGenInstrInfo : public TargetInstrInfo {
 
 #ifdef GET_INSTRINFO_OPERAND_ENUM
 #undef GET_INSTRINFO_OPERAND_ENUM
-namespace llvm {
+namespace llvm_ks {
 namespace PPC {
 namespace OpName { 
 enum {
@@ -3661,23 +3661,23 @@ OPERAND_LAST
 };
 } // end namespace OpName
 } // end namespace PPC
-} // end namespace llvm
+} // end namespace llvm_ks
 #endif //GET_INSTRINFO_OPERAND_ENUM
 #ifdef GET_INSTRINFO_NAMED_OPS
 #undef GET_INSTRINFO_NAMED_OPS
-namespace llvm {
+namespace llvm_ks {
 namespace PPC {
 LLVM_READONLY
 int16_t getNamedOperandIdx(uint16_t Opcode, uint16_t NamedIdx) {
   return -1;
 }
 } // end namespace PPC
-} // end namespace llvm
+} // end namespace llvm_ks
 #endif //GET_INSTRINFO_NAMED_OPS
 
 #ifdef GET_INSTRINFO_OPERAND_TYPES_ENUM
 #undef GET_INSTRINFO_OPERAND_TYPES_ENUM
-namespace llvm {
+namespace llvm_ks {
 namespace PPC {
 namespace OpTypes { 
 enum OperandType {
@@ -3740,11 +3740,11 @@ enum OperandType {
 };
 } // end namespace OpTypes
 } // end namespace PPC
-} // end namespace llvm
+} // end namespace llvm_ks
 #endif // GET_INSTRINFO_OPERAND_TYPES_ENUM
 #ifdef GET_INSTRMAP_INFO
 #undef GET_INSTRMAP_INFO
-namespace llvm {
+namespace llvm_ks {
 
 namespace PPC {
 

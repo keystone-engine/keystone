@@ -55,7 +55,7 @@
 //===          is guaranteed to work on *all* UNIX variants.
 //===----------------------------------------------------------------------===//
 
-using namespace llvm;
+using namespace llvm_ks;
 using namespace sys;
 
 // On Cygwin, getpagesize() returns 64k(AllocationGranularity) and
@@ -357,7 +357,7 @@ const char *Process::ResetColor() {
   return "\033[0m";
 }
 
-unsigned llvm::sys::Process::GetRandomNumber() {
+unsigned llvm_ks::sys::Process::GetRandomNumber() {
 #if defined(HAVE_DECL_ARC4RANDOM) && HAVE_DECL_ARC4RANDOM
   return arc4random();
 #else
