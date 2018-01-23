@@ -12,6 +12,7 @@ Except Python, all other bindings are contributed by community.
 - PowerShell binding: by Ruben Boonen
 - C# binding: by Marco Fornaro
 - VB6 binding: by David Zimmer
+- Masm binding: by mrfearless
 
 Other bindings maintained externally by community:
 
