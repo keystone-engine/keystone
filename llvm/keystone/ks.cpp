@@ -482,6 +482,9 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
 KEYSTONE_EXPORT
 ks_err ks_close(ks_engine *ks)
 {
+    if (!ks)
+        return KS_ERR_HANDLE;
+
     delete ks->STI;
     delete ks->MCII;
     delete ks->MAI;
