@@ -19,6 +19,7 @@ extern "C" {
 #define KEYSTONE_EXPORT __declspec(dllexport)
 #else
 #ifdef __GNUC__
+#include <stdbool.h>
 #define KEYSTONE_EXPORT __attribute__((visibility("default")))
 #else
 #define KEYSTONE_EXPORT
