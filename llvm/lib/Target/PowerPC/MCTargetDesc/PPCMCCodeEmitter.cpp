@@ -152,7 +152,7 @@ getDirectBrEncoding(const MCInst &MI, unsigned OpNo,
   const MCOperand &MO = MI.getOperand(OpNo);
 
   if (MO.isImm())
-      return (MO.getImm() * 4 - MI.getAddress()) / 4;
+      return MO.getImm();
 
   if (MO.isReg())
       return getMachineOpValue(MI, MO, Fixups, STI);

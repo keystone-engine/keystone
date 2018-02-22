@@ -52,7 +52,9 @@ class TestPPC(regress.RegressTest):
     def runTest(self):
         ks = Ks(KS_ARCH_PPC, KS_MODE_PPC32 + KS_MODE_BIG_ENDIAN)
         encoding, count = ks.asm(b"b 0x1010", 0x1000)
-        self.assertEqual(encoding, [ 0x48, 0x00, 0x00, 0x10])
+        self.assertEqual(encoding, [ 0x48, 0x00, 0x10, 0x10])
+        encoding, count = ks.asm(b"ba 0x1010", 0x1000)
+        self.assertEqual(encoding, [ 0x48, 0x00, 0x10, 0x12])
 
 class TestSystemZ(regress.RegressTest):
     def runTest(self):
