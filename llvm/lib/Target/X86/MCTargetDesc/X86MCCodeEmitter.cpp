@@ -1198,6 +1198,49 @@ void X86MCCodeEmitter::EmitOpcodePrefix(uint64_t TSFlags, unsigned &CurByte,
     break;
   }
 
+  // Emit AddressSize and segment override prefixes before REX prefix.
+  switch (TSFlags & X86II::FormMask) {
+  case X86II::RawFrmDstSrc: {
+    unsigned siReg = MI.getOperand(1).getReg();
+    // Emit segment override opcode prefix as needed (not for %ds).
+    if (MI.getOperand(2).getReg() != X86::DS) {
+      EmitSegmentOverridePrefix(CurByte, 2, MI, OS);
+    }
+    // Emit AdSize prefix as needed.
+    if ((!is32BitMode(STI) && siReg == X86::ESI) ||
+        (is32BitMode(STI) && siReg == X86::SI)) {
+      EmitByte(0x67, CurByte, OS);
+    }
+    break;
+  }
+  case X86II::RawFrmSrc: {
+    unsigned siReg = MI.getOperand(0).getReg();
+    // Emit segment override opcode prefix as needed (not for %ds).
+    if (MI.getOperand(1).getReg() != X86::DS) {
+      EmitSegmentOverridePrefix(CurByte, 1, MI, OS);
+    }
+    // Emit AdSize prefix as needed.
+    if ((!is32BitMode(STI) && siReg == X86::ESI) ||
+        (is32BitMode(STI) && siReg == X86::SI)) {
+      EmitByte(0x67, CurByte, OS);
+    }
+    break;
+  }
+  case X86II::RawFrmDst: {
+    unsigned siReg = MI.getOperand(0).getReg();
+    // Emit AdSize prefix as needed.
+    if ((!is32BitMode(STI) && siReg == X86::EDI) ||
+        (is32BitMode(STI) && siReg == X86::DI)) {
+      EmitByte(0x67, CurByte, OS);
+    }
+    break;
+  }
+  case X86II::RawFrmMemOffs:
+    // Emit segment override opcode prefix as needed.
+    EmitSegmentOverridePrefix(CurByte, 1, MI, OS);
+    break;
+  }
+
   // Handle REX prefix.
   // FIXME: Can this come before F2 etc to simplify emission?
   if (is64BitMode(STI)) {
@@ -1354,38 +1397,18 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
         KsError = KS_ERR_ASM_INSN_UNSUPPORTED;
         return;
     }
-    // Emit segment override opcode prefix as needed (not for %ds).
-    if (MI.getOperand(2).getReg() != X86::DS)
-      EmitSegmentOverridePrefix(CurByte, 2, MI, OS);
-    // Emit AdSize prefix as needed.
-    if ((!is32BitMode(STI) && siReg == X86::ESI) ||
-        (is32BitMode(STI) && siReg == X86::SI))
-      EmitByte(0x67, CurByte, OS);
     CurOp += 3; // Consume operands.
     EmitByte(BaseOpcode, CurByte, OS);
     break;
   }
   case X86II::RawFrmSrc: {
     //printf(">> bb\n");
-    unsigned siReg = MI.getOperand(0).getReg();
-    // Emit segment override opcode prefix as needed (not for %ds).
-    if (MI.getOperand(1).getReg() != X86::DS)
-      EmitSegmentOverridePrefix(CurByte, 1, MI, OS);
-    // Emit AdSize prefix as needed.
-    if ((!is32BitMode(STI) && siReg == X86::ESI) ||
-        (is32BitMode(STI) && siReg == X86::SI))
-      EmitByte(0x67, CurByte, OS);
     CurOp += 2; // Consume operands.
     EmitByte(BaseOpcode, CurByte, OS);
     break;
   }
   case X86II::RawFrmDst: {
     //printf(">> cc\n");
-    unsigned siReg = MI.getOperand(0).getReg();
-    // Emit AdSize prefix as needed.
-    if ((!is32BitMode(STI) && siReg == X86::EDI) ||
-        (is32BitMode(STI) && siReg == X86::DI))
-      EmitByte(0x67, CurByte, OS);
     ++CurOp; // Consume operand.
     EmitByte(BaseOpcode, CurByte, OS);
     break;
@@ -1396,8 +1419,6 @@ encodeInstruction(MCInst &MI, raw_ostream &OS,
     break;
   case X86II::RawFrmMemOffs:
     //printf(">> ee\n");
-    // Emit segment override opcode prefix as needed.
-    EmitSegmentOverridePrefix(CurByte, 1, MI, OS);
     EmitByte(BaseOpcode, CurByte, OS);
     EmitImmediate(MI, MI.getOperand(CurOp++), MI.getLoc(),
                   X86II::getSizeOfImm(TSFlags), getImmFixupKind(TSFlags),
