@@ -1,0 +1,13 @@
+Source: keystone-engine
+Maintainer: Michael Mohr <akihana@gmail.com>
+Section: python
+Priority: optional
+Build-Depends: dh-python, python-all (>= 2.6.6-3), debhelper (>= 9)
+Standards-Version: 3.9.6
+Homepage: http://www.keystone-engine.org
+
+Package: python-keystone-engine
+Architecture: all
+Depends: ${misc:Depends}, ${python:Depends}, keystone-engine1
+Description: Keystone assembler engine
+

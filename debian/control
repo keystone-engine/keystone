@@ -1,0 +1,24 @@
+Source: keystone-engine
+Priority: optional
+Maintainer: Michael Mohr <akihana@gmail.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.8
+Section: libs
+Homepage: http://www.keystone-engine.org/
+Vcs-Git: https://github.com/keystone-engine/keystone.git
+Vcs-Browser: https://github.com/keystone-engine/keystone
+
+Package: keystone-engine-dev
+Section: libdevel
+Architecture: any
+Depends: keystone-engine1 (= ${binary:Version}), ${misc:Depends}
+Description: A lightweight multi-architecture assembler framework.
+ Multi-architecture, with support for Arm, Arm64 (AArch64/Armv8),
+ Hexagon, Mips, PowerPC, Sparc, SystemZ, & X86 (include 16/32/64bit).
+
+Package: keystone-engine1
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: A lightweight multi-architecture assembler framework.
+ Multi-architecture, with support for Arm, Arm64 (AArch64/Armv8),
+ Hexagon, Mips, PowerPC, Sparc, SystemZ, & X86 (include 16/32/64bit).
