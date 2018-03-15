@@ -18,3 +18,5 @@ Other bindings maintained externally by community:
 
 - Perl-Keystone: Perl binding made by @t00sh.
     https://github.com/t00sh/perl-keystone
+- keystone-rs: Rust binding by @tathanhdinh
+    https://github.com/tathanhdinh/keystone-rs
