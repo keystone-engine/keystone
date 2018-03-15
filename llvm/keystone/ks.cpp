@@ -550,60 +550,74 @@ int ks_asm(ks_engine *ks,
         unsigned char **insn, size_t *insn_size,
         size_t *stat_count)
 {
-    MCCodeEmitter *CE;
-    MCStreamer *Streamer;
-    unsigned char *encoding;
-    SmallString<1024> Msg;
-    raw_svector_ostream OS(Msg);
+    MCCodeEmitter        *CE;
+    MCStreamer           *Streamer;
+    MCAsmParser          *Parser;
+    MCTargetAsmParser    *TAP;
+    unsigned char        *encoding;
+    SmallString<1024>    Msg;
+    raw_svector_ostream  OS(Msg);
+    uint64_t             BaseAddr;
+    int32_t              MemSts = 0;
 
+    encoding = nullptr;
+    BaseAddr = 0;
     *insn = NULL;
     *insn_size = 0;
 
-    MCContext Ctx(ks->MAI, ks->MRI, &ks->MOFI, &ks->SrcMgr, true, address);
+    //If no address is specified by the user then allocate memory
+    //and give it some space In order to enhance its chances
+    //of remaining in the same location after reallocation is done
+    BaseAddr = address ? address : [&](){ encoding = (unsigned char *)malloc(1024); return (uint64_t)encoding; }();
+    if (!BaseAddr)
+        // memory insufficient
+	return KS_ERR_NOMEM;
+
+    MCContext Ctx(ks->MAI, ks->MRI, &ks->MOFI, &ks->SrcMgr, true, BaseAddr);
     ks->MOFI.InitMCObjectFileInfo(Triple(ks->TripleName), Ctx);
     CE = ks->TheTarget->createMCCodeEmitter(*ks->MCII, *ks->MRI, Ctx);
     if (!CE) {
         // memory insufficient
-        return KS_ERR_NOMEM;
+	MemSts = KS_ERR_NOMEM;
+	goto MemoryInsufficient;
     }
+
     Streamer = ks->TheTarget->createMCObjectStreamer(
             Triple(ks->TripleName), Ctx, *ks->MAB, OS, CE, *ks->STI, ks->MCOptions.MCRelaxAll,
             /*DWARFMustBeAtTheEnd*/ false);
-            
     if (!Streamer) {
+	// memory insufficient
+	MemSts = KS_ERR_NOMEM;
+        goto MemoryInsufficient;
+    }
+    
+    {   // Tell SrcMgr about this buffer, which is what the parser will pick up.
+   	ErrorOr<std::unique_ptr<MemoryBuffer>> BufferPtr = MemoryBuffer::getMemBuffer(assembly);
+	if (BufferPtr.getError()) {
         // memory insufficient
-        delete CE;
-        return KS_ERR_NOMEM;
-    }
+            MemSts = KS_ERR_NOMEM;
+            goto MemoryInsufficient;
+          }
 
-    // Tell SrcMgr about this buffer, which is what the parser will pick up.
-    ErrorOr<std::unique_ptr<MemoryBuffer>> BufferPtr = MemoryBuffer::getMemBuffer(assembly);
-    if (BufferPtr.getError()) {
-        delete Streamer;
-        delete CE;
-        return KS_ERR_NOMEM;
+	ks->SrcMgr.clearBuffers();
+	ks->SrcMgr.AddNewSourceBuffer(std::move(*BufferPtr), SMLoc());
     }
-
-    ks->SrcMgr.clearBuffers();
-    ks->SrcMgr.AddNewSourceBuffer(std::move(*BufferPtr), SMLoc());
 
     Streamer->setSymResolver((void *)(ks->sym_resolver));
-
-    MCAsmParser *Parser = createMCAsmParser(ks->SrcMgr, Ctx, *Streamer, *ks->MAI);
+    
+    Parser = createMCAsmParser(ks->SrcMgr, Ctx, *Streamer, *ks->MAI);
     if (!Parser) {
-        delete Streamer;
-        delete CE;
-        // memory insufficient
-        return KS_ERR_NOMEM;
+	// memory insufficient
+	MemSts = KS_ERR_NOMEM;
+	goto MemoryInsufficient;
     }
-    MCTargetAsmParser *TAP = ks->TheTarget->createMCAsmParser(*ks->STI, *Parser, *ks->MCII, ks->MCOptions);
-    if (!TAP) { 
-        // memory insufficient
-        delete Parser;
-        delete Streamer;
-        delete CE;
-        return KS_ERR_NOMEM;
-    }
+    
+    TAP = ks->TheTarget->createMCAsmParser(*ks->STI, *Parser, *ks->MCII, ks->MCOptions);
+    if (!TAP) {
+	// memory insufficient
+	MemSts = KS_ERR_NOMEM;
+	goto MemoryInsufficient;
+    }    
     TAP->KsSyntax = ks->syntax;
 
     Parser->setTargetParser(*TAP);
@@ -614,7 +628,7 @@ int ks_asm(ks_engine *ks,
         ks->MAI->setCommentString(";");
     }
 
-    *stat_count = Parser->Run(false, address);
+    *stat_count = Parser->Run(false, BaseAddr);
 
     // PPC counts empty statement
     if (ks->arch == KS_ARCH_PPC)
@@ -622,19 +636,29 @@ int ks_asm(ks_engine *ks,
 
     ks->errnum = Parser->KsError;
 
-    delete TAP;
-    delete Parser;
-    delete CE;
-    delete Streamer;
+MemoryInsufficient: // Clean up
 
-    if (ks->errnum >= KS_ERR_ASM)
-        return -1;
+	if (!TAP)      delete TAP;
+	if (!Parser)   delete Parser;
+	if (!CE) 	   delete CE;
+	if (!Streamer) delete Streamer;
+
+	if (ks->errnum >= KS_ERR_ASM || MemSts == KS_ERR_NOMEM)
+        {
+           if (encoding != nullptr)
+               free(encoding);
+	    return MemSts ? MemSts : -1;
+	}
     else {
         *insn_size = Msg.size();
-        encoding = (unsigned char *)malloc(*insn_size);
-        if (!encoding) {
-            return KS_ERR_NOMEM;
+        //Reallocate the correct amount of memory
+        unsigned char *ext_encoding = (unsigned char *) realloc(encoding, *insn_size);
+        if (!ext_encoding) {
+           if (encoding != nullptr)
+               free(encoding);
+          return KS_ERR_NOMEM;
         }
+	encoding = ext_encoding;
         memcpy(encoding, Msg.data(), *insn_size);
         *insn = encoding;
         return 0;
