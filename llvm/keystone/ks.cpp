@@ -49,7 +49,7 @@ const char *ks_strerror(ks_err code)
 {
     switch(code) {
         default:
-            return "Unknow error";  // FIXME
+            return "Unknown error";  // FIXME
         case KS_ERR_OK:
             return "OK (KS_ERR_OK)";
         case KS_ERR_NOMEM:

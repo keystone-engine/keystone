@@ -1231,11 +1231,11 @@ bool HexagonAsmParser::isLabel(AsmToken &Token, bool &valid) {
 
 bool HexagonAsmParser::handleNoncontigiousRegister(bool Contigious, SMLoc &Loc) {
   if (!Contigious && ErrorNoncontigiousRegister) {
-    Error(Loc, "Register name is not contigious");
+    Error(Loc, "Register name is not contiguous");
     return true;
   }
   if (!Contigious && WarnNoncontigiousRegister)
-    Warning(Loc, "Register name is not contigious");
+    Warning(Loc, "Register name is not contiguous");
   return false;
 }
 
