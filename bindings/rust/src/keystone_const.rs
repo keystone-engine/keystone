@@ -12,7 +12,8 @@ pub const KS_ARCH_PPC : u32 = 5;
 pub const KS_ARCH_SPARC : u32 = 6;
 pub const KS_ARCH_SYSTEMZ : u32 = 7;
 pub const KS_ARCH_HEXAGON : u32 = 8;
-pub const KS_ARCH_MAX : u32 = 9;
+pub const KS_ARCH_EVM : u32 = 9;
+pub const KS_ARCH_MAX : u32 = 10;
 
 
 bitflags! {
@@ -49,6 +50,7 @@ pub enum Arch {
 	SPARC,
 	SYSTEMZ,
 	HEXAGON,
+	EVM,
 	MAX,
 }
 
@@ -65,7 +67,8 @@ impl Arch {
 			Arch::SPARC => 6,
 			Arch::SYSTEMZ => 7,
 			Arch::HEXAGON => 8,
-			Arch::MAX => 9,
+			Arch::EVM => 9,
+			Arch::MAX => 10,
 		}
 	}
 }

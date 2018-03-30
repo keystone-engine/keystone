@@ -55,6 +55,7 @@ typedef enum ks_arch {
     KS_ARCH_SPARC,      // Sparc architecture
     KS_ARCH_SYSTEMZ,    // SystemZ architecture (S390X)
     KS_ARCH_HEXAGON,    // Hexagon architecture
+    KS_ARCH_EVM,        // Ethereum Virtual Machine architecture
     KS_ARCH_MAX,
 } ks_arch;
 
@@ -176,6 +177,7 @@ typedef enum ks_opt_value {
 
 #include "arm64.h"
 #include "arm.h"
+#include "evm.h"
 #include "hexagon.h"
 #include "mips.h"
 #include "ppc.h"

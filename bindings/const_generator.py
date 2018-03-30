@@ -8,7 +8,7 @@ INCL_DIR = os.path.join('..', 'include', 'keystone')
 # NOTE: this reflects the value of KS_ERR_ASM_xxx in keystone.h
 ks_err_val = { 'KS_ERR_ASM': '128', 'KS_ERR_ASM_ARCH': '512' }
 
-include = [ 'arm.h', 'arm64.h', 'mips.h', 'x86.h', 'sparc.h', 'ppc.h', 'systemz.h', 'hexagon.h', 'keystone.h' ]
+include = [ 'arm.h', 'arm64.h', 'mips.h', 'x86.h', 'sparc.h', 'ppc.h', 'systemz.h', 'hexagon.h', 'evm.h', 'keystone.h' ]
 
 def CamelCase(s):
     # return re.sub(r'(\w)+\_?', lambda m:m.group(0).capitalize(), s)
@@ -43,6 +43,7 @@ template = {
             'systemz.h': 'keystone',
             'ppc.h': 'keystone',
             'hexagon.h': 'keystone',
+            'evm.h': 'keystone',
             'keystone.h': 'keystone',
             'comment_open': '/*',
             'comment_close': '*/',
@@ -120,6 +121,7 @@ template = {
             'systemz.h': 'systemz',
             'ppc.h': 'ppc',
             'hexagon.h': 'hexagon',
+            'evm.h': 'evm',
             'keystone.h': 'keystone',
             'comment_open': '/*',
             'comment_close': '*/',
@@ -181,6 +183,7 @@ template = {
             'systemz.h': 'systemz',
             'ppc.h': 'ppc',
             'hexagon.h': 'hexagon',
+            'evm.h': 'evm',
             'keystone.h': 'keystone',
             'comment_open': '#',
             'comment_close': '',
@@ -205,6 +208,7 @@ template = {
             'systemz.h': 'systemz',
             'ppc.h': 'ppc',
             'hexagon.h': 'hexagon',
+            'evm.h': 'evm',
             'keystone.h': 'keystone',
             'comment_open': '//',
             'comment_close': '',
@@ -229,6 +233,7 @@ template = {
             'systemz.h': 'systemz',
             'ppc.h': 'ppc',
             'hexagon.h': 'hexagon',
+            'evm.h': 'evm',
             'keystone.h': 'keystone',
             'comment_open': '#',
             'comment_close': '',
@@ -254,6 +259,7 @@ template = {
             'systemz.h': 'systemz',
             'ppc.h': 'ppc',
             'hexagon.h': 'hexagon',
+            'evm.h': 'evm',
             'keystone.h': 'keystone',
             'comment_open': '//',
             'comment_close': '',

@@ -13,6 +13,10 @@
 #include "llvm/MC/MCObjectFileInfo.h"
 #include "llvm/MC/MCCodeEmitter.h"
 
+// FIXME: setup this with CMake
+#define LLVM_ENABLE_ARCH_EVM
+#include "EVMMapping.h"
+
 // DEBUG
 //#include <iostream>
 
@@ -172,6 +176,9 @@ bool ks_arch_supported(ks_arch arch)
 #ifdef LLVM_ENABLE_ARCH_SystemZ
         case KS_ARCH_SYSTEMZ:   return true;
 #endif
+#ifdef LLVM_ENABLE_ARCH_EVM
+        case KS_ARCH_EVM:   return true;
+#endif
         /* Invalid or disabled arch */
         default:            return false;
     }
@@ -249,6 +256,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
     std::string TripleName = "";
 
     if (arch < KS_ARCH_MAX) {
+        // LLVM-based architectures
         ks = new (std::nothrow) ks_struct(arch, mode, KS_ERR_OK, KS_OPT_SYNTAX_INTEL);
         
         if (!ks) {
@@ -463,6 +471,12 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
                 break;
             }
 #endif
+#ifdef LLVM_ENABLE_ARCH_EVM
+            case KS_ARCH_EVM: {
+                *result = ks;
+                return KS_ERR_OK;
+            }
+#endif
         }
 
         if (TripleName.empty()) {
@@ -485,6 +499,12 @@ ks_err ks_close(ks_engine *ks)
     if (!ks)
         return KS_ERR_HANDLE;
 
+    if (ks->arch == KS_ARCH_EVM) {
+        // handle EVM differently
+        return KS_ERR_OK;
+    }
+
+    // LLVM-based architectures
     delete ks->STI;
     delete ks->MCII;
     delete ks->MAI;
@@ -543,6 +563,10 @@ void ks_free(unsigned char *p)
     free(p);
 }
 
+/*
+ @return: 0 on success, or -1 on failure.
+ On failure, call ks_errno() for error code.
+*/
 KEYSTONE_EXPORT
 int ks_asm(ks_engine *ks,
         const char *assembly,
@@ -555,6 +579,22 @@ int ks_asm(ks_engine *ks,
     unsigned char *encoding;
     SmallString<1024> Msg;
     raw_svector_ostream OS(Msg);
+
+    if (ks->arch == KS_ARCH_EVM) {
+        // handle EVM differently
+        unsigned short opcode = EVM_opcode(assembly);
+        if (opcode == (unsigned short)-1) {
+            // invalid instruction
+            return -1;
+        }
+
+        *insn_size = 1;
+        *stat_count = 1;
+        encoding = (unsigned char *)malloc(*insn_size);
+        encoding[0] = opcode;
+        *insn = encoding;
+        return 0;
+    }
 
     *insn = NULL;
     *insn_size = 0;

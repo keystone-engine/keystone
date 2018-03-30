@@ -14,11 +14,9 @@
 
 #include <keystone/keystone.h>
 
-#define VERSION "0.9.1"
-
 static void usage(char *prog)
 {
-    printf("Kstool v%u.%u.%u for Keystone Assembler Engine (www.keystone-engine.org)\nBy Nguyen Anh Quynh, 2016\n\n",
+    printf("Kstool v%u.%u.%u for Keystone Assembler Engine (www.keystone-engine.org)\nBy Nguyen Anh Quynh, 2016-2018\n\n",
             KS_VERSION_MAJOR, KS_VERSION_MINOR, KS_VERSION_EXTRA);
     printf("Syntax: %s <arch+mode> <assembly-string> [start-address-in-hex-format]\n", prog);
     printf("\nThe following <arch+mode> options are supported:\n");
@@ -76,6 +74,10 @@ static void usage(char *prog)
 
     if (ks_arch_supported(KS_ARCH_SYSTEMZ)) {
         printf("        systemz:   SystemZ (S390x)\n");
+    }
+
+    if (ks_arch_supported(KS_ARCH_EVM)) {
+        printf("        evm:       Ethereum Virtual Machine\n");
     }
 
     printf("\n");
@@ -283,6 +285,10 @@ int main(int argc, char **argv)
         err = ks_open(KS_ARCH_SYSTEMZ, KS_MODE_BIG_ENDIAN, &ks);
     }
 
+    if (!strcmp(mode, "evm")) {
+        err = ks_open(KS_ARCH_EVM, 0, &ks);
+    }
+
     if (err) {
         printf("ERROR: failed on ks_open()\n");
         usage(argv[0]);
@@ -293,7 +299,6 @@ int main(int argc, char **argv)
         printf("ERROR: failed on ks_asm() with count = %zu, error = '%s' (code = %u)\n", count, ks_strerror(ks_errno(ks)), ks_errno(ks));
     } else {
         size_t i;
-        //printf("Kstool v%s for Keystone Engine (www.keystone-engine.org)\n\n", VERSION);
         printf("%s = [ ", assembly);
         for (i = 0; i < size; i++) {
             printf("%02x ", insn[i]);
