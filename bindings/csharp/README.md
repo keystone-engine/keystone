@@ -1,23 +1,29 @@
 # Keystone.Net
-.Net bindings for Keystone
+.NET Standard bindings for Keystone.
 
 ## Usage
+```csharp
+using Keystone;
 
- ```csharp
- using(var keystone = new Keystone(KeystoneArchitecture.KS_ARCH_X86, KeystoneMode.KS_MODE_32, false))
- {
+using (Engine keystone = new Engine(Architecture.X86, Mode.X32, throwOnKeystoneError: true))
+{
     ulong address = 0;
+
     keystone.ResolveSymbol += (string s, ref ulong w) =>
     {
-      if (s == "_j1")
-      {
-        w = 0x1234abcd;
-        return true;
-      }
-      return false;
+        if (s == "_j1")
+        {
+            w = 0x1234abcd;
+            return true;
+        }
+
+        return false;
     };
     
-    KeystoneEncoded enc = keystone.Assemble("xor eax, eax; jmp _j1", address);
-    
-    ...
- }
+    EncodedData enc = keystone.Assemble("xor eax, eax; jmp _j1", address);
+
+    enc.Buffer.ShouldBe(new byte[] { 0x00 });
+    enc.Address.ShouldBe(address);
+    enc.StatementCount.ShouldBe(3);
+}
+```

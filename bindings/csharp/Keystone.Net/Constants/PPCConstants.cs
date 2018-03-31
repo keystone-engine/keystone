@@ -1,5 +1,5 @@
 // For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [ppcConstants.cs]
-namespace KeystoneNET
+namespace Keystone
 {
 	public enum PpcError : short
 	{

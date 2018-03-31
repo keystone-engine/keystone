@@ -1,5 +1,5 @@
 // For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [armConstants.cs]
-namespace KeystoneNET
+namespace Keystone
 {
 	public enum ArmError : short
 	{

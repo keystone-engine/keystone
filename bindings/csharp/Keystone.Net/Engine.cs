@@ -3,25 +3,25 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-namespace KeystoneNET
+namespace Keystone
 {
     /// <summary>
-    /// Manage a Keystone engine.
+    ///   Represents a Keystone engine.
     /// </summary>
-    public class Keystone : IDisposable
+    public sealed class Engine : IDisposable
     {
-        IntPtr engine = IntPtr.Zero;
-        bool throwOnError;
-        bool addedResolveSymbol;
+        private IntPtr engine = IntPtr.Zero;
+        private readonly bool throwOnError;
+        private bool addedResolveSymbol;
 
-        ResolverInternal internalImpl;
-        List<Resolver> resolvers = new List<Resolver>();
+        private readonly ResolverInternal internalImpl;
+        private readonly List<Resolver> resolvers = new List<Resolver>();
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        delegate bool ResolverInternal(IntPtr symbol, ref ulong value);
+        private delegate bool ResolverInternal(IntPtr symbol, ref ulong value);
 
         /// <summary>
-        /// Delegate for defining symbol resolvers.
+        ///   Delegate for defining symbol resolvers.
         /// </summary>
         /// <param name="symbol">Symbol to resolve</param>
         /// <param name="value">Address</param>
@@ -29,33 +29,45 @@ namespace KeystoneNET
         public delegate bool Resolver(string symbol, ref ulong value);
 
         /// <summary>
-        /// Event raised when keystone is resolving a symbol.
+        ///   Event raised when keystone is resolving a symbol.
         /// </summary>
+        /// <remarks>This event requires Keystone 0.9.2 or higher.</remarks>
         public event Resolver ResolveSymbol
         {
             add
             {
-                resolvers.Add(value);
                 if (!addedResolveSymbol)
                 {
-                    KeystoneImports.SetOption(engine, KeystoneOptionType.KS_OPT_SYM_RESOLVER, Marshal.GetFunctionPointerForDelegate(internalImpl));
-                    addedResolveSymbol = true;
+                    KeystoneError err = NativeInterop.SetOption(engine, (int)OptionType.SYM_RESOLVER, Marshal.GetFunctionPointerForDelegate(internalImpl));
+
+                    if (err == KeystoneError.KS_ERR_OK)
+                        addedResolveSymbol = true;
+                    else
+                        throw new InvalidOperationException($"Could not add symol resolver: {ErrorToString(err)}.");
                 }
+
+                resolvers.Add(value);
             }
+
             remove
             {
-                resolvers.Remove(value);
                 if (addedResolveSymbol && resolvers.Count == 0)
                 {
-                    KeystoneImports.SetOption(engine, KeystoneOptionType.KS_OPT_SYM_RESOLVER, IntPtr.Zero);
-                    addedResolveSymbol = false;
+                    KeystoneError err = NativeInterop.SetOption(engine, (int)OptionType.SYM_RESOLVER, IntPtr.Zero);
+
+                    if (err == KeystoneError.KS_ERR_OK)
+                        addedResolveSymbol = false;
+                    else
+                        throw new InvalidOperationException($"Could not remove symol resolver: {ErrorToString(err)}.");
                 }
+
+                resolvers.Remove(value);
             }
         }
 
 
         /// <summary>
-        /// Method used for symbol resolving.
+        ///   Method used for symbol resolving.
         /// </summary>
         /// <param name="symbolPtr">Name of the symbol</param>
         /// <param name="value">Address</param>
@@ -63,51 +75,54 @@ namespace KeystoneNET
         private bool SymbolResolver(IntPtr symbolPtr, ref ulong value)
         {
             string symbol = Marshal.PtrToStringAnsi(symbolPtr);
-            foreach (var item in resolvers)
+
+            foreach (Resolver item in resolvers)
             {
                 bool result = item(symbol, ref value);
                 if (result)
                     return true;
             }
+
             return false;
         }
 
         /// <summary>
-        /// Construct the object with a given architecture and a given mode.
+        ///   Constructs the object with a given architecture and a given mode.
         /// </summary>
         /// <param name="architecture">Architecture</param>
         /// <param name="mode">Mode, i.e. endianess, word size etc.</param>
         /// <param name="throwOnKeystoneError">Throw when there are errors</param>
         /// <remarks>
         /// Some architectures are not supported.
-        /// Check with <see cref="IsArchitectureSupported(KeystoneArchitecture)"/> if the engine
+        /// Check with <see cref="IsArchitectureSupported(Architecture)"/> if the engine
         /// support the architecture.
         /// </remarks>
-        public Keystone(KeystoneArchitecture architecture, KeystoneMode mode, bool throwOnKeystoneError = true)
+        public Engine(Architecture architecture, Mode mode, bool throwOnKeystoneError = true)
         {
             internalImpl = SymbolResolver;
             throwOnError = throwOnKeystoneError;
-            var result = KeystoneImports.Open(architecture, (int)mode, ref engine);
+
+            var result = NativeInterop.Open(architecture, (int)mode, ref engine);
 
             if (result != KeystoneError.KS_ERR_OK && throwOnKeystoneError)
-                throw new InvalidOperationException($"Error while initializing keystone: {ErrorToString(result)}");
+                throw new InvalidOperationException($"Error while initializing keystone: {ErrorToString(result)}.");
         }
 
         /// <summary>
-        /// Set an option in the engine.
+        ///   Sets an option in the engine.
         /// </summary>
         /// <param name="type">Type of option</param>
         /// <param name="value">Value</param>
         /// <returns>True is the option is correctly setted, False otherwise &amp;&amp; throwOnError is false.</returns>
         /// <exception cref="InvalidOperationException">If Keystone return an error &amp;&amp; throwOnError is true</exception>
-        public bool SetOption(KeystoneOptionType type, uint value)
+        public bool SetOption(OptionType type, uint value)
         {
-            var result = KeystoneImports.SetOption(engine, type, (IntPtr)value);
+            var result = NativeInterop.SetOption(engine, (int)type, (IntPtr)value);
 
             if (result != KeystoneError.KS_ERR_OK)
             {
                 if (throwOnError)
-                    throw new InvalidOperationException($"Error while setting option in keystone: {ErrorToString(result)}");
+                    throw new InvalidOperationException($"Error while setting option in keystone: {ErrorToString(result)}.");
                 return false;
             }
 
@@ -115,38 +130,33 @@ namespace KeystoneNET
         }
 
         /// <summary>
-        /// Return a string associated with a given error code.
+        ///   Returns a string associated with a given error code.
         /// </summary>
         /// <param name="result">Error code</param>
         /// <returns>The string</returns>
         public static string ErrorToString(KeystoneError result)
         {
-            IntPtr error = KeystoneImports.ErrorToString(result);
+            IntPtr error = NativeInterop.ErrorToString(result);
             if (error != IntPtr.Zero)
                 return Marshal.PtrToStringAnsi(error);
             return string.Empty;
         }
 
         /// <summary>
-        /// Encode given statements.
+        ///   Encodes given statements.
         /// </summary>
         /// <param name="toEncode">String that contains the statements to encode</param>
         /// <param name="address">Address of the first instruction.</param>
         /// <returns>Result of the assemble operation or null if it failed &amp;&amp; throwOnError is false.</returns>
         /// <exception cref="InvalidOperationException">If keystone return an error &amp;&amp; throwOnError is true</exception>
-        public KeystoneEncoded Assemble(string toEncode, ulong address)
+        public EncodedData Assemble(string toEncode, ulong address)
         {
-            IntPtr encoding;
-            uint size;
-            uint statementCount;
-            byte[] buffer;
-
-            int result = KeystoneImports.Assemble(engine,
+            int result = NativeInterop.Assemble(engine,
                                                   toEncode,
                                                   address,
-                                                  out encoding,
-                                                  out size,
-                                                  out statementCount);
+                                                  out IntPtr encoding,
+                                                  out uint size,
+                                                  out uint statementCount);
 
             if (result != 0)
             {
@@ -155,16 +165,16 @@ namespace KeystoneNET
                 return null;
             }
 
-            buffer = new byte[size];
+            byte[] buffer = new byte[size];
 
             Marshal.Copy(encoding, buffer, 0, (int)size);
-            KeystoneImports.Free(encoding);
+            NativeInterop.Free(encoding);
 
-            return new KeystoneEncoded(buffer, statementCount, address);
+            return new EncodedData(buffer, statementCount, address);
         }
 
         /// <summary>
-        /// Append the result of an assemble to an existing collection of bytes.
+        ///   Appends the result of an assemble to an existing collection of bytes.
         /// </summary>
         /// <param name="toEncode">String to encode</param>
         /// <param name="encoded">Collection of bytes</param>
@@ -175,12 +185,12 @@ namespace KeystoneNET
         /// <exception cref="ArgumentNullException">String to encode is null or collection is null</exception>
         /// <exception cref="ArgumentException">Collection is read-only</exception>
         /// <exception cref="InvalidOperationException">If keystone return an error &amp;&amp; throwOnError is true</exception>
-        public bool AppendAssemble(string toEncode, ICollection<byte> encoded, ulong address, out int size, out uint statements)
+        public bool AppendAssemble(string toEncode, ICollection<byte> encoded, ulong address, out int size, out int statements)
         {
             if (encoded == null)
-                throw new ArgumentNullException("encoded");
+                throw new ArgumentNullException(nameof(encoded));
             if (toEncode == null)
-                throw new ArgumentNullException("toEncode");
+                throw new ArgumentNullException(nameof(toEncode));
             if (encoded.IsReadOnly)
                 throw new ArgumentException("encoded collection can't be read-only.");
 
@@ -204,7 +214,7 @@ namespace KeystoneNET
         }
 
         /// <summary>
-        /// Append the result of an assemble to an existing collection of bytes.
+        ///   Appends the result of an assemble to an existing collection of bytes.
         /// </summary>
         /// <param name="toEncode">String to encode</param>
         /// <param name="encoded">Collection of bytes</param>
@@ -216,12 +226,11 @@ namespace KeystoneNET
         /// <exception cref="InvalidOperationException">If keystone return an error &amp;&amp; throwOnError is true</exception>
         public bool AppendAssemble(string toEncode, ICollection<byte> encoded, ulong address, out int size)
         {
-            uint unused;
-            return AppendAssemble(toEncode, encoded, address, out size, out unused);
+            return AppendAssemble(toEncode, encoded, address, out size, out _);
         }
 
         /// <summary>
-        /// Append the result of an assemble to an existing collection of bytes.
+        ///   Appends the result of an assemble to an existing collection of bytes.
         /// </summary>
         /// <param name="toEncode">String to encode</param>
         /// <param name="encoded">Collection of bytes</param>
@@ -232,14 +241,11 @@ namespace KeystoneNET
         /// <exception cref="InvalidOperationException">If keystone return an error &amp;&amp; throwOnError is true</exception>
         public bool AppendAssemble(string toEncode, ICollection<byte> encoded, ulong address)
         {
-            uint unused1;
-            int unused2;
-
-            return AppendAssemble(toEncode, encoded, address, out unused2, out unused1);
+            return AppendAssemble(toEncode, encoded, address, out _, out _);
         }
 
         /// <summary>
-        /// Append the result of an assemble to an existing collection of bytes.
+        ///   Appends the result of an assemble to an existing collection of bytes.
         /// </summary>
         /// <param name="toEncode">String to encode</param>
         /// <param name="encoded">Collection of bytes</param>
@@ -249,14 +255,11 @@ namespace KeystoneNET
         /// <exception cref="InvalidOperationException">If keystone return an error &amp;&amp; throwOnError is true</exception>
         public bool AppendAssemble(string toEncode, ICollection<byte> encoded)
         {
-            uint unused1;
-            int unused2;
-
-            return AppendAssemble(toEncode, encoded, 0, out unused2, out unused1);
+            return AppendAssemble(toEncode, encoded, 0, out _, out _);
         }
 
         /// <summary>
-        /// Get the last error for this instance.
+        ///   Gets the last error for this instance.
         /// </summary>
         /// <returns>Last error</returns>
         /// <remarks>
@@ -264,40 +267,39 @@ namespace KeystoneNET
         /// </remarks>
         public KeystoneError GetLastKeystoneError()
         {
-            return KeystoneImports.GetLastKeystoneError(engine);
+            return NativeInterop.GetLastKeystoneError(engine);
         }
 
         /// <summary>
-        /// Check if an architecture is supported.
+        ///   Checks if an architecture is supported.
         /// </summary>
         /// <param name="architecture">Architecture</param>
         /// <returns>True if it is supported</returns>
-        public static bool IsArchitectureSupported(KeystoneArchitecture architecture)
+        public static bool IsArchitectureSupported(Architecture architecture)
         {
-            return KeystoneImports.IsArchitectureSupported(architecture);
+            return NativeInterop.IsArchitectureSupported(architecture);
         }
 
         /// <summary>
-        /// Get the version of the engine.
+        ///   Gets the version of the engine.
         /// </summary>
         /// <param name="major">Major</param>
         /// <param name="minor">Minor</param>
         /// <returns>Unique identifier for this version.</returns>
         public static uint GetKeystoneVersion(ref uint major, ref uint minor)
         {
-            return KeystoneImports.Version(ref major, ref minor);
+            return NativeInterop.Version(ref major, ref minor);
         }
 
         /// <summary>
-        /// Release the engine.
+        ///   Releases the engine.
         /// </summary>
         public void Dispose()
         {
-            var currentEngine = Interlocked.Exchange(ref engine, IntPtr.Zero);
-            if (currentEngine != IntPtr.Zero)
-                KeystoneImports.Close(currentEngine);
+            IntPtr currentEngine = Interlocked.Exchange(ref engine, IntPtr.Zero);
 
-            GC.SuppressFinalize(this);
+            if (currentEngine != IntPtr.Zero)
+                NativeInterop.Close(currentEngine);
         }
     }
 }
