@@ -45,6 +45,13 @@ if (${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
 else()
     set(CMAKE_C_VISIBILITY_PRESET hidden)
     set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+
+    # Use GNUInstallDirs to set LLVM_LIBDIR_SUFFIX. This should automatically
+    # handle cases where the libdir should be lib/, lib64/, or lib/<arch>/
+    # depending on the target system and cmake options.
+    include(GNUInstallDirs)
+    string(REGEX REPLACE "lib(.*)$" "\\1" LLVM_LIBDIR_SUFFIX "${CMAKE_INSTALL_LIBDIR}")
+    set(LLVM_LIBDIR_SUFFIX "${LLVM_LIBDIR_SUFFIX}" CACHE STRING "Define suffix of library directory name (32/64)")
 endif()
 
 # Force static runtime libraries
