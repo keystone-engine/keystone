@@ -258,7 +258,7 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
     if (arch < KS_ARCH_MAX) {
         // LLVM-based architectures
         ks = new (std::nothrow) ks_struct(arch, mode, KS_ERR_OK, KS_OPT_SYNTAX_INTEL);
-        
+
         if (!ks) {
             // memory insufficient
             return KS_ERR_NOMEM;
@@ -290,6 +290,12 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
                     case KS_MODE_BIG_ENDIAN | KS_MODE_THUMB:
                         TripleName = "thumbebv7";
                         break;
+                    case KS_MODE_BIG_ENDIAN | KS_MODE_V5 | KS_MODE_ARM:
+                        TripleName = "armv5eb";
+                        break;
+                    case KS_MODE_BIG_ENDIAN | KS_MODE_V5 | KS_MODE_THUMB:
+                        TripleName = "thumbebv5";
+                        break;
 
                     // little-endian
                     case KS_MODE_LITTLE_ENDIAN | KS_MODE_V8 | KS_MODE_ARM:
@@ -303,6 +309,12 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
                         break;
                     case KS_MODE_LITTLE_ENDIAN | KS_MODE_THUMB:
                         TripleName = "thumbv7";
+                        break;
+                    case KS_MODE_LITTLE_ENDIAN | KS_MODE_V5 | KS_MODE_ARM:
+                        TripleName = "armv5";
+                        break;
+                    case KS_MODE_LITTLE_ENDIAN | KS_MODE_V5 | KS_MODE_THUMB:
+                        TripleName = "thumbv5";
                         break;
                 }
 
@@ -609,7 +621,7 @@ int ks_asm(ks_engine *ks,
     Streamer = ks->TheTarget->createMCObjectStreamer(
             Triple(ks->TripleName), Ctx, *ks->MAB, OS, CE, *ks->STI, ks->MCOptions.MCRelaxAll,
             /*DWARFMustBeAtTheEnd*/ false);
-            
+
     if (!Streamer) {
         // memory insufficient
         delete CE;
@@ -637,7 +649,7 @@ int ks_asm(ks_engine *ks,
         return KS_ERR_NOMEM;
     }
     MCTargetAsmParser *TAP = ks->TheTarget->createMCAsmParser(*ks->STI, *Parser, *ks->MCII, ks->MCOptions);
-    if (!TAP) { 
+    if (!TAP) {
         // memory insufficient
         delete Parser;
         delete Streamer;
