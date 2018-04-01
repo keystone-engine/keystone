@@ -164,7 +164,8 @@ impl Keystone {
         });
 
         if err == ERR_OK {
-            let bytes = unsafe { std::slice::from_raw_parts(ptr, size) };
+            let bytes_slice = unsafe { std::slice::from_raw_parts(ptr, size) };
+            let bytes = bytes_slice.to_vec();
 
             unsafe {
                 ffi::ks_free(ptr);
@@ -173,7 +174,7 @@ impl Keystone {
             Ok(AsmResult {
                 size: size as u32,
                 stat_count: stat_count as u32,
-                bytes: From::from(&bytes[..]),
+                bytes
             })
         } else {
             let err = Error::from_bits_truncate(unsafe { ffi::ks_errno(self.handle) });
