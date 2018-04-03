@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -11,7 +12,6 @@ namespace Keystone
     public sealed class Engine : IDisposable
     {
         private IntPtr engine = IntPtr.Zero;
-        private readonly bool throwOnError;
         private bool addedResolveSymbol;
 
         private readonly ResolverInternal internalImpl;
@@ -20,18 +20,25 @@ namespace Keystone
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate bool ResolverInternal(IntPtr symbol, ref ulong value);
 
+
+        /// <summary>
+        ///   Gets or sets a value that represents whether a <see cref="KeystoneException" />
+        ///   should be thrown on error.
+        /// </summary>
+        public bool ThrowOnError { get; set; }
+
         /// <summary>
         ///   Delegate for defining symbol resolvers.
         /// </summary>
-        /// <param name="symbol">Symbol to resolve</param>
-        /// <param name="value">Address</param>
-        /// <returns>True if the symbol was recognized.</returns>
+        /// <param name="symbol">Symbol to resolve.</param>
+        /// <param name="value">Address of taid symbol, if found.</param>
+        /// <returns>Whether the symbol was recognized.</returns>
         public delegate bool Resolver(string symbol, ref ulong value);
 
         /// <summary>
         ///   Event raised when keystone is resolving a symbol.
         /// </summary>
-        /// <remarks>This event requires Keystone 0.9.2 or higher.</remarks>
+        /// <remarks>This event is only available on Keystone 0.9.2 or higher.</remarks>
         public event Resolver ResolveSymbol
         {
             add
@@ -43,7 +50,7 @@ namespace Keystone
                     if (err == KeystoneError.KS_ERR_OK)
                         addedResolveSymbol = true;
                     else
-                        throw new InvalidOperationException($"Could not add symol resolver: {ErrorToString(err)}.");
+                        throw new KeystoneException("Could not add symbol resolver", err);
                 }
 
                 resolvers.Add(value);
@@ -58,21 +65,20 @@ namespace Keystone
                     if (err == KeystoneError.KS_ERR_OK)
                         addedResolveSymbol = false;
                     else
-                        throw new InvalidOperationException($"Could not remove symol resolver: {ErrorToString(err)}.");
+                        throw new KeystoneException("Could not remove symbol resolver", err);
                 }
 
                 resolvers.Remove(value);
             }
         }
 
-
         /// <summary>
         ///   Method used for symbol resolving.
         /// </summary>
-        /// <param name="symbolPtr">Name of the symbol</param>
-        /// <param name="value">Address</param>
-        /// <returns>True if the symbol is recognized</returns>
-        private bool SymbolResolver(IntPtr symbolPtr, ref ulong value)
+        /// <param name="symbolPtr">Pointer to the name of the symbol.</param>
+        /// <param name="value">Address of the symbol, if found.</param>
+        /// <returns>Whether the symbol could be recognized.</returns>
+        private bool ResolveSymbolInternal(IntPtr symbolPtr, ref ulong value)
         {
             string symbol = Marshal.PtrToStringAnsi(symbolPtr);
 
@@ -87,42 +93,41 @@ namespace Keystone
         }
 
         /// <summary>
-        ///   Constructs the object with a given architecture and a given mode.
+        ///   Constructs the engine with a given architecture and a given mode.
         /// </summary>
-        /// <param name="architecture">Architecture</param>
-        /// <param name="mode">Mode, i.e. endianess, word size etc.</param>
-        /// <param name="throwOnKeystoneError">Throw when there are errors</param>
+        /// <param name="architecture">The target architecture.</param>
+        /// <param name="mode">The mode, i.e. endianness, word size etc.</param>
         /// <remarks>
-        /// Some architectures are not supported.
-        /// Check with <see cref="IsArchitectureSupported(Architecture)"/> if the engine
-        /// support the architecture.
+        ///   Some architectures are not supported.
+        ///   Check with <see cref="IsArchitectureSupported(Architecture)"/> if the engine
+        ///   supports the target architecture.
         /// </remarks>
-        public Engine(Architecture architecture, Mode mode, bool throwOnKeystoneError = true)
+        public Engine(Architecture architecture, Mode mode)
         {
-            internalImpl = SymbolResolver;
-            throwOnError = throwOnKeystoneError;
+            internalImpl = ResolveSymbolInternal;
 
             var result = NativeInterop.Open(architecture, (int)mode, ref engine);
 
-            if (result != KeystoneError.KS_ERR_OK && throwOnKeystoneError)
-                throw new InvalidOperationException($"Error while initializing keystone: {ErrorToString(result)}.");
+            if (result != KeystoneError.KS_ERR_OK)
+                throw new KeystoneException("Error while initializing keystone", result);
         }
 
         /// <summary>
         ///   Sets an option in the engine.
         /// </summary>
-        /// <param name="type">Type of option</param>
-        /// <param name="value">Value</param>
-        /// <returns>True is the option is correctly setted, False otherwise &amp;&amp; throwOnError is false.</returns>
-        /// <exception cref="InvalidOperationException">If Keystone return an error &amp;&amp; throwOnError is true</exception>
+        /// <param name="type">Type of the option.</param>
+        /// <param name="value">Value it the option.</param>
+        /// <returns>Whether the option was correctly set.</returns>
+        /// <exception cref="KeystoneException">An error encountered when setting the option.</exception>
         public bool SetOption(OptionType type, uint value)
         {
             var result = NativeInterop.SetOption(engine, (int)type, (IntPtr)value);
 
             if (result != KeystoneError.KS_ERR_OK)
             {
-                if (throwOnError)
-                    throw new InvalidOperationException($"Error while setting option in keystone: {ErrorToString(result)}.");
+                if (ThrowOnError)
+                    throw new KeystoneException("Error while setting option", result);
+
                 return false;
             }
 
@@ -130,140 +135,189 @@ namespace Keystone
         }
 
         /// <summary>
-        ///   Returns a string associated with a given error code.
+        ///   Encodes the given statement(s).
         /// </summary>
-        /// <param name="result">Error code</param>
-        /// <returns>The string</returns>
-        public static string ErrorToString(KeystoneError result)
+        /// <param name="toEncode">String that contains the statements to encode.</param>
+        /// <param name="address">Address of the first instruction to encode.</param>
+        /// <param name="size">Size of the buffer produced by the operation.</param>
+        /// <param name="statementCount">Number of statements found and encoded.</param>
+        /// <returns>Result of the operation, or <c>null</c> if it failed and <see cref="ThrowOnError" /> is <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException">A null argument was given.</exception>
+        /// <exception cref="KeystoneException">An error encountered when encoding the instructions.</exception>
+        public byte[] Assemble(string toEncode, ulong address, out int size, out int statementCount)
         {
-            IntPtr error = NativeInterop.ErrorToString(result);
-            if (error != IntPtr.Zero)
-                return Marshal.PtrToStringAnsi(error);
-            return string.Empty;
-        }
+            if (toEncode == null)
+                throw new ArgumentNullException(nameof(toEncode));
 
-        /// <summary>
-        ///   Encodes given statements.
-        /// </summary>
-        /// <param name="toEncode">String that contains the statements to encode</param>
-        /// <param name="address">Address of the first instruction.</param>
-        /// <returns>Result of the assemble operation or null if it failed &amp;&amp; throwOnError is false.</returns>
-        /// <exception cref="InvalidOperationException">If keystone return an error &amp;&amp; throwOnError is true</exception>
-        public EncodedData Assemble(string toEncode, ulong address)
-        {
             int result = NativeInterop.Assemble(engine,
-                                                  toEncode,
-                                                  address,
-                                                  out IntPtr encoding,
-                                                  out uint size,
-                                                  out uint statementCount);
-
+                                                toEncode,
+                                                address,
+                                                out IntPtr encoding,
+                                                out uint size_,
+                                                out uint statementCount_);
+                                                
             if (result != 0)
             {
-                if (throwOnError)
-                    throw new InvalidOperationException($"Error while assembling {toEncode}: {ErrorToString(GetLastKeystoneError())}");
+                if (ThrowOnError)
+                    throw new KeystoneException("Error while assembling instructions", GetLastKeystoneError());
+
+                size = statementCount = 0;
+
                 return null;
             }
 
+            size = (int)size_;
+            statementCount = (int)statementCount_;
+
             byte[] buffer = new byte[size];
 
-            Marshal.Copy(encoding, buffer, 0, (int)size);
+            Marshal.Copy(encoding, buffer, 0, size);
             NativeInterop.Free(encoding);
+
+            return buffer;
+        }
+
+        /// <summary>
+        ///   Encodes the given statement(s).
+        /// </summary>
+        /// <param name="toEncode">String that contains the statements to encode.</param>
+        /// <param name="address">Address of the first instruction to encode.</param>
+        /// <returns>Result of the operation, or <c>null</c> if it failed and <see cref="ThrowOnError" /> is <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException">A null argument was given.</exception>
+        /// <exception cref="KeystoneException">An error encountered when encoding the instructions.</exception>
+        public EncodedData Assemble(string toEncode, ulong address)
+        {
+            byte[] buffer = Assemble(toEncode, address, out int size, out int statementCount);
+
+            if (buffer == null)
+                return null;
 
             return new EncodedData(buffer, statementCount, address);
         }
 
         /// <summary>
-        ///   Appends the result of an assemble to an existing collection of bytes.
+        ///   Encodes the given statement(s) into the given buffer.
         /// </summary>
-        /// <param name="toEncode">String to encode</param>
-        /// <param name="encoded">Collection of bytes</param>
-        /// <param name="address">Address of the first instruction in input to this function</param>
-        /// <param name="size">Size of the result of this operation</param>
-        /// <param name="statements">Number of statement found</param>
-        /// <returns>True if the compilation is successful, False otherwise &amp;&amp;throwOnError is False.</returns>
-        /// <exception cref="ArgumentNullException">String to encode is null or collection is null</exception>
-        /// <exception cref="ArgumentException">Collection is read-only</exception>
-        /// <exception cref="InvalidOperationException">If keystone return an error &amp;&amp; throwOnError is true</exception>
-        public bool AppendAssemble(string toEncode, ICollection<byte> encoded, ulong address, out int size, out int statements)
+        /// <param name="toEncode">String that contains the statements to encode.</param>
+        /// <param name="address">Address of the first instruction to encode.</param>
+        /// <param name="buffer">Buffer into which the data shall be written.</param>
+        /// <param name="index">Index into the buffer after which the data shall be written.</param>
+        /// <param name="statementCount">Number of statements found and encoded.</param>
+        /// <returns>Size of the data writen by the operation., or <c>0</c> if it failed and <see cref="ThrowOnError" /> is <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException">A null argument was given.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The provided index is invalid.</exception>
+        /// <exception cref="KeystoneException">An error encountered when encoding the instructions.</exception>
+        public int Assemble(string toEncode, ulong address, byte[] buffer, int index, out int statementCount)
         {
-            if (encoded == null)
-                throw new ArgumentNullException(nameof(encoded));
             if (toEncode == null)
                 throw new ArgumentNullException(nameof(toEncode));
-            if (encoded.IsReadOnly)
-                throw new ArgumentException("encoded collection can't be read-only.");
+            if (buffer == null)
+                throw new ArgumentNullException(nameof(buffer));
+            if (index < 0 || index >= buffer.Length)
+                throw new ArgumentOutOfRangeException(nameof(buffer));
 
-            var result = Assemble(toEncode, address);
+            int result = NativeInterop.Assemble(engine,
+                                                toEncode,
+                                                address,
+                                                out IntPtr encoding,
+                                                out uint size_,
+                                                out uint statementCount_);
 
-            if (result != null)
+            int size = (int)size_;
+
+            statementCount = (int)statementCount_;
+
+            if (result != 0)
             {
-                foreach (var v in result.Buffer)
-                    encoded.Add(v);
+                if (ThrowOnError)
+                    throw new KeystoneException("Error while assembling instructions", GetLastKeystoneError());
 
-                size = result.Buffer.Length;
-                statements = result.StatementCount;
-                return true;
+                return 0;
             }
-            else
-            {
-                size = 0;
-                statements = 0;
+
+            Marshal.Copy(encoding, buffer, index, size);
+            NativeInterop.Free(encoding);
+
+            return size;
+        }
+
+        /// <summary>
+        ///   Encodes the given statement(s) into the given buffer.
+        /// </summary>
+        /// <param name="toEncode">String that contains the statements to encode.</param>
+        /// <param name="address">Address of the first instruction to encode.</param>
+        /// <param name="buffer">Buffer into which the data shall be written.</param>
+        /// <param name="index">Index into the buffer after which the data shall be written.</param>
+        /// <returns>Size of the data writen by the operation., or <c>0</c> if it failed and <see cref="ThrowOnError" /> is <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException">A null argument was given.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">The provided index is invalid.</exception>
+        /// <exception cref="KeystoneException">An error encountered when encoding the instructions.</exception>
+        public int Assemble(string toEncode, ulong address, byte[] buffer, int index)
+        {
+            return Assemble(toEncode, address, buffer, index, out _);
+        }
+
+        /// <summary>
+        ///   Encodes the given statement(s) into the given stream.
+        /// </summary>
+        /// <param name="toEncode">String that contains the statements to encode.</param>
+        /// <param name="address">Address of the first instruction to encode.</param>
+        /// <param name="stream">Buffer into which the data shall be written.</param>
+        /// <param name="size">Size of the buffer produced by the operation.</param>
+        /// <param name="statementCount">Number of statements found and encoded.</param>
+        /// <returns><c>true</c> on success, or <c>false</c> if it failed and <see cref="ThrowOnError" /> is <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException">A null argument was given.</exception>
+        /// <exception cref="KeystoneException">An error encountered when encoding the instructions.</exception>
+        public bool Assemble(string toEncode, ulong address, Stream stream, out int size, out int statementCount)
+        {
+            if (stream == null)
+                throw new ArgumentNullException(nameof(stream));
+
+            byte[] enc = Assemble(toEncode, address, out size, out statementCount);
+
+            if (enc == null)
                 return false;
-            }
+
+            stream.Write(enc, 0, size);
+
+            return true;
         }
 
         /// <summary>
-        ///   Appends the result of an assemble to an existing collection of bytes.
+        ///   Encodes the given statement(s) into the given stream.
         /// </summary>
-        /// <param name="toEncode">String to encode</param>
-        /// <param name="encoded">Collection of bytes</param>
-        /// <param name="address">Address of the first instruction in input to this function</param>
-        /// <param name="size">Size of the result of this operation</param>
-        /// <returns>True if the compilation is successful, False otherwise &amp;&amp; throwOnError is True.</returns>
-        /// <exception cref="ArgumentNullException">String to encode is null or collection is null</exception>
-        /// <exception cref="ArgumentException">Collection is read-only</exception>
-        /// <exception cref="InvalidOperationException">If keystone return an error &amp;&amp; throwOnError is true</exception>
-        public bool AppendAssemble(string toEncode, ICollection<byte> encoded, ulong address, out int size)
+        /// <param name="toEncode">String that contains the statements to encode.</param>
+        /// <param name="address">Address of the first instruction to encode.</param>
+        /// <param name="stream">Buffer into which the data shall be written.</param>
+        /// <param name="size">Size of the buffer produced by the operation.</param>
+        /// <returns><c>true</c> on success, or <c>false</c> if it failed and <see cref="ThrowOnError" /> is <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException">A null argument was given.</exception>
+        /// <exception cref="KeystoneException">An error encountered when encoding the instructions.</exception>
+        public bool Assemble(string toEncode, ulong address, Stream stream, out int size)
         {
-            return AppendAssemble(toEncode, encoded, address, out size, out _);
+            return Assemble(toEncode, address, stream, out size, out _);
         }
 
         /// <summary>
-        ///   Appends the result of an assemble to an existing collection of bytes.
+        ///   Encodes the given statement(s) into the given stream.
         /// </summary>
-        /// <param name="toEncode">String to encode</param>
-        /// <param name="encoded">Collection of bytes</param>
-        /// <param name="address">Address of the first instruction in input to this function</param>
-        /// <returns>True if the compilation is successful, False otherwise &amp;&amp;throwOnError is True.</returns>
-        /// <exception cref="ArgumentNullException">String to encode is null or collection is null</exception>
-        /// <exception cref="ArgumentException">Collection is read-only</exception>
-        /// <exception cref="InvalidOperationException">If keystone return an error &amp;&amp; throwOnError is true</exception>
-        public bool AppendAssemble(string toEncode, ICollection<byte> encoded, ulong address)
+        /// <param name="toEncode">String that contains the statements to encode.</param>
+        /// <param name="address">Address of the first instruction to encode.</param>
+        /// <param name="stream">Buffer into which the data shall be written.</param>
+        /// <returns><c>true</c> on success, or <c>false</c> if it failed and <see cref="ThrowOnError" /> is <c>false</c>.</returns>
+        /// <exception cref="ArgumentNullException">A null argument was given.</exception>
+        /// <exception cref="KeystoneException">An error encountered when encoding the instructions.</exception>
+        public bool Assemble(string toEncode, ulong address, Stream stream)
         {
-            return AppendAssemble(toEncode, encoded, address, out _, out _);
-        }
-
-        /// <summary>
-        ///   Appends the result of an assemble to an existing collection of bytes.
-        /// </summary>
-        /// <param name="toEncode">String to encode</param>
-        /// <param name="encoded">Collection of bytes</param>
-        /// <returns>True if the compilation is successful, False otherwise &amp;&amp;throwOnError is True.</returns>
-        /// <exception cref="ArgumentNullException">String to encode is null or collection is null</exception>
-        /// <exception cref="ArgumentException">Collection is read-only</exception>
-        /// <exception cref="InvalidOperationException">If keystone return an error &amp;&amp; throwOnError is true</exception>
-        public bool AppendAssemble(string toEncode, ICollection<byte> encoded)
-        {
-            return AppendAssemble(toEncode, encoded, 0, out _, out _);
+            return Assemble(toEncode, address, stream, out _, out _);
         }
 
         /// <summary>
         ///   Gets the last error for this instance.
         /// </summary>
-        /// <returns>Last error</returns>
+        /// <returns>The last error code.</returns>
         /// <remarks>
-        /// Might not retain its old error once accessed.
+        ///   It might not retain its old error once accessed.
         /// </remarks>
         public KeystoneError GetLastKeystoneError()
         {
@@ -271,10 +325,21 @@ namespace Keystone
         }
 
         /// <summary>
-        ///   Checks if an architecture is supported.
+        ///   Returns the string associated with a given error code.
         /// </summary>
-        /// <param name="architecture">Architecture</param>
-        /// <returns>True if it is supported</returns>
+        public static string ErrorToString(KeystoneError code)
+        {
+            IntPtr error = NativeInterop.ErrorToString(code);
+
+            if (error != IntPtr.Zero)
+                return Marshal.PtrToStringAnsi(error);
+
+            return string.Empty;
+        }
+
+        /// <summary>
+        ///   Checks if the given architecture is supported.
+        /// </summary>
         public static bool IsArchitectureSupported(Architecture architecture)
         {
             return NativeInterop.IsArchitectureSupported(architecture);
@@ -283,8 +348,8 @@ namespace Keystone
         /// <summary>
         ///   Gets the version of the engine.
         /// </summary>
-        /// <param name="major">Major</param>
-        /// <param name="minor">Minor</param>
+        /// <param name="major">Major version number.</param>
+        /// <param name="minor">Minor version number.</param>
         /// <returns>Unique identifier for this version.</returns>
         public static uint GetKeystoneVersion(ref uint major, ref uint minor)
         {

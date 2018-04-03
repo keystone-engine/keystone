@@ -8,11 +8,11 @@
         /// <summary>
         ///   Constructs the encoded data.
         /// </summary>
-        internal EncodedData(byte[] buffer, uint statementCount, ulong address)
+        internal EncodedData(byte[] buffer, int statementCount, ulong address)
         {
             Buffer = buffer;
             Address = address;
-            StatementCount = (int)statementCount;
+            StatementCount = statementCount;
         }
 
         /// <summary>

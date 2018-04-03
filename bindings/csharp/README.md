@@ -5,7 +5,7 @@
 ```csharp
 using Keystone;
 
-using (Engine keystone = new Engine(Architecture.X86, Mode.X32, throwOnKeystoneError: true))
+using (Engine keystone = new Engine(Architecture.X86, Mode.X32) { ThrowOnError = true })
 {
     ulong address = 0;
 

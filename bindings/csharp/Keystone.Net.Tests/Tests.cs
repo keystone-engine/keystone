@@ -17,7 +17,7 @@ namespace Keystone.Tests
         [Test]
         public void ShouldEmitValidX86Data()
         {
-            using (Engine engine = new Engine(Architecture.X86, Mode.X32, true))
+            using (Engine engine = new Engine(Architecture.X86, Mode.X32) { ThrowOnError = true })
             {
                 engine.Assemble("nop", 0).Buffer.ShouldBe(new byte[] { 0x90 });
                 engine.Assemble("add eax, eax", 0).Buffer.ShouldBe(new byte[] { 0x01, 0xC0 });
@@ -27,7 +27,7 @@ namespace Keystone.Tests
         [Test]
         public void ShouldEmitValidARMData()
         {
-            using (Engine engine = new Engine(Architecture.ARM, Mode.ARM, true))
+            using (Engine engine = new Engine(Architecture.ARM, Mode.ARM) { ThrowOnError = true })
             {
                 engine.Assemble("mul r1, r0, r0", 0).Buffer.ShouldBe(new byte[] { 0x90, 0x00, 0x01, 0xE0 });
             }
@@ -36,23 +36,23 @@ namespace Keystone.Tests
         [Test]
         public void ShouldThrowOnError()
         {
-            using (Engine engine = new Engine(Architecture.ARM, Mode.ARM, false))
+            using (Engine engine = new Engine(Architecture.ARM, Mode.ARM) { ThrowOnError = false })
             {
                 engine.Assemble("push eax, 0x42", 0).ShouldBeNull();
                 engine.Assemble("doesntexist", 0).ShouldBeNull();
             }
 
-            using (Engine engine = new Engine(Architecture.ARM, Mode.ARM, true))
+            using (Engine engine = new Engine(Architecture.ARM, Mode.ARM) { ThrowOnError = true })
             {
-                Should.Throw<InvalidOperationException>(() => engine.Assemble("push eax, 0x42", 0));
-                Should.Throw<InvalidOperationException>(() => engine.Assemble("doestexist", 0));
+                Should.Throw<KeystoneException>(() => engine.Assemble("push eax, 0x42", 0));
+                Should.Throw<KeystoneException>(() => engine.Assemble("doestexist", 0));
             }
         }
 
         [Test, Ignore("Feature requires Keystone built after October 7th 2016.")]
         public void ShouldHaveValidExample()
         {
-            using (Engine keystone = new Engine(Architecture.X86, Mode.X32, throwOnKeystoneError: true))
+            using (Engine keystone = new Engine(Architecture.X86, Mode.X32) { ThrowOnError = true })
             {
                 ulong address = 0;
 
