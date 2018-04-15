@@ -27,3 +27,6 @@ using (Engine keystone = new Engine(Architecture.X86, Mode.X32) { ThrowOnError =
     enc.StatementCount.ShouldBe(3);
 }
 ```
+
+For those who already used the bindings before their last update, many things have changed.
+You can migrate your existing code easily using the [migration guide](./MIGRATON.md).
