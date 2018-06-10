@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2018 Jämes Ménétrey <james@menetrey.me>
+  ~
+  ~ This file is part of the Keystone Java bindings which is released under MIT.
+  ~ See file LICENSE in the Java bindings folder for full license details.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>keystone</groupId>
+    <artifactId>binding-java</artifactId>
+    <version>0.9.1</version>
+
+    <name>Keystone Java bindings</name>
+    <description>Keystone assembler framework: Core (Arm, Arm64, Hexagon, Mips, PowerPC, Sparc, SystemZ and X86) orm.</description>
+    <url>https://github.com/keystone-engine/keystone/tree/master/bindings/java</url>
+
+    <developers>
+        <developer>
+            <email>james@menetrey.me</email>
+            <name>Jämes Ménétrey</name>
+            <url>https://github.com/ZenLulz</url>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <properties>
+        <maven.compiler.source>10</maven.compiler.source>
+        <maven.compiler.target>10</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna-platform</artifactId>
+            <version>4.5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>
