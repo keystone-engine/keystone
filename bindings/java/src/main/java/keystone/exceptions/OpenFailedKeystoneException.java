@@ -12,8 +12,8 @@ import keystone.KeystoneError;
 /**
  * An exception that represents a failure to open the library Keystone.
  */
-public class KeystoneOpenFailedException extends KeystoneException {
-    public KeystoneOpenFailedException(KeystoneError error) {
+public class OpenFailedKeystoneException extends KeystoneException {
+    public OpenFailedKeystoneException(KeystoneError error) {
         super(error, "Keystone library could not be opened (ks_open), error: " + error.name());
     }
 }
