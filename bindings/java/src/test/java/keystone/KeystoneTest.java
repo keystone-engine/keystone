@@ -20,7 +20,7 @@ class KeystoneTest {
 
     @BeforeEach
     void setUp() {
-        keystone = new Keystone();
+        keystone = new Keystone(KeystoneArchitecture.X86, KeystoneMode.Mode64);
     }
 
     @AfterEach
@@ -30,5 +30,10 @@ class KeystoneTest {
     @Test
     void version_shouldBeDifferentFromZero() {
         assertEquals(1, keystone.version().compareTo(new Version(0, 0)));
+    }
+
+    @Test
+    void close_shouldNotThrowAnyException() {
+        keystone.close();
     }
 }
