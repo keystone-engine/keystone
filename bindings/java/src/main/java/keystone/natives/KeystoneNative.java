@@ -17,6 +17,8 @@ import keystone.KeystoneMode;
 
 /**
  * Contract used by JNA to interoperate with the native C code of the library.
+ *
+ * Those functions are declared in the header file <i>keystone.h</i>.
  */
 public interface KeystoneNative extends Library {
 
@@ -92,4 +94,12 @@ public interface KeystoneNative extends Library {
      */
     // ks_err ks_open(ks_arch arch, int mode, ks_engine **ks);
     KeystoneError ks_open(KeystoneArchitecture architecture, KeystoneMode mode, PointerByReference engine);
+
+    /**
+     * Return a string describing given error code.
+     *
+     * @param errorCode error code.
+     * @return returns a pointer to a string that describes the error code passed in the argument @errorCode.
+     */
+    String ks_strerror(KeystoneError errorCode);
 }

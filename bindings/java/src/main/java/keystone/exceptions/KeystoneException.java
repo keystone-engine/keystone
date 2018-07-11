@@ -8,11 +8,15 @@
 package keystone.exceptions;
 
 import keystone.KeystoneError;
+import keystone.natives.KeystoneNative;
 
 /**
  * The base class for all the exceptions thrown by the library Keystone.
  */
 public abstract class KeystoneException extends RuntimeException {
+    /**
+     * The error thrown by Keystone.
+     */
     private final KeystoneError keystoneError;
 
     /**
@@ -20,8 +24,8 @@ public abstract class KeystoneException extends RuntimeException {
      * @param keystoneError The error code of Keystone.
      * @param message A human-readable message of the error.
      */
-    KeystoneException(KeystoneError keystoneError, String message) {
-        super(message);
+    KeystoneException(KeystoneNative ksNative, KeystoneError keystoneError, String message) {
+        super(message + " : " + ksNative.ks_strerror(keystoneError));
 
         this.keystoneError = keystoneError;
     }

@@ -64,11 +64,16 @@ class KeystoneTest {
 
     @Test
     void assemble_ifAssemblyCodeInvalid_shouldThrowAnException() {
+        // Arrange
+        var assembly = "UNK";
+
+        // Act and Assert
         try {
-            keystone.assemble("UNK", 0);
+            keystone.assemble(assembly, 0);
             fail("The assembly instruction is invalid. It should not pass the unit test.");
         } catch (AssembleFailedKeystoneException e) {
             assertEquals(KeystoneError.AsmMnemonicFail, e.getKeystoneError());
+            assertEquals(assembly, e.getAssembly());
         }
     }
 

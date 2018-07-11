@@ -85,7 +85,7 @@ public class Keystone implements AutoCloseable {
         var openResult = ksNative.ks_open(architecture, mode, pointerToEngine);
 
         if (openResult != KeystoneError.Ok) {
-            throw new OpenFailedKeystoneException(openResult);
+            throw new OpenFailedKeystoneException(ksNative, openResult);
         }
 
         return pointerToEngine.getValue();
@@ -129,7 +129,8 @@ public class Keystone implements AutoCloseable {
                 pointerToMachineCodeSize, pointerToNumberOfStatements);
 
         if (result != 0) {
-            throw new AssembleFailedKeystoneException(ksNative.ks_errno(ksEngine), assembly);
+            var errorCode = ksNative.ks_errno(ksEngine);
+            throw new AssembleFailedKeystoneException(ksNative, errorCode, assembly);
         }
 
         var machineCodeBuffer = pointerToMachineCodeBuffer.getValue();

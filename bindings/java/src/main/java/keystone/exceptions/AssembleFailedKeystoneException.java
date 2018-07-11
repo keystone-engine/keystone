@@ -8,14 +8,27 @@
 package keystone.exceptions;
 
 import keystone.KeystoneError;
+import keystone.natives.KeystoneNative;
 
 /**
  * An exception that represents a failure while assembling code.
  */
 public class AssembleFailedKeystoneException extends KeystoneException {
-    public AssembleFailedKeystoneException(KeystoneError keystoneError, String assembly) {
-        super(keystoneError,
-                "Keystone library could not assemble (ks_asm) the following assembly code: " + assembly +
-                        ", error: " + keystoneError);
+    /**
+     * The assembly code that generates the error.
+     */
+    private final String assembly;
+
+    public AssembleFailedKeystoneException(KeystoneNative ksNative, KeystoneError keystoneError, String assembly) {
+        super(ksNative, keystoneError, "Error while assembling `" + assembly + "`");
+
+        this.assembly = assembly;
+    }
+
+    /**
+     * Gets the assembly code that generates the error.
+     */
+    public String getAssembly() {
+        return assembly;
     }
 }
