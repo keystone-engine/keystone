@@ -19,6 +19,48 @@ import keystone.KeystoneMode;
  * Contract used by JNA to interoperate with the native C code of the library.
  */
 public interface KeystoneNative extends Library {
+
+    /**
+     * Assemble a string given its the buffer, size, start address and number
+     * of instructions to be decoded.
+     * This API dynamically allocate memory to contain assembled instruction.
+     * Resulted array of bytes containing the machine code is put into @machineCode.
+     *
+     * On failure, call {@link KeystoneNative#ks_errno} for error code.
+     *
+     * NOTE 1: this API will automatically determine memory needed to contain
+     * output bytes in *encoding.
+     *
+     * NOTE 2: caller must free the allocated memory itself to avoid memory leaking.
+     * @param engine handle returned by ks_open()
+     * @param assembly NULL-terminated assembly string. Use ; or \n to separate statements.
+     * @param address address of the first assembly instruction, or 0 to ignore.
+     * @param machineCodeBuffer array of bytes containing encoding of input assembly string.
+     *                    NOTE: *encoding will be allocated by this function, and should be freed
+     *                    with ks_free() function.
+     * @param machineCodeSize size of machineCode
+     * @param numberOfStatements number of statements successfully processed
+     * @return 0 on success, or -1 on failure.
+     */
+    int ks_asm(Pointer engine, String assembly, int address, PointerByReference machineCodeBuffer,
+               IntByReference machineCodeSize, IntByReference numberOfStatements);
+
+    /**
+     * Report the last error number when some API function fail.
+     * Like glibc's errno, ks_errno might not retain its old error once accessed.
+     *
+     * @param engine handle returned by ks_open()
+     * @return error code of ks_err enum type {@link KeystoneError}
+     */
+    KeystoneError ks_errno(Pointer engine);
+
+    /**
+     * Free memory allocated by ks_asm().
+     *
+     * @param machineCodeBuffer memory allocated in @encoding argument of ks_asm()
+     */
+    void ks_free(Pointer machineCodeBuffer);
+
     /**
      * Returns combined API version & major and minor version numbers.
      *

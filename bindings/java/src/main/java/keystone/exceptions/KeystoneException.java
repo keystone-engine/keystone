@@ -29,7 +29,7 @@ public abstract class KeystoneException extends RuntimeException {
     /**
      * Gets the error code of Keystone.
      */
-    public KeystoneError keystoneError() {
+    public KeystoneError getKeystoneError() {
         return keystoneError;
     }
 }

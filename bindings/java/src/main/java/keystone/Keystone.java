@@ -12,6 +12,7 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
+import keystone.exceptions.AssembleFailedKeystoneException;
 import keystone.exceptions.OpenFailedKeystoneException;
 import keystone.jna.KeystoneTypeMapper;
 import keystone.natives.CleanerContainer;
@@ -98,6 +99,68 @@ public class Keystone implements AutoCloseable {
      */
     private CleanerContainer initializeKeystoneCleanerContainer() {
         return new KeystoneCleanerContainer(ksEngine, ksNative);
+    }
+
+    /**
+     * Assembles a string that contains assembly code.
+     *
+     * @param assembly The assembly instructions. Use ; or \n to separate statements.
+     * @return The return value is the machine code of the assembly instructions.
+     * @throws AssembleFailedKeystoneException if the assembly code cannot be assembled properly.
+     */
+    public KeystoneEncoded assemble(String assembly) {
+        return assemble(assembly, 0);
+    }
+
+    /**
+     * Assembles a string that contains assembly code, located at a given address location.
+     *
+     * @param assembly The assembly instructions. Use ; or \n to separate statements.
+     * @param address  The address of the first assembly instruction.
+     * @return The return value is the machine code of the assembly instructions.
+     * @throws AssembleFailedKeystoneException if the assembly code cannot be assembled properly.
+     */
+    public KeystoneEncoded assemble(String assembly, int address) {
+        var pointerToMachineCodeBuffer = new PointerByReference();
+        var pointerToMachineCodeSize = new IntByReference();
+        var pointerToNumberOfStatements = new IntByReference();
+
+        var result = ksNative.ks_asm(ksEngine, assembly, address, pointerToMachineCodeBuffer,
+                pointerToMachineCodeSize, pointerToNumberOfStatements);
+
+        if (result != 0) {
+            throw new AssembleFailedKeystoneException(ksNative.ks_errno(ksEngine), assembly);
+        }
+
+        var machineCodeBuffer = pointerToMachineCodeBuffer.getValue();
+        var machineCode = machineCodeBuffer.getByteArray(0, pointerToMachineCodeSize.getValue());
+
+        ksNative.ks_free(machineCodeBuffer);
+
+        return new KeystoneEncoded(machineCode, address, pointerToNumberOfStatements.getValue());
+    }
+
+    /**
+     * Assembles a string that contains assembly code.
+     *
+     * @param assembly A collection of assembly instructions.
+     * @return The return value is the machine code of the assembly instructions.
+     * @throws AssembleFailedKeystoneException if the assembly code cannot be assembled properly.
+     */
+    public KeystoneEncoded assemble(Iterable<String> assembly) {
+        return assemble(assembly, 0);
+    }
+
+    /**
+     * Assembles a string that contains assembly code, located at a given address location.
+     *
+     * @param assembly A collection of assembly instructions.
+     * @param address  The address of the first assembly instruction.
+     * @return The return value is the machine code of the assembly instructions.
+     * @throws AssembleFailedKeystoneException if the assembly code cannot be assembled properly.
+     */
+    public KeystoneEncoded assemble(Iterable<String> assembly, int address) {
+        return assemble(String.join(";", assembly), address);
     }
 
     /**
