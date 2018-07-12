@@ -17,30 +17,39 @@ import keystone.KeystoneMode;
 
 /**
  * Contract used by JNA to interoperate with the native C code of the library.
- *
+ * <p>
  * Those functions are declared in the header file <i>keystone.h</i>.
  */
 public interface KeystoneNative extends Library {
+
+    /**
+     * Determine if the given architecture is supported by this library.
+     *
+     * @param architecture architecture type
+     * @return {@code true} if this library supports the given arch.
+     */
+    boolean ks_arch_supported(KeystoneArchitecture architecture);
 
     /**
      * Assemble a string given its the buffer, size, start address and number
      * of instructions to be decoded.
      * This API dynamically allocate memory to contain assembled instruction.
      * Resulted array of bytes containing the machine code is put into @machineCode.
-     *
+     * <p>
      * On failure, call {@link KeystoneNative#ks_errno} for error code.
-     *
+     * <p>
      * NOTE 1: this API will automatically determine memory needed to contain
      * output bytes in *encoding.
-     *
+     * <p>
      * NOTE 2: caller must free the allocated memory itself to avoid memory leaking.
-     * @param engine handle returned by ks_open()
-     * @param assembly NULL-terminated assembly string. Use ; or \n to separate statements.
-     * @param address address of the first assembly instruction, or 0 to ignore.
-     * @param machineCodeBuffer array of bytes containing encoding of input assembly string.
-     *                    NOTE: *encoding will be allocated by this function, and should be freed
-     *                    with ks_free() function.
-     * @param machineCodeSize size of machineCode
+     *
+     * @param engine             handle returned by ks_open()
+     * @param assembly           NULL-terminated assembly string. Use ; or \n to separate statements.
+     * @param address            address of the first assembly instruction, or 0 to ignore.
+     * @param machineCodeBuffer  array of bytes containing encoding of input assembly string.
+     *                           NOTE: *encoding will be allocated by this function, and should be freed
+     *                           with ks_free() function.
+     * @param machineCodeSize    size of machineCode
      * @param numberOfStatements number of statements successfully processed
      * @return 0 on success, or -1 on failure.
      */
@@ -88,8 +97,8 @@ public interface KeystoneNative extends Library {
      * Create new instance of Keystone engine.
      *
      * @param architecture architecture type (KS_ARCH_*).
-     * @param mode hardware mode. This is combined of KS_MODE_*.
-     * @param engine pointer to ks_engine, which will be updated at return time.
+     * @param mode         hardware mode. This is combined of KS_MODE_*.
+     * @param engine       pointer to ks_engine, which will be updated at return time.
      * @return KS_ERR_OK on success, or other value on failure (refer to ks_err enum for detailed error).
      */
     // ks_err ks_open(ks_arch arch, int mode, ks_engine **ks);

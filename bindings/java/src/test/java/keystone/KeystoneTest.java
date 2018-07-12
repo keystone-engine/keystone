@@ -95,6 +95,11 @@ class KeystoneTest {
     }
 
     @Test
+    void isArchitectureSupported_shouldSupportX86Everywhere() {
+        assertTrue(Keystone.isArchitectureSupported(KeystoneArchitecture.X86));
+    }
+
+    @Test
     void version_shouldBeDifferentFromZero() {
         assertEquals(1, keystone.version().compareTo(new Version(0, 0)));
     }
