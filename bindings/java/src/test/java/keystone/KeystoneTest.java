@@ -140,7 +140,7 @@ class KeystoneTest {
 
         // Act and Assert
         try {
-           keystone.setOption(expectedType, invalidValue);
+            keystone.setOption(expectedType, invalidValue);
         } catch (SetOptionFailedKeystoneException e) {
             assertEquals(KeystoneError.OptInvalid, e.getKeystoneError());
             assertEquals(expectedType, e.getOptionType());

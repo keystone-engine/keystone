@@ -21,8 +21,9 @@ public abstract class KeystoneException extends RuntimeException {
 
     /**
      * Creates a new instance of {@link KeystoneException}.
+     *
      * @param keystoneError The error code of Keystone.
-     * @param message A human-readable message of the error.
+     * @param message       A human-readable message of the error.
      */
     KeystoneException(KeystoneNative ksNative, KeystoneError keystoneError, String message) {
         super(message + " : " + ksNative.ks_strerror(keystoneError));

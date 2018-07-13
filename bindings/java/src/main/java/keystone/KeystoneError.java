@@ -241,14 +241,6 @@ public enum KeystoneError implements JnaEnum {
     AsmMnemonicFail(Base.asmArch + 2);
 
     /**
-     * Internal interface referencing the base error codes.
-     */
-    interface Base {
-        int asm = 128;
-        int asmArch = 512;
-    }
-
-    /**
      * Mapping table to determine an enumeration value based on an integer with a complexity of θ(1).
      */
     private static Map<Integer, KeystoneError> intToEnumMapping = new HashMap<>();
@@ -258,18 +250,6 @@ public enum KeystoneError implements JnaEnum {
         for (KeystoneError error : KeystoneError.values()) {
             intToEnumMapping.put(error.value(), error);
         }
-    }
-
-    /**
-     * Converts an integer value into its corresponding enumeration value.
-     *
-     * The complexity of the conversion is θ(1).
-     *
-     * @param value The integer value.
-     * @return The return value is a value of the enumeration.
-     */
-    public static KeystoneError fromValue(Integer value) {
-        return intToEnumMapping.get(value);
     }
 
     /**
@@ -288,11 +268,31 @@ public enum KeystoneError implements JnaEnum {
     }
 
     /**
+     * Converts an integer value into its corresponding enumeration value.
+     * <p>
+     * The complexity of the conversion is θ(1).
+     *
+     * @param value The integer value.
+     * @return The return value is a value of the enumeration.
+     */
+    public static KeystoneError fromValue(Integer value) {
+        return intToEnumMapping.get(value);
+    }
+
+    /**
      * Retrieves the value of the enumeration, that corresponds to the value used in the enumeration in C.
      *
      * @return The return value is an integer value.
      */
     public int value() {
         return value;
+    }
+
+    /**
+     * Internal interface referencing the base error codes.
+     */
+    interface Base {
+        int asm = 128;
+        int asmArch = 512;
     }
 }

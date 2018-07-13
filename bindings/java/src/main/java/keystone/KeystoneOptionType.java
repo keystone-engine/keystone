@@ -36,18 +36,6 @@ public enum KeystoneOptionType implements JnaEnum {
     }
 
     /**
-     * Converts an integer value into its corresponding enumeration value.
-     * <p>
-     * The complexity of the conversion is θ(1).
-     *
-     * @param value The integer value.
-     * @return The return value is a value of the enumeration.
-     */
-    public static KeystoneOptionType fromValue(Integer value) {
-        return intToEnumMapping.get(value);
-    }
-
-    /**
      * Holds the integer value of the enumeration, that corresponds to the value used in the enumeration in C.
      */
     private final int value;
@@ -59,6 +47,18 @@ public enum KeystoneOptionType implements JnaEnum {
      */
     KeystoneOptionType(int value) {
         this.value = value;
+    }
+
+    /**
+     * Converts an integer value into its corresponding enumeration value.
+     * <p>
+     * The complexity of the conversion is θ(1).
+     *
+     * @param value The integer value.
+     * @return The return value is a value of the enumeration.
+     */
+    public static KeystoneOptionType fromValue(Integer value) {
+        return intToEnumMapping.get(value);
     }
 
     /**

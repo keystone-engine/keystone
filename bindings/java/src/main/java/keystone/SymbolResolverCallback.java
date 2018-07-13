@@ -18,7 +18,7 @@ public interface SymbolResolverCallback extends Callback {
      * A callback triggered when a unrecognized symbol is found.
      *
      * @param symbol The symbol to resolve.
-     * @param value The value to modify if the symbol is resolved.
+     * @param value  The value to modify if the symbol is resolved.
      * @return The return value must be {@code true} if the symbol can be resolved; otherwise {@code false}.
      */
     boolean onResolve(String symbol, LongByReference value);

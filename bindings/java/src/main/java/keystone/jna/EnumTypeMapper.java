@@ -7,7 +7,10 @@
 
 package keystone.jna;
 
-import com.sun.jna.*;
+import com.sun.jna.DefaultTypeMapper;
+import com.sun.jna.FromNativeContext;
+import com.sun.jna.ToNativeContext;
+import com.sun.jna.TypeConverter;
 
 import java.util.function.Function;
 
