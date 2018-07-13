@@ -7,6 +7,7 @@
 
 package keystone;
 
+import com.sun.jna.ptr.LongByReference;
 import keystone.exceptions.AssembleFailedKeystoneException;
 import keystone.utilities.Version;
 import org.junit.jupiter.api.AfterEach;
@@ -92,6 +93,86 @@ class KeystoneTest {
         // Assert
         assertArrayEquals(expectedMachineCode, encoded.getMachineCode());
         assertEquals(expectedNumberOfStatements, encoded.getNumberOfStatements());
+    }
+
+    @Test
+    void assemble_withSymbolWithoutResolver_shouldFail() {
+        // Arrange
+        var assembly = "MOV EAX, TEST";
+
+        // Act and Assert
+        try {
+            keystone.assemble(assembly);
+            fail("The assembly instruction is composed of an undefined symbol. It should not pass the unit test");
+        } catch (AssembleFailedKeystoneException e) {
+            assertEquals(KeystoneError.AsmSymbolMissing, e.getKeystoneError());
+        }
+    }
+
+    @Test
+    void setAssemblySyntax_withAttSyntax_shouldBeEqualToX86Syntax() {
+        // Act
+        var x86Result = keystone.assemble("INC ECX; DEC EDX");
+        keystone.setAssemblySyntax(KeystoneOptionValue.KeystoneOptionSyntax.Att);
+        var attResult = keystone.assemble("INC %ecx; DEC %edx");
+
+        // Assert
+        assertArrayEquals(x86Result.getMachineCode(), attResult.getMachineCode());
+    }
+
+    @Test
+    void setSymbolResolver_assembleCustomSymbol_shouldProduceValidAssemblyCode() {
+        // Arrange
+        var expectedSymbol = "TEST";
+        var expectedValue = (byte) 0x66;
+        var movOpcode = (byte) 0xB8;
+        var assembly = "MOV EAX, " + expectedSymbol;
+        var symbolResolver = new SymbolResolverCallback() {
+            @Override
+            public boolean onResolve(String symbol, LongByReference value) {
+                assertEquals(expectedSymbol, symbol);
+
+                value.setValue(expectedValue);
+                return true;
+            }
+        };
+
+        // Act
+        keystone.setSymbolResolver(symbolResolver);
+        var assemblyCode = keystone.assemble(assembly);
+
+        // Assert
+        assertEquals(1, assemblyCode.getNumberOfStatements());
+        assertEquals(movOpcode, assemblyCode.getMachineCode()[0]);
+        assertEquals(expectedValue, assemblyCode.getMachineCode()[1]);
+    }
+
+    @Test
+    void unsetSymbolResolver_assembleCustomSymbol_shouldfailBecauseTheCallbackHasBeenUnset() {
+        // Arrange
+        var expectedSymbol = "TEST";
+        var expectedValue = (byte) 0x66;
+        var assembly = "MOV EAX, " + expectedSymbol;
+        var symbolResolver = new SymbolResolverCallback() {
+            @Override
+            public boolean onResolve(String symbol, LongByReference value) {
+                assertEquals(expectedSymbol, symbol);
+
+                value.setValue(expectedValue);
+                return true;
+            }
+        };
+
+        // Act and Assert
+        keystone.setSymbolResolver(symbolResolver);
+        keystone.unsetSymbolResolver();
+
+        try {
+            keystone.assemble(assembly);
+            fail("The assembly instruction is composed of an undefined symbol and no resolver should be available.");
+        } catch (AssembleFailedKeystoneException e) {
+            assertEquals(KeystoneError.AsmSymbolMissing, e.getKeystoneError());
+        }
     }
 
     @Test

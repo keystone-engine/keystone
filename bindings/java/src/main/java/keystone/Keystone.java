@@ -14,6 +14,7 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import keystone.exceptions.AssembleFailedKeystoneException;
 import keystone.exceptions.OpenFailedKeystoneException;
+import keystone.exceptions.SetOptionFailedKeystoneException;
 import keystone.jna.KeystoneTypeMapper;
 import keystone.natives.CleanerContainer;
 import keystone.natives.KeystoneCleanerContainer;
@@ -48,6 +49,12 @@ public class Keystone implements AutoCloseable {
      * Indicates whether the current instance of Keystone has been closed.
      */
     private final AtomicBoolean hasBeenClosed;
+
+    /**
+     * The memory retention of the symbol resolver callback, in order to prevent the garbage collector
+     * to free up the callback, that would result in a crash, as the native library still has a reference to it.
+     */
+    private SymbolResolverCallback symbolResolverCallback;
 
     /**
      * Initializes a new instance of the class {@link Keystone}.
@@ -188,6 +195,54 @@ public class Keystone implements AutoCloseable {
         ksNative.ks_version(major, minor);
 
         return new Version(major.getValue(), minor.getValue());
+    }
+
+    /**
+     * Sets the syntax of the assembly code used in this instance of Keystone.
+     *
+     * @param syntax The syntax of the assembly code.
+     * @throws SetOptionFailedKeystoneException if the syntax is not supported.
+     */
+    public void setAssemblySyntax(KeystoneOptionValue.KeystoneOptionSyntax syntax) {
+        setOption(KeystoneOptionType.Syntax, syntax.value());
+    }
+
+    /**
+     * Sets an option for Keystone engine at runtime using a not-strongly typed option value.
+     * <p>
+     * It is suggested to prefer the methods {@link #setAssemblySyntax(KeystoneOptionValue.KeystoneOptionSyntax)},
+     * {@link #setSymbolResolver(SymbolResolverCallback)} or {@link #unsetSymbolResolver()}.
+     *
+     * @param type  The type of the option.
+     * @param value The value of the option.
+     * @throws SetOptionFailedKeystoneException if the pair of type and value is not valid.
+     */
+    public void setOption(KeystoneOptionType type, int value) {
+        var result = ksNative.ks_option(ksEngine, type, value);
+
+        if (result != KeystoneError.Ok) {
+            throw new SetOptionFailedKeystoneException(ksNative, result, type, value);
+        }
+    }
+
+    /**
+     * Sets a symbol resolver callback, to resolve unrecognized symbols encountered in the assembly code.
+     * <p>
+     * If the method is called many times, only the last callback will be triggered.
+     *
+     * @param callback The symbol resolver callback.
+     */
+    public void setSymbolResolver(SymbolResolverCallback callback) {
+        symbolResolverCallback = callback;
+        ksNative.ks_option(ksEngine, KeystoneOptionType.SymbolResolver, callback);
+    }
+
+    /**
+     * Unsets the current symbol resolver. The symbol resolver instance can be freely collected afterwards.
+     */
+    public void unsetSymbolResolver() {
+        ksNative.ks_option(ksEngine, KeystoneOptionType.SymbolResolver, 0);
+        symbolResolverCallback = null;
     }
 
     /**

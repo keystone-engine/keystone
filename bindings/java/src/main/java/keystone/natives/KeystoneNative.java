@@ -11,9 +11,7 @@ import com.sun.jna.Library;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
-import keystone.KeystoneArchitecture;
-import keystone.KeystoneError;
-import keystone.KeystoneMode;
+import keystone.*;
 
 /**
  * Contract used by JNA to interoperate with the native C code of the library.
@@ -103,6 +101,28 @@ public interface KeystoneNative extends Library {
      */
     // ks_err ks_open(ks_arch arch, int mode, ks_engine **ks);
     KeystoneError ks_open(KeystoneArchitecture architecture, KeystoneMode mode, PointerByReference engine);
+
+    /**
+     * Set option for Keystone engine at runtime
+     *
+     * @param engine handle returned by ks_open()
+     * @param type   type of option to be set. See {@link KeystoneOptionType}
+     * @param value  option value corresponding with @type
+     * @return {@link KeystoneError#Ok} on success, or other value on failure.
+     * Refer to {@link KeystoneError} enum for detailed error.
+     */
+    KeystoneError ks_option(Pointer engine, KeystoneOptionType type, int value);
+
+    /**
+     * Set option for Keystone engine at runtime
+     *
+     * @param engine handle returned by ks_open()
+     * @param type   ype of option to be set. See {@link KeystoneOptionType}
+     * @param callback callback to resolve a unrecognized symbol.
+     * @return {@link KeystoneError#Ok} on success, or other value on failure.
+     * Refer to {@link KeystoneError} enum for detailed error.
+     */
+    KeystoneError ks_option(Pointer engine, KeystoneOptionType type, SymbolResolverCallback callback);
 
     /**
      * Return a string describing given error code.

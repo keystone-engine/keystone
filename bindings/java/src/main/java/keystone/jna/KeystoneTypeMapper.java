@@ -7,9 +7,7 @@
 
 package keystone.jna;
 
-import keystone.KeystoneArchitecture;
-import keystone.KeystoneError;
-import keystone.KeystoneMode;
+import keystone.*;
 
 /**
  * Extends the numeration type mapper in order to register the enumeration used by Keystone.
@@ -19,5 +17,7 @@ public class KeystoneTypeMapper extends EnumTypeMapper {
         addTypeConverter(KeystoneError.class, KeystoneError::fromValue);
         addTypeConverter(KeystoneArchitecture.class, KeystoneArchitecture::fromValue);
         addTypeConverter(KeystoneMode.class, KeystoneMode::fromValue);
+        addTypeConverter(KeystoneOptionType.class, KeystoneOptionType::fromValue);
+        addTypeConverter(KeystoneOptionValue.KeystoneOptionSyntax.class, KeystoneOptionValue.KeystoneOptionSyntax::fromValue);
     }
 }
