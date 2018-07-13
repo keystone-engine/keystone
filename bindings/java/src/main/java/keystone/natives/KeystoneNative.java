@@ -22,6 +22,8 @@ public interface KeystoneNative extends Library {
 
     /**
      * Determine if the given architecture is supported by this library.
+     * <p>
+     * Native function prototype: <i>bool ks_arch_supported(ks_arch arch);</i>
      *
      * @param architecture architecture type
      * @return {@code true} if this library supports the given arch.
@@ -40,6 +42,12 @@ public interface KeystoneNative extends Library {
      * output bytes in *encoding.
      * <p>
      * NOTE 2: caller must free the allocated memory itself to avoid memory leaking.
+     * <p>
+     * Native function prototype: <i>int ks_asm(ks_engine *ks,
+     * const char *string,
+     * uint64_t address,
+     * unsigned char **encoding, size_t *encoding_size,
+     * size_t *stat_count);</i>
      *
      * @param engine             handle returned by ks_open()
      * @param assembly           NULL-terminated assembly string. Use ; or \n to separate statements.
@@ -55,8 +63,24 @@ public interface KeystoneNative extends Library {
                IntByReference machineCodeSize, IntByReference numberOfStatements);
 
     /**
+     * Close KS instance: MUST do to release the handle when it is not used anymore.
+     * NOTE: this must be called only when there is no longer usage of Keystone.
+     * The reason is this API releases some cached memory, thus access to any
+     * Keystone API after ks_close() might crash your application.
+     * After this, @engine is invalid, and no longer usable.
+     * <p>
+     * Native function prototype: <i>ks_err ks_close(ks_engine *ks);</i>
+     *
+     * @param engine pointer to a handle returned by ks_open().
+     * @return KS_ERR_OK on success, or other value on failure (refer to ks_err enum for detailed error).
+     */
+    KeystoneError ks_close(Pointer engine);
+
+    /**
      * Report the last error number when some API function fail.
      * Like glibc's errno, ks_errno might not retain its old error once accessed.
+     * <p>
+     * Native function prototype: <i>ks_err ks_errno(ks_engine *ks)</i>
      *
      * @param engine handle returned by ks_open()
      * @return error code of ks_err enum type {@link KeystoneError}
@@ -65,45 +89,29 @@ public interface KeystoneNative extends Library {
 
     /**
      * Free memory allocated by ks_asm().
+     * <p>
+     * Native function prototype: <i>void ks_free(unsigned char *p)</i>
      *
      * @param machineCodeBuffer memory allocated in @encoding argument of ks_asm()
      */
     void ks_free(Pointer machineCodeBuffer);
 
     /**
-     * Returns combined API version & major and minor version numbers.
-     *
-     * @param major The major number of API version.
-     * @param minor The minor number of API version.
-     * @return An hexadecimal number as (major << 8 | minor), which encodes both major & minor versions.
-     */
-    int ks_version(IntByReference major, IntByReference minor);
-
-    /**
-     * Close KS instance: MUST do to release the handle when it is not used anymore.
-     * NOTE: this must be called only when there is no longer usage of Keystone.
-     * The reason is this API releases some cached memory, thus access to any
-     * Keystone API after ks_close() might crash your application.
-     * After this, @engine is invalid, and no longer usable.
-     *
-     * @param engine pointer to a handle returned by ks_open().
-     * @return KS_ERR_OK on success, or other value on failure (refer to ks_err enum for detailed error).
-     */
-    KeystoneError ks_close(Pointer engine);
-
-    /**
      * Create new instance of Keystone engine.
+     * <p>
+     * Native function prototype: <i>ks_err ks_open(ks_arch arch, int mode, ks_engine **ks);</i>
      *
      * @param architecture architecture type (KS_ARCH_*).
      * @param mode         hardware mode. This is combined of KS_MODE_*.
      * @param engine       pointer to ks_engine, which will be updated at return time.
      * @return KS_ERR_OK on success, or other value on failure (refer to ks_err enum for detailed error).
      */
-    // ks_err ks_open(ks_arch arch, int mode, ks_engine **ks);
     KeystoneError ks_open(KeystoneArchitecture architecture, KeystoneMode mode, PointerByReference engine);
 
     /**
-     * Set option for Keystone engine at runtime
+     * Set option for Keystone engine at runtime.
+     * <p>
+     * Native function prototype: <i>err ks_option(ks_engine *ks, ks_opt_type type, size_t value);</i>
      *
      * @param engine handle returned by ks_open()
      * @param type   type of option to be set. See {@link KeystoneOptionType}
@@ -115,9 +123,11 @@ public interface KeystoneNative extends Library {
 
     /**
      * Set option for Keystone engine at runtime
+     * <p>
+     * Native function prototype: <i>err ks_option(ks_engine *ks, ks_opt_type type, size_t value);</i>
      *
-     * @param engine handle returned by ks_open()
-     * @param type   ype of option to be set. See {@link KeystoneOptionType}
+     * @param engine   handle returned by ks_open()
+     * @param type     ype of option to be set. See {@link KeystoneOptionType}
      * @param callback callback to resolve a unrecognized symbol.
      * @return {@link KeystoneError#Ok} on success, or other value on failure.
      * Refer to {@link KeystoneError} enum for detailed error.
@@ -126,9 +136,22 @@ public interface KeystoneNative extends Library {
 
     /**
      * Return a string describing given error code.
+     * <p>
+     * Native function prototype: <i>const char *ks_strerror(ks_err code);</i>
      *
      * @param errorCode error code.
      * @return returns a pointer to a string that describes the error code passed in the argument @errorCode.
      */
     String ks_strerror(KeystoneError errorCode);
+
+    /**
+     * Returns combined API version & major and minor version numbers.
+     * <p>
+     * Native function prototype: <i>unsigned int ks_version(unsigned int *major, unsigned int *minor);</i>
+     *
+     * @param major The major number of API version.
+     * @param minor The minor number of API version.
+     * @return An hexadecimal number as (major << 8 | minor), which encodes both major & minor versions.
+     */
+    int ks_version(IntByReference major, IntByReference minor);
 }
