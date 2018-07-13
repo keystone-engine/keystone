@@ -9,6 +9,8 @@ package keystone;
 
 import com.sun.jna.ptr.LongByReference;
 import keystone.exceptions.AssembleFailedKeystoneException;
+import keystone.exceptions.OpenFailedKeystoneException;
+import keystone.exceptions.SetOptionFailedKeystoneException;
 import keystone.utilities.Version;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +31,16 @@ class KeystoneTest {
 
     @AfterEach
     void tearDown() {
+    }
+
+    @Test
+    void ctor_ifInvalidArguments_shouldThrowAnException() {
+        try {
+            new Keystone(KeystoneArchitecture.Ppc, KeystoneMode.SparcV9);
+            fail("An exception must be thrown upon invalid arguments are used.");
+        } catch (OpenFailedKeystoneException e) {
+            assertEquals(KeystoneError.Mode, e.getKeystoneError());
+        }
     }
 
     @Test
@@ -118,6 +130,22 @@ class KeystoneTest {
 
         // Assert
         assertArrayEquals(x86Result.getMachineCode(), attResult.getMachineCode());
+    }
+
+    @Test
+    void setOption_ifInvalidArguments_shouldTrowAnException() {
+        // Arrange
+        var expectedType = KeystoneOptionType.Syntax;
+        var invalidValue = -1;
+
+        // Act and Assert
+        try {
+           keystone.setOption(expectedType, invalidValue);
+        } catch (SetOptionFailedKeystoneException e) {
+            assertEquals(KeystoneError.OptInvalid, e.getKeystoneError());
+            assertEquals(expectedType, e.getOptionType());
+            assertEquals(invalidValue, e.getOptionValue());
+        }
     }
 
     @Test
