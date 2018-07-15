@@ -14,8 +14,8 @@ import keystone.exceptions.AssembleFailedKeystoneException;
 import keystone.exceptions.OpenFailedKeystoneException;
 import keystone.exceptions.SetOptionFailedKeystoneException;
 import keystone.natives.CleanerContainer;
-import keystone.natives.KeystoneCleanerContainer;
 import keystone.natives.DirectMappingKeystoneNative;
+import keystone.natives.KeystoneCleanerContainer;
 import keystone.utilities.Version;
 
 import java.util.concurrent.atomic.AtomicBoolean;
