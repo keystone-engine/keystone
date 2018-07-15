@@ -4,6 +4,7 @@ Java bindings for the [Keystone](http://www.keystone-engine.org/) engine. Requir
 
 ## Sample
 
+```java
     import keystone.Keystone;
     import keystone.KeystoneArchitecture;
     import keystone.KeystoneMode;
@@ -30,7 +31,8 @@ Java bindings for the [Keystone](http://www.keystone-engine.org/) engine. Requir
             }
         }
     }
-     
+```
+
 Output:
 
 > Number of statements encoded: 2  
