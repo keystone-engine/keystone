@@ -8,17 +8,39 @@
 package keystone.natives;
 
 import com.sun.jna.Library;
+import com.sun.jna.Native;
+import com.sun.jna.NativeLibrary;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import keystone.*;
+import keystone.jna.KeystoneTypeMapper;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Contract used by JNA to interoperate with the native C code of the library.
+ * The class providing the native functions of Keystone using the Direct Mapping of JNA for best performance.
  * <p>
- * Those functions are declared in the header file <i>keystone.h</i>.
+ * The original function prototypes are declared in the header file <i>keystone.h</i>.
+ *
+ * @see <a href="https://github.com/java-native-access/jna/blob/master/www/DirectMapping.md">JNA: Direct Mapping</a>
  */
-public interface KeystoneNative extends Library {
+public final class DirectMappingKeystoneNative {
+
+    static {
+        Map<String, Object> options = new HashMap<>();
+        options.put(Library.OPTION_TYPE_MAPPER, new KeystoneTypeMapper());
+
+        // Direct Mapping using JNA
+        Native.register(NativeLibrary.getInstance("keystone", options));
+    }
+
+    /**
+     * Private constructor to prevent any instantiation of the class.
+     */
+    private DirectMappingKeystoneNative() {
+    }
 
     /**
      * Determine if the given architecture is supported by this library.
@@ -28,7 +50,7 @@ public interface KeystoneNative extends Library {
      * @param architecture architecture type
      * @return {@code true} if this library supports the given arch.
      */
-    boolean ks_arch_supported(KeystoneArchitecture architecture);
+    public static native boolean ks_arch_supported(KeystoneArchitecture architecture);
 
     /**
      * Assemble a string given its the buffer, size, start address and number
@@ -36,7 +58,7 @@ public interface KeystoneNative extends Library {
      * This API dynamically allocate memory to contain assembled instruction.
      * Resulted array of bytes containing the machine code is put into @machineCode.
      * <p>
-     * On failure, call {@link KeystoneNative#ks_errno} for error code.
+     * On failure, call {@link DirectMappingKeystoneNative#ks_errno} for error code.
      * <p>
      * NOTE 1: this API will automatically determine memory needed to contain
      * output bytes in *encoding.
@@ -59,8 +81,8 @@ public interface KeystoneNative extends Library {
      * @param numberOfStatements number of statements successfully processed
      * @return 0 on success, or -1 on failure.
      */
-    int ks_asm(Pointer engine, String assembly, int address, PointerByReference machineCodeBuffer,
-               IntByReference machineCodeSize, IntByReference numberOfStatements);
+    public static native int ks_asm(Pointer engine, String assembly, int address, PointerByReference machineCodeBuffer,
+                                    IntByReference machineCodeSize, IntByReference numberOfStatements);
 
     /**
      * Close KS instance: MUST do to release the handle when it is not used anymore.
@@ -74,7 +96,7 @@ public interface KeystoneNative extends Library {
      * @param engine pointer to a handle returned by ks_open().
      * @return KS_ERR_OK on success, or other value on failure (refer to ks_err enum for detailed error).
      */
-    KeystoneError ks_close(Pointer engine);
+    public static native KeystoneError ks_close(Pointer engine);
 
     /**
      * Report the last error number when some API function fail.
@@ -85,7 +107,7 @@ public interface KeystoneNative extends Library {
      * @param engine handle returned by ks_open()
      * @return error code of ks_err enum type {@link KeystoneError}
      */
-    KeystoneError ks_errno(Pointer engine);
+    public static native KeystoneError ks_errno(Pointer engine);
 
     /**
      * Free memory allocated by ks_asm().
@@ -94,7 +116,7 @@ public interface KeystoneNative extends Library {
      *
      * @param machineCodeBuffer memory allocated in @encoding argument of ks_asm()
      */
-    void ks_free(Pointer machineCodeBuffer);
+    public static native void ks_free(Pointer machineCodeBuffer);
 
     /**
      * Create new instance of Keystone engine.
@@ -106,7 +128,7 @@ public interface KeystoneNative extends Library {
      * @param engine       pointer to ks_engine, which will be updated at return time.
      * @return KS_ERR_OK on success, or other value on failure (refer to ks_err enum for detailed error).
      */
-    KeystoneError ks_open(KeystoneArchitecture architecture, KeystoneMode mode, PointerByReference engine);
+    public static native KeystoneError ks_open(KeystoneArchitecture architecture, KeystoneMode mode, PointerByReference engine);
 
     /**
      * Set option for Keystone engine at runtime.
@@ -119,7 +141,7 @@ public interface KeystoneNative extends Library {
      * @return {@link KeystoneError#Ok} on success, or other value on failure.
      * Refer to {@link KeystoneError} enum for detailed error.
      */
-    KeystoneError ks_option(Pointer engine, KeystoneOptionType type, int value);
+    public static native KeystoneError ks_option(Pointer engine, KeystoneOptionType type, int value);
 
     /**
      * Set option for Keystone engine at runtime
@@ -132,7 +154,7 @@ public interface KeystoneNative extends Library {
      * @return {@link KeystoneError#Ok} on success, or other value on failure.
      * Refer to {@link KeystoneError} enum for detailed error.
      */
-    KeystoneError ks_option(Pointer engine, KeystoneOptionType type, SymbolResolverCallback callback);
+    public static native KeystoneError ks_option(Pointer engine, KeystoneOptionType type, SymbolResolverCallback callback);
 
     /**
      * Return a string describing given error code.
@@ -142,7 +164,7 @@ public interface KeystoneNative extends Library {
      * @param errorCode error code.
      * @return returns a pointer to a string that describes the error code passed in the argument @errorCode.
      */
-    String ks_strerror(KeystoneError errorCode);
+    public static native String ks_strerror(KeystoneError errorCode);
 
     /**
      * Returns combined API version & major and minor version numbers.
@@ -153,5 +175,5 @@ public interface KeystoneNative extends Library {
      * @param minor The minor number of API version.
      * @return An hexadecimal number as (major << 8 | minor), which encodes both major & minor versions.
      */
-    int ks_version(IntByReference major, IntByReference minor);
+    public static native int ks_version(IntByReference major, IntByReference minor);
 }

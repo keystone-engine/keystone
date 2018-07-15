@@ -8,7 +8,6 @@
 package keystone.exceptions;
 
 import keystone.KeystoneError;
-import keystone.natives.KeystoneNative;
 
 /**
  * An exception that represents a failure while assembling code.
@@ -19,8 +18,8 @@ public class AssembleFailedKeystoneException extends KeystoneException {
      */
     private final String assembly;
 
-    public AssembleFailedKeystoneException(KeystoneNative ksNative, KeystoneError keystoneError, String assembly) {
-        super(ksNative, keystoneError, "Error while assembling `" + assembly + "`");
+    public AssembleFailedKeystoneException(KeystoneError keystoneError, String assembly) {
+        super(keystoneError, "Error while assembling `" + assembly + "`");
 
         this.assembly = assembly;
     }

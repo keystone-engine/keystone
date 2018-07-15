@@ -9,7 +9,6 @@ package keystone.exceptions;
 
 import keystone.KeystoneError;
 import keystone.KeystoneOptionType;
-import keystone.natives.KeystoneNative;
 
 /**
  * An exception that represents an error while setting an option in the Keystone library.
@@ -25,9 +24,8 @@ public class SetOptionFailedKeystoneException extends KeystoneException {
      */
     private final int optionValue;
 
-    public SetOptionFailedKeystoneException(KeystoneNative ksNative, KeystoneError keystoneError,
-                                            KeystoneOptionType type, int value) {
-        super(ksNative, keystoneError, createErrorMessage(type, value));
+    public SetOptionFailedKeystoneException(KeystoneError keystoneError, KeystoneOptionType type, int value) {
+        super(keystoneError, createErrorMessage(type, value));
         this.optionType = type;
         this.optionValue = value;
     }
