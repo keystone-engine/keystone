@@ -44,7 +44,7 @@ Other samples are provided by the unit tests included with the library, which co
 ## Getting Started
 
 1. Clone the repository locally.
-2. Download or compile Keystone library and store it in the folder `src/main/resources/{os-prefix}/{kexstone-lib}`, according [the specifications of JNA](https://java-native-access.github.io/jna/4.5.0/javadoc/index.html?com/sun/jna/NativeLibrary.html), or [the related unit test](https://github.com/java-native-access/jna/blob/7122be473e5f6179deb1c2b1c2fdeb77d8486fed/test/com/sun/jna/PlatformTest.java#L29).
+2. Download or compile Keystone library and store it in the folder `src/main/resources/{os-prefix}/{keystone-lib}`, according [the specifications of JNA](https://java-native-access.github.io/jna/4.5.0/javadoc/index.html?com/sun/jna/NativeLibrary.html), or [the related unit test](https://github.com/java-native-access/jna/blob/7122be473e5f6179deb1c2b1c2fdeb77d8486fed/test/com/sun/jna/PlatformTest.java#L29).
 3. Compile the Java bindings and issue the JAR using Maven `mvn package`. The unit tests are automatically while running the goal.
 4. In your project, include `target/binding-java-{version}.jar` and [JNA](https://github.com/java-native-access/jna) using your favourite dependency manager, or include `target/binding-java-{version}-jar-with-dependencies.jar` that is packaged with JNA.
 
