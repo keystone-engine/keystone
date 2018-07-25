@@ -21,6 +21,9 @@ while [ "$1" != "" ]; do
     debug)
       BUILDTYPE='Debug'
       ;;
+    macos-no-universal)
+      ARCH=''	# do not build MacOS universal binaries
+      ;;
     macos-universal)
       ARCH='i386;x86_64'	# build MacOS universal binaries
       ;;
