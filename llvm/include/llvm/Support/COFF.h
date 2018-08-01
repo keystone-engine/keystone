@@ -530,7 +530,13 @@ namespace COFF {
     EXCEPTION_TABLE,
     CERTIFICATE_TABLE,
     BASE_RELOCATION_TABLE,
+#ifdef DEBUG
+#undef DEBUG
     DEBUG,
+#define DEBUG
+#else
+    DEBUG,
+#endif
     ARCHITECTURE,
     GLOBAL_PTR,
     TLS_TABLE,
