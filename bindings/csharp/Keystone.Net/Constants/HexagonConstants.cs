@@ -1,5 +1,5 @@
 // For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [hexagonConstants.cs]
-namespace KeystoneNET
+namespace Keystone
 {
 	public enum HexagonError : short
 	{
