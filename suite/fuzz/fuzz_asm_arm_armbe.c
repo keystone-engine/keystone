@@ -9,7 +9,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
     ks_engine *ks;
     ks_err err;
     size_t count;
-    unsigned char *encode;
+    unsigned char *encode = NULL;
     size_t size;
     char * assembler;
 
@@ -55,7 +55,9 @@ int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
 
     free(assembler);
     // NOTE: free encode after usage to avoid leaking memory
-    ks_free(encode);
+    if (encode != NULL) {
+        ks_free(encode);
+    }
 
     // close Keystone instance when done
     ks_close(ks);
