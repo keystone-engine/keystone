@@ -29,7 +29,6 @@ sed 's/KS_ARCH_X86/KS_ARCH_PPC/' fuzz_asm_x86_32.c | sed 's/KS_MODE_32/KS_MODE_P
 
 sed 's/KS_ARCH_X86/KS_ARCH_SPARC/' fuzz_asm_x86_32.c | sed 's/KS_MODE_32/KS_MODE_SPARC32+KS_MODE_LITTLE_ENDIAN/' > fuzz_asm_sparc.c
 sed 's/KS_ARCH_X86/KS_ARCH_SPARC/' fuzz_asm_x86_32.c | sed 's/KS_MODE_32/KS_MODE_SPARC32+KS_MODE_BIG_ENDIAN/' > fuzz_asm_sparcbe.c
-sed 's/KS_ARCH_X86/KS_ARCH_SPARC/' fuzz_asm_x86_32.c | sed 's/KS_MODE_32/KS_MODE_SPARC64+KS_MODE_LITTLE_ENDIAN/' > fuzz_asm_sparc64.c
 sed 's/KS_ARCH_X86/KS_ARCH_SPARC/' fuzz_asm_x86_32.c | sed 's/KS_MODE_32/KS_MODE_SPARC64+KS_MODE_BIG_ENDIAN/' > fuzz_asm_sparc64be.c
 
 sed 's/KS_ARCH_X86/KS_ARCH_SYSTEMZ/' fuzz_asm_x86_32.c | sed 's/KS_MODE_32/KS_MODE_BIG_ENDIAN/' > fuzz_asm_systemz.c
