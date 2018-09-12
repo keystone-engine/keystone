@@ -501,6 +501,7 @@ ks_err ks_close(ks_engine *ks)
 
     if (ks->arch == KS_ARCH_EVM) {
         // handle EVM differently
+        delete ks;
         return KS_ERR_OK;
     }
 
