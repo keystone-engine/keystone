@@ -6,6 +6,7 @@ description = "Rust bindings for the keystone-engine"
 license = "GPL-2.0"
 readme = "README.md"
 include = ["src/*", "tests/*", "Cargo.toml", "COPYING", "README.md"]
+build = "build.rs"
 
 [dependencies]
 libc = "0.2.*"
