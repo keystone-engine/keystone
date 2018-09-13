@@ -91,7 +91,7 @@ int main(int argc, char **argv)
     uint64_t start_addr = 0;
     char *input = NULL;
     size_t count;
-    unsigned char *insn;
+    unsigned char *insn = NULL;
     size_t size;
 
     if (argc == 2) {
@@ -308,7 +308,9 @@ int main(int argc, char **argv)
     }
 
     // NOTE: free insn after usage to avoid leaking memory
-    ks_free(insn);
+    if (insn != NULL) {
+        ks_free(insn);
+    }
 
     // close Keystone instance when done
     ks_close(ks);
