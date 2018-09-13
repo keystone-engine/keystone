@@ -50,3 +50,4 @@ Marco Fornaro: C# binding.
 David Zimmer: VB6 binding.
 Michael Mohr: Debian packaging.
 Jämes Ménétrey (ZenLulz): Java binding.
+Philippe Antoine (Catena cyber): fuzzing.
