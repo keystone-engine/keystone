@@ -245,6 +245,7 @@ public:
 
   bool parseExpression(const MCExpr *&Res);
   bool parseExpression(const MCExpr *&Res, SMLoc &EndLoc) override;
+  bool parsePrimaryExprAux(const MCExpr *&Res, SMLoc &EndLoc, unsigned int depth);
   bool parsePrimaryExpr(const MCExpr *&Res, SMLoc &EndLoc) override;
   bool parseParenExpression(const MCExpr *&Res, SMLoc &EndLoc) override;
   bool parseParenExprOfDepth(unsigned ParenDepth, const MCExpr *&Res,
@@ -838,14 +839,12 @@ bool AsmParser::parseBracketExpr(const MCExpr *&Res, SMLoc &EndLoc) {
   return false;
 }
 
-/// \brief Parse a primary expression and return it.
-///  primaryexpr ::= (parenexpr
-///  primaryexpr ::= symbol
-///  primaryexpr ::= number
-///  primaryexpr ::= '.'
-///  primaryexpr ::= ~,+,- primaryexpr
-bool AsmParser::parsePrimaryExpr(const MCExpr *&Res, SMLoc &EndLoc)
+bool AsmParser::parsePrimaryExprAux(const MCExpr *&Res, SMLoc &EndLoc, unsigned int depth)
 {
+  if (depth > 0x100) {
+    KsError = KS_ERR_ASM_EXPR_TOKEN;
+    return true;
+  }
   SMLoc FirstTokenLoc = getLexer().getLoc();
   AsmToken::TokenKind FirstTokenKind = Lexer.getKind();
   switch (FirstTokenKind) {
@@ -858,7 +857,7 @@ bool AsmParser::parsePrimaryExpr(const MCExpr *&Res, SMLoc &EndLoc)
     return true;
   case AsmToken::Exclaim:
     Lex(); // Eat the operator.
-    if (parsePrimaryExpr(Res, EndLoc))
+    if (parsePrimaryExprAux(Res, EndLoc, depth+1))
       return true;
     Res = MCUnaryExpr::createLNot(Res, getContext());
     return false;
@@ -1039,23 +1038,34 @@ bool AsmParser::parsePrimaryExpr(const MCExpr *&Res, SMLoc &EndLoc)
     return parseBracketExpr(Res, EndLoc);
   case AsmToken::Minus:
     Lex(); // Eat the operator.
-    if (parsePrimaryExpr(Res, EndLoc))
+    if (parsePrimaryExprAux(Res, EndLoc, depth+1))
       return true;
     Res = MCUnaryExpr::createMinus(Res, getContext());
     return false;
   case AsmToken::Plus:
     Lex(); // Eat the operator.
-    if (parsePrimaryExpr(Res, EndLoc))
+    if (parsePrimaryExprAux(Res, EndLoc, depth+1))
       return true;
     Res = MCUnaryExpr::createPlus(Res, getContext());
     return false;
   case AsmToken::Tilde:
     Lex(); // Eat the operator.
-    if (parsePrimaryExpr(Res, EndLoc))
+    if (parsePrimaryExprAux(Res, EndLoc, depth+1))
       return true;
     Res = MCUnaryExpr::createNot(Res, getContext());
     return false;
   }
+}
+
+/// \brief Parse a primary expression and return it.
+///  primaryexpr ::= (parenexpr
+///  primaryexpr ::= symbol
+///  primaryexpr ::= number
+///  primaryexpr ::= '.'
+///  primaryexpr ::= ~,+,- primaryexpr
+bool AsmParser::parsePrimaryExpr(const MCExpr *&Res, SMLoc &EndLoc)
+{
+  return parsePrimaryExprAux(Res, EndLoc, 0);
 }
 
 bool AsmParser::parseExpression(const MCExpr *&Res) {
