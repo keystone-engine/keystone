@@ -43,6 +43,9 @@ using namespace llvm_ks;
 
 /* *** */
 
+static unsigned FragmentsDepth = 0;
+
+
 MCAssembler::MCAssembler(MCContext &Context_, MCAsmBackend &Backend_,
                          MCCodeEmitter &Emitter_, MCObjectWriter &Writer_)
     : Context(Context_), Backend(Backend_), Emitter(Emitter_), Writer(Writer_),
@@ -265,6 +268,11 @@ bool MCAssembler::evaluateFixup(const MCAsmLayout &Layout,
 uint64_t MCAssembler::computeFragmentSize(const MCAsmLayout &Layout,
                                           const MCFragment &F, bool &valid) const
 {
+  FragmentsDepth++;
+  if (FragmentsDepth > 0x10) {
+    valid = false;
+    return 0;
+  }
   valid = true;
   switch (F.getKind()) {
   case MCFragment::FT_Data:
