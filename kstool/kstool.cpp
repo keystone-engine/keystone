@@ -108,7 +108,7 @@ int main(int argc, char **argv)
         fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
 
         while(fgets(buf, sizeof(buf), stdin)) {
-            input = (char*)realloc(assembly, index + strlen(buf));
+            input = (char*)realloc(input, index + strlen(buf));
             if (!input) {
                 printf("Failed to allocate memory.");
                 return 1;
