@@ -75,6 +75,11 @@ kstool mips64be "and    \$9, \$6, \$7"
 #encoding: [0x00,0xc7,0x48,0x24]
 echo
 
+echo "::MSP430"
+kstool msp430 "and \$9, \$6, \$7"
+#encoding: [0x00,0xc7,0x48,0x24]
+echo
+
 echo "::SystemZ"
 kstool systemz "a %r0, 4095(%r15,%r1)"
 #encoding: [0x5a,0x0f,0x1f,0xff]

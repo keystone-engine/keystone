@@ -137,6 +137,9 @@ int main(int argc, char **argv)
     test_ks(KS_ARCH_MIPS, KS_MODE_MIPS64, "and $9, $6, $7", 0);
     test_ks(KS_ARCH_MIPS, KS_MODE_MIPS64 + KS_MODE_BIG_ENDIAN, "and $9, $6, $7", 0);
 
+    // MSP430
+    test_ks(KS_ARCH_MSP430, KS_MODE_LITTLE_ENDIAN, "and r12, r13", 0);
+
     // PowerPC
     test_ks(KS_ARCH_PPC, KS_MODE_PPC32 + KS_MODE_BIG_ENDIAN, "add 1, 2, 3", 0);
     test_ks(KS_ARCH_PPC, KS_MODE_PPC64, "add 1, 2, 3", 0);
