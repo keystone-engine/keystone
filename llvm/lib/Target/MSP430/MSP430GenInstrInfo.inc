@@ -116,219 +116,235 @@ namespace MSP430 {
     AND8rn	= 101,
     AND8rp	= 102,
     AND8rr	= 103,
-    BIC16mm	= 104,
-    BIC16mr	= 105,
-    BIC16rm	= 106,
-    BIC16rr	= 107,
-    BIC8mm	= 108,
-    BIC8mr	= 109,
-    BIC8rm	= 110,
-    BIC8rr	= 111,
-    BIS16mc	= 112,
-    BIS16mi	= 113,
-    BIS16mm	= 114,
-    BIS16mn	= 115,
-    BIS16mp	= 116,
-    BIS16mr	= 117,
-    BIS16rc	= 118,
-    BIS16ri	= 119,
-    BIS16rm	= 120,
-    BIS16rn	= 121,
-    BIS16rp	= 122,
-    BIS16rr	= 123,
-    BIS8mc	= 124,
-    BIS8mi	= 125,
-    BIS8mm	= 126,
-    BIS8mn	= 127,
-    BIS8mp	= 128,
-    BIS8mr	= 129,
-    BIS8rc	= 130,
-    BIS8ri	= 131,
-    BIS8rm	= 132,
-    BIS8rn	= 133,
-    BIS8rp	= 134,
-    BIS8rr	= 135,
-    BIT16mc	= 136,
-    BIT16mi	= 137,
-    BIT16mm	= 138,
-    BIT16mr	= 139,
-    BIT16rc	= 140,
-    BIT16ri	= 141,
-    BIT16rm	= 142,
-    BIT16rr	= 143,
-    BIT8mc	= 144,
-    BIT8mi	= 145,
-    BIT8mm	= 146,
-    BIT8mr	= 147,
-    BIT8rc	= 148,
-    BIT8ri	= 149,
-    BIT8rm	= 150,
-    BIT8rr	= 151,
-    Bi	= 152,
-    Bm	= 153,
-    Br	= 154,
-    CALLi	= 155,
-    CALLm	= 156,
-    CALLr	= 157,
-    CMP16mc	= 158,
-    CMP16mi	= 159,
-    CMP16mr	= 160,
-    CMP16rc	= 161,
-    CMP16ri	= 162,
-    CMP16rm	= 163,
-    CMP16rr	= 164,
-    CMP8mc	= 165,
-    CMP8mi	= 166,
-    CMP8mr	= 167,
-    CMP8rc	= 168,
-    CMP8ri	= 169,
-    CMP8rm	= 170,
-    CMP8rr	= 171,
-    DADD16mc	= 172,
-    DADD16mi	= 173,
-    DADD16mm	= 174,
-    DADD16mn	= 175,
-    DADD16mp	= 176,
-    DADD16mr	= 177,
-    DADD16rc	= 178,
-    DADD16ri	= 179,
-    DADD16rm	= 180,
-    DADD16rn	= 181,
-    DADD16rp	= 182,
-    DADD16rr	= 183,
-    DADD8mc	= 184,
-    DADD8mi	= 185,
-    DADD8mm	= 186,
-    DADD8mn	= 187,
-    DADD8mp	= 188,
-    DADD8mr	= 189,
-    DADD8rc	= 190,
-    DADD8ri	= 191,
-    DADD8rm	= 192,
-    DADD8rn	= 193,
-    DADD8rp	= 194,
-    DADD8rr	= 195,
-    JCC	= 196,
-    JMP	= 197,
-    MOV16mc	= 198,
-    MOV16mi	= 199,
-    MOV16mm	= 200,
-    MOV16mr	= 201,
-    MOV16rc	= 202,
-    MOV16ri	= 203,
-    MOV16rm	= 204,
-    MOV16rn	= 205,
-    MOV16rp	= 206,
-    MOV16rr	= 207,
-    MOV8mc	= 208,
-    MOV8mi	= 209,
-    MOV8mm	= 210,
-    MOV8mr	= 211,
-    MOV8rc	= 212,
-    MOV8ri	= 213,
-    MOV8rm	= 214,
-    MOV8rn	= 215,
-    MOV8rp	= 216,
-    MOV8rr	= 217,
-    MOVZX16rm8	= 218,
-    MOVZX16rr8	= 219,
-    POP16r	= 220,
-    PUSH16c	= 221,
-    PUSH16i	= 222,
-    PUSH16r	= 223,
-    PUSH8r	= 224,
-    RET	= 225,
-    RETI	= 226,
-    RRA16r	= 227,
-    RRA8r	= 228,
-    RRC16r	= 229,
-    RRC8r	= 230,
-    Rrcl16	= 231,
-    Rrcl8	= 232,
-    SEXT16r	= 233,
-    SUB16mc	= 234,
-    SUB16mi	= 235,
-    SUB16mm	= 236,
-    SUB16mn	= 237,
-    SUB16mp	= 238,
-    SUB16mr	= 239,
-    SUB16rc	= 240,
-    SUB16ri	= 241,
-    SUB16rm	= 242,
-    SUB16rn	= 243,
-    SUB16rp	= 244,
-    SUB16rr	= 245,
-    SUB8mc	= 246,
-    SUB8mi	= 247,
-    SUB8mm	= 248,
-    SUB8mn	= 249,
-    SUB8mp	= 250,
-    SUB8mr	= 251,
-    SUB8rc	= 252,
-    SUB8ri	= 253,
-    SUB8rm	= 254,
-    SUB8rn	= 255,
-    SUB8rp	= 256,
-    SUB8rr	= 257,
-    SUBC16mc	= 258,
-    SUBC16mi	= 259,
-    SUBC16mm	= 260,
-    SUBC16mn	= 261,
-    SUBC16mp	= 262,
-    SUBC16mr	= 263,
-    SUBC16rc	= 264,
-    SUBC16ri	= 265,
-    SUBC16rm	= 266,
-    SUBC16rn	= 267,
-    SUBC16rp	= 268,
-    SUBC16rr	= 269,
-    SUBC8mc	= 270,
-    SUBC8mi	= 271,
-    SUBC8mm	= 272,
-    SUBC8mn	= 273,
-    SUBC8mp	= 274,
-    SUBC8mr	= 275,
-    SUBC8rc	= 276,
-    SUBC8ri	= 277,
-    SUBC8rm	= 278,
-    SUBC8rn	= 279,
-    SUBC8rp	= 280,
-    SUBC8rr	= 281,
-    SWPB16r	= 282,
-    Select16	= 283,
-    Select8	= 284,
-    Shl16	= 285,
-    Shl8	= 286,
-    Sra16	= 287,
-    Sra8	= 288,
-    Srl16	= 289,
-    Srl8	= 290,
-    XOR16mc	= 291,
-    XOR16mi	= 292,
-    XOR16mm	= 293,
-    XOR16mn	= 294,
-    XOR16mp	= 295,
-    XOR16mr	= 296,
-    XOR16rc	= 297,
-    XOR16ri	= 298,
-    XOR16rm	= 299,
-    XOR16rn	= 300,
-    XOR16rp	= 301,
-    XOR16rr	= 302,
-    XOR8mc	= 303,
-    XOR8mi	= 304,
-    XOR8mm	= 305,
-    XOR8mn	= 306,
-    XOR8mp	= 307,
-    XOR8mr	= 308,
-    XOR8rc	= 309,
-    XOR8ri	= 310,
-    XOR8rm	= 311,
-    XOR8rn	= 312,
-    XOR8rp	= 313,
-    XOR8rr	= 314,
-    ZEXT16r	= 315,
-    INSTRUCTION_LIST_END = 316
+    BIC16mc	= 104,
+    BIC16mi	= 105,
+    BIC16mm	= 106,
+    BIC16mn	= 107,
+    BIC16mp	= 108,
+    BIC16mr	= 109,
+    BIC16rc	= 110,
+    BIC16ri	= 111,
+    BIC16rm	= 112,
+    BIC16rn	= 113,
+    BIC16rp	= 114,
+    BIC16rr	= 115,
+    BIC8mc	= 116,
+    BIC8mi	= 117,
+    BIC8mm	= 118,
+    BIC8mn	= 119,
+    BIC8mp	= 120,
+    BIC8mr	= 121,
+    BIC8rc	= 122,
+    BIC8ri	= 123,
+    BIC8rm	= 124,
+    BIC8rn	= 125,
+    BIC8rp	= 126,
+    BIC8rr	= 127,
+    BIS16mc	= 128,
+    BIS16mi	= 129,
+    BIS16mm	= 130,
+    BIS16mn	= 131,
+    BIS16mp	= 132,
+    BIS16mr	= 133,
+    BIS16rc	= 134,
+    BIS16ri	= 135,
+    BIS16rm	= 136,
+    BIS16rn	= 137,
+    BIS16rp	= 138,
+    BIS16rr	= 139,
+    BIS8mc	= 140,
+    BIS8mi	= 141,
+    BIS8mm	= 142,
+    BIS8mn	= 143,
+    BIS8mp	= 144,
+    BIS8mr	= 145,
+    BIS8rc	= 146,
+    BIS8ri	= 147,
+    BIS8rm	= 148,
+    BIS8rn	= 149,
+    BIS8rp	= 150,
+    BIS8rr	= 151,
+    BIT16mc	= 152,
+    BIT16mi	= 153,
+    BIT16mm	= 154,
+    BIT16mr	= 155,
+    BIT16rc	= 156,
+    BIT16ri	= 157,
+    BIT16rm	= 158,
+    BIT16rr	= 159,
+    BIT8mc	= 160,
+    BIT8mi	= 161,
+    BIT8mm	= 162,
+    BIT8mr	= 163,
+    BIT8rc	= 164,
+    BIT8ri	= 165,
+    BIT8rm	= 166,
+    BIT8rr	= 167,
+    Bi	= 168,
+    Bm	= 169,
+    Br	= 170,
+    CALLi	= 171,
+    CALLm	= 172,
+    CALLr	= 173,
+    CMP16mc	= 174,
+    CMP16mi	= 175,
+    CMP16mr	= 176,
+    CMP16rc	= 177,
+    CMP16ri	= 178,
+    CMP16rm	= 179,
+    CMP16rr	= 180,
+    CMP8mc	= 181,
+    CMP8mi	= 182,
+    CMP8mr	= 183,
+    CMP8rc	= 184,
+    CMP8ri	= 185,
+    CMP8rm	= 186,
+    CMP8rr	= 187,
+    DADD16mc	= 188,
+    DADD16mi	= 189,
+    DADD16mm	= 190,
+    DADD16mn	= 191,
+    DADD16mp	= 192,
+    DADD16mr	= 193,
+    DADD16rc	= 194,
+    DADD16ri	= 195,
+    DADD16rm	= 196,
+    DADD16rn	= 197,
+    DADD16rp	= 198,
+    DADD16rr	= 199,
+    DADD8mc	= 200,
+    DADD8mi	= 201,
+    DADD8mm	= 202,
+    DADD8mn	= 203,
+    DADD8mp	= 204,
+    DADD8mr	= 205,
+    DADD8rc	= 206,
+    DADD8ri	= 207,
+    DADD8rm	= 208,
+    DADD8rn	= 209,
+    DADD8rp	= 210,
+    DADD8rr	= 211,
+    JCC	= 212,
+    JMP	= 213,
+    MOV16mc	= 214,
+    MOV16mi	= 215,
+    MOV16mm	= 216,
+    MOV16mr	= 217,
+    MOV16rc	= 218,
+    MOV16ri	= 219,
+    MOV16rm	= 220,
+    MOV16rn	= 221,
+    MOV16rp	= 222,
+    MOV16rr	= 223,
+    MOV8mc	= 224,
+    MOV8mi	= 225,
+    MOV8mm	= 226,
+    MOV8mr	= 227,
+    MOV8rc	= 228,
+    MOV8ri	= 229,
+    MOV8rm	= 230,
+    MOV8rn	= 231,
+    MOV8rp	= 232,
+    MOV8rr	= 233,
+    MOVZX16rm8	= 234,
+    MOVZX16rr8	= 235,
+    POP16r	= 236,
+    PUSH16c	= 237,
+    PUSH16i	= 238,
+    PUSH16r	= 239,
+    PUSH8r	= 240,
+    RET	= 241,
+    RETI	= 242,
+    RRA16r	= 243,
+    RRA8r	= 244,
+    RRC16r	= 245,
+    RRC8r	= 246,
+    Rrcl16	= 247,
+    Rrcl8	= 248,
+    SEXT16r	= 249,
+    SUB16mc	= 250,
+    SUB16mi	= 251,
+    SUB16mm	= 252,
+    SUB16mn	= 253,
+    SUB16mp	= 254,
+    SUB16mr	= 255,
+    SUB16rc	= 256,
+    SUB16ri	= 257,
+    SUB16rm	= 258,
+    SUB16rn	= 259,
+    SUB16rp	= 260,
+    SUB16rr	= 261,
+    SUB8mc	= 262,
+    SUB8mi	= 263,
+    SUB8mm	= 264,
+    SUB8mn	= 265,
+    SUB8mp	= 266,
+    SUB8mr	= 267,
+    SUB8rc	= 268,
+    SUB8ri	= 269,
+    SUB8rm	= 270,
+    SUB8rn	= 271,
+    SUB8rp	= 272,
+    SUB8rr	= 273,
+    SUBC16mc	= 274,
+    SUBC16mi	= 275,
+    SUBC16mm	= 276,
+    SUBC16mn	= 277,
+    SUBC16mp	= 278,
+    SUBC16mr	= 279,
+    SUBC16rc	= 280,
+    SUBC16ri	= 281,
+    SUBC16rm	= 282,
+    SUBC16rn	= 283,
+    SUBC16rp	= 284,
+    SUBC16rr	= 285,
+    SUBC8mc	= 286,
+    SUBC8mi	= 287,
+    SUBC8mm	= 288,
+    SUBC8mn	= 289,
+    SUBC8mp	= 290,
+    SUBC8mr	= 291,
+    SUBC8rc	= 292,
+    SUBC8ri	= 293,
+    SUBC8rm	= 294,
+    SUBC8rn	= 295,
+    SUBC8rp	= 296,
+    SUBC8rr	= 297,
+    SWPB16r	= 298,
+    Select16	= 299,
+    Select8	= 300,
+    Shl16	= 301,
+    Shl8	= 302,
+    Sra16	= 303,
+    Sra8	= 304,
+    Srl16	= 305,
+    Srl8	= 306,
+    XOR16mc	= 307,
+    XOR16mi	= 308,
+    XOR16mm	= 309,
+    XOR16mn	= 310,
+    XOR16mp	= 311,
+    XOR16mr	= 312,
+    XOR16rc	= 313,
+    XOR16ri	= 314,
+    XOR16rm	= 315,
+    XOR16rn	= 316,
+    XOR16rp	= 317,
+    XOR16rr	= 318,
+    XOR8mc	= 319,
+    XOR8mi	= 320,
+    XOR8mm	= 321,
+    XOR8mn	= 322,
+    XOR8mp	= 323,
+    XOR8mr	= 324,
+    XOR8rc	= 325,
+    XOR8ri	= 326,
+    XOR8rm	= 327,
+    XOR8rn	= 328,
+    XOR8rp	= 329,
+    XOR8rr	= 330,
+    ZEXT16r	= 331,
+    INSTRUCTION_LIST_END = 332
   };
 
 namespace Sched {
@@ -380,31 +396,28 @@ static const MCOperandInfo OperandInfo28[] = { { MSP430::GR8RegClassID, 0, MCOI:
 static const MCOperandInfo OperandInfo29[] = { { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, ((0 << 16) | (1 << MCOI::TIED_TO)) }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_UNKNOWN, ((1 << 16) | (1 << MCOI::TIED_TO)) }, };
 static const MCOperandInfo OperandInfo30[] = { { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, ((0 << 16) | (1 << MCOI::TIED_TO)) }, { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, };
 static const MCOperandInfo OperandInfo31[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { -1, 0, MCOI::OPERAND_IMMEDIATE, 0 }, { -1, 0, MCOI::OPERAND_IMMEDIATE, 0 }, };
-static const MCOperandInfo OperandInfo32[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_UNKNOWN, 0 }, { -1, 0, MCOI::OPERAND_UNKNOWN, 0 }, };
-static const MCOperandInfo OperandInfo33[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, };
-static const MCOperandInfo OperandInfo34[] = { { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_UNKNOWN, 0 }, { -1, 0, MCOI::OPERAND_UNKNOWN, 0 }, };
-static const MCOperandInfo OperandInfo35[] = { { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, };
-static const MCOperandInfo OperandInfo36[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { -1, 0, MCOI::OPERAND_UNKNOWN, 0 }, };
-static const MCOperandInfo OperandInfo37[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { -1, 0, MCOI::OPERAND_IMMEDIATE, 0 }, };
-static const MCOperandInfo OperandInfo38[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_UNKNOWN, 0 }, { -1, 0, MCOI::OPERAND_UNKNOWN, 0 }, };
-static const MCOperandInfo OperandInfo39[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, };
-static const MCOperandInfo OperandInfo40[] = { { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { -1, 0, MCOI::OPERAND_UNKNOWN, 0 }, };
-static const MCOperandInfo OperandInfo41[] = { { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { -1, 0, MCOI::OPERAND_IMMEDIATE, 0 }, };
-static const MCOperandInfo OperandInfo42[] = { { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_UNKNOWN, 0 }, { -1, 0, MCOI::OPERAND_UNKNOWN, 0 }, };
-static const MCOperandInfo OperandInfo43[] = { { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, };
-static const MCOperandInfo OperandInfo44[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_UNKNOWN, 0 }, { -1, 0, MCOI::OPERAND_UNKNOWN, 0 }, };
-static const MCOperandInfo OperandInfo45[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, };
-static const MCOperandInfo OperandInfo46[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_UNKNOWN, 0 }, };
-static const MCOperandInfo OperandInfo47[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_UNKNOWN, ((1 << 16) | (1 << MCOI::TIED_TO)) }, };
-static const MCOperandInfo OperandInfo48[] = { { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_UNKNOWN, 0 }, };
-static const MCOperandInfo OperandInfo49[] = { { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_UNKNOWN, ((1 << 16) | (1 << MCOI::TIED_TO)) }, };
-static const MCOperandInfo OperandInfo50[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, };
-static const MCOperandInfo OperandInfo51[] = { { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, };
-static const MCOperandInfo OperandInfo52[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, ((0 << 16) | (1 << MCOI::TIED_TO)) }, };
-static const MCOperandInfo OperandInfo53[] = { { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, ((0 << 16) | (1 << MCOI::TIED_TO)) }, };
-static const MCOperandInfo OperandInfo54[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { -1, 0, MCOI::OPERAND_IMMEDIATE, 0 }, };
-static const MCOperandInfo OperandInfo55[] = { { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { -1, 0, MCOI::OPERAND_IMMEDIATE, 0 }, };
-static const MCOperandInfo OperandInfo56[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, };
+static const MCOperandInfo OperandInfo32[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { -1, 0, MCOI::OPERAND_UNKNOWN, 0 }, };
+static const MCOperandInfo OperandInfo33[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { -1, 0, MCOI::OPERAND_IMMEDIATE, 0 }, };
+static const MCOperandInfo OperandInfo34[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_UNKNOWN, 0 }, { -1, 0, MCOI::OPERAND_UNKNOWN, 0 }, };
+static const MCOperandInfo OperandInfo35[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, };
+static const MCOperandInfo OperandInfo36[] = { { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { -1, 0, MCOI::OPERAND_UNKNOWN, 0 }, };
+static const MCOperandInfo OperandInfo37[] = { { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { -1, 0, MCOI::OPERAND_IMMEDIATE, 0 }, };
+static const MCOperandInfo OperandInfo38[] = { { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_UNKNOWN, 0 }, { -1, 0, MCOI::OPERAND_UNKNOWN, 0 }, };
+static const MCOperandInfo OperandInfo39[] = { { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, };
+static const MCOperandInfo OperandInfo40[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_UNKNOWN, 0 }, { -1, 0, MCOI::OPERAND_UNKNOWN, 0 }, };
+static const MCOperandInfo OperandInfo41[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, };
+static const MCOperandInfo OperandInfo42[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_UNKNOWN, 0 }, };
+static const MCOperandInfo OperandInfo43[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_UNKNOWN, ((1 << 16) | (1 << MCOI::TIED_TO)) }, };
+static const MCOperandInfo OperandInfo44[] = { { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_UNKNOWN, 0 }, };
+static const MCOperandInfo OperandInfo45[] = { { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_UNKNOWN, ((1 << 16) | (1 << MCOI::TIED_TO)) }, };
+static const MCOperandInfo OperandInfo46[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, };
+static const MCOperandInfo OperandInfo47[] = { { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, };
+static const MCOperandInfo OperandInfo48[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, ((0 << 16) | (1 << MCOI::TIED_TO)) }, };
+static const MCOperandInfo OperandInfo49[] = { { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, ((0 << 16) | (1 << MCOI::TIED_TO)) }, };
+static const MCOperandInfo OperandInfo50[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { -1, 0, MCOI::OPERAND_IMMEDIATE, 0 }, };
+static const MCOperandInfo OperandInfo51[] = { { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { -1, 0, MCOI::OPERAND_IMMEDIATE, 0 }, };
+static const MCOperandInfo OperandInfo52[] = { { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR16RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, };
+static const MCOperandInfo OperandInfo53[] = { { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, { MSP430::GR8RegClassID, 0, MCOI::OPERAND_REGISTER, 0 }, };
 
 extern const MCInstrDesc MSP430Insts[] = {
   { 0,	1,	1,	0,	0,	0|(1ULL<<MCID::Pseudo)|(1ULL<<MCID::Variadic)|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, nullptr, OperandInfo2, -1 ,nullptr },  // Inst #0 = PHI
@@ -511,218 +524,234 @@ extern const MCInstrDesc MSP430Insts[] = {
   { 101,	3,	1,	2,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo28, -1 ,nullptr },  // Inst #101 = AND8rn
   { 102,	4,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, nullptr, ImplicitList1, OperandInfo29, -1 ,nullptr },  // Inst #102 = AND8rp
   { 103,	3,	1,	2,	0,	0|(1ULL<<MCID::Commutable), 0x0ULL, nullptr, ImplicitList1, OperandInfo30, -1 ,nullptr },  // Inst #103 = AND8rr
-  { 104,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, nullptr, OperandInfo15, -1 ,nullptr },  // Inst #104 = BIC16mm
-  { 105,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, nullptr, OperandInfo17, -1 ,nullptr },  // Inst #105 = BIC16mr
-  { 106,	4,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, nullptr, OperandInfo32, -1 ,nullptr },  // Inst #106 = BIC16rm
-  { 107,	3,	1,	2,	0,	0, 0x0ULL, nullptr, nullptr, OperandInfo33, -1 ,nullptr },  // Inst #107 = BIC16rr
-  { 108,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, nullptr, OperandInfo15, -1 ,nullptr },  // Inst #108 = BIC8mm
-  { 109,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, nullptr, OperandInfo24, -1 ,nullptr },  // Inst #109 = BIC8mr
-  { 110,	4,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, nullptr, OperandInfo34, -1 ,nullptr },  // Inst #110 = BIC8rm
-  { 111,	3,	1,	2,	0,	0, 0x0ULL, nullptr, nullptr, OperandInfo35, -1 ,nullptr },  // Inst #111 = BIC8rr
-  { 112,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #112 = BIS16mc
-  { 113,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #113 = BIS16mi
-  { 114,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #114 = BIS16mm
-  { 115,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #115 = BIS16mn
-  { 116,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #116 = BIS16mp
-  { 117,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo17, -1 ,nullptr },  // Inst #117 = BIS16mr
-  { 118,	3,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo18, -1 ,nullptr },  // Inst #118 = BIS16rc
-  { 119,	3,	1,	4,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo19, -1 ,nullptr },  // Inst #119 = BIS16ri
-  { 120,	4,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo20, -1 ,nullptr },  // Inst #120 = BIS16rm
-  { 121,	3,	1,	2,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo21, -1 ,nullptr },  // Inst #121 = BIS16rn
-  { 122,	4,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, nullptr, ImplicitList1, OperandInfo22, -1 ,nullptr },  // Inst #122 = BIS16rp
-  { 123,	3,	1,	2,	0,	0|(1ULL<<MCID::Commutable), 0x0ULL, nullptr, ImplicitList1, OperandInfo23, -1 ,nullptr },  // Inst #123 = BIS16rr
-  { 124,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #124 = BIS8mc
-  { 125,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #125 = BIS8mi
-  { 126,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #126 = BIS8mm
-  { 127,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #127 = BIS8mn
-  { 128,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #128 = BIS8mp
-  { 129,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo24, -1 ,nullptr },  // Inst #129 = BIS8mr
-  { 130,	3,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo25, -1 ,nullptr },  // Inst #130 = BIS8rc
-  { 131,	3,	1,	4,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo26, -1 ,nullptr },  // Inst #131 = BIS8ri
-  { 132,	4,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo27, -1 ,nullptr },  // Inst #132 = BIS8rm
-  { 133,	3,	1,	2,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo28, -1 ,nullptr },  // Inst #133 = BIS8rn
-  { 134,	4,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, nullptr, ImplicitList1, OperandInfo29, -1 ,nullptr },  // Inst #134 = BIS8rp
-  { 135,	3,	1,	2,	0,	0|(1ULL<<MCID::Commutable), 0x0ULL, nullptr, ImplicitList1, OperandInfo30, -1 ,nullptr },  // Inst #135 = BIS8rr
-  { 136,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #136 = BIT16mc
-  { 137,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #137 = BIT16mi
-  { 138,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #138 = BIT16mm
-  { 139,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo17, -1 ,nullptr },  // Inst #139 = BIT16mr
-  { 140,	2,	0,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo36, -1 ,nullptr },  // Inst #140 = BIT16rc
-  { 141,	2,	0,	4,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo37, -1 ,nullptr },  // Inst #141 = BIT16ri
-  { 142,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo38, -1 ,nullptr },  // Inst #142 = BIT16rm
-  { 143,	2,	0,	2,	0,	0|(1ULL<<MCID::Commutable), 0x0ULL, nullptr, ImplicitList1, OperandInfo39, -1 ,nullptr },  // Inst #143 = BIT16rr
-  { 144,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #144 = BIT8mc
-  { 145,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #145 = BIT8mi
-  { 146,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #146 = BIT8mm
-  { 147,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo24, -1 ,nullptr },  // Inst #147 = BIT8mr
-  { 148,	2,	0,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo40, -1 ,nullptr },  // Inst #148 = BIT8rc
-  { 149,	2,	0,	4,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo41, -1 ,nullptr },  // Inst #149 = BIT8ri
-  { 150,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo42, -1 ,nullptr },  // Inst #150 = BIT8rm
-  { 151,	2,	0,	2,	0,	0|(1ULL<<MCID::Commutable), 0x0ULL, nullptr, ImplicitList1, OperandInfo43, -1 ,nullptr },  // Inst #151 = BIT8rr
-  { 152,	1,	0,	4,	0,	0|(1ULL<<MCID::Branch)|(1ULL<<MCID::IndirectBranch)|(1ULL<<MCID::Barrier)|(1ULL<<MCID::Terminator), 0x0ULL, nullptr, nullptr, OperandInfo3, -1 ,nullptr },  // Inst #152 = Bi
-  { 153,	2,	0,	4,	0,	0|(1ULL<<MCID::Branch)|(1ULL<<MCID::IndirectBranch)|(1ULL<<MCID::Barrier)|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::Terminator), 0x0ULL, nullptr, nullptr, OperandInfo44, -1 ,nullptr },  // Inst #153 = Bm
-  { 154,	1,	0,	2,	0,	0|(1ULL<<MCID::Branch)|(1ULL<<MCID::IndirectBranch)|(1ULL<<MCID::Barrier)|(1ULL<<MCID::Terminator), 0x0ULL, nullptr, nullptr, OperandInfo45, -1 ,nullptr },  // Inst #154 = Br
-  { 155,	1,	0,	4,	0,	0|(1ULL<<MCID::Call), 0x0ULL, ImplicitList2, ImplicitList4, OperandInfo3, -1 ,nullptr },  // Inst #155 = CALLi
-  { 156,	2,	0,	4,	0,	0|(1ULL<<MCID::Call)|(1ULL<<MCID::MayLoad), 0x0ULL, ImplicitList2, ImplicitList4, OperandInfo44, -1 ,nullptr },  // Inst #156 = CALLm
-  { 157,	1,	0,	2,	0,	0|(1ULL<<MCID::Call), 0x0ULL, ImplicitList2, ImplicitList4, OperandInfo45, -1 ,nullptr },  // Inst #157 = CALLr
-  { 158,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #158 = CMP16mc
-  { 159,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #159 = CMP16mi
-  { 160,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo17, -1 ,nullptr },  // Inst #160 = CMP16mr
-  { 161,	2,	0,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo36, -1 ,nullptr },  // Inst #161 = CMP16rc
-  { 162,	2,	0,	4,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo37, -1 ,nullptr },  // Inst #162 = CMP16ri
-  { 163,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo38, -1 ,nullptr },  // Inst #163 = CMP16rm
-  { 164,	2,	0,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo39, -1 ,nullptr },  // Inst #164 = CMP16rr
-  { 165,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #165 = CMP8mc
-  { 166,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #166 = CMP8mi
-  { 167,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo24, -1 ,nullptr },  // Inst #167 = CMP8mr
-  { 168,	2,	0,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo40, -1 ,nullptr },  // Inst #168 = CMP8rc
-  { 169,	2,	0,	4,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo41, -1 ,nullptr },  // Inst #169 = CMP8ri
-  { 170,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo42, -1 ,nullptr },  // Inst #170 = CMP8rm
-  { 171,	2,	0,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo43, -1 ,nullptr },  // Inst #171 = CMP8rr
-  { 172,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #172 = DADD16mc
-  { 173,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #173 = DADD16mi
-  { 174,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #174 = DADD16mm
-  { 175,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #175 = DADD16mn
-  { 176,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #176 = DADD16mp
-  { 177,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo17, -1 ,nullptr },  // Inst #177 = DADD16mr
-  { 178,	3,	1,	2,	0,	0, 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo18, -1 ,nullptr },  // Inst #178 = DADD16rc
-  { 179,	3,	1,	4,	0,	0, 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo19, -1 ,nullptr },  // Inst #179 = DADD16ri
-  { 180,	4,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo20, -1 ,nullptr },  // Inst #180 = DADD16rm
-  { 181,	3,	1,	2,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo21, -1 ,nullptr },  // Inst #181 = DADD16rn
-  { 182,	4,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo22, -1 ,nullptr },  // Inst #182 = DADD16rp
-  { 183,	3,	1,	2,	0,	0|(1ULL<<MCID::Commutable), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo23, -1 ,nullptr },  // Inst #183 = DADD16rr
-  { 184,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #184 = DADD8mc
-  { 185,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #185 = DADD8mi
-  { 186,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #186 = DADD8mm
-  { 187,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #187 = DADD8mn
-  { 188,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #188 = DADD8mp
-  { 189,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo24, -1 ,nullptr },  // Inst #189 = DADD8mr
-  { 190,	3,	1,	2,	0,	0, 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo25, -1 ,nullptr },  // Inst #190 = DADD8rc
-  { 191,	3,	1,	4,	0,	0, 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo26, -1 ,nullptr },  // Inst #191 = DADD8ri
-  { 192,	4,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo27, -1 ,nullptr },  // Inst #192 = DADD8rm
-  { 193,	3,	1,	2,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo28, -1 ,nullptr },  // Inst #193 = DADD8rn
-  { 194,	4,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo29, -1 ,nullptr },  // Inst #194 = DADD8rp
-  { 195,	3,	1,	2,	0,	0|(1ULL<<MCID::Commutable), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo30, -1 ,nullptr },  // Inst #195 = DADD8rr
-  { 196,	2,	0,	2,	0,	0|(1ULL<<MCID::Branch)|(1ULL<<MCID::Terminator), 0x0ULL, ImplicitList1, nullptr, OperandInfo7, -1 ,nullptr },  // Inst #196 = JCC
-  { 197,	1,	0,	2,	0,	0|(1ULL<<MCID::Branch)|(1ULL<<MCID::Barrier)|(1ULL<<MCID::Terminator), 0x0ULL, nullptr, nullptr, OperandInfo2, -1 ,nullptr },  // Inst #197 = JMP
-  { 198,	3,	0,	4,	0,	0|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, nullptr, OperandInfo13, -1 ,nullptr },  // Inst #198 = MOV16mc
-  { 199,	3,	0,	6,	0,	0|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, nullptr, OperandInfo14, -1 ,nullptr },  // Inst #199 = MOV16mi
-  { 200,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, nullptr, OperandInfo15, -1 ,nullptr },  // Inst #200 = MOV16mm
-  { 201,	3,	0,	4,	0,	0|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, nullptr, OperandInfo17, -1 ,nullptr },  // Inst #201 = MOV16mr
-  { 202,	2,	1,	2,	0,	0|(1ULL<<MCID::Rematerializable)|(1ULL<<MCID::CheapAsAMove), 0x0ULL, nullptr, nullptr, OperandInfo36, -1 ,nullptr },  // Inst #202 = MOV16rc
-  { 203,	2,	1,	4,	0,	0|(1ULL<<MCID::Rematerializable)|(1ULL<<MCID::CheapAsAMove), 0x0ULL, nullptr, nullptr, OperandInfo37, -1 ,nullptr },  // Inst #203 = MOV16ri
-  { 204,	3,	1,	4,	0,	0|(1ULL<<MCID::FoldableAsLoad)|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::Rematerializable), 0x0ULL, nullptr, nullptr, OperandInfo38, -1 ,nullptr },  // Inst #204 = MOV16rm
-  { 205,	2,	1,	2,	0,	0|(1ULL<<MCID::FoldableAsLoad)|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::Rematerializable), 0x0ULL, nullptr, nullptr, OperandInfo46, -1 ,nullptr },  // Inst #205 = MOV16rn
-  { 206,	3,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, nullptr, nullptr, OperandInfo47, -1 ,nullptr },  // Inst #206 = MOV16rp
-  { 207,	2,	1,	2,	0,	0, 0x0ULL, nullptr, nullptr, OperandInfo39, -1 ,nullptr },  // Inst #207 = MOV16rr
-  { 208,	3,	0,	4,	0,	0|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, nullptr, OperandInfo13, -1 ,nullptr },  // Inst #208 = MOV8mc
-  { 209,	3,	0,	6,	0,	0|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, nullptr, OperandInfo14, -1 ,nullptr },  // Inst #209 = MOV8mi
-  { 210,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, nullptr, OperandInfo15, -1 ,nullptr },  // Inst #210 = MOV8mm
-  { 211,	3,	0,	4,	0,	0|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, nullptr, OperandInfo24, -1 ,nullptr },  // Inst #211 = MOV8mr
-  { 212,	2,	1,	2,	0,	0|(1ULL<<MCID::Rematerializable)|(1ULL<<MCID::CheapAsAMove), 0x0ULL, nullptr, nullptr, OperandInfo40, -1 ,nullptr },  // Inst #212 = MOV8rc
-  { 213,	2,	1,	4,	0,	0|(1ULL<<MCID::Rematerializable)|(1ULL<<MCID::CheapAsAMove), 0x0ULL, nullptr, nullptr, OperandInfo41, -1 ,nullptr },  // Inst #213 = MOV8ri
-  { 214,	3,	1,	4,	0,	0|(1ULL<<MCID::FoldableAsLoad)|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::Rematerializable), 0x0ULL, nullptr, nullptr, OperandInfo42, -1 ,nullptr },  // Inst #214 = MOV8rm
-  { 215,	2,	1,	2,	0,	0|(1ULL<<MCID::FoldableAsLoad)|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::Rematerializable), 0x0ULL, nullptr, nullptr, OperandInfo48, -1 ,nullptr },  // Inst #215 = MOV8rn
-  { 216,	3,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, nullptr, nullptr, OperandInfo49, -1 ,nullptr },  // Inst #216 = MOV8rp
-  { 217,	2,	1,	2,	0,	0, 0x0ULL, nullptr, nullptr, OperandInfo43, -1 ,nullptr },  // Inst #217 = MOV8rr
-  { 218,	3,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, nullptr, OperandInfo38, -1 ,nullptr },  // Inst #218 = MOVZX16rm8
-  { 219,	2,	1,	2,	0,	0, 0x0ULL, nullptr, nullptr, OperandInfo50, -1 ,nullptr },  // Inst #219 = MOVZX16rr8
-  { 220,	1,	1,	2,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, ImplicitList2, ImplicitList2, OperandInfo45, -1 ,nullptr },  // Inst #220 = POP16r
-  { 221,	1,	0,	2,	0,	0, 0x0ULL, ImplicitList2, ImplicitList2, OperandInfo2, -1 ,nullptr },  // Inst #221 = PUSH16c
-  { 222,	1,	0,	4,	0,	0, 0x0ULL, ImplicitList2, ImplicitList2, OperandInfo3, -1 ,nullptr },  // Inst #222 = PUSH16i
-  { 223,	1,	0,	2,	0,	0, 0x0ULL, ImplicitList2, ImplicitList2, OperandInfo45, -1 ,nullptr },  // Inst #223 = PUSH16r
-  { 224,	1,	0,	2,	0,	0|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList2, ImplicitList2, OperandInfo51, -1 ,nullptr },  // Inst #224 = PUSH8r
-  { 225,	0,	0,	2,	0,	0|(1ULL<<MCID::Return)|(1ULL<<MCID::Barrier)|(1ULL<<MCID::Terminator), 0x0ULL, nullptr, nullptr, nullptr, -1 ,nullptr },  // Inst #225 = RET
-  { 226,	0,	0,	2,	0,	0|(1ULL<<MCID::Return)|(1ULL<<MCID::Barrier)|(1ULL<<MCID::Terminator), 0x0ULL, nullptr, nullptr, nullptr, -1 ,nullptr },  // Inst #226 = RETI
-  { 227,	2,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo52, -1 ,nullptr },  // Inst #227 = RRA16r
-  { 228,	2,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo53, -1 ,nullptr },  // Inst #228 = RRA8r
-  { 229,	2,	1,	2,	0,	0, 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo52, -1 ,nullptr },  // Inst #229 = RRC16r
-  { 230,	2,	1,	2,	0,	0, 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo53, -1 ,nullptr },  // Inst #230 = RRC8r
-  { 231,	2,	1,	0,	0,	0|(1ULL<<MCID::UsesCustomInserter), 0x4ULL, nullptr, ImplicitList1, OperandInfo39, -1 ,nullptr },  // Inst #231 = Rrcl16
-  { 232,	2,	1,	0,	0,	0|(1ULL<<MCID::UsesCustomInserter), 0x4ULL, nullptr, ImplicitList1, OperandInfo43, -1 ,nullptr },  // Inst #232 = Rrcl8
-  { 233,	2,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo52, -1 ,nullptr },  // Inst #233 = SEXT16r
-  { 234,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #234 = SUB16mc
-  { 235,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #235 = SUB16mi
-  { 236,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #236 = SUB16mm
-  { 237,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #237 = SUB16mn
-  { 238,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #238 = SUB16mp
-  { 239,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo17, -1 ,nullptr },  // Inst #239 = SUB16mr
-  { 240,	3,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo18, -1 ,nullptr },  // Inst #240 = SUB16rc
-  { 241,	3,	1,	4,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo19, -1 ,nullptr },  // Inst #241 = SUB16ri
-  { 242,	4,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo20, -1 ,nullptr },  // Inst #242 = SUB16rm
-  { 243,	3,	1,	2,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo21, -1 ,nullptr },  // Inst #243 = SUB16rn
-  { 244,	4,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, nullptr, ImplicitList1, OperandInfo22, -1 ,nullptr },  // Inst #244 = SUB16rp
-  { 245,	3,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo23, -1 ,nullptr },  // Inst #245 = SUB16rr
-  { 246,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #246 = SUB8mc
-  { 247,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #247 = SUB8mi
-  { 248,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #248 = SUB8mm
-  { 249,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #249 = SUB8mn
-  { 250,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #250 = SUB8mp
-  { 251,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo24, -1 ,nullptr },  // Inst #251 = SUB8mr
-  { 252,	3,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo25, -1 ,nullptr },  // Inst #252 = SUB8rc
-  { 253,	3,	1,	4,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo26, -1 ,nullptr },  // Inst #253 = SUB8ri
-  { 254,	4,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo27, -1 ,nullptr },  // Inst #254 = SUB8rm
-  { 255,	3,	1,	2,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo28, -1 ,nullptr },  // Inst #255 = SUB8rn
-  { 256,	4,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, nullptr, ImplicitList1, OperandInfo29, -1 ,nullptr },  // Inst #256 = SUB8rp
-  { 257,	3,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo30, -1 ,nullptr },  // Inst #257 = SUB8rr
-  { 258,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #258 = SUBC16mc
-  { 259,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #259 = SUBC16mi
-  { 260,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #260 = SUBC16mm
-  { 261,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #261 = SUBC16mn
-  { 262,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #262 = SUBC16mp
-  { 263,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo17, -1 ,nullptr },  // Inst #263 = SUBC16mr
-  { 264,	3,	1,	2,	0,	0, 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo18, -1 ,nullptr },  // Inst #264 = SUBC16rc
-  { 265,	3,	1,	4,	0,	0, 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo19, -1 ,nullptr },  // Inst #265 = SUBC16ri
-  { 266,	4,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo20, -1 ,nullptr },  // Inst #266 = SUBC16rm
-  { 267,	3,	1,	2,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo21, -1 ,nullptr },  // Inst #267 = SUBC16rn
-  { 268,	4,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo22, -1 ,nullptr },  // Inst #268 = SUBC16rp
-  { 269,	3,	1,	2,	0,	0, 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo23, -1 ,nullptr },  // Inst #269 = SUBC16rr
-  { 270,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #270 = SUBC8mc
-  { 271,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #271 = SUBC8mi
-  { 272,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #272 = SUBC8mm
-  { 273,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #273 = SUBC8mn
-  { 274,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #274 = SUBC8mp
-  { 275,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo24, -1 ,nullptr },  // Inst #275 = SUBC8mr
-  { 276,	3,	1,	2,	0,	0, 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo25, -1 ,nullptr },  // Inst #276 = SUBC8rc
-  { 277,	3,	1,	4,	0,	0, 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo26, -1 ,nullptr },  // Inst #277 = SUBC8ri
-  { 278,	4,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo27, -1 ,nullptr },  // Inst #278 = SUBC8rm
-  { 279,	3,	1,	2,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo28, -1 ,nullptr },  // Inst #279 = SUBC8rn
-  { 280,	4,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo29, -1 ,nullptr },  // Inst #280 = SUBC8rp
-  { 281,	3,	1,	2,	0,	0, 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo30, -1 ,nullptr },  // Inst #281 = SUBC8rr
-  { 282,	2,	1,	2,	0,	0, 0x0ULL, nullptr, nullptr, OperandInfo52, -1 ,nullptr },  // Inst #282 = SWPB16r
-  { 283,	4,	1,	0,	0,	0|(1ULL<<MCID::UsesCustomInserter), 0x4ULL, ImplicitList1, nullptr, OperandInfo54, -1 ,nullptr },  // Inst #283 = Select16
-  { 284,	4,	1,	0,	0,	0|(1ULL<<MCID::UsesCustomInserter), 0x4ULL, ImplicitList1, nullptr, OperandInfo55, -1 ,nullptr },  // Inst #284 = Select8
-  { 285,	3,	1,	0,	0,	0|(1ULL<<MCID::UsesCustomInserter), 0x4ULL, nullptr, ImplicitList1, OperandInfo56, -1 ,nullptr },  // Inst #285 = Shl16
-  { 286,	3,	1,	0,	0,	0|(1ULL<<MCID::UsesCustomInserter), 0x4ULL, nullptr, ImplicitList1, OperandInfo35, -1 ,nullptr },  // Inst #286 = Shl8
-  { 287,	3,	1,	0,	0,	0|(1ULL<<MCID::UsesCustomInserter), 0x4ULL, nullptr, ImplicitList1, OperandInfo56, -1 ,nullptr },  // Inst #287 = Sra16
-  { 288,	3,	1,	0,	0,	0|(1ULL<<MCID::UsesCustomInserter), 0x4ULL, nullptr, ImplicitList1, OperandInfo35, -1 ,nullptr },  // Inst #288 = Sra8
-  { 289,	3,	1,	0,	0,	0|(1ULL<<MCID::UsesCustomInserter), 0x4ULL, nullptr, ImplicitList1, OperandInfo56, -1 ,nullptr },  // Inst #289 = Srl16
-  { 290,	3,	1,	0,	0,	0|(1ULL<<MCID::UsesCustomInserter), 0x4ULL, nullptr, ImplicitList1, OperandInfo35, -1 ,nullptr },  // Inst #290 = Srl8
-  { 291,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #291 = XOR16mc
-  { 292,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #292 = XOR16mi
-  { 293,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #293 = XOR16mm
-  { 294,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #294 = XOR16mn
-  { 295,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #295 = XOR16mp
-  { 296,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo17, -1 ,nullptr },  // Inst #296 = XOR16mr
-  { 297,	3,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo18, -1 ,nullptr },  // Inst #297 = XOR16rc
-  { 298,	3,	1,	4,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo19, -1 ,nullptr },  // Inst #298 = XOR16ri
-  { 299,	4,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo20, -1 ,nullptr },  // Inst #299 = XOR16rm
-  { 300,	3,	1,	2,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo21, -1 ,nullptr },  // Inst #300 = XOR16rn
-  { 301,	4,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, nullptr, ImplicitList1, OperandInfo22, -1 ,nullptr },  // Inst #301 = XOR16rp
-  { 302,	3,	1,	2,	0,	0|(1ULL<<MCID::Commutable), 0x0ULL, nullptr, ImplicitList1, OperandInfo23, -1 ,nullptr },  // Inst #302 = XOR16rr
-  { 303,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #303 = XOR8mc
-  { 304,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #304 = XOR8mi
-  { 305,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #305 = XOR8mm
-  { 306,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #306 = XOR8mn
-  { 307,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #307 = XOR8mp
-  { 308,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo24, -1 ,nullptr },  // Inst #308 = XOR8mr
-  { 309,	3,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo25, -1 ,nullptr },  // Inst #309 = XOR8rc
-  { 310,	3,	1,	4,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo26, -1 ,nullptr },  // Inst #310 = XOR8ri
-  { 311,	4,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo27, -1 ,nullptr },  // Inst #311 = XOR8rm
-  { 312,	3,	1,	2,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo28, -1 ,nullptr },  // Inst #312 = XOR8rn
-  { 313,	4,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, nullptr, ImplicitList1, OperandInfo29, -1 ,nullptr },  // Inst #313 = XOR8rp
-  { 314,	3,	1,	2,	0,	0|(1ULL<<MCID::Commutable), 0x0ULL, nullptr, ImplicitList1, OperandInfo30, -1 ,nullptr },  // Inst #314 = XOR8rr
-  { 315,	2,	1,	2,	0,	0, 0x0ULL, nullptr, nullptr, OperandInfo52, -1 ,nullptr },  // Inst #315 = ZEXT16r
+  { 104,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #104 = BIC16mc
+  { 105,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #105 = BIC16mi
+  { 106,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #106 = BIC16mm
+  { 107,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #107 = BIC16mn
+  { 108,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #108 = BIC16mp
+  { 109,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo17, -1 ,nullptr },  // Inst #109 = BIC16mr
+  { 110,	3,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo18, -1 ,nullptr },  // Inst #110 = BIC16rc
+  { 111,	3,	1,	4,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo19, -1 ,nullptr },  // Inst #111 = BIC16ri
+  { 112,	4,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo20, -1 ,nullptr },  // Inst #112 = BIC16rm
+  { 113,	3,	1,	2,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo21, -1 ,nullptr },  // Inst #113 = BIC16rn
+  { 114,	4,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, nullptr, ImplicitList1, OperandInfo22, -1 ,nullptr },  // Inst #114 = BIC16rp
+  { 115,	3,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo23, -1 ,nullptr },  // Inst #115 = BIC16rr
+  { 116,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #116 = BIC8mc
+  { 117,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #117 = BIC8mi
+  { 118,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #118 = BIC8mm
+  { 119,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #119 = BIC8mn
+  { 120,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #120 = BIC8mp
+  { 121,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo24, -1 ,nullptr },  // Inst #121 = BIC8mr
+  { 122,	3,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo25, -1 ,nullptr },  // Inst #122 = BIC8rc
+  { 123,	3,	1,	4,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo26, -1 ,nullptr },  // Inst #123 = BIC8ri
+  { 124,	4,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo27, -1 ,nullptr },  // Inst #124 = BIC8rm
+  { 125,	3,	1,	2,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo28, -1 ,nullptr },  // Inst #125 = BIC8rn
+  { 126,	4,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, nullptr, ImplicitList1, OperandInfo29, -1 ,nullptr },  // Inst #126 = BIC8rp
+  { 127,	3,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo30, -1 ,nullptr },  // Inst #127 = BIC8rr
+  { 128,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #128 = BIS16mc
+  { 129,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #129 = BIS16mi
+  { 130,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #130 = BIS16mm
+  { 131,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #131 = BIS16mn
+  { 132,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #132 = BIS16mp
+  { 133,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo17, -1 ,nullptr },  // Inst #133 = BIS16mr
+  { 134,	3,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo18, -1 ,nullptr },  // Inst #134 = BIS16rc
+  { 135,	3,	1,	4,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo19, -1 ,nullptr },  // Inst #135 = BIS16ri
+  { 136,	4,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo20, -1 ,nullptr },  // Inst #136 = BIS16rm
+  { 137,	3,	1,	2,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo21, -1 ,nullptr },  // Inst #137 = BIS16rn
+  { 138,	4,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, nullptr, ImplicitList1, OperandInfo22, -1 ,nullptr },  // Inst #138 = BIS16rp
+  { 139,	3,	1,	2,	0,	0|(1ULL<<MCID::Commutable), 0x0ULL, nullptr, ImplicitList1, OperandInfo23, -1 ,nullptr },  // Inst #139 = BIS16rr
+  { 140,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #140 = BIS8mc
+  { 141,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #141 = BIS8mi
+  { 142,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #142 = BIS8mm
+  { 143,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #143 = BIS8mn
+  { 144,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #144 = BIS8mp
+  { 145,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo24, -1 ,nullptr },  // Inst #145 = BIS8mr
+  { 146,	3,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo25, -1 ,nullptr },  // Inst #146 = BIS8rc
+  { 147,	3,	1,	4,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo26, -1 ,nullptr },  // Inst #147 = BIS8ri
+  { 148,	4,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo27, -1 ,nullptr },  // Inst #148 = BIS8rm
+  { 149,	3,	1,	2,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo28, -1 ,nullptr },  // Inst #149 = BIS8rn
+  { 150,	4,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, nullptr, ImplicitList1, OperandInfo29, -1 ,nullptr },  // Inst #150 = BIS8rp
+  { 151,	3,	1,	2,	0,	0|(1ULL<<MCID::Commutable), 0x0ULL, nullptr, ImplicitList1, OperandInfo30, -1 ,nullptr },  // Inst #151 = BIS8rr
+  { 152,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #152 = BIT16mc
+  { 153,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #153 = BIT16mi
+  { 154,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #154 = BIT16mm
+  { 155,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo17, -1 ,nullptr },  // Inst #155 = BIT16mr
+  { 156,	2,	0,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo32, -1 ,nullptr },  // Inst #156 = BIT16rc
+  { 157,	2,	0,	4,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo33, -1 ,nullptr },  // Inst #157 = BIT16ri
+  { 158,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo34, -1 ,nullptr },  // Inst #158 = BIT16rm
+  { 159,	2,	0,	2,	0,	0|(1ULL<<MCID::Commutable), 0x0ULL, nullptr, ImplicitList1, OperandInfo35, -1 ,nullptr },  // Inst #159 = BIT16rr
+  { 160,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #160 = BIT8mc
+  { 161,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #161 = BIT8mi
+  { 162,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #162 = BIT8mm
+  { 163,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo24, -1 ,nullptr },  // Inst #163 = BIT8mr
+  { 164,	2,	0,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo36, -1 ,nullptr },  // Inst #164 = BIT8rc
+  { 165,	2,	0,	4,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo37, -1 ,nullptr },  // Inst #165 = BIT8ri
+  { 166,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo38, -1 ,nullptr },  // Inst #166 = BIT8rm
+  { 167,	2,	0,	2,	0,	0|(1ULL<<MCID::Commutable), 0x0ULL, nullptr, ImplicitList1, OperandInfo39, -1 ,nullptr },  // Inst #167 = BIT8rr
+  { 168,	1,	0,	4,	0,	0|(1ULL<<MCID::Branch)|(1ULL<<MCID::IndirectBranch)|(1ULL<<MCID::Barrier)|(1ULL<<MCID::Terminator), 0x0ULL, nullptr, nullptr, OperandInfo3, -1 ,nullptr },  // Inst #168 = Bi
+  { 169,	2,	0,	4,	0,	0|(1ULL<<MCID::Branch)|(1ULL<<MCID::IndirectBranch)|(1ULL<<MCID::Barrier)|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::Terminator), 0x0ULL, nullptr, nullptr, OperandInfo40, -1 ,nullptr },  // Inst #169 = Bm
+  { 170,	1,	0,	2,	0,	0|(1ULL<<MCID::Branch)|(1ULL<<MCID::IndirectBranch)|(1ULL<<MCID::Barrier)|(1ULL<<MCID::Terminator), 0x0ULL, nullptr, nullptr, OperandInfo41, -1 ,nullptr },  // Inst #170 = Br
+  { 171,	1,	0,	4,	0,	0|(1ULL<<MCID::Call), 0x0ULL, ImplicitList2, ImplicitList4, OperandInfo3, -1 ,nullptr },  // Inst #171 = CALLi
+  { 172,	2,	0,	4,	0,	0|(1ULL<<MCID::Call)|(1ULL<<MCID::MayLoad), 0x0ULL, ImplicitList2, ImplicitList4, OperandInfo40, -1 ,nullptr },  // Inst #172 = CALLm
+  { 173,	1,	0,	2,	0,	0|(1ULL<<MCID::Call), 0x0ULL, ImplicitList2, ImplicitList4, OperandInfo41, -1 ,nullptr },  // Inst #173 = CALLr
+  { 174,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #174 = CMP16mc
+  { 175,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #175 = CMP16mi
+  { 176,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo17, -1 ,nullptr },  // Inst #176 = CMP16mr
+  { 177,	2,	0,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo32, -1 ,nullptr },  // Inst #177 = CMP16rc
+  { 178,	2,	0,	4,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo33, -1 ,nullptr },  // Inst #178 = CMP16ri
+  { 179,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo34, -1 ,nullptr },  // Inst #179 = CMP16rm
+  { 180,	2,	0,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo35, -1 ,nullptr },  // Inst #180 = CMP16rr
+  { 181,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #181 = CMP8mc
+  { 182,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #182 = CMP8mi
+  { 183,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo24, -1 ,nullptr },  // Inst #183 = CMP8mr
+  { 184,	2,	0,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo36, -1 ,nullptr },  // Inst #184 = CMP8rc
+  { 185,	2,	0,	4,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo37, -1 ,nullptr },  // Inst #185 = CMP8ri
+  { 186,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo38, -1 ,nullptr },  // Inst #186 = CMP8rm
+  { 187,	2,	0,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo39, -1 ,nullptr },  // Inst #187 = CMP8rr
+  { 188,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #188 = DADD16mc
+  { 189,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #189 = DADD16mi
+  { 190,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #190 = DADD16mm
+  { 191,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #191 = DADD16mn
+  { 192,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #192 = DADD16mp
+  { 193,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo17, -1 ,nullptr },  // Inst #193 = DADD16mr
+  { 194,	3,	1,	2,	0,	0, 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo18, -1 ,nullptr },  // Inst #194 = DADD16rc
+  { 195,	3,	1,	4,	0,	0, 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo19, -1 ,nullptr },  // Inst #195 = DADD16ri
+  { 196,	4,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo20, -1 ,nullptr },  // Inst #196 = DADD16rm
+  { 197,	3,	1,	2,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo21, -1 ,nullptr },  // Inst #197 = DADD16rn
+  { 198,	4,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo22, -1 ,nullptr },  // Inst #198 = DADD16rp
+  { 199,	3,	1,	2,	0,	0|(1ULL<<MCID::Commutable), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo23, -1 ,nullptr },  // Inst #199 = DADD16rr
+  { 200,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #200 = DADD8mc
+  { 201,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #201 = DADD8mi
+  { 202,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #202 = DADD8mm
+  { 203,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #203 = DADD8mn
+  { 204,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #204 = DADD8mp
+  { 205,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo24, -1 ,nullptr },  // Inst #205 = DADD8mr
+  { 206,	3,	1,	2,	0,	0, 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo25, -1 ,nullptr },  // Inst #206 = DADD8rc
+  { 207,	3,	1,	4,	0,	0, 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo26, -1 ,nullptr },  // Inst #207 = DADD8ri
+  { 208,	4,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo27, -1 ,nullptr },  // Inst #208 = DADD8rm
+  { 209,	3,	1,	2,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo28, -1 ,nullptr },  // Inst #209 = DADD8rn
+  { 210,	4,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo29, -1 ,nullptr },  // Inst #210 = DADD8rp
+  { 211,	3,	1,	2,	0,	0|(1ULL<<MCID::Commutable), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo30, -1 ,nullptr },  // Inst #211 = DADD8rr
+  { 212,	2,	0,	2,	0,	0|(1ULL<<MCID::Branch)|(1ULL<<MCID::Terminator), 0x0ULL, ImplicitList1, nullptr, OperandInfo7, -1 ,nullptr },  // Inst #212 = JCC
+  { 213,	1,	0,	2,	0,	0|(1ULL<<MCID::Branch)|(1ULL<<MCID::Barrier)|(1ULL<<MCID::Terminator), 0x0ULL, nullptr, nullptr, OperandInfo2, -1 ,nullptr },  // Inst #213 = JMP
+  { 214,	3,	0,	4,	0,	0|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, nullptr, OperandInfo13, -1 ,nullptr },  // Inst #214 = MOV16mc
+  { 215,	3,	0,	6,	0,	0|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, nullptr, OperandInfo14, -1 ,nullptr },  // Inst #215 = MOV16mi
+  { 216,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, nullptr, OperandInfo15, -1 ,nullptr },  // Inst #216 = MOV16mm
+  { 217,	3,	0,	4,	0,	0|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, nullptr, OperandInfo17, -1 ,nullptr },  // Inst #217 = MOV16mr
+  { 218,	2,	1,	2,	0,	0|(1ULL<<MCID::Rematerializable)|(1ULL<<MCID::CheapAsAMove), 0x0ULL, nullptr, nullptr, OperandInfo32, -1 ,nullptr },  // Inst #218 = MOV16rc
+  { 219,	2,	1,	4,	0,	0|(1ULL<<MCID::Rematerializable)|(1ULL<<MCID::CheapAsAMove), 0x0ULL, nullptr, nullptr, OperandInfo33, -1 ,nullptr },  // Inst #219 = MOV16ri
+  { 220,	3,	1,	4,	0,	0|(1ULL<<MCID::FoldableAsLoad)|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::Rematerializable), 0x0ULL, nullptr, nullptr, OperandInfo34, -1 ,nullptr },  // Inst #220 = MOV16rm
+  { 221,	2,	1,	2,	0,	0|(1ULL<<MCID::FoldableAsLoad)|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::Rematerializable), 0x0ULL, nullptr, nullptr, OperandInfo42, -1 ,nullptr },  // Inst #221 = MOV16rn
+  { 222,	3,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, nullptr, nullptr, OperandInfo43, -1 ,nullptr },  // Inst #222 = MOV16rp
+  { 223,	2,	1,	2,	0,	0, 0x0ULL, nullptr, nullptr, OperandInfo35, -1 ,nullptr },  // Inst #223 = MOV16rr
+  { 224,	3,	0,	4,	0,	0|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, nullptr, OperandInfo13, -1 ,nullptr },  // Inst #224 = MOV8mc
+  { 225,	3,	0,	6,	0,	0|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, nullptr, OperandInfo14, -1 ,nullptr },  // Inst #225 = MOV8mi
+  { 226,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, nullptr, OperandInfo15, -1 ,nullptr },  // Inst #226 = MOV8mm
+  { 227,	3,	0,	4,	0,	0|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, nullptr, OperandInfo24, -1 ,nullptr },  // Inst #227 = MOV8mr
+  { 228,	2,	1,	2,	0,	0|(1ULL<<MCID::Rematerializable)|(1ULL<<MCID::CheapAsAMove), 0x0ULL, nullptr, nullptr, OperandInfo36, -1 ,nullptr },  // Inst #228 = MOV8rc
+  { 229,	2,	1,	4,	0,	0|(1ULL<<MCID::Rematerializable)|(1ULL<<MCID::CheapAsAMove), 0x0ULL, nullptr, nullptr, OperandInfo37, -1 ,nullptr },  // Inst #229 = MOV8ri
+  { 230,	3,	1,	4,	0,	0|(1ULL<<MCID::FoldableAsLoad)|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::Rematerializable), 0x0ULL, nullptr, nullptr, OperandInfo38, -1 ,nullptr },  // Inst #230 = MOV8rm
+  { 231,	2,	1,	2,	0,	0|(1ULL<<MCID::FoldableAsLoad)|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::Rematerializable), 0x0ULL, nullptr, nullptr, OperandInfo44, -1 ,nullptr },  // Inst #231 = MOV8rn
+  { 232,	3,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, nullptr, nullptr, OperandInfo45, -1 ,nullptr },  // Inst #232 = MOV8rp
+  { 233,	2,	1,	2,	0,	0, 0x0ULL, nullptr, nullptr, OperandInfo39, -1 ,nullptr },  // Inst #233 = MOV8rr
+  { 234,	3,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, nullptr, OperandInfo34, -1 ,nullptr },  // Inst #234 = MOVZX16rm8
+  { 235,	2,	1,	2,	0,	0, 0x0ULL, nullptr, nullptr, OperandInfo46, -1 ,nullptr },  // Inst #235 = MOVZX16rr8
+  { 236,	1,	1,	2,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, ImplicitList2, ImplicitList2, OperandInfo41, -1 ,nullptr },  // Inst #236 = POP16r
+  { 237,	1,	0,	2,	0,	0, 0x0ULL, ImplicitList2, ImplicitList2, OperandInfo2, -1 ,nullptr },  // Inst #237 = PUSH16c
+  { 238,	1,	0,	4,	0,	0, 0x0ULL, ImplicitList2, ImplicitList2, OperandInfo3, -1 ,nullptr },  // Inst #238 = PUSH16i
+  { 239,	1,	0,	2,	0,	0, 0x0ULL, ImplicitList2, ImplicitList2, OperandInfo41, -1 ,nullptr },  // Inst #239 = PUSH16r
+  { 240,	1,	0,	2,	0,	0|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList2, ImplicitList2, OperandInfo47, -1 ,nullptr },  // Inst #240 = PUSH8r
+  { 241,	0,	0,	2,	0,	0|(1ULL<<MCID::Return)|(1ULL<<MCID::Barrier)|(1ULL<<MCID::Terminator), 0x0ULL, nullptr, nullptr, nullptr, -1 ,nullptr },  // Inst #241 = RET
+  { 242,	0,	0,	2,	0,	0|(1ULL<<MCID::Return)|(1ULL<<MCID::Barrier)|(1ULL<<MCID::Terminator), 0x0ULL, nullptr, nullptr, nullptr, -1 ,nullptr },  // Inst #242 = RETI
+  { 243,	2,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo48, -1 ,nullptr },  // Inst #243 = RRA16r
+  { 244,	2,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo49, -1 ,nullptr },  // Inst #244 = RRA8r
+  { 245,	2,	1,	2,	0,	0, 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo48, -1 ,nullptr },  // Inst #245 = RRC16r
+  { 246,	2,	1,	2,	0,	0, 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo49, -1 ,nullptr },  // Inst #246 = RRC8r
+  { 247,	2,	1,	0,	0,	0|(1ULL<<MCID::UsesCustomInserter), 0x4ULL, nullptr, ImplicitList1, OperandInfo35, -1 ,nullptr },  // Inst #247 = Rrcl16
+  { 248,	2,	1,	0,	0,	0|(1ULL<<MCID::UsesCustomInserter), 0x4ULL, nullptr, ImplicitList1, OperandInfo39, -1 ,nullptr },  // Inst #248 = Rrcl8
+  { 249,	2,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo48, -1 ,nullptr },  // Inst #249 = SEXT16r
+  { 250,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #250 = SUB16mc
+  { 251,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #251 = SUB16mi
+  { 252,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #252 = SUB16mm
+  { 253,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #253 = SUB16mn
+  { 254,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #254 = SUB16mp
+  { 255,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo17, -1 ,nullptr },  // Inst #255 = SUB16mr
+  { 256,	3,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo18, -1 ,nullptr },  // Inst #256 = SUB16rc
+  { 257,	3,	1,	4,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo19, -1 ,nullptr },  // Inst #257 = SUB16ri
+  { 258,	4,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo20, -1 ,nullptr },  // Inst #258 = SUB16rm
+  { 259,	3,	1,	2,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo21, -1 ,nullptr },  // Inst #259 = SUB16rn
+  { 260,	4,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, nullptr, ImplicitList1, OperandInfo22, -1 ,nullptr },  // Inst #260 = SUB16rp
+  { 261,	3,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo23, -1 ,nullptr },  // Inst #261 = SUB16rr
+  { 262,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #262 = SUB8mc
+  { 263,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #263 = SUB8mi
+  { 264,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #264 = SUB8mm
+  { 265,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #265 = SUB8mn
+  { 266,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #266 = SUB8mp
+  { 267,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo24, -1 ,nullptr },  // Inst #267 = SUB8mr
+  { 268,	3,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo25, -1 ,nullptr },  // Inst #268 = SUB8rc
+  { 269,	3,	1,	4,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo26, -1 ,nullptr },  // Inst #269 = SUB8ri
+  { 270,	4,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo27, -1 ,nullptr },  // Inst #270 = SUB8rm
+  { 271,	3,	1,	2,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo28, -1 ,nullptr },  // Inst #271 = SUB8rn
+  { 272,	4,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, nullptr, ImplicitList1, OperandInfo29, -1 ,nullptr },  // Inst #272 = SUB8rp
+  { 273,	3,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo30, -1 ,nullptr },  // Inst #273 = SUB8rr
+  { 274,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #274 = SUBC16mc
+  { 275,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #275 = SUBC16mi
+  { 276,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #276 = SUBC16mm
+  { 277,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #277 = SUBC16mn
+  { 278,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #278 = SUBC16mp
+  { 279,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo17, -1 ,nullptr },  // Inst #279 = SUBC16mr
+  { 280,	3,	1,	2,	0,	0, 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo18, -1 ,nullptr },  // Inst #280 = SUBC16rc
+  { 281,	3,	1,	4,	0,	0, 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo19, -1 ,nullptr },  // Inst #281 = SUBC16ri
+  { 282,	4,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo20, -1 ,nullptr },  // Inst #282 = SUBC16rm
+  { 283,	3,	1,	2,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo21, -1 ,nullptr },  // Inst #283 = SUBC16rn
+  { 284,	4,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo22, -1 ,nullptr },  // Inst #284 = SUBC16rp
+  { 285,	3,	1,	2,	0,	0, 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo23, -1 ,nullptr },  // Inst #285 = SUBC16rr
+  { 286,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #286 = SUBC8mc
+  { 287,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #287 = SUBC8mi
+  { 288,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #288 = SUBC8mm
+  { 289,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #289 = SUBC8mn
+  { 290,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #290 = SUBC8mp
+  { 291,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo24, -1 ,nullptr },  // Inst #291 = SUBC8mr
+  { 292,	3,	1,	2,	0,	0, 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo25, -1 ,nullptr },  // Inst #292 = SUBC8rc
+  { 293,	3,	1,	4,	0,	0, 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo26, -1 ,nullptr },  // Inst #293 = SUBC8ri
+  { 294,	4,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo27, -1 ,nullptr },  // Inst #294 = SUBC8rm
+  { 295,	3,	1,	2,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo28, -1 ,nullptr },  // Inst #295 = SUBC8rn
+  { 296,	4,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo29, -1 ,nullptr },  // Inst #296 = SUBC8rp
+  { 297,	3,	1,	2,	0,	0, 0x0ULL, ImplicitList1, ImplicitList1, OperandInfo30, -1 ,nullptr },  // Inst #297 = SUBC8rr
+  { 298,	2,	1,	2,	0,	0, 0x0ULL, nullptr, nullptr, OperandInfo48, -1 ,nullptr },  // Inst #298 = SWPB16r
+  { 299,	4,	1,	0,	0,	0|(1ULL<<MCID::UsesCustomInserter), 0x4ULL, ImplicitList1, nullptr, OperandInfo50, -1 ,nullptr },  // Inst #299 = Select16
+  { 300,	4,	1,	0,	0,	0|(1ULL<<MCID::UsesCustomInserter), 0x4ULL, ImplicitList1, nullptr, OperandInfo51, -1 ,nullptr },  // Inst #300 = Select8
+  { 301,	3,	1,	0,	0,	0|(1ULL<<MCID::UsesCustomInserter), 0x4ULL, nullptr, ImplicitList1, OperandInfo52, -1 ,nullptr },  // Inst #301 = Shl16
+  { 302,	3,	1,	0,	0,	0|(1ULL<<MCID::UsesCustomInserter), 0x4ULL, nullptr, ImplicitList1, OperandInfo53, -1 ,nullptr },  // Inst #302 = Shl8
+  { 303,	3,	1,	0,	0,	0|(1ULL<<MCID::UsesCustomInserter), 0x4ULL, nullptr, ImplicitList1, OperandInfo52, -1 ,nullptr },  // Inst #303 = Sra16
+  { 304,	3,	1,	0,	0,	0|(1ULL<<MCID::UsesCustomInserter), 0x4ULL, nullptr, ImplicitList1, OperandInfo53, -1 ,nullptr },  // Inst #304 = Sra8
+  { 305,	3,	1,	0,	0,	0|(1ULL<<MCID::UsesCustomInserter), 0x4ULL, nullptr, ImplicitList1, OperandInfo52, -1 ,nullptr },  // Inst #305 = Srl16
+  { 306,	3,	1,	0,	0,	0|(1ULL<<MCID::UsesCustomInserter), 0x4ULL, nullptr, ImplicitList1, OperandInfo53, -1 ,nullptr },  // Inst #306 = Srl8
+  { 307,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #307 = XOR16mc
+  { 308,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #308 = XOR16mi
+  { 309,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #309 = XOR16mm
+  { 310,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #310 = XOR16mn
+  { 311,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #311 = XOR16mp
+  { 312,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo17, -1 ,nullptr },  // Inst #312 = XOR16mr
+  { 313,	3,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo18, -1 ,nullptr },  // Inst #313 = XOR16rc
+  { 314,	3,	1,	4,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo19, -1 ,nullptr },  // Inst #314 = XOR16ri
+  { 315,	4,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo20, -1 ,nullptr },  // Inst #315 = XOR16rm
+  { 316,	3,	1,	2,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo21, -1 ,nullptr },  // Inst #316 = XOR16rn
+  { 317,	4,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, nullptr, ImplicitList1, OperandInfo22, -1 ,nullptr },  // Inst #317 = XOR16rp
+  { 318,	3,	1,	2,	0,	0|(1ULL<<MCID::Commutable), 0x0ULL, nullptr, ImplicitList1, OperandInfo23, -1 ,nullptr },  // Inst #318 = XOR16rr
+  { 319,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo13, -1 ,nullptr },  // Inst #319 = XOR8mc
+  { 320,	3,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo14, -1 ,nullptr },  // Inst #320 = XOR8mi
+  { 321,	4,	0,	6,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo15, -1 ,nullptr },  // Inst #321 = XOR8mm
+  { 322,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #322 = XOR8mn
+  { 323,	3,	0,	4,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo16, -1 ,nullptr },  // Inst #323 = XOR8mp
+  { 324,	3,	0,	4,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::MayStore), 0x0ULL, nullptr, ImplicitList1, OperandInfo24, -1 ,nullptr },  // Inst #324 = XOR8mr
+  { 325,	3,	1,	2,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo25, -1 ,nullptr },  // Inst #325 = XOR8rc
+  { 326,	3,	1,	4,	0,	0, 0x0ULL, nullptr, ImplicitList1, OperandInfo26, -1 ,nullptr },  // Inst #326 = XOR8ri
+  { 327,	4,	1,	4,	0,	0|(1ULL<<MCID::MayLoad), 0x0ULL, nullptr, ImplicitList1, OperandInfo27, -1 ,nullptr },  // Inst #327 = XOR8rm
+  { 328,	3,	1,	2,	0,	0|(1ULL<<MCID::UnmodeledSideEffects), 0x0ULL, nullptr, ImplicitList1, OperandInfo28, -1 ,nullptr },  // Inst #328 = XOR8rn
+  { 329,	4,	2,	2,	0,	0|(1ULL<<MCID::MayLoad)|(1ULL<<MCID::UnmodeledSideEffects)|(1ULL<<MCID::ExtraDefRegAllocReq), 0x0ULL, nullptr, ImplicitList1, OperandInfo29, -1 ,nullptr },  // Inst #329 = XOR8rp
+  { 330,	3,	1,	2,	0,	0|(1ULL<<MCID::Commutable), 0x0ULL, nullptr, ImplicitList1, OperandInfo30, -1 ,nullptr },  // Inst #330 = XOR8rr
+  { 331,	2,	1,	2,	0,	0, 0x0ULL, nullptr, nullptr, OperandInfo48, -1 ,nullptr },  // Inst #331 = ZEXT16r
 };
 
 extern const char MSP430InstrNameData[] = {
@@ -776,294 +805,312 @@ extern const char MSP430InstrNameData[] = {
   /* 473 */ 'S', 'U', 'B', '1', '6', 'm', 'c', 0,
   /* 481 */ 'S', 'U', 'B', 'C', '1', '6', 'm', 'c', 0,
   /* 490 */ 'A', 'D', 'D', 'C', '1', '6', 'm', 'c', 0,
-  /* 499 */ 'D', 'A', 'D', 'D', '1', '6', 'm', 'c', 0,
-  /* 508 */ 'A', 'N', 'D', '1', '6', 'm', 'c', 0,
-  /* 516 */ 'C', 'M', 'P', '1', '6', 'm', 'c', 0,
-  /* 524 */ 'X', 'O', 'R', '1', '6', 'm', 'c', 0,
-  /* 532 */ 'B', 'I', 'S', '1', '6', 'm', 'c', 0,
-  /* 540 */ 'B', 'I', 'T', '1', '6', 'm', 'c', 0,
-  /* 548 */ 'M', 'O', 'V', '1', '6', 'm', 'c', 0,
-  /* 556 */ 'S', 'U', 'B', '8', 'm', 'c', 0,
-  /* 563 */ 'S', 'U', 'B', 'C', '8', 'm', 'c', 0,
-  /* 571 */ 'A', 'D', 'D', 'C', '8', 'm', 'c', 0,
-  /* 579 */ 'D', 'A', 'D', 'D', '8', 'm', 'c', 0,
-  /* 587 */ 'A', 'N', 'D', '8', 'm', 'c', 0,
-  /* 594 */ 'C', 'M', 'P', '8', 'm', 'c', 0,
-  /* 601 */ 'X', 'O', 'R', '8', 'm', 'c', 0,
-  /* 608 */ 'B', 'I', 'S', '8', 'm', 'c', 0,
-  /* 615 */ 'B', 'I', 'T', '8', 'm', 'c', 0,
-  /* 622 */ 'M', 'O', 'V', '8', 'm', 'c', 0,
-  /* 629 */ 'S', 'U', 'B', '1', '6', 'r', 'c', 0,
-  /* 637 */ 'S', 'U', 'B', 'C', '1', '6', 'r', 'c', 0,
-  /* 646 */ 'A', 'D', 'D', 'C', '1', '6', 'r', 'c', 0,
-  /* 655 */ 'D', 'A', 'D', 'D', '1', '6', 'r', 'c', 0,
-  /* 664 */ 'A', 'N', 'D', '1', '6', 'r', 'c', 0,
-  /* 672 */ 'C', 'M', 'P', '1', '6', 'r', 'c', 0,
-  /* 680 */ 'X', 'O', 'R', '1', '6', 'r', 'c', 0,
-  /* 688 */ 'B', 'I', 'S', '1', '6', 'r', 'c', 0,
-  /* 696 */ 'B', 'I', 'T', '1', '6', 'r', 'c', 0,
-  /* 704 */ 'M', 'O', 'V', '1', '6', 'r', 'c', 0,
-  /* 712 */ 'S', 'U', 'B', '8', 'r', 'c', 0,
-  /* 719 */ 'S', 'U', 'B', 'C', '8', 'r', 'c', 0,
-  /* 727 */ 'A', 'D', 'D', 'C', '8', 'r', 'c', 0,
-  /* 735 */ 'D', 'A', 'D', 'D', '8', 'r', 'c', 0,
-  /* 743 */ 'A', 'N', 'D', '8', 'r', 'c', 0,
-  /* 750 */ 'C', 'M', 'P', '8', 'r', 'c', 0,
-  /* 757 */ 'X', 'O', 'R', '8', 'r', 'c', 0,
-  /* 764 */ 'B', 'I', 'S', '8', 'r', 'c', 0,
-  /* 771 */ 'B', 'I', 'T', '8', 'r', 'c', 0,
-  /* 778 */ 'M', 'O', 'V', '8', 'r', 'c', 0,
-  /* 785 */ 'A', 'D', 'D', 'f', 'r', 'a', 'm', 'e', 0,
-  /* 794 */ 'P', 'U', 'S', 'H', '1', '6', 'i', 0,
-  /* 802 */ 'B', 'i', 0,
-  /* 805 */ 'C', 'A', 'L', 'L', 'i', 0,
-  /* 811 */ 'S', 'U', 'B', '1', '6', 'm', 'i', 0,
-  /* 819 */ 'S', 'U', 'B', 'C', '1', '6', 'm', 'i', 0,
-  /* 828 */ 'A', 'D', 'D', 'C', '1', '6', 'm', 'i', 0,
-  /* 837 */ 'D', 'A', 'D', 'D', '1', '6', 'm', 'i', 0,
-  /* 846 */ 'A', 'N', 'D', '1', '6', 'm', 'i', 0,
-  /* 854 */ 'C', 'M', 'P', '1', '6', 'm', 'i', 0,
-  /* 862 */ 'X', 'O', 'R', '1', '6', 'm', 'i', 0,
-  /* 870 */ 'B', 'I', 'S', '1', '6', 'm', 'i', 0,
-  /* 878 */ 'B', 'I', 'T', '1', '6', 'm', 'i', 0,
-  /* 886 */ 'M', 'O', 'V', '1', '6', 'm', 'i', 0,
-  /* 894 */ 'S', 'U', 'B', '8', 'm', 'i', 0,
-  /* 901 */ 'S', 'U', 'B', 'C', '8', 'm', 'i', 0,
-  /* 909 */ 'A', 'D', 'D', 'C', '8', 'm', 'i', 0,
-  /* 917 */ 'D', 'A', 'D', 'D', '8', 'm', 'i', 0,
-  /* 925 */ 'A', 'N', 'D', '8', 'm', 'i', 0,
-  /* 932 */ 'C', 'M', 'P', '8', 'm', 'i', 0,
-  /* 939 */ 'X', 'O', 'R', '8', 'm', 'i', 0,
-  /* 946 */ 'B', 'I', 'S', '8', 'm', 'i', 0,
-  /* 953 */ 'B', 'I', 'T', '8', 'm', 'i', 0,
-  /* 960 */ 'M', 'O', 'V', '8', 'm', 'i', 0,
-  /* 967 */ 'S', 'U', 'B', '1', '6', 'r', 'i', 0,
-  /* 975 */ 'S', 'U', 'B', 'C', '1', '6', 'r', 'i', 0,
-  /* 984 */ 'A', 'D', 'D', 'C', '1', '6', 'r', 'i', 0,
-  /* 993 */ 'D', 'A', 'D', 'D', '1', '6', 'r', 'i', 0,
-  /* 1002 */ 'A', 'N', 'D', '1', '6', 'r', 'i', 0,
-  /* 1010 */ 'C', 'M', 'P', '1', '6', 'r', 'i', 0,
-  /* 1018 */ 'X', 'O', 'R', '1', '6', 'r', 'i', 0,
-  /* 1026 */ 'B', 'I', 'S', '1', '6', 'r', 'i', 0,
-  /* 1034 */ 'B', 'I', 'T', '1', '6', 'r', 'i', 0,
-  /* 1042 */ 'M', 'O', 'V', '1', '6', 'r', 'i', 0,
-  /* 1050 */ 'S', 'U', 'B', '8', 'r', 'i', 0,
-  /* 1057 */ 'S', 'U', 'B', 'C', '8', 'r', 'i', 0,
-  /* 1065 */ 'A', 'D', 'D', 'C', '8', 'r', 'i', 0,
-  /* 1073 */ 'D', 'A', 'D', 'D', '8', 'r', 'i', 0,
-  /* 1081 */ 'A', 'N', 'D', '8', 'r', 'i', 0,
-  /* 1088 */ 'C', 'M', 'P', '8', 'r', 'i', 0,
-  /* 1095 */ 'X', 'O', 'R', '8', 'r', 'i', 0,
-  /* 1102 */ 'B', 'I', 'S', '8', 'r', 'i', 0,
-  /* 1109 */ 'B', 'I', 'T', '8', 'r', 'i', 0,
-  /* 1116 */ 'M', 'O', 'V', '8', 'r', 'i', 0,
-  /* 1123 */ 'B', 'm', 0,
-  /* 1126 */ 'C', 'A', 'L', 'L', 'm', 0,
-  /* 1132 */ 'S', 'U', 'B', '1', '6', 'm', 'm', 0,
-  /* 1140 */ 'S', 'U', 'B', 'C', '1', '6', 'm', 'm', 0,
-  /* 1149 */ 'A', 'D', 'D', 'C', '1', '6', 'm', 'm', 0,
-  /* 1158 */ 'B', 'I', 'C', '1', '6', 'm', 'm', 0,
-  /* 1166 */ 'D', 'A', 'D', 'D', '1', '6', 'm', 'm', 0,
-  /* 1175 */ 'A', 'N', 'D', '1', '6', 'm', 'm', 0,
-  /* 1183 */ 'X', 'O', 'R', '1', '6', 'm', 'm', 0,
-  /* 1191 */ 'B', 'I', 'S', '1', '6', 'm', 'm', 0,
-  /* 1199 */ 'B', 'I', 'T', '1', '6', 'm', 'm', 0,
-  /* 1207 */ 'M', 'O', 'V', '1', '6', 'm', 'm', 0,
-  /* 1215 */ 'S', 'U', 'B', '8', 'm', 'm', 0,
-  /* 1222 */ 'S', 'U', 'B', 'C', '8', 'm', 'm', 0,
-  /* 1230 */ 'A', 'D', 'D', 'C', '8', 'm', 'm', 0,
-  /* 1238 */ 'B', 'I', 'C', '8', 'm', 'm', 0,
-  /* 1245 */ 'D', 'A', 'D', 'D', '8', 'm', 'm', 0,
-  /* 1253 */ 'A', 'N', 'D', '8', 'm', 'm', 0,
-  /* 1260 */ 'X', 'O', 'R', '8', 'm', 'm', 0,
-  /* 1267 */ 'B', 'I', 'S', '8', 'm', 'm', 0,
-  /* 1274 */ 'B', 'I', 'T', '8', 'm', 'm', 0,
-  /* 1281 */ 'M', 'O', 'V', '8', 'm', 'm', 0,
-  /* 1288 */ 'S', 'U', 'B', '1', '6', 'r', 'm', 0,
-  /* 1296 */ 'S', 'U', 'B', 'C', '1', '6', 'r', 'm', 0,
-  /* 1305 */ 'A', 'D', 'D', 'C', '1', '6', 'r', 'm', 0,
-  /* 1314 */ 'B', 'I', 'C', '1', '6', 'r', 'm', 0,
-  /* 1322 */ 'D', 'A', 'D', 'D', '1', '6', 'r', 'm', 0,
-  /* 1331 */ 'A', 'N', 'D', '1', '6', 'r', 'm', 0,
-  /* 1339 */ 'C', 'M', 'P', '1', '6', 'r', 'm', 0,
-  /* 1347 */ 'X', 'O', 'R', '1', '6', 'r', 'm', 0,
-  /* 1355 */ 'B', 'I', 'S', '1', '6', 'r', 'm', 0,
-  /* 1363 */ 'B', 'I', 'T', '1', '6', 'r', 'm', 0,
-  /* 1371 */ 'M', 'O', 'V', '1', '6', 'r', 'm', 0,
-  /* 1379 */ 'S', 'U', 'B', '8', 'r', 'm', 0,
-  /* 1386 */ 'S', 'U', 'B', 'C', '8', 'r', 'm', 0,
-  /* 1394 */ 'A', 'D', 'D', 'C', '8', 'r', 'm', 0,
-  /* 1402 */ 'B', 'I', 'C', '8', 'r', 'm', 0,
-  /* 1409 */ 'D', 'A', 'D', 'D', '8', 'r', 'm', 0,
-  /* 1417 */ 'A', 'N', 'D', '8', 'r', 'm', 0,
-  /* 1424 */ 'C', 'M', 'P', '8', 'r', 'm', 0,
-  /* 1431 */ 'X', 'O', 'R', '8', 'r', 'm', 0,
-  /* 1438 */ 'B', 'I', 'S', '8', 'r', 'm', 0,
-  /* 1445 */ 'B', 'I', 'T', '8', 'r', 'm', 0,
-  /* 1452 */ 'M', 'O', 'V', '8', 'r', 'm', 0,
-  /* 1459 */ 'S', 'U', 'B', '1', '6', 'm', 'n', 0,
-  /* 1467 */ 'S', 'U', 'B', 'C', '1', '6', 'm', 'n', 0,
-  /* 1476 */ 'A', 'D', 'D', 'C', '1', '6', 'm', 'n', 0,
-  /* 1485 */ 'D', 'A', 'D', 'D', '1', '6', 'm', 'n', 0,
-  /* 1494 */ 'A', 'N', 'D', '1', '6', 'm', 'n', 0,
-  /* 1502 */ 'X', 'O', 'R', '1', '6', 'm', 'n', 0,
-  /* 1510 */ 'B', 'I', 'S', '1', '6', 'm', 'n', 0,
-  /* 1518 */ 'S', 'U', 'B', '8', 'm', 'n', 0,
-  /* 1525 */ 'S', 'U', 'B', 'C', '8', 'm', 'n', 0,
-  /* 1533 */ 'A', 'D', 'D', 'C', '8', 'm', 'n', 0,
-  /* 1541 */ 'D', 'A', 'D', 'D', '8', 'm', 'n', 0,
-  /* 1549 */ 'A', 'N', 'D', '8', 'm', 'n', 0,
-  /* 1556 */ 'X', 'O', 'R', '8', 'm', 'n', 0,
-  /* 1563 */ 'B', 'I', 'S', '8', 'm', 'n', 0,
-  /* 1570 */ 'S', 'U', 'B', '1', '6', 'r', 'n', 0,
-  /* 1578 */ 'S', 'U', 'B', 'C', '1', '6', 'r', 'n', 0,
-  /* 1587 */ 'A', 'D', 'D', 'C', '1', '6', 'r', 'n', 0,
-  /* 1596 */ 'D', 'A', 'D', 'D', '1', '6', 'r', 'n', 0,
-  /* 1605 */ 'A', 'N', 'D', '1', '6', 'r', 'n', 0,
-  /* 1613 */ 'X', 'O', 'R', '1', '6', 'r', 'n', 0,
-  /* 1621 */ 'B', 'I', 'S', '1', '6', 'r', 'n', 0,
-  /* 1629 */ 'M', 'O', 'V', '1', '6', 'r', 'n', 0,
-  /* 1637 */ 'S', 'U', 'B', '8', 'r', 'n', 0,
-  /* 1644 */ 'S', 'U', 'B', 'C', '8', 'r', 'n', 0,
-  /* 1652 */ 'A', 'D', 'D', 'C', '8', 'r', 'n', 0,
-  /* 1660 */ 'D', 'A', 'D', 'D', '8', 'r', 'n', 0,
-  /* 1668 */ 'A', 'N', 'D', '8', 'r', 'n', 0,
-  /* 1675 */ 'X', 'O', 'R', '8', 'r', 'n', 0,
-  /* 1682 */ 'B', 'I', 'S', '8', 'r', 'n', 0,
-  /* 1689 */ 'M', 'O', 'V', '8', 'r', 'n', 0,
-  /* 1696 */ 'S', 'U', 'B', '1', '6', 'm', 'p', 0,
-  /* 1704 */ 'S', 'U', 'B', 'C', '1', '6', 'm', 'p', 0,
-  /* 1713 */ 'A', 'D', 'D', 'C', '1', '6', 'm', 'p', 0,
-  /* 1722 */ 'D', 'A', 'D', 'D', '1', '6', 'm', 'p', 0,
-  /* 1731 */ 'A', 'N', 'D', '1', '6', 'm', 'p', 0,
-  /* 1739 */ 'X', 'O', 'R', '1', '6', 'm', 'p', 0,
-  /* 1747 */ 'B', 'I', 'S', '1', '6', 'm', 'p', 0,
-  /* 1755 */ 'S', 'U', 'B', '8', 'm', 'p', 0,
-  /* 1762 */ 'S', 'U', 'B', 'C', '8', 'm', 'p', 0,
-  /* 1770 */ 'A', 'D', 'D', 'C', '8', 'm', 'p', 0,
-  /* 1778 */ 'D', 'A', 'D', 'D', '8', 'm', 'p', 0,
-  /* 1786 */ 'A', 'N', 'D', '8', 'm', 'p', 0,
-  /* 1793 */ 'X', 'O', 'R', '8', 'm', 'p', 0,
-  /* 1800 */ 'B', 'I', 'S', '8', 'm', 'p', 0,
-  /* 1807 */ 'S', 'U', 'B', '1', '6', 'r', 'p', 0,
-  /* 1815 */ 'S', 'U', 'B', 'C', '1', '6', 'r', 'p', 0,
-  /* 1824 */ 'A', 'D', 'D', 'C', '1', '6', 'r', 'p', 0,
-  /* 1833 */ 'D', 'A', 'D', 'D', '1', '6', 'r', 'p', 0,
-  /* 1842 */ 'A', 'N', 'D', '1', '6', 'r', 'p', 0,
-  /* 1850 */ 'X', 'O', 'R', '1', '6', 'r', 'p', 0,
-  /* 1858 */ 'B', 'I', 'S', '1', '6', 'r', 'p', 0,
-  /* 1866 */ 'M', 'O', 'V', '1', '6', 'r', 'p', 0,
-  /* 1874 */ 'S', 'U', 'B', '8', 'r', 'p', 0,
-  /* 1881 */ 'S', 'U', 'B', 'C', '8', 'r', 'p', 0,
-  /* 1889 */ 'A', 'D', 'D', 'C', '8', 'r', 'p', 0,
-  /* 1897 */ 'D', 'A', 'D', 'D', '8', 'r', 'p', 0,
-  /* 1905 */ 'A', 'N', 'D', '8', 'r', 'p', 0,
-  /* 1912 */ 'X', 'O', 'R', '8', 'r', 'p', 0,
-  /* 1919 */ 'B', 'I', 'S', '8', 'r', 'p', 0,
-  /* 1926 */ 'M', 'O', 'V', '8', 'r', 'p', 0,
-  /* 1933 */ 'R', 'R', 'A', '1', '6', 'r', 0,
-  /* 1940 */ 'S', 'W', 'P', 'B', '1', '6', 'r', 0,
-  /* 1948 */ 'R', 'R', 'C', '1', '6', 'r', 0,
-  /* 1955 */ 'P', 'U', 'S', 'H', '1', '6', 'r', 0,
-  /* 1963 */ 'P', 'O', 'P', '1', '6', 'r', 0,
-  /* 1970 */ 'S', 'E', 'X', 'T', '1', '6', 'r', 0,
-  /* 1978 */ 'Z', 'E', 'X', 'T', '1', '6', 'r', 0,
-  /* 1986 */ 'R', 'R', 'A', '8', 'r', 0,
-  /* 1992 */ 'R', 'R', 'C', '8', 'r', 0,
-  /* 1998 */ 'P', 'U', 'S', 'H', '8', 'r', 0,
-  /* 2005 */ 'B', 'r', 0,
-  /* 2008 */ 'C', 'A', 'L', 'L', 'r', 0,
-  /* 2014 */ 'S', 'U', 'B', '1', '6', 'm', 'r', 0,
-  /* 2022 */ 'S', 'U', 'B', 'C', '1', '6', 'm', 'r', 0,
-  /* 2031 */ 'A', 'D', 'D', 'C', '1', '6', 'm', 'r', 0,
-  /* 2040 */ 'B', 'I', 'C', '1', '6', 'm', 'r', 0,
-  /* 2048 */ 'D', 'A', 'D', 'D', '1', '6', 'm', 'r', 0,
-  /* 2057 */ 'A', 'N', 'D', '1', '6', 'm', 'r', 0,
-  /* 2065 */ 'C', 'M', 'P', '1', '6', 'm', 'r', 0,
-  /* 2073 */ 'X', 'O', 'R', '1', '6', 'm', 'r', 0,
-  /* 2081 */ 'B', 'I', 'S', '1', '6', 'm', 'r', 0,
-  /* 2089 */ 'B', 'I', 'T', '1', '6', 'm', 'r', 0,
-  /* 2097 */ 'M', 'O', 'V', '1', '6', 'm', 'r', 0,
-  /* 2105 */ 'S', 'U', 'B', '8', 'm', 'r', 0,
-  /* 2112 */ 'S', 'U', 'B', 'C', '8', 'm', 'r', 0,
-  /* 2120 */ 'A', 'D', 'D', 'C', '8', 'm', 'r', 0,
-  /* 2128 */ 'B', 'I', 'C', '8', 'm', 'r', 0,
-  /* 2135 */ 'D', 'A', 'D', 'D', '8', 'm', 'r', 0,
-  /* 2143 */ 'A', 'N', 'D', '8', 'm', 'r', 0,
-  /* 2150 */ 'C', 'M', 'P', '8', 'm', 'r', 0,
-  /* 2157 */ 'X', 'O', 'R', '8', 'm', 'r', 0,
-  /* 2164 */ 'B', 'I', 'S', '8', 'm', 'r', 0,
-  /* 2171 */ 'B', 'I', 'T', '8', 'm', 'r', 0,
-  /* 2178 */ 'M', 'O', 'V', '8', 'm', 'r', 0,
-  /* 2185 */ 'S', 'U', 'B', '1', '6', 'r', 'r', 0,
-  /* 2193 */ 'S', 'U', 'B', 'C', '1', '6', 'r', 'r', 0,
-  /* 2202 */ 'A', 'D', 'D', 'C', '1', '6', 'r', 'r', 0,
-  /* 2211 */ 'B', 'I', 'C', '1', '6', 'r', 'r', 0,
-  /* 2219 */ 'D', 'A', 'D', 'D', '1', '6', 'r', 'r', 0,
-  /* 2228 */ 'A', 'N', 'D', '1', '6', 'r', 'r', 0,
-  /* 2236 */ 'C', 'M', 'P', '1', '6', 'r', 'r', 0,
-  /* 2244 */ 'X', 'O', 'R', '1', '6', 'r', 'r', 0,
-  /* 2252 */ 'B', 'I', 'S', '1', '6', 'r', 'r', 0,
-  /* 2260 */ 'B', 'I', 'T', '1', '6', 'r', 'r', 0,
-  /* 2268 */ 'M', 'O', 'V', '1', '6', 'r', 'r', 0,
-  /* 2276 */ 'S', 'U', 'B', '8', 'r', 'r', 0,
-  /* 2283 */ 'S', 'U', 'B', 'C', '8', 'r', 'r', 0,
-  /* 2291 */ 'A', 'D', 'D', 'C', '8', 'r', 'r', 0,
-  /* 2299 */ 'B', 'I', 'C', '8', 'r', 'r', 0,
-  /* 2306 */ 'D', 'A', 'D', 'D', '8', 'r', 'r', 0,
-  /* 2314 */ 'A', 'N', 'D', '8', 'r', 'r', 0,
-  /* 2321 */ 'C', 'M', 'P', '8', 'r', 'r', 0,
-  /* 2328 */ 'X', 'O', 'R', '8', 'r', 'r', 0,
-  /* 2335 */ 'B', 'I', 'S', '8', 'r', 'r', 0,
-  /* 2342 */ 'B', 'I', 'T', '8', 'r', 'r', 0,
-  /* 2349 */ 'M', 'O', 'V', '8', 'r', 'r', 0,
+  /* 499 */ 'B', 'I', 'C', '1', '6', 'm', 'c', 0,
+  /* 507 */ 'D', 'A', 'D', 'D', '1', '6', 'm', 'c', 0,
+  /* 516 */ 'A', 'N', 'D', '1', '6', 'm', 'c', 0,
+  /* 524 */ 'C', 'M', 'P', '1', '6', 'm', 'c', 0,
+  /* 532 */ 'X', 'O', 'R', '1', '6', 'm', 'c', 0,
+  /* 540 */ 'B', 'I', 'S', '1', '6', 'm', 'c', 0,
+  /* 548 */ 'B', 'I', 'T', '1', '6', 'm', 'c', 0,
+  /* 556 */ 'M', 'O', 'V', '1', '6', 'm', 'c', 0,
+  /* 564 */ 'S', 'U', 'B', '8', 'm', 'c', 0,
+  /* 571 */ 'S', 'U', 'B', 'C', '8', 'm', 'c', 0,
+  /* 579 */ 'A', 'D', 'D', 'C', '8', 'm', 'c', 0,
+  /* 587 */ 'B', 'I', 'C', '8', 'm', 'c', 0,
+  /* 594 */ 'D', 'A', 'D', 'D', '8', 'm', 'c', 0,
+  /* 602 */ 'A', 'N', 'D', '8', 'm', 'c', 0,
+  /* 609 */ 'C', 'M', 'P', '8', 'm', 'c', 0,
+  /* 616 */ 'X', 'O', 'R', '8', 'm', 'c', 0,
+  /* 623 */ 'B', 'I', 'S', '8', 'm', 'c', 0,
+  /* 630 */ 'B', 'I', 'T', '8', 'm', 'c', 0,
+  /* 637 */ 'M', 'O', 'V', '8', 'm', 'c', 0,
+  /* 644 */ 'S', 'U', 'B', '1', '6', 'r', 'c', 0,
+  /* 652 */ 'S', 'U', 'B', 'C', '1', '6', 'r', 'c', 0,
+  /* 661 */ 'A', 'D', 'D', 'C', '1', '6', 'r', 'c', 0,
+  /* 670 */ 'B', 'I', 'C', '1', '6', 'r', 'c', 0,
+  /* 678 */ 'D', 'A', 'D', 'D', '1', '6', 'r', 'c', 0,
+  /* 687 */ 'A', 'N', 'D', '1', '6', 'r', 'c', 0,
+  /* 695 */ 'C', 'M', 'P', '1', '6', 'r', 'c', 0,
+  /* 703 */ 'X', 'O', 'R', '1', '6', 'r', 'c', 0,
+  /* 711 */ 'B', 'I', 'S', '1', '6', 'r', 'c', 0,
+  /* 719 */ 'B', 'I', 'T', '1', '6', 'r', 'c', 0,
+  /* 727 */ 'M', 'O', 'V', '1', '6', 'r', 'c', 0,
+  /* 735 */ 'S', 'U', 'B', '8', 'r', 'c', 0,
+  /* 742 */ 'S', 'U', 'B', 'C', '8', 'r', 'c', 0,
+  /* 750 */ 'A', 'D', 'D', 'C', '8', 'r', 'c', 0,
+  /* 758 */ 'B', 'I', 'C', '8', 'r', 'c', 0,
+  /* 765 */ 'D', 'A', 'D', 'D', '8', 'r', 'c', 0,
+  /* 773 */ 'A', 'N', 'D', '8', 'r', 'c', 0,
+  /* 780 */ 'C', 'M', 'P', '8', 'r', 'c', 0,
+  /* 787 */ 'X', 'O', 'R', '8', 'r', 'c', 0,
+  /* 794 */ 'B', 'I', 'S', '8', 'r', 'c', 0,
+  /* 801 */ 'B', 'I', 'T', '8', 'r', 'c', 0,
+  /* 808 */ 'M', 'O', 'V', '8', 'r', 'c', 0,
+  /* 815 */ 'A', 'D', 'D', 'f', 'r', 'a', 'm', 'e', 0,
+  /* 824 */ 'P', 'U', 'S', 'H', '1', '6', 'i', 0,
+  /* 832 */ 'B', 'i', 0,
+  /* 835 */ 'C', 'A', 'L', 'L', 'i', 0,
+  /* 841 */ 'S', 'U', 'B', '1', '6', 'm', 'i', 0,
+  /* 849 */ 'S', 'U', 'B', 'C', '1', '6', 'm', 'i', 0,
+  /* 858 */ 'A', 'D', 'D', 'C', '1', '6', 'm', 'i', 0,
+  /* 867 */ 'B', 'I', 'C', '1', '6', 'm', 'i', 0,
+  /* 875 */ 'D', 'A', 'D', 'D', '1', '6', 'm', 'i', 0,
+  /* 884 */ 'A', 'N', 'D', '1', '6', 'm', 'i', 0,
+  /* 892 */ 'C', 'M', 'P', '1', '6', 'm', 'i', 0,
+  /* 900 */ 'X', 'O', 'R', '1', '6', 'm', 'i', 0,
+  /* 908 */ 'B', 'I', 'S', '1', '6', 'm', 'i', 0,
+  /* 916 */ 'B', 'I', 'T', '1', '6', 'm', 'i', 0,
+  /* 924 */ 'M', 'O', 'V', '1', '6', 'm', 'i', 0,
+  /* 932 */ 'S', 'U', 'B', '8', 'm', 'i', 0,
+  /* 939 */ 'S', 'U', 'B', 'C', '8', 'm', 'i', 0,
+  /* 947 */ 'A', 'D', 'D', 'C', '8', 'm', 'i', 0,
+  /* 955 */ 'B', 'I', 'C', '8', 'm', 'i', 0,
+  /* 962 */ 'D', 'A', 'D', 'D', '8', 'm', 'i', 0,
+  /* 970 */ 'A', 'N', 'D', '8', 'm', 'i', 0,
+  /* 977 */ 'C', 'M', 'P', '8', 'm', 'i', 0,
+  /* 984 */ 'X', 'O', 'R', '8', 'm', 'i', 0,
+  /* 991 */ 'B', 'I', 'S', '8', 'm', 'i', 0,
+  /* 998 */ 'B', 'I', 'T', '8', 'm', 'i', 0,
+  /* 1005 */ 'M', 'O', 'V', '8', 'm', 'i', 0,
+  /* 1012 */ 'S', 'U', 'B', '1', '6', 'r', 'i', 0,
+  /* 1020 */ 'S', 'U', 'B', 'C', '1', '6', 'r', 'i', 0,
+  /* 1029 */ 'A', 'D', 'D', 'C', '1', '6', 'r', 'i', 0,
+  /* 1038 */ 'B', 'I', 'C', '1', '6', 'r', 'i', 0,
+  /* 1046 */ 'D', 'A', 'D', 'D', '1', '6', 'r', 'i', 0,
+  /* 1055 */ 'A', 'N', 'D', '1', '6', 'r', 'i', 0,
+  /* 1063 */ 'C', 'M', 'P', '1', '6', 'r', 'i', 0,
+  /* 1071 */ 'X', 'O', 'R', '1', '6', 'r', 'i', 0,
+  /* 1079 */ 'B', 'I', 'S', '1', '6', 'r', 'i', 0,
+  /* 1087 */ 'B', 'I', 'T', '1', '6', 'r', 'i', 0,
+  /* 1095 */ 'M', 'O', 'V', '1', '6', 'r', 'i', 0,
+  /* 1103 */ 'S', 'U', 'B', '8', 'r', 'i', 0,
+  /* 1110 */ 'S', 'U', 'B', 'C', '8', 'r', 'i', 0,
+  /* 1118 */ 'A', 'D', 'D', 'C', '8', 'r', 'i', 0,
+  /* 1126 */ 'B', 'I', 'C', '8', 'r', 'i', 0,
+  /* 1133 */ 'D', 'A', 'D', 'D', '8', 'r', 'i', 0,
+  /* 1141 */ 'A', 'N', 'D', '8', 'r', 'i', 0,
+  /* 1148 */ 'C', 'M', 'P', '8', 'r', 'i', 0,
+  /* 1155 */ 'X', 'O', 'R', '8', 'r', 'i', 0,
+  /* 1162 */ 'B', 'I', 'S', '8', 'r', 'i', 0,
+  /* 1169 */ 'B', 'I', 'T', '8', 'r', 'i', 0,
+  /* 1176 */ 'M', 'O', 'V', '8', 'r', 'i', 0,
+  /* 1183 */ 'B', 'm', 0,
+  /* 1186 */ 'C', 'A', 'L', 'L', 'm', 0,
+  /* 1192 */ 'S', 'U', 'B', '1', '6', 'm', 'm', 0,
+  /* 1200 */ 'S', 'U', 'B', 'C', '1', '6', 'm', 'm', 0,
+  /* 1209 */ 'A', 'D', 'D', 'C', '1', '6', 'm', 'm', 0,
+  /* 1218 */ 'B', 'I', 'C', '1', '6', 'm', 'm', 0,
+  /* 1226 */ 'D', 'A', 'D', 'D', '1', '6', 'm', 'm', 0,
+  /* 1235 */ 'A', 'N', 'D', '1', '6', 'm', 'm', 0,
+  /* 1243 */ 'X', 'O', 'R', '1', '6', 'm', 'm', 0,
+  /* 1251 */ 'B', 'I', 'S', '1', '6', 'm', 'm', 0,
+  /* 1259 */ 'B', 'I', 'T', '1', '6', 'm', 'm', 0,
+  /* 1267 */ 'M', 'O', 'V', '1', '6', 'm', 'm', 0,
+  /* 1275 */ 'S', 'U', 'B', '8', 'm', 'm', 0,
+  /* 1282 */ 'S', 'U', 'B', 'C', '8', 'm', 'm', 0,
+  /* 1290 */ 'A', 'D', 'D', 'C', '8', 'm', 'm', 0,
+  /* 1298 */ 'B', 'I', 'C', '8', 'm', 'm', 0,
+  /* 1305 */ 'D', 'A', 'D', 'D', '8', 'm', 'm', 0,
+  /* 1313 */ 'A', 'N', 'D', '8', 'm', 'm', 0,
+  /* 1320 */ 'X', 'O', 'R', '8', 'm', 'm', 0,
+  /* 1327 */ 'B', 'I', 'S', '8', 'm', 'm', 0,
+  /* 1334 */ 'B', 'I', 'T', '8', 'm', 'm', 0,
+  /* 1341 */ 'M', 'O', 'V', '8', 'm', 'm', 0,
+  /* 1348 */ 'S', 'U', 'B', '1', '6', 'r', 'm', 0,
+  /* 1356 */ 'S', 'U', 'B', 'C', '1', '6', 'r', 'm', 0,
+  /* 1365 */ 'A', 'D', 'D', 'C', '1', '6', 'r', 'm', 0,
+  /* 1374 */ 'B', 'I', 'C', '1', '6', 'r', 'm', 0,
+  /* 1382 */ 'D', 'A', 'D', 'D', '1', '6', 'r', 'm', 0,
+  /* 1391 */ 'A', 'N', 'D', '1', '6', 'r', 'm', 0,
+  /* 1399 */ 'C', 'M', 'P', '1', '6', 'r', 'm', 0,
+  /* 1407 */ 'X', 'O', 'R', '1', '6', 'r', 'm', 0,
+  /* 1415 */ 'B', 'I', 'S', '1', '6', 'r', 'm', 0,
+  /* 1423 */ 'B', 'I', 'T', '1', '6', 'r', 'm', 0,
+  /* 1431 */ 'M', 'O', 'V', '1', '6', 'r', 'm', 0,
+  /* 1439 */ 'S', 'U', 'B', '8', 'r', 'm', 0,
+  /* 1446 */ 'S', 'U', 'B', 'C', '8', 'r', 'm', 0,
+  /* 1454 */ 'A', 'D', 'D', 'C', '8', 'r', 'm', 0,
+  /* 1462 */ 'B', 'I', 'C', '8', 'r', 'm', 0,
+  /* 1469 */ 'D', 'A', 'D', 'D', '8', 'r', 'm', 0,
+  /* 1477 */ 'A', 'N', 'D', '8', 'r', 'm', 0,
+  /* 1484 */ 'C', 'M', 'P', '8', 'r', 'm', 0,
+  /* 1491 */ 'X', 'O', 'R', '8', 'r', 'm', 0,
+  /* 1498 */ 'B', 'I', 'S', '8', 'r', 'm', 0,
+  /* 1505 */ 'B', 'I', 'T', '8', 'r', 'm', 0,
+  /* 1512 */ 'M', 'O', 'V', '8', 'r', 'm', 0,
+  /* 1519 */ 'S', 'U', 'B', '1', '6', 'm', 'n', 0,
+  /* 1527 */ 'S', 'U', 'B', 'C', '1', '6', 'm', 'n', 0,
+  /* 1536 */ 'A', 'D', 'D', 'C', '1', '6', 'm', 'n', 0,
+  /* 1545 */ 'B', 'I', 'C', '1', '6', 'm', 'n', 0,
+  /* 1553 */ 'D', 'A', 'D', 'D', '1', '6', 'm', 'n', 0,
+  /* 1562 */ 'A', 'N', 'D', '1', '6', 'm', 'n', 0,
+  /* 1570 */ 'X', 'O', 'R', '1', '6', 'm', 'n', 0,
+  /* 1578 */ 'B', 'I', 'S', '1', '6', 'm', 'n', 0,
+  /* 1586 */ 'S', 'U', 'B', '8', 'm', 'n', 0,
+  /* 1593 */ 'S', 'U', 'B', 'C', '8', 'm', 'n', 0,
+  /* 1601 */ 'A', 'D', 'D', 'C', '8', 'm', 'n', 0,
+  /* 1609 */ 'B', 'I', 'C', '8', 'm', 'n', 0,
+  /* 1616 */ 'D', 'A', 'D', 'D', '8', 'm', 'n', 0,
+  /* 1624 */ 'A', 'N', 'D', '8', 'm', 'n', 0,
+  /* 1631 */ 'X', 'O', 'R', '8', 'm', 'n', 0,
+  /* 1638 */ 'B', 'I', 'S', '8', 'm', 'n', 0,
+  /* 1645 */ 'S', 'U', 'B', '1', '6', 'r', 'n', 0,
+  /* 1653 */ 'S', 'U', 'B', 'C', '1', '6', 'r', 'n', 0,
+  /* 1662 */ 'A', 'D', 'D', 'C', '1', '6', 'r', 'n', 0,
+  /* 1671 */ 'B', 'I', 'C', '1', '6', 'r', 'n', 0,
+  /* 1679 */ 'D', 'A', 'D', 'D', '1', '6', 'r', 'n', 0,
+  /* 1688 */ 'A', 'N', 'D', '1', '6', 'r', 'n', 0,
+  /* 1696 */ 'X', 'O', 'R', '1', '6', 'r', 'n', 0,
+  /* 1704 */ 'B', 'I', 'S', '1', '6', 'r', 'n', 0,
+  /* 1712 */ 'M', 'O', 'V', '1', '6', 'r', 'n', 0,
+  /* 1720 */ 'S', 'U', 'B', '8', 'r', 'n', 0,
+  /* 1727 */ 'S', 'U', 'B', 'C', '8', 'r', 'n', 0,
+  /* 1735 */ 'A', 'D', 'D', 'C', '8', 'r', 'n', 0,
+  /* 1743 */ 'B', 'I', 'C', '8', 'r', 'n', 0,
+  /* 1750 */ 'D', 'A', 'D', 'D', '8', 'r', 'n', 0,
+  /* 1758 */ 'A', 'N', 'D', '8', 'r', 'n', 0,
+  /* 1765 */ 'X', 'O', 'R', '8', 'r', 'n', 0,
+  /* 1772 */ 'B', 'I', 'S', '8', 'r', 'n', 0,
+  /* 1779 */ 'M', 'O', 'V', '8', 'r', 'n', 0,
+  /* 1786 */ 'S', 'U', 'B', '1', '6', 'm', 'p', 0,
+  /* 1794 */ 'S', 'U', 'B', 'C', '1', '6', 'm', 'p', 0,
+  /* 1803 */ 'A', 'D', 'D', 'C', '1', '6', 'm', 'p', 0,
+  /* 1812 */ 'B', 'I', 'C', '1', '6', 'm', 'p', 0,
+  /* 1820 */ 'D', 'A', 'D', 'D', '1', '6', 'm', 'p', 0,
+  /* 1829 */ 'A', 'N', 'D', '1', '6', 'm', 'p', 0,
+  /* 1837 */ 'X', 'O', 'R', '1', '6', 'm', 'p', 0,
+  /* 1845 */ 'B', 'I', 'S', '1', '6', 'm', 'p', 0,
+  /* 1853 */ 'S', 'U', 'B', '8', 'm', 'p', 0,
+  /* 1860 */ 'S', 'U', 'B', 'C', '8', 'm', 'p', 0,
+  /* 1868 */ 'A', 'D', 'D', 'C', '8', 'm', 'p', 0,
+  /* 1876 */ 'B', 'I', 'C', '8', 'm', 'p', 0,
+  /* 1883 */ 'D', 'A', 'D', 'D', '8', 'm', 'p', 0,
+  /* 1891 */ 'A', 'N', 'D', '8', 'm', 'p', 0,
+  /* 1898 */ 'X', 'O', 'R', '8', 'm', 'p', 0,
+  /* 1905 */ 'B', 'I', 'S', '8', 'm', 'p', 0,
+  /* 1912 */ 'S', 'U', 'B', '1', '6', 'r', 'p', 0,
+  /* 1920 */ 'S', 'U', 'B', 'C', '1', '6', 'r', 'p', 0,
+  /* 1929 */ 'A', 'D', 'D', 'C', '1', '6', 'r', 'p', 0,
+  /* 1938 */ 'B', 'I', 'C', '1', '6', 'r', 'p', 0,
+  /* 1946 */ 'D', 'A', 'D', 'D', '1', '6', 'r', 'p', 0,
+  /* 1955 */ 'A', 'N', 'D', '1', '6', 'r', 'p', 0,
+  /* 1963 */ 'X', 'O', 'R', '1', '6', 'r', 'p', 0,
+  /* 1971 */ 'B', 'I', 'S', '1', '6', 'r', 'p', 0,
+  /* 1979 */ 'M', 'O', 'V', '1', '6', 'r', 'p', 0,
+  /* 1987 */ 'S', 'U', 'B', '8', 'r', 'p', 0,
+  /* 1994 */ 'S', 'U', 'B', 'C', '8', 'r', 'p', 0,
+  /* 2002 */ 'A', 'D', 'D', 'C', '8', 'r', 'p', 0,
+  /* 2010 */ 'B', 'I', 'C', '8', 'r', 'p', 0,
+  /* 2017 */ 'D', 'A', 'D', 'D', '8', 'r', 'p', 0,
+  /* 2025 */ 'A', 'N', 'D', '8', 'r', 'p', 0,
+  /* 2032 */ 'X', 'O', 'R', '8', 'r', 'p', 0,
+  /* 2039 */ 'B', 'I', 'S', '8', 'r', 'p', 0,
+  /* 2046 */ 'M', 'O', 'V', '8', 'r', 'p', 0,
+  /* 2053 */ 'R', 'R', 'A', '1', '6', 'r', 0,
+  /* 2060 */ 'S', 'W', 'P', 'B', '1', '6', 'r', 0,
+  /* 2068 */ 'R', 'R', 'C', '1', '6', 'r', 0,
+  /* 2075 */ 'P', 'U', 'S', 'H', '1', '6', 'r', 0,
+  /* 2083 */ 'P', 'O', 'P', '1', '6', 'r', 0,
+  /* 2090 */ 'S', 'E', 'X', 'T', '1', '6', 'r', 0,
+  /* 2098 */ 'Z', 'E', 'X', 'T', '1', '6', 'r', 0,
+  /* 2106 */ 'R', 'R', 'A', '8', 'r', 0,
+  /* 2112 */ 'R', 'R', 'C', '8', 'r', 0,
+  /* 2118 */ 'P', 'U', 'S', 'H', '8', 'r', 0,
+  /* 2125 */ 'B', 'r', 0,
+  /* 2128 */ 'C', 'A', 'L', 'L', 'r', 0,
+  /* 2134 */ 'S', 'U', 'B', '1', '6', 'm', 'r', 0,
+  /* 2142 */ 'S', 'U', 'B', 'C', '1', '6', 'm', 'r', 0,
+  /* 2151 */ 'A', 'D', 'D', 'C', '1', '6', 'm', 'r', 0,
+  /* 2160 */ 'B', 'I', 'C', '1', '6', 'm', 'r', 0,
+  /* 2168 */ 'D', 'A', 'D', 'D', '1', '6', 'm', 'r', 0,
+  /* 2177 */ 'A', 'N', 'D', '1', '6', 'm', 'r', 0,
+  /* 2185 */ 'C', 'M', 'P', '1', '6', 'm', 'r', 0,
+  /* 2193 */ 'X', 'O', 'R', '1', '6', 'm', 'r', 0,
+  /* 2201 */ 'B', 'I', 'S', '1', '6', 'm', 'r', 0,
+  /* 2209 */ 'B', 'I', 'T', '1', '6', 'm', 'r', 0,
+  /* 2217 */ 'M', 'O', 'V', '1', '6', 'm', 'r', 0,
+  /* 2225 */ 'S', 'U', 'B', '8', 'm', 'r', 0,
+  /* 2232 */ 'S', 'U', 'B', 'C', '8', 'm', 'r', 0,
+  /* 2240 */ 'A', 'D', 'D', 'C', '8', 'm', 'r', 0,
+  /* 2248 */ 'B', 'I', 'C', '8', 'm', 'r', 0,
+  /* 2255 */ 'D', 'A', 'D', 'D', '8', 'm', 'r', 0,
+  /* 2263 */ 'A', 'N', 'D', '8', 'm', 'r', 0,
+  /* 2270 */ 'C', 'M', 'P', '8', 'm', 'r', 0,
+  /* 2277 */ 'X', 'O', 'R', '8', 'm', 'r', 0,
+  /* 2284 */ 'B', 'I', 'S', '8', 'm', 'r', 0,
+  /* 2291 */ 'B', 'I', 'T', '8', 'm', 'r', 0,
+  /* 2298 */ 'M', 'O', 'V', '8', 'm', 'r', 0,
+  /* 2305 */ 'S', 'U', 'B', '1', '6', 'r', 'r', 0,
+  /* 2313 */ 'S', 'U', 'B', 'C', '1', '6', 'r', 'r', 0,
+  /* 2322 */ 'A', 'D', 'D', 'C', '1', '6', 'r', 'r', 0,
+  /* 2331 */ 'B', 'I', 'C', '1', '6', 'r', 'r', 0,
+  /* 2339 */ 'D', 'A', 'D', 'D', '1', '6', 'r', 'r', 0,
+  /* 2348 */ 'A', 'N', 'D', '1', '6', 'r', 'r', 0,
+  /* 2356 */ 'C', 'M', 'P', '1', '6', 'r', 'r', 0,
+  /* 2364 */ 'X', 'O', 'R', '1', '6', 'r', 'r', 0,
+  /* 2372 */ 'B', 'I', 'S', '1', '6', 'r', 'r', 0,
+  /* 2380 */ 'B', 'I', 'T', '1', '6', 'r', 'r', 0,
+  /* 2388 */ 'M', 'O', 'V', '1', '6', 'r', 'r', 0,
+  /* 2396 */ 'S', 'U', 'B', '8', 'r', 'r', 0,
+  /* 2403 */ 'S', 'U', 'B', 'C', '8', 'r', 'r', 0,
+  /* 2411 */ 'A', 'D', 'D', 'C', '8', 'r', 'r', 0,
+  /* 2419 */ 'B', 'I', 'C', '8', 'r', 'r', 0,
+  /* 2426 */ 'D', 'A', 'D', 'D', '8', 'r', 'r', 0,
+  /* 2434 */ 'A', 'N', 'D', '8', 'r', 'r', 0,
+  /* 2441 */ 'C', 'M', 'P', '8', 'r', 'r', 0,
+  /* 2448 */ 'X', 'O', 'R', '8', 'r', 'r', 0,
+  /* 2455 */ 'B', 'I', 'S', '8', 'r', 'r', 0,
+  /* 2462 */ 'B', 'I', 'T', '8', 'r', 'r', 0,
+  /* 2469 */ 'M', 'O', 'V', '8', 'r', 'r', 0,
 };
 
 extern const unsigned MSP430InstrNameIndices[] = {
     224U, 256U, 266U, 242U, 233U, 251U, 181U, 196U, 
     168U, 210U, 392U, 158U, 125U, 460U, 138U, 445U, 
     95U, 299U, 434U, 108U, 423U, 145U, 312U, 329U, 
-    362U, 409U, 89U, 387U, 357U, 500U, 838U, 1167U, 
-    1486U, 1723U, 2049U, 656U, 994U, 1323U, 1597U, 1834U, 
-    2220U, 580U, 918U, 1246U, 1542U, 1779U, 2136U, 736U, 
-    1074U, 1410U, 1661U, 1898U, 2307U, 490U, 828U, 1149U, 
-    1476U, 1713U, 2031U, 646U, 984U, 1305U, 1587U, 1824U, 
-    2202U, 571U, 909U, 1230U, 1533U, 1770U, 2120U, 727U, 
-    1065U, 1394U, 1652U, 1889U, 2291U, 785U, 282U, 342U, 
-    508U, 846U, 1175U, 1494U, 1731U, 2057U, 664U, 1002U, 
-    1331U, 1605U, 1842U, 2228U, 587U, 925U, 1253U, 1549U, 
-    1786U, 2143U, 743U, 1081U, 1417U, 1668U, 1905U, 2314U, 
-    1158U, 2040U, 1314U, 2211U, 1238U, 2128U, 1402U, 2299U, 
-    532U, 870U, 1191U, 1510U, 1747U, 2081U, 688U, 1026U, 
-    1355U, 1621U, 1858U, 2252U, 608U, 946U, 1267U, 1563U, 
-    1800U, 2164U, 764U, 1102U, 1438U, 1682U, 1919U, 2335U, 
-    540U, 878U, 1199U, 2089U, 696U, 1034U, 1363U, 2260U, 
-    615U, 953U, 1274U, 2171U, 771U, 1109U, 1445U, 2342U, 
-    802U, 1123U, 2005U, 805U, 1126U, 2008U, 516U, 854U, 
-    2065U, 672U, 1010U, 1339U, 2236U, 594U, 932U, 2150U, 
-    750U, 1088U, 1424U, 2321U, 499U, 837U, 1166U, 1485U, 
-    1722U, 2048U, 655U, 993U, 1322U, 1596U, 1833U, 2219U, 
-    579U, 917U, 1245U, 1541U, 1778U, 2135U, 735U, 1073U, 
-    1409U, 1660U, 1897U, 2306U, 85U, 308U, 548U, 886U, 
-    1207U, 2097U, 704U, 1042U, 1371U, 1629U, 1866U, 2268U, 
-    622U, 960U, 1281U, 2178U, 778U, 1116U, 1452U, 1689U, 
-    1926U, 2349U, 55U, 66U, 1963U, 465U, 794U, 1955U, 
-    1998U, 419U, 228U, 1933U, 1986U, 1948U, 1992U, 6U, 
-    39U, 1970U, 473U, 811U, 1132U, 1459U, 1696U, 2014U, 
-    629U, 967U, 1288U, 1570U, 1807U, 2185U, 556U, 894U, 
-    1215U, 1518U, 1755U, 2105U, 712U, 1050U, 1379U, 1637U, 
-    1874U, 2276U, 481U, 819U, 1140U, 1467U, 1704U, 2022U, 
-    637U, 975U, 1296U, 1578U, 1815U, 2193U, 563U, 901U, 
-    1222U, 1525U, 1762U, 2112U, 719U, 1057U, 1386U, 1644U, 
-    1881U, 2283U, 1940U, 25U, 77U, 13U, 45U, 0U, 
-    34U, 19U, 50U, 524U, 862U, 1183U, 1502U, 1739U, 
-    2073U, 680U, 1018U, 1347U, 1613U, 1850U, 2244U, 601U, 
-    939U, 1260U, 1556U, 1793U, 2157U, 757U, 1095U, 1431U, 
-    1675U, 1912U, 2328U, 1978U, 
+    362U, 409U, 89U, 387U, 357U, 508U, 876U, 1227U, 
+    1554U, 1821U, 2169U, 679U, 1047U, 1383U, 1680U, 1947U, 
+    2340U, 595U, 963U, 1306U, 1617U, 1884U, 2256U, 766U, 
+    1134U, 1470U, 1751U, 2018U, 2427U, 490U, 858U, 1209U, 
+    1536U, 1803U, 2151U, 661U, 1029U, 1365U, 1662U, 1929U, 
+    2322U, 579U, 947U, 1290U, 1601U, 1868U, 2240U, 750U, 
+    1118U, 1454U, 1735U, 2002U, 2411U, 815U, 282U, 342U, 
+    516U, 884U, 1235U, 1562U, 1829U, 2177U, 687U, 1055U, 
+    1391U, 1688U, 1955U, 2348U, 602U, 970U, 1313U, 1624U, 
+    1891U, 2263U, 773U, 1141U, 1477U, 1758U, 2025U, 2434U, 
+    499U, 867U, 1218U, 1545U, 1812U, 2160U, 670U, 1038U, 
+    1374U, 1671U, 1938U, 2331U, 587U, 955U, 1298U, 1609U, 
+    1876U, 2248U, 758U, 1126U, 1462U, 1743U, 2010U, 2419U, 
+    540U, 908U, 1251U, 1578U, 1845U, 2201U, 711U, 1079U, 
+    1415U, 1704U, 1971U, 2372U, 623U, 991U, 1327U, 1638U, 
+    1905U, 2284U, 794U, 1162U, 1498U, 1772U, 2039U, 2455U, 
+    548U, 916U, 1259U, 2209U, 719U, 1087U, 1423U, 2380U, 
+    630U, 998U, 1334U, 2291U, 801U, 1169U, 1505U, 2462U, 
+    832U, 1183U, 2125U, 835U, 1186U, 2128U, 524U, 892U, 
+    2185U, 695U, 1063U, 1399U, 2356U, 609U, 977U, 2270U, 
+    780U, 1148U, 1484U, 2441U, 507U, 875U, 1226U, 1553U, 
+    1820U, 2168U, 678U, 1046U, 1382U, 1679U, 1946U, 2339U, 
+    594U, 962U, 1305U, 1616U, 1883U, 2255U, 765U, 1133U, 
+    1469U, 1750U, 2017U, 2426U, 85U, 308U, 556U, 924U, 
+    1267U, 2217U, 727U, 1095U, 1431U, 1712U, 1979U, 2388U, 
+    637U, 1005U, 1341U, 2298U, 808U, 1176U, 1512U, 1779U, 
+    2046U, 2469U, 55U, 66U, 2083U, 465U, 824U, 2075U, 
+    2118U, 419U, 228U, 2053U, 2106U, 2068U, 2112U, 6U, 
+    39U, 2090U, 473U, 841U, 1192U, 1519U, 1786U, 2134U, 
+    644U, 1012U, 1348U, 1645U, 1912U, 2305U, 564U, 932U, 
+    1275U, 1586U, 1853U, 2225U, 735U, 1103U, 1439U, 1720U, 
+    1987U, 2396U, 481U, 849U, 1200U, 1527U, 1794U, 2142U, 
+    652U, 1020U, 1356U, 1653U, 1920U, 2313U, 571U, 939U, 
+    1282U, 1593U, 1860U, 2232U, 742U, 1110U, 1446U, 1727U, 
+    1994U, 2403U, 2060U, 25U, 77U, 13U, 45U, 0U, 
+    34U, 19U, 50U, 532U, 900U, 1243U, 1570U, 1837U, 
+    2193U, 703U, 1071U, 1407U, 1696U, 1963U, 2364U, 616U, 
+    984U, 1320U, 1631U, 1898U, 2277U, 787U, 1155U, 1491U, 
+    1765U, 2032U, 2448U, 2098U, 
 };
 
 static inline void InitMSP430MCInstrInfo(MCInstrInfo *II) {
-  II->InitMCInstrInfo(MSP430Insts, MSP430InstrNameIndices, MSP430InstrNameData, 316);
+  II->InitMCInstrInfo(MSP430Insts, MSP430InstrNameIndices, MSP430InstrNameData, 332);
 }
 
 } // end llvm namespace
@@ -1087,7 +1134,7 @@ extern const unsigned MSP430InstrNameIndices[];
 extern const char MSP430InstrNameData[];
 MSP430GenInstrInfo::MSP430GenInstrInfo(int CFSetupOpcode, int CFDestroyOpcode, int CatchRetOpcode, int ReturnOpcode)
   : TargetInstrInfo(CFSetupOpcode, CFDestroyOpcode, CatchRetOpcode, ReturnOpcode) {
-  InitMCInstrInfo(MSP430Insts, MSP430InstrNameIndices, MSP430InstrNameData, 316);
+  InitMCInstrInfo(MSP430Insts, MSP430InstrNameIndices, MSP430InstrNameData, 332);
 }
 } // end llvm namespace
 #endif // GET_INSTRINFO_CTOR_DTOR
