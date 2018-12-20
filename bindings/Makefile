@@ -21,6 +21,7 @@ all:
 	python const_generator.py go
 	cd ruby && $(MAKE) gen_const
 	python const_generator.py powershell
+	python const_generator.py csharp
 
 samples: expected python
 

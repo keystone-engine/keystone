@@ -1,4 +1,4 @@
-// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [systemzConstants.cs]
+// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [SystemZConstants.cs]
 namespace Keystone
 {
 	public enum SystemzError : short

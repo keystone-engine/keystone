@@ -61,6 +61,11 @@ public enum KeystoneArchitecture implements JnaEnum {
      */
     Evm(9),
 
+    /**
+     * Msp430 architecture
+     */
+    Msp430(10),
+
     Max(10);
 
     /**
