@@ -80,7 +80,7 @@ namespace llvm_ks {
 
     /// Construct an ArrayRef from a C array.
     template <size_t N>
-    /*implicit*/ LLVM_CONSTEXPR ArrayRef(const T (&Arr)[N])
+    /*implicit*/ constexpr ArrayRef(const T (&Arr)[N])
       : Data(Arr), Length(N) {}
 
     /// Construct an ArrayRef from a std::initializer_list.
@@ -249,7 +249,7 @@ namespace llvm_ks {
 
     /// Construct an MutableArrayRef from a C array.
     template <size_t N>
-    /*implicit*/ LLVM_CONSTEXPR MutableArrayRef(T (&Arr)[N])
+    /*implicit*/ constexpr MutableArrayRef(T (&Arr)[N])
       : ArrayRef<T>(Arr) {}
 
     T *data() const { return const_cast<T*>(ArrayRef<T>::data()); }

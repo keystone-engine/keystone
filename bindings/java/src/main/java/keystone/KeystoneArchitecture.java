@@ -66,7 +66,7 @@ public enum KeystoneArchitecture implements JnaEnum {
      */
     Msp430(10),
 
-    Max(10);
+    Max(11);
 
     /**
      * Mapping table to determine an enumeration value based on an integer with a complexity of θ(1).
