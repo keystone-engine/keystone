@@ -58,3 +58,6 @@ test_ks(KS_ARCH_SPARC, KS_MODE_SPARC32 + KS_MODE_BIG_ENDIAN, "add %g1, %g2, %g3"
 
 # SystemZ
 test_ks(KS_ARCH_SYSTEMZ, KS_MODE_BIG_ENDIAN, "a %r0, 4095(%r15,%r1)")
+
+# MSP430
+test_ks(KS_ARCH_MSP430, KS_MODE_LITTLE_ENDIAN, "and r12, r13")
