@@ -38,8 +38,7 @@ const (
 	ARCH_SYSTEMZ Architecture = 7
 	ARCH_HEXAGON Architecture = 8
 	ARCH_EVM Architecture = 9
-	ARCH_MSP430 Architecture = 10
-	ARCH_MAX Architecture = 11
+	ARCH_MAX Architecture = 10
 )
 
 const (

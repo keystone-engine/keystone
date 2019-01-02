@@ -1,4 +1,4 @@
-// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [MipsConstants.cs]
+// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [mipsConstants.cs]
 namespace Keystone
 {
 	public enum MipsError : short

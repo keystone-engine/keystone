@@ -24,8 +24,6 @@ Public Enum ks_arch
     KS_ARCH_SPARC   ' Sparc architecture
     KS_ARCH_SYSTEMZ ' SystemZ architecture (S390X)
     KS_ARCH_HEXAGON ' Hexagon architecture
-    KS_ARCH_EVM     ' EVM architecture
-    KS_ARCH_MSP430  ' MSP430 architecture
     KS_ARCH_MAX
 End Enum
 
@@ -341,8 +339,6 @@ Function ks_arch2str(v As ks_arch) As String
     If v = KS_ARCH_SPARC Then r = "KS_ARCH_SPARC"
     If v = KS_ARCH_SYSTEMZ Then r = "KS_ARCH_SYSTEMZ"
     If v = KS_ARCH_HEXAGON Then r = "KS_ARCH_HEXAGON"
-    If v = KS_ARCH_EVM Then r = "KS_ARCH_EVM"
-    If v = KS_ARCH_MSP430 Then r = "KS_ARCH_MSP430"
     If v = KS_ARCH_MAX Then r = "KS_ARCH_MAX"
     If Len(r) = 0 Then r = "Unknown: " & Hex(v)
     ks_arch2str = r

@@ -1,4 +1,4 @@
-// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [ARMConstants.cs]
+// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [armConstants.cs]
 namespace Keystone
 {
 	public enum ArmError : short

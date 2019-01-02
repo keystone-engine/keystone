@@ -17,8 +17,6 @@ module Types : sig
     | KS_ARCH_SPARC
     | KS_ARCH_SYSTEMZ
     | KS_ARCH_HEXAGON
-    | KS_ARCH_EVM
-    | KS_ARCH_MSP430
     | KS_ARCH_MAX
 
   (** Keystone error types. Please see keystone.h for a full description. *)

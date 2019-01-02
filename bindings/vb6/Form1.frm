@@ -116,9 +116,6 @@ Private Sub Form_Load()
 
     ' SystemZ
     AddResult test_ks(KS_ARCH_SYSTEMZ, KS_MODE_BIG_ENDIAN, "a %r0, 4095(%r15,%r1)", 0, base)
-
-    ' MSP430
-    AddResult test_ks(KS_ARCH_MSP430, KS_MODE_LITTLE_ENDIAN, "and r12, r13", 0, base)
     
     ' symbol resolver test (will enable once in stable release binaries not tested yet)
     'AddResult test_ks(KS_ARCH_X86, KS_MODE_32, "jmp _l1; nop", 0, , base, True)

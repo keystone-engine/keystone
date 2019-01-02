@@ -19,7 +19,6 @@ library
                        Keystone.CPU.Arm
                        Keystone.CPU.Hexagon
                        Keystone.CPU.Mips
-                       Keystone.CPU.Msp430
                        Keystone.CPU.Ppc
                        Keystone.CPU.Sparc
                        Keystone.CPU.SystemZ

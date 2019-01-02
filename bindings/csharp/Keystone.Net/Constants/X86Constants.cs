@@ -1,4 +1,4 @@
-// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [X86Constants.cs]
+// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [x86Constants.cs]
 namespace Keystone
 {
 	public enum X86Error : short

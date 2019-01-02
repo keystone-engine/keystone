@@ -1,5 +1,5 @@
 var extend = require('util')._extend,
-    archs = ['arm64', 'arm', 'hexagon', 'mips', 'ppc', 'sparc', 'systemz', 'x86', 'evm', 'msp430'],
+    archs = ['arm64', 'arm', 'hexagon', 'mips', 'ppc', 'sparc', 'systemz', 'x86'],
     i
 
 module.exports = require('./keystone')
