@@ -1,4 +1,4 @@
-// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [sparcConstants.cs]
+// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [SPARCConstants.cs]
 namespace Keystone
 {
 	public enum SparcError : short

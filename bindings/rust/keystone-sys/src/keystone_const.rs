@@ -42,7 +42,8 @@ pub enum Arch {
     SYSTEMZ = 7,
     HEXAGON = 8,
     EVM = 9,
-    MAX = 10,
+    MSP430 = 10,
+    MAX = 11,
 }
 
 #[repr(C)]
