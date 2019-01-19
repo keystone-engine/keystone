@@ -3,10 +3,10 @@ use keystone::*;
 
 fn main() {
     let engine =
-        Keystone::new(Arch::X86, Mode::MODE_32).expect("Could not initialize Keystone engine");
+        Keystone::new(Arch::X86, MODE_32).expect("Could not initialize Keystone engine");
 
     engine
-        .option(OptionType::SYNTAX, OptionValue::SYNTAX_NASM)
+        .option(OptionType::SYNTAX, OPT_SYNTAX_NASM)
         .expect("Could not set option to nasm syntax");
 
     let result = engine
