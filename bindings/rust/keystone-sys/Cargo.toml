@@ -15,8 +15,6 @@ exclude = [
 ]
 
 [build-dependencies]
-build-helper = "0.1"
-os_type = "2.0"
 pkg-config = { optional = true, version = "0.3" }
 
 [dependencies]
