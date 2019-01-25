@@ -17,9 +17,8 @@ use keystone_const::{Arch, Error, Mode, OptionType, OptionValue};
 #[allow(non_camel_case_types)]
 pub type ks_handle = libc::size_t;
 
-#[link(name = "keystone")]
 extern "C" {
-    pub fn ks_version(major: *const u32, minor: *const u32) -> u32;
+    pub fn ks_version(major: *mut u32, minor: *mut u32) -> u32;
     pub fn ks_arch_supported(arch: Arch) -> bool;
     pub fn ks_open(arch: Arch, mode: Mode, engine: *mut ks_handle) -> Error;
     pub fn ks_asm(
@@ -38,8 +37,8 @@ extern "C" {
 }
 
 impl Error {
-    pub fn msg(&self) -> String {
-        error_msg(*self)
+    pub fn msg(self) -> String {
+        error_msg(self)
     }
 }
 

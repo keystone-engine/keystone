@@ -28,3 +28,5 @@ default = []
 
 use_system_keystone = ["pkg-config"]
 build_keystone_cmake = []
+
+[workspace]

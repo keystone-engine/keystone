@@ -2,22 +2,20 @@
 
 .PHONY: gen_const build package clean check
 
-build: keystone-sys/keystone
+build:
 	cargo build -vv
 
-package: keystone-sys/keystone
+package:
 	cd keystone-sys && cargo package -vv
 	cargo package -vv
 
-keystone-sys/keystone:
-	rsync -a ../.. keystone-sys/keystone --exclude bindings --filter ":- ../../.gitignore"
-
 clean:
-	rm -rf target/ keystone-sys/target/ keystone-sys/keystone/
+	cargo clean
 
 check:
-	cargo test
+# 	Make sure to only use one test thread as keystone isn't thread-safe
+	cargo test -- --test-threads=1
 
 gen_const:
-	cd .. && python const_generator.py rust
+	cd .. && python2 const_generator.py rust
 	cargo fmt

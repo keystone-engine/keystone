@@ -21,7 +21,7 @@
 extern crate keystone_sys as ffi;
 extern crate libc;
 
-use std::ffi::{CString, CStr};
+use std::ffi::{CStr, CString};
 use std::fmt;
 
 pub use ffi::keystone_const::*;
