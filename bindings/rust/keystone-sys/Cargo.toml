@@ -10,21 +10,17 @@ repository = "https://github.com/keystone-engine/keystone"
 documentation = "https://docs.rs/keystone/"
 license = "GPL-2.0"
 build = "build.rs"
-exclude = [
-  "keystone/build/**"
-]
 
 [build-dependencies]
 pkg-config = { optional = true, version = "0.3" }
+cmake = { optional = true, version = "0.1" }
 
 [dependencies]
 bitflags = "1.0"
 libc = "0.2"
 
 [features]
-default = []
+default = ["build_keystone_cmake"]
 
 use_system_keystone = ["pkg-config"]
-build_keystone_cmake = []
-
-[workspace]
+build_keystone_cmake = ["cmake"]

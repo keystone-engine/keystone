@@ -2,14 +2,19 @@
 
 .PHONY: gen_const build package clean check
 
-build:
+build: keystone-sys/keystone
 	cargo build -vv
 
-package:
+package: keystone-sys/keystone
 	cd keystone-sys && cargo package -vv
 	cargo package -vv
 
+# For packaging we need to embed the keystone source in the crate
+keystone-sys/keystone:
+	rsync -a ../.. keystone-sys/keystone --exclude bindings --filter ":- ../../.gitignore"
+
 clean:
+	rm -rf keystone-sys/keystone/
 	cargo clean
 
 check:

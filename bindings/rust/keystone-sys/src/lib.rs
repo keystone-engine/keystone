@@ -9,10 +9,10 @@ extern crate libc;
 
 pub mod keystone_const;
 
-use std::fmt;
-use std::ffi::CStr;
-use std::os::raw::c_char;
 use keystone_const::{Arch, Error, Mode, OptionType, OptionValue};
+use std::ffi::CStr;
+use std::fmt;
+use std::os::raw::c_char;
 
 #[allow(non_camel_case_types)]
 pub type ks_handle = libc::size_t;
