@@ -21,7 +21,7 @@
 extern crate keystone_sys as ffi;
 extern crate libc;
 
-use std::ffi::CString;
+use std::ffi::{CString, CStr};
 use std::fmt;
 
 pub use ffi::keystone_const::*;
@@ -66,7 +66,7 @@ pub fn arch_supported(arch: Arch) -> bool {
 
 pub fn error_msg(error: Error) -> String {
     unsafe {
-        CStr::from_ptr(ffi::ks_strerror(error.bits()))
+        CStr::from_ptr(ffi::ks_strerror(error))
             .to_string_lossy()
             .into_owned()
     }
