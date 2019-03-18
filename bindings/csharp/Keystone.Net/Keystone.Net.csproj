@@ -1,28 +1,36 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Keystone</RootNamespace>
 
-    <Version>1.1.0</Version>
-    <AssemblyVersion>$(Version)</AssemblyVersion>
-    <FileVersion>$(Version).0</FileVersion>
+    <Version>0.9.1.1</Version>
+    <AssemblyVersion>0.9.1.1</AssemblyVersion>
+    <FileVersion>0.9.1.1</FileVersion>
 
-    <Description>.NET bindings to the Keystone Engine.</Description>
-    <Authors>Grégoire Geis</Authors>
+    <Description>Keystone is a lightweight multi-platform, multi-architecture assembler framework. This package corresponds to the csharp bindings in the official git repository.</Description>
+    <Authors>Nguyen Anh Quynh, Marco Fornaro, Grégoire Geis, Jämes Ménétrey</Authors>
 
-    <PackageId>Keystone.Net</PackageId>
+    <PackageId>keystoneengine.csharp</PackageId>
     <PackageVersion>$(Version)</PackageVersion>
-    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>- First release.</PackageReleaseNotes>
-    <PackageTags>assembler x86 arm keystone</PackageTags>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes>Release notes can be found at: https://github.com/keystone-engine/keystone/blob/0.9.1/ChangeLog</PackageReleaseNotes>
+    <PackageTags>assembler x86 x64 arm keystone llvm</PackageTags>
 
-    <PackageProjectUrl>https://github.com/keystone-engine/keystone</PackageProjectUrl>
-    <PackageLicenseUrl>$(PackageProjectUrl)/blob/master/COPYING</PackageLicenseUrl>
+    <PackageProjectUrl>http://www.keystone-engine.org</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/keystone-engine/keystone#license</PackageLicenseUrl>
     <PackageIconUrl>http://www.keystone-engine.org/images/keystone.png</PackageIconUrl>
 
-    <RepositoryUrl>$(PackageProjectUrl).git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/keystone-engine/keystone</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <Company />
+    <Copyright>Nguyen Anh Quynh</Copyright>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Product>Keystone Engine - .NET Bindings</Product>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
 </Project>

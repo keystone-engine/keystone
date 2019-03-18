@@ -49,5 +49,5 @@ Ruben Boonen: PowerShell binding.
 Marco Fornaro: C# binding.
 David Zimmer: VB6 binding.
 Michael Mohr: Debian packaging.
-Jämes Ménétrey (ZenLulz): Java binding.
+Jämes Ménétrey (ZenLulz): Java and C# bindings.
 Philippe Antoine (Catena cyber): fuzzing.
