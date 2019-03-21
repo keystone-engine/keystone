@@ -16,7 +16,9 @@ fn build_with_cmake() {
     if !Path::new("keystone").exists() {
         // This only happens when using the crate via a `git` reference as the
         // published version already embeds keystone's source.
-        symlink("../../..", "keystone").expect("failed to symlink keystone");
+        let pwd = std::env::current_dir().unwrap();
+        let keystone_dir = pwd.ancestors().skip(3).next().unwrap();
+        symlink(keystone_dir, "keystone").expect("failed to symlink keystone");
     }
 
     let dest = cmake::Config::new("keystone")
