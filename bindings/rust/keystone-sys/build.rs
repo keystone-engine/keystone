@@ -3,8 +3,11 @@ extern crate cmake;
 #[cfg(feature = "use_system_keystone")]
 extern crate pkg_config;
 
-#[cfg(feature = "build_keystone_cmake")]
-use std::os::unix::fs;
+#[cfg(all(not(windows), feature = "build_keystone_cmake"))]
+use std::os::unix::fs::symlink;
+#[cfg(all(windows, feature = "build_keystone_cmake"))]
+use std::os::windows::fs::symlink_dir as symlink;
+
 #[cfg(feature = "build_keystone_cmake")]
 use std::path::Path;
 
@@ -13,7 +16,7 @@ fn build_with_cmake() {
     if !Path::new("keystone").exists() {
         // This only happens when using the crate via a `git` reference as the
         // published version already embeds keystone's source.
-        fs::symlink("../../..", "keystone").expect("failed to symlink keystone");
+        symlink("../../..", "keystone").expect("failed to symlink keystone");
     }
 
     let dest = cmake::Config::new("keystone")
@@ -26,6 +29,9 @@ fn build_with_cmake() {
 
     println!("cargo:rustc-link-search=native={}/lib", dest.display());
     println!("cargo:rustc-link-lib=keystone");
+
+    #[cfg(windows)]
+    println!("cargo:rustc-link-lib=shell32");
 }
 
 fn main() {
