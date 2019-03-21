@@ -1,6 +1,6 @@
-//! Keystone Assembler Engine (www.keystone-engine.org) */
-//! By Nguyen Anh Quynh <aquynh@gmail.com>, 2016 */
-//! Rust bindings by Remco Verhoef <remco@dutchcoders.io>, 2016 */
+//! Keystone Assembler Engine (www.keystone-engine.org) \
+//! By Nguyen Anh Quynh <aquynh@gmail.com>, 2016 \
+//! Rust bindings by Remco Verhoef <remco@dutchcoders.io>, 2016
 //!
 //! ```rust
 //! extern crate keystone;
@@ -15,8 +15,6 @@
 //!         .expect("Could not assemble");
 //! }
 //! ```
-
-#![doc(html_root_url = "https://keystone/doc/here/v1")]
 
 extern crate keystone_sys as ffi;
 extern crate libc;
