@@ -24,7 +24,7 @@ fn build_with_cmake() {
     let dest = cmake::Config::new("keystone")
         .define("BUILD_LIBS_ONLY", "1")
         .define("BUILD_SHARED_LIBS", "OFF")
-        .define("LLVM_TARGET_ARCH", "host")
+        .define("LLVM_TARGETS_TO_BUILD", "all")
         // Prevent python from leaving behind `.pyc` files which break `cargo package`
         .env("PYTHONDONTWRITEBYTECODE", "1")
         .build();
