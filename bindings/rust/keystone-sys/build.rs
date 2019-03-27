@@ -32,8 +32,14 @@ fn build_with_cmake() {
     println!("cargo:rustc-link-search=native={}/lib", dest.display());
     println!("cargo:rustc-link-lib=keystone");
 
-    #[cfg(windows)]
-    println!("cargo:rustc-link-lib=shell32");
+    let target = std::env::var("TARGET").unwrap();
+    if target.contains("apple") {
+        println!("cargo:rustc-link-lib=dylib=c++");
+    } else if target.contains("linux") {
+        println!("cargo:rustc-link-lib=dylib=stdc++");
+    } else if target.contains("windows") {
+        println!("cargo:rustc-link-lib=dylib=shell32");
+    }
 }
 
 fn main() {
