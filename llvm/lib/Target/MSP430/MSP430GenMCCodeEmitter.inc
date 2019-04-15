@@ -165,38 +165,58 @@ uint64_t MSP430MCCodeEmitter::getBinaryCodeForInstr(const MCInst &MI,
     UINT64_C(45184),	// BIT16mc
     UINT64_C(45232),	// BIT16mi
     UINT64_C(45200),	// BIT16mm
+    UINT64_C(45216),	// BIT16mn
+    UINT64_C(45232),	// BIT16mp
     UINT64_C(45184),	// BIT16mr
     UINT64_C(45056),	// BIT16rc
     UINT64_C(45104),	// BIT16ri
     UINT64_C(45072),	// BIT16rm
+    UINT64_C(45088),	// BIT16rn
+    UINT64_C(45104),	// BIT16rp
     UINT64_C(45056),	// BIT16rr
     UINT64_C(45248),	// BIT8mc
     UINT64_C(45296),	// BIT8mi
     UINT64_C(45264),	// BIT8mm
+    UINT64_C(45280),	// BIT8mn
+    UINT64_C(45296),	// BIT8mp
     UINT64_C(45248),	// BIT8mr
     UINT64_C(45120),	// BIT8rc
     UINT64_C(45168),	// BIT8ri
     UINT64_C(45136),	// BIT8rm
+    UINT64_C(45152),	// BIT8rn
+    UINT64_C(45168),	// BIT8rp
     UINT64_C(45120),	// BIT8rr
     UINT64_C(16432),	// Bi
     UINT64_C(16400),	// Bm
     UINT64_C(16384),	// Br
     UINT64_C(4784),	// CALLi
     UINT64_C(4752),	// CALLm
+    UINT64_C(4768),	// CALLn
+    UINT64_C(4784),	// CALLp
     UINT64_C(4736),	// CALLr
     UINT64_C(36992),	// CMP16mc
     UINT64_C(37040),	// CMP16mi
+    UINT64_C(37008),	// CMP16mm
+    UINT64_C(37024),	// CMP16mn
+    UINT64_C(37040),	// CMP16mp
     UINT64_C(36992),	// CMP16mr
     UINT64_C(36864),	// CMP16rc
     UINT64_C(36912),	// CMP16ri
     UINT64_C(36880),	// CMP16rm
+    UINT64_C(36896),	// CMP16rn
+    UINT64_C(36912),	// CMP16rp
     UINT64_C(36864),	// CMP16rr
     UINT64_C(37056),	// CMP8mc
     UINT64_C(37104),	// CMP8mi
+    UINT64_C(37072),	// CMP8mm
+    UINT64_C(37088),	// CMP8mn
+    UINT64_C(37104),	// CMP8mp
     UINT64_C(37056),	// CMP8mr
     UINT64_C(36928),	// CMP8rc
     UINT64_C(36976),	// CMP8ri
     UINT64_C(36944),	// CMP8rm
+    UINT64_C(36960),	// CMP8rn
+    UINT64_C(36976),	// CMP8rp
     UINT64_C(36928),	// CMP8rr
     UINT64_C(41088),	// DADD16mc
     UINT64_C(41136),	// DADD16mi
@@ -227,6 +247,8 @@ uint64_t MSP430MCCodeEmitter::getBinaryCodeForInstr(const MCInst &MI,
     UINT64_C(16512),	// MOV16mc
     UINT64_C(16560),	// MOV16mi
     UINT64_C(16528),	// MOV16mm
+    UINT64_C(16544),	// MOV16mn
+    UINT64_C(16560),	// MOV16mp
     UINT64_C(16512),	// MOV16mr
     UINT64_C(16384),	// MOV16rc
     UINT64_C(16432),	// MOV16ri
@@ -237,6 +259,8 @@ uint64_t MSP430MCCodeEmitter::getBinaryCodeForInstr(const MCInst &MI,
     UINT64_C(16576),	// MOV8mc
     UINT64_C(16624),	// MOV8mi
     UINT64_C(16592),	// MOV8mm
+    UINT64_C(16608),	// MOV8mn
+    UINT64_C(16624),	// MOV8mp
     UINT64_C(16576),	// MOV8mr
     UINT64_C(16448),	// MOV8rc
     UINT64_C(16496),	// MOV8ri
@@ -253,12 +277,27 @@ uint64_t MSP430MCCodeEmitter::getBinaryCodeForInstr(const MCInst &MI,
     UINT64_C(4672),	// PUSH8r
     UINT64_C(16688),	// RET
     UINT64_C(4864),	// RETI
+    UINT64_C(4368),	// RRA16m
+    UINT64_C(4384),	// RRA16n
+    UINT64_C(4400),	// RRA16p
     UINT64_C(4352),	// RRA16r
+    UINT64_C(4432),	// RRA8m
+    UINT64_C(4448),	// RRA8n
+    UINT64_C(4464),	// RRA8p
     UINT64_C(4416),	// RRA8r
+    UINT64_C(4112),	// RRC16m
+    UINT64_C(4128),	// RRC16n
+    UINT64_C(4144),	// RRC16p
     UINT64_C(4096),	// RRC16r
+    UINT64_C(4176),	// RRC8m
+    UINT64_C(4192),	// RRC8n
+    UINT64_C(4208),	// RRC8p
     UINT64_C(4160),	// RRC8r
     UINT64_C(0),	// Rrcl16
     UINT64_C(0),	// Rrcl8
+    UINT64_C(4496),	// SEXT16m
+    UINT64_C(4512),	// SEXT16n
+    UINT64_C(4528),	// SEXT16p
     UINT64_C(4480),	// SEXT16r
     UINT64_C(32896),	// SUB16mc
     UINT64_C(32944),	// SUB16mi
@@ -308,6 +347,9 @@ uint64_t MSP430MCCodeEmitter::getBinaryCodeForInstr(const MCInst &MI,
     UINT64_C(28768),	// SUBC8rn
     UINT64_C(28784),	// SUBC8rp
     UINT64_C(28736),	// SUBC8rr
+    UINT64_C(4240),	// SWPB16m
+    UINT64_C(4256),	// SWPB16n
+    UINT64_C(4272),	// SWPB16p
     UINT64_C(4224),	// SWPB16r
     UINT64_C(0),	// Select16
     UINT64_C(0),	// Select8
@@ -609,17 +651,39 @@ uint64_t MSP430MCCodeEmitter::getBinaryCodeForInstr(const MCInst &MI,
       Value |= (op & UINT64_C(15)) << 8;
       break;
     }
+    case MSP430::CALLn:
+    case MSP430::CALLp:
     case MSP430::CALLr:
     case MSP430::PUSH16r:
-    case MSP430::PUSH8r: {
+    case MSP430::PUSH8r:
+    case MSP430::RRA16n:
+    case MSP430::RRA16p:
+    case MSP430::RRA8n:
+    case MSP430::RRA8p:
+    case MSP430::RRC16n:
+    case MSP430::RRC16p:
+    case MSP430::RRC8n:
+    case MSP430::RRC8p:
+    case MSP430::SEXT16n:
+    case MSP430::SEXT16p:
+    case MSP430::SWPB16n:
+    case MSP430::SWPB16p: {
       // op: rs
       op = getMachineOpValue(MI, MI.getOperand(0), Fixups, STI);
       Value |= op & UINT64_C(15);
       break;
     }
+    case MSP430::BIT16rn:
+    case MSP430::BIT16rp:
     case MSP430::BIT16rr:
+    case MSP430::BIT8rn:
+    case MSP430::BIT8rp:
     case MSP430::BIT8rr:
+    case MSP430::CMP16rn:
+    case MSP430::CMP16rp:
     case MSP430::CMP16rr:
+    case MSP430::CMP8rn:
+    case MSP430::CMP8rp:
     case MSP430::CMP8rr:
     case MSP430::MOV16rn:
     case MSP430::MOV16rr:
@@ -676,9 +740,17 @@ uint64_t MSP430MCCodeEmitter::getBinaryCodeForInstr(const MCInst &MI,
     case MSP430::BIS8mn:
     case MSP430::BIS8mp:
     case MSP430::BIS8mr:
+    case MSP430::BIT16mn:
+    case MSP430::BIT16mp:
     case MSP430::BIT16mr:
+    case MSP430::BIT8mn:
+    case MSP430::BIT8mp:
     case MSP430::BIT8mr:
+    case MSP430::CMP16mn:
+    case MSP430::CMP16mp:
     case MSP430::CMP16mr:
+    case MSP430::CMP8mn:
+    case MSP430::CMP8mp:
     case MSP430::CMP8mr:
     case MSP430::DADD16mn:
     case MSP430::DADD16mp:
@@ -686,7 +758,11 @@ uint64_t MSP430MCCodeEmitter::getBinaryCodeForInstr(const MCInst &MI,
     case MSP430::DADD8mn:
     case MSP430::DADD8mp:
     case MSP430::DADD8mr:
+    case MSP430::MOV16mn:
+    case MSP430::MOV16mp:
     case MSP430::MOV16mr:
+    case MSP430::MOV8mn:
+    case MSP430::MOV8mp:
     case MSP430::MOV8mr:
     case MSP430::SUB16mn:
     case MSP430::SUB16mp:
@@ -794,7 +870,13 @@ uint64_t MSP430MCCodeEmitter::getBinaryCodeForInstr(const MCInst &MI,
       Value |= (op & UINT64_C(15)) << 8;
       break;
     }
-    case MSP430::CALLm: {
+    case MSP430::CALLm:
+    case MSP430::RRA16m:
+    case MSP430::RRA8m:
+    case MSP430::RRC16m:
+    case MSP430::RRC8m:
+    case MSP430::SEXT16m:
+    case MSP430::SWPB16m: {
       // op: src
       op = getMemOpValue(MI, 0, Fixups, STI);
       Value |= (op & UINT64_C(1048560)) << 12;
@@ -813,6 +895,8 @@ uint64_t MSP430MCCodeEmitter::getBinaryCodeForInstr(const MCInst &MI,
     case MSP430::BIS8mm:
     case MSP430::BIT16mm:
     case MSP430::BIT8mm:
+    case MSP430::CMP16mm:
+    case MSP430::CMP8mm:
     case MSP430::DADD16mm:
     case MSP430::DADD8mm:
     case MSP430::MOV16mm:
