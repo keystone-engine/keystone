@@ -19,7 +19,7 @@ enum {
   FeatureX = 3
 };
 } // end namespace MSP430
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif // GET_SUBTARGETINFO_ENUM
 
@@ -91,10 +91,11 @@ extern const llvm_ks::SubtargetInfoKV MSP430ProcSchedKV[] = {
 };
 #undef DBGFIELD
 static inline MCSubtargetInfo *createMSP430MCSubtargetInfoImpl(const Triple &TT, StringRef CPU, StringRef FS) {
-  return new MCSubtargetInfo(TT, CPU, FS, MSP430FeatureKV, MSP430SubTypeKV, NULL);
+  return new MCSubtargetInfo(TT, CPU, FS, MSP430FeatureKV, MSP430SubTypeKV, NULL); 
+  
 }
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif // GET_SUBTARGETINFO_MC_DESC
 
@@ -131,7 +132,7 @@ public:
   unsigned resolveSchedClass(unsigned SchedClass,  const MachineInstr *DefMI, const TargetSchedModel *SchedModel) const override;
   DFAPacketizer *createDFAPacketizer(const InstrItineraryData *IID) const;
 };
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif // GET_SUBTARGETINFO_HEADER
 
@@ -157,7 +158,7 @@ unsigned MSP430GenSubtargetInfo
 ::resolveSchedClass(unsigned SchedClass, const MachineInstr *MI, const TargetSchedModel *SchedModel) const {
   report_fatal_error("Expected a variant SchedClass");
 } // MSP430GenSubtargetInfo::resolveSchedClass
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif // GET_SUBTARGETINFO_CTOR
 

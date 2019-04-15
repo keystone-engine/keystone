@@ -75,7 +75,7 @@ enum {
 };
 } // end namespace MSP430
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif // GET_REGINFO_ENUM
 
@@ -284,7 +284,7 @@ MSP430SubRegIdxRanges, MSP430RegEncodingTable);
 
 }
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif // GET_REGINFO_MC_DESC
 
@@ -331,7 +331,7 @@ namespace MSP430 { // Register classes
   extern const TargetRegisterClass GR16RegClass;
 } // end namespace MSP430
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif // GET_REGINFO_HEADER
 
@@ -625,7 +625,7 @@ MSP430GenRegisterInfo::getFrameLowering(const MachineFunction &MF) {
       MF.getSubtarget().getFrameLowering());
 }
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif // GET_REGINFO_TARGET_DESC
 
