@@ -219,7 +219,7 @@ AArch64MCCodeEmitter::getAdrLabelOpValue(const MCInst &MI, unsigned OpIdx,
 
   // If the destination is an immediate, we have nothing to do.
   if (MO.isImm())
-      return (MO.getImm() * 4096 - MI.getAddress()) / 4096;
+      return MO.getImm() - (MI.getAddress() >> 12);
   assert(MO.isExpr() && "Unexpected target type!");
   const MCExpr *Expr = MO.getExpr();
 
