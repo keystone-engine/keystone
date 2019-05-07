@@ -49,6 +49,7 @@ def copy_sources():
 
     dir_util.copy_tree("../../llvm", "src/llvm/")
     dir_util.copy_tree("../../include", "src/include/")
+    dir_util.copy_tree("../../suite", "src/suite")
 
     src.extend(glob.glob("../../*.h"))
     src.extend(glob.glob("../../*.cpp"))
