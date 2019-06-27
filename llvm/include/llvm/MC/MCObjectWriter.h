@@ -17,7 +17,7 @@
 #include "llvm/Support/raw_ostream.h"
 #include <cassert>
 
-namespace llvm {
+namespace llvm_ks {
 class MCAsmLayout;
 class MCAssembler;
 class MCFixup;

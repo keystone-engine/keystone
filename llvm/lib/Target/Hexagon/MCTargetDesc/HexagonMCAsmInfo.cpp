@@ -13,7 +13,7 @@
 
 #include "HexagonMCAsmInfo.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 HexagonMCAsmInfo::HexagonMCAsmInfo(const Triple &TT) {
   Data16bitsDirective = "\t.half\t";

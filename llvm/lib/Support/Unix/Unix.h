@@ -61,7 +61,7 @@ static inline bool MakeErrMsg(
     return true;
   if (errnum == -1)
     errnum = errno;
-  *ErrMsg = prefix + ": ";  // + llvm::sys::StrError(errnum);
+  *ErrMsg = prefix + ": ";  // + llvm_ks::sys::StrError(errnum);
   return true;
 }
 

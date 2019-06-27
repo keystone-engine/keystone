@@ -16,7 +16,7 @@
 #include "llvm/MC/MCValue.h"
 #include "llvm/Support/ErrorHandling.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 namespace {
   class SparcELFObjectWriter : public MCELFObjectTargetWriter {
@@ -131,7 +131,7 @@ bool SparcELFObjectWriter::needsRelocateWithSymbol(const MCSymbol &Sym,
   }
 }
 
-MCObjectWriter *llvm::createSparcELFObjectWriter(raw_pwrite_stream &OS,
+MCObjectWriter *llvm_ks::createSparcELFObjectWriter(raw_pwrite_stream &OS,
                                                  bool Is64Bit,
                                                  bool IsLittleEndian,
                                                  uint8_t OSABI) {

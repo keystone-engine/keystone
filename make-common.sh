@@ -1,11 +1,7 @@
 BUILDTYPE='Release'
 
-# on MacOS, build universal binaries by default
-ARCH='i386;x86_64'
-
-# Linux FHS wants to install x64 libraries in "lib64"
-# Examples are Fedora, Redhat, Suse.
-LLVM_LIBDIR_SUFFIX=''
+# on MacOS, do not build universal binaries by default
+ARCH=''
 
 # by default we do NOT build 32bit on 64bit system
 LLVM_BUILD_32_BITS=0
@@ -22,14 +18,14 @@ while [ "$1" != "" ]; do
     lib32)
       LLVM_BUILD_32_BITS=1
       ;;
-    lib64)
-      LLVM_LIBDIR_SUFFIX='64'
-      ;;
     debug)
       BUILDTYPE='Debug'
       ;;
     macos-no-universal)
       ARCH=''	# do not build MacOS universal binaries
+      ;;
+    macos-universal)
+      ARCH='i386;x86_64'	# build MacOS universal binaries
       ;;
     *)
       echo "ERROR: unknown parameter \"$1\""

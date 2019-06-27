@@ -10,7 +10,7 @@
 #include "llvm/Support/ARMBuildAttributes.h"
 #include "llvm/ADT/StringRef.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 namespace {
 const struct {
@@ -69,7 +69,7 @@ const struct {
 };
 }
 
-namespace llvm {
+namespace llvm_ks {
 namespace ARMBuildAttrs {
 StringRef AttrTypeAsString(unsigned Attr, bool HasTagPrefix) {
   return AttrTypeAsString(static_cast<AttrType>(Attr), HasTagPrefix);

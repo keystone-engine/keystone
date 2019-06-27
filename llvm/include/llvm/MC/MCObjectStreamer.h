@@ -15,7 +15,7 @@
 #include "llvm/MC/MCSection.h"
 #include "llvm/MC/MCStreamer.h"
 
-namespace llvm {
+namespace llvm_ks {
 class MCAssembler;
 class MCCodeEmitter;
 class MCSubtargetInfo;
@@ -150,8 +150,9 @@ public:
                               unsigned Size) override;
 
   bool mayHaveInstructions(MCSection &Sec) const override;
+  uint64_t getCurrentFragmentSize() override;
 };
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

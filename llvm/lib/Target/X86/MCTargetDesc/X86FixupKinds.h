@@ -12,7 +12,7 @@
 
 #include "llvm/MC/MCFixup.h"
 
-namespace llvm {
+namespace llvm_ks {
 namespace X86 {
 enum Fixups {
   reloc_riprel_4byte = FirstTargetFixupKind, // 32-bit rip-relative

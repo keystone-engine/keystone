@@ -10,7 +10,7 @@
 #include "llvm/MC/MCAsmBackend.h"
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/MC/MCFixupKindInfo.h"
-using namespace llvm;
+using namespace llvm_ks;
 
 MCAsmBackend::MCAsmBackend() : HasDataInCodeSupport(false) {}
 

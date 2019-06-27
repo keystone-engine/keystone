@@ -25,7 +25,7 @@
 #include <cassert>
 #include <cstddef>
 
-namespace llvm {
+namespace llvm_ks {
 
   template <class T>
   class IntrusiveRefCntPtr;
@@ -88,7 +88,7 @@ namespace llvm {
     static void release(T *obj) { obj->Release(); }
   };
 
-/// \brief A thread-safe version of \c llvm::RefCountedBase.
+/// \brief A thread-safe version of \c llvm_ks::RefCountedBase.
 ///
 /// A generic base class for objects that wish to have their lifetimes managed
 /// using reference counts. Classes subclass \c ThreadSafeRefCountedBase to
@@ -282,6 +282,6 @@ public:
     }
   };
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif // LLVM_ADT_INTRUSIVEREFCNTPTR_H

@@ -14,11 +14,10 @@
 
 #include <keystone/keystone.h>
 
-#define VERSION "0.9.1"
-
 static void usage(char *prog)
 {
-    printf("Kstool v%s for Keystone Assembler Engine (www.keystone-engine.org)\nBy Nguyen Anh Quynh, 2016\n\n", VERSION);
+    printf("Kstool v%u.%u.%u for Keystone Assembler Engine (www.keystone-engine.org)\nBy Nguyen Anh Quynh, 2016-2018\n\n",
+            KS_VERSION_MAJOR, KS_VERSION_MINOR, KS_VERSION_EXTRA);
     printf("Syntax: %s <arch+mode> <assembly-string> [start-address-in-hex-format]\n", prog);
     printf("\nThe following <arch+mode> options are supported:\n");
 
@@ -39,6 +38,10 @@ static void usage(char *prog)
         printf("        armbe:     ARM - big endian\n");
         printf("        thumb:     Thumb - little endian\n");
         printf("        thumbbe:   Thumb - big endian\n");
+        printf("        armv8:     ARM V8 - little endian\n");
+        printf("        armv8be:   ARM V8 - big endian\n");
+        printf("        thumbv8:   Thumb V8 - little endian\n");
+        printf("        thumbv8be: Thumb V8 - big endian\n");
     }
 
     if (ks_arch_supported(KS_ARCH_ARM64)) {
@@ -65,12 +68,15 @@ static void usage(char *prog)
     if (ks_arch_supported(KS_ARCH_SPARC)) {
         printf("        sparc:     Sparc - little endian\n");
         printf("        sparcbe:   Sparc - big endian\n");
-        printf("        sparc64:   Sparc64 - little endian\n");
         printf("        sparc64be: Sparc64 - big endian\n");
     }
 
     if (ks_arch_supported(KS_ARCH_SYSTEMZ)) {
         printf("        systemz:   SystemZ (S390x)\n");
+    }
+
+    if (ks_arch_supported(KS_ARCH_EVM)) {
+        printf("        evm:       Ethereum Virtual Machine\n");
     }
 
     printf("\n");
@@ -84,7 +90,7 @@ int main(int argc, char **argv)
     uint64_t start_addr = 0;
     char *input = NULL;
     size_t count;
-    unsigned char *insn;
+    unsigned char *insn = NULL;
     size_t size;
 
     if (argc == 2) {
@@ -102,7 +108,7 @@ int main(int argc, char **argv)
         fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
 
         while(fgets(buf, sizeof(buf), stdin)) {
-            input = (char*)realloc(assembly, index + strlen(buf));
+            input = (char*)realloc(input, index + strlen(buf));
             if (!input) {
                 printf("Failed to allocate memory.");
                 return 1;
@@ -206,6 +212,22 @@ int main(int argc, char **argv)
         err = ks_open(KS_ARCH_ARM, KS_MODE_THUMB+KS_MODE_BIG_ENDIAN, &ks);
     }
 
+    if (!strcmp(mode, "armv8")) {
+        err = ks_open(KS_ARCH_ARM, KS_MODE_ARM+KS_MODE_LITTLE_ENDIAN+KS_MODE_V8, &ks);
+    }
+
+    if (!strcmp(mode, "armv8be")) {
+        err = ks_open(KS_ARCH_ARM, KS_MODE_ARM+KS_MODE_BIG_ENDIAN+KS_MODE_V8, &ks);
+    }
+
+    if (!strcmp(mode, "thumbv8")) {
+        err = ks_open(KS_ARCH_ARM, KS_MODE_THUMB+KS_MODE_LITTLE_ENDIAN+KS_MODE_V8, &ks);
+    }
+
+    if (!strcmp(mode, "thumbv8be")) {
+        err = ks_open(KS_ARCH_ARM, KS_MODE_THUMB+KS_MODE_BIG_ENDIAN+KS_MODE_V8, &ks);
+    }
+
     if (!strcmp(mode, "arm64")) {
         err = ks_open(KS_ARCH_ARM64, KS_MODE_LITTLE_ENDIAN, &ks);
     }
@@ -250,16 +272,16 @@ int main(int argc, char **argv)
         err = ks_open(KS_ARCH_SPARC, KS_MODE_SPARC32+KS_MODE_BIG_ENDIAN, &ks);
     }
 
-    if (!strcmp(mode, "sparc64")) {
-        err = ks_open(KS_ARCH_SPARC, KS_MODE_SPARC64+KS_MODE_LITTLE_ENDIAN, &ks);
-    }
-
     if (!strcmp(mode, "sparc64be")) {
         err = ks_open(KS_ARCH_SPARC, KS_MODE_SPARC64+KS_MODE_BIG_ENDIAN, &ks);
     }
 
     if (!strcmp(mode, "systemz") || !strcmp(mode, "sysz") || !strcmp(mode, "s390x")) {
         err = ks_open(KS_ARCH_SYSTEMZ, KS_MODE_BIG_ENDIAN, &ks);
+    }
+
+    if (!strcmp(mode, "evm")) {
+        err = ks_open(KS_ARCH_EVM, 0, &ks);
     }
 
     if (err) {
@@ -272,7 +294,6 @@ int main(int argc, char **argv)
         printf("ERROR: failed on ks_asm() with count = %zu, error = '%s' (code = %u)\n", count, ks_strerror(ks_errno(ks)), ks_errno(ks));
     } else {
         size_t i;
-        //printf("Kstool v%s for Keystone Engine (www.keystone-engine.org)\n\n", VERSION);
         printf("%s = [ ", assembly);
         for (i = 0; i < size; i++) {
             printf("%02x ", insn[i]);
@@ -282,7 +303,9 @@ int main(int argc, char **argv)
     }
 
     // NOTE: free insn after usage to avoid leaking memory
-    ks_free(insn);
+    if (insn != NULL) {
+        ks_free(insn);
+    }
 
     // close Keystone instance when done
     ks_close(ks);

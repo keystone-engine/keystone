@@ -20,7 +20,7 @@
 #include "llvm/MC/MCELFStreamer.h"
 #include <memory>
 
-namespace llvm {
+namespace llvm_ks {
 class MCAsmBackend;
 class MCCodeEmitter;
 class MCContext;
@@ -72,5 +72,5 @@ public:
 MCELFStreamer *createMipsELFStreamer(MCContext &Context, MCAsmBackend &MAB,
                                      raw_pwrite_stream &OS,
                                      MCCodeEmitter *Emitter, bool RelaxAll);
-} // namespace llvm.
+} // namespace llvm_ks.
 #endif

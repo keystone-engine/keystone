@@ -13,7 +13,7 @@
 #include "llvm/MC/MCAsmInfoELF.h"
 #include "llvm/Support/Compiler.h"
 
-namespace llvm {
+namespace llvm_ks {
 class Triple;
 
 class SystemZMCAsmInfo : public MCAsmInfoELF {
@@ -21,6 +21,6 @@ public:
   explicit SystemZMCAsmInfo(const Triple &TT);
 };
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

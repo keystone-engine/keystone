@@ -14,7 +14,7 @@
 #include "llvm/ADT/Twine.h"
 #include "llvm/Support/Allocator.h"
 
-namespace llvm {
+namespace llvm_ks {
 
 /// \brief Saves strings in the inheritor's stable storage and returns a stable
 /// raw character pointer.

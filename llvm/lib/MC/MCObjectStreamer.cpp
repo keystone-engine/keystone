@@ -24,7 +24,7 @@
 
 //#include <iostream>
 
-using namespace llvm;
+using namespace llvm_ks;
 
 MCObjectStreamer::MCObjectStreamer(MCContext &Context, MCAsmBackend &TAB,
                                    raw_pwrite_stream &OS,
@@ -463,7 +463,7 @@ void MCObjectStreamer::EmitGPRel32Value(const MCExpr *Value) {
   MCDataFragment *DF = getOrCreateDataFragment();
   flushPendingLabels(DF, DF->getContents().size());
 
-  DF->getFixups().push_back(MCFixup::create(DF->getContents().size(), 
+  DF->getFixups().push_back(MCFixup::create(DF->getContents().size(),
                                             Value, FK_GPRel_4));
   DF->getContents().resize(DF->getContents().size() + 4, 0);
 }
@@ -473,7 +473,7 @@ void MCObjectStreamer::EmitGPRel64Value(const MCExpr *Value) {
   MCDataFragment *DF = getOrCreateDataFragment();
   flushPendingLabels(DF, DF->getContents().size());
 
-  DF->getFixups().push_back(MCFixup::create(DF->getContents().size(), 
+  DF->getFixups().push_back(MCFixup::create(DF->getContents().size(),
                                             Value, FK_GPRel_4));
   DF->getContents().resize(DF->getContents().size() + 8, 0);
 }
@@ -510,7 +510,8 @@ void MCObjectStreamer::EmitFill(uint64_t NumBytes, uint8_t FillValue) {
   insert(new MCFillFragment(FillValue, NumBytes));
 }
 
-unsigned int MCObjectStreamer::FinishImpl() {
+unsigned int MCObjectStreamer::FinishImpl()
+{
   unsigned int KsError = 0;
   // If we are generating dwarf for assembly source files dump out the sections.
   //if (getContext().getGenDwarfForAssembly())
@@ -520,7 +521,15 @@ unsigned int MCObjectStreamer::FinishImpl() {
   //MCDwarfLineTable::Emit(this, getAssembler().getDWARFLinetableParams());
 
   flushPendingLabels(nullptr);
+  getAssembler().setSymResolver(getSymResolver());
   getAssembler().Finish(KsError);
 
   return KsError;
+}
+
+uint64_t MCObjectStreamer::getCurrentFragmentSize() {
+  auto *F = dyn_cast_or_null<MCDataFragment>(getCurrentFragment());
+  if (nullptr != F)
+      return F->getContents().size();
+  return 0;
 }

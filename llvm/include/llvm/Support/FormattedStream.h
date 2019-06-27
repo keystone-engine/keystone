@@ -18,7 +18,7 @@
 #include "llvm/Support/raw_ostream.h"
 #include <utility>
 
-namespace llvm {
+namespace llvm_ks {
 
 /// formatted_raw_ostream - A raw_ostream that wraps another one and keeps track
 /// of line and column position, allowing padding out to specific column

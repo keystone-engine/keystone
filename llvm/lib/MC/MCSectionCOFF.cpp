@@ -13,7 +13,7 @@
 #include "llvm/MC/MCSymbol.h"
 #include "llvm/Support/COFF.h"
 #include "llvm/Support/raw_ostream.h"
-using namespace llvm;
+using namespace llvm_ks;
 
 MCSectionCOFF::~MCSectionCOFF() {} // anchor.
 

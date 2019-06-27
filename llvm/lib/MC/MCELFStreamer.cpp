@@ -38,7 +38,7 @@
 
 //#include <iostream>
 
-using namespace llvm;
+using namespace llvm_ks;
 
 bool MCELFStreamer::isBundleLocked() const {
   return getCurrentSectionOnly()->isBundleLocked();
@@ -630,17 +630,17 @@ void MCELFStreamer::EmitBundleUnlock() {
     Sec.setBundleLockState(MCSection::NotBundleLocked);
 }
 
-unsigned int MCELFStreamer::FinishImpl() {
+unsigned int MCELFStreamer::FinishImpl()
+{
   // Ensure the last section gets aligned if necessary.
   MCSection *CurSection = getCurrentSectionOnly();
   setSectionAlignmentForBundling(getAssembler(), CurSection);
 
   EmitFrames(nullptr);
-
   return this->MCObjectStreamer::FinishImpl();
 }
 
-MCStreamer *llvm::createELFStreamer(MCContext &Context, MCAsmBackend &MAB,
+MCStreamer *llvm_ks::createELFStreamer(MCContext &Context, MCAsmBackend &MAB,
                                     raw_pwrite_stream &OS, MCCodeEmitter *CE,
                                     bool RelaxAll) {
   MCELFStreamer *S = new MCELFStreamer(Context, MAB, OS, CE);

@@ -20,7 +20,7 @@
 #include "llvm/MC/MCInstrInfo.h"
 #include "llvm/MC/MCRegisterInfo.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 #define DEBUG_TYPE "mccodeemitter"
 
@@ -114,7 +114,7 @@ private:
 };
 } // end anonymous namespace
 
-MCCodeEmitter *llvm::createSystemZMCCodeEmitter(const MCInstrInfo &MCII,
+MCCodeEmitter *llvm_ks::createSystemZMCCodeEmitter(const MCInstrInfo &MCII,
                                                 const MCRegisterInfo &MRI,
                                                 MCContext &Ctx) {
   return new SystemZMCCodeEmitter(MCII, Ctx);

@@ -13,7 +13,7 @@
 #include "llvm/MC/MCExpr.h"
 #include "llvm/MC/MCValue.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 namespace {
 class SystemZObjectWriter : public MCELFObjectTargetWriter {
@@ -153,7 +153,7 @@ unsigned SystemZObjectWriter::getRelocType(MCContext &Ctx,
   }
 }
 
-MCObjectWriter *llvm::createSystemZObjectWriter(raw_pwrite_stream &OS,
+MCObjectWriter *llvm_ks::createSystemZObjectWriter(raw_pwrite_stream &OS,
                                                 uint8_t OSABI) {
   MCELFObjectTargetWriter *MOTW = new SystemZObjectWriter(OSABI);
   return createELFObjectWriter(MOTW, OS, /*IsLittleEndian=*/false);

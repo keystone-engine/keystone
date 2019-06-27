@@ -15,7 +15,7 @@
 #include "llvm/MC/MCTargetOptions.h"
 #include <memory>
 
-namespace llvm {
+namespace llvm_ks {
 class AsmToken;
 class MCInst;
 class MCParsedAsmOperand;

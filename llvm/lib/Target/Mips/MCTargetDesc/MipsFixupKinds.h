@@ -12,7 +12,7 @@
 
 #include "llvm/MC/MCFixup.h"
 
-namespace llvm {
+namespace llvm_ks {
 namespace Mips {
   // Although most of the current fixup types reflect a unique relocation
   // one can have multiple fixup types for a given relocation and thus need
@@ -205,7 +205,7 @@ namespace Mips {
     NumTargetFixupKinds = LastTargetFixupKind - FirstTargetFixupKind
   };
 } // namespace Mips
-} // namespace llvm
+} // namespace llvm_ks
 
 
 #endif

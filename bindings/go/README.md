@@ -1,4 +1,4 @@
-# keystone 
+# keystone
 Go bindings for the [keystone](http://www.keystone-engine.org/) engine.
 
 ## Sample
@@ -6,30 +6,30 @@ Go bindings for the [keystone](http://www.keystone-engine.org/) engine.
 package main
 
 import (
-        "fmt"
-        "os"
+	"fmt"
+	"os"
 
-        keystone "github.com/keystone-engine/beta/bindings/go/keystone"
+	"github.com/keystone-engine/keystone/bindings/go/keystone"
 )
 
 func main() {
-        assembly := os.Args[1]
+	assembly := os.Args[1]
 
-        if ks, err := keystone.New(keystone.ArchitectureX86, keystone.Mode32); err != nil {
-                panic(err)
-        } else {
-                defer ks.Close()
+	ks, err := keystone.New(keystone.ARCH_X86, keystone.MODE_32)
+	if err != nil {
+		panic(err)
+	}
+	defer ks.Close()
 
-                if err := ks.Option(keystone.OptionSyntax, keystone.OptionSyntaxIntel); err != nil {
-                        panic(fmt.Errorf("Could not set syntax option to intel"))
-                }
+	if err := ks.Option(keystone.OPT_SYNTAX, keystone.OPT_SYNTAX_INTEL); err != nil {
+		panic(fmt.Errorf("Could not set syntax option to intel"))
+	}
 
-                if insn, _, ok := ks.Assemble(assembly, 0); !ok {
-                        panic(fmt.Errorf("Could not assemble instruction"))
-                } else {
-                        fmt.Printf("%s: [%x]", assembly, insn)
-                }
-        }
+	if insn, _, ok := ks.Assemble(assembly, 0); !ok {
+		panic(fmt.Errorf("Could not assemble instruction"))
+	} else {
+		fmt.Printf("%s: [%x]", assembly, insn)
+	}
 }
 ```
 

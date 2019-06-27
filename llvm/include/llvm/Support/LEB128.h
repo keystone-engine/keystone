@@ -17,7 +17,7 @@
 
 #include "llvm/Support/raw_ostream.h"
 
-namespace llvm {
+namespace llvm_ks {
 
 /// Utility function to encode a SLEB128 value to an output stream.
 inline void encodeSLEB128(int64_t Value, raw_ostream &OS) {
@@ -116,6 +116,6 @@ extern unsigned getULEB128Size(uint64_t Value);
 /// Utility function to get the size of the SLEB128-encoded value.
 extern unsigned getSLEB128Size(int64_t Value);
 
-}  // namespace llvm
+}  // namespace llvm_ks
 
 #endif  // LLVM_SYSTEM_LEB128_H

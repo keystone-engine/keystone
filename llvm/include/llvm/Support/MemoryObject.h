@@ -12,7 +12,7 @@
 
 #include "llvm/Support/DataTypes.h"
 
-namespace llvm {
+namespace llvm_ks {
 
 /// Interface to data which might be streamed. Streamability has 2 important
 /// implications/restrictions. First, the data might not yet exist in memory

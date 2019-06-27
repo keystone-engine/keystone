@@ -9,10 +9,10 @@
 
 #include "MCTargetDesc/ARMMCTargetDesc.h"
 #include "llvm/Support/TargetRegistry.h"
-using namespace llvm;
+using namespace llvm_ks;
 
-Target llvm::TheARMLETarget,   llvm::TheARMBETarget;
-Target llvm::TheThumbLETarget, llvm::TheThumbBETarget;
+Target llvm_ks::TheARMLETarget,   llvm_ks::TheARMBETarget;
+Target llvm_ks::TheThumbLETarget, llvm_ks::TheThumbBETarget;
 
 extern "C" void LLVMInitializeARMTargetInfo() {
   RegisterTarget<Triple::arm>

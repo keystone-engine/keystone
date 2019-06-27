@@ -16,7 +16,7 @@
 
 #define DEBUG_TYPE "hexagon-elf-writer"
 
-using namespace llvm;
+using namespace llvm_ks;
 using namespace Hexagon;
 
 namespace {
@@ -244,7 +244,7 @@ unsigned HexagonELFObjectWriter::getRelocType(MCContext &Ctx,
   }
 }
 
-MCObjectWriter *llvm::createHexagonELFObjectWriter(raw_pwrite_stream &OS,
+MCObjectWriter *llvm_ks::createHexagonELFObjectWriter(raw_pwrite_stream &OS,
                                                    uint8_t OSABI,
                                                    StringRef CPU) {
   MCELFObjectTargetWriter *MOTW = new HexagonELFObjectWriter(OSABI, CPU);

@@ -60,9 +60,9 @@
 # define PATH_MAX 4096
 #endif
 
-using namespace llvm;
+using namespace llvm_ks;
 
-namespace llvm {
+namespace llvm_ks {
 namespace sys  {
 namespace fs {
 #if defined(__FreeBSD__) || defined (__NetBSD__) || defined(__Bitrig__) || \
@@ -182,10 +182,10 @@ std::error_code current_path(SmallVectorImpl<char> &result) {
   result.clear();
 
   const char *pwd = ::getenv("PWD");
-  llvm::sys::fs::file_status PWDStatus, DotStatus;
-  if (pwd && llvm::sys::path::is_absolute(pwd) &&
-      !llvm::sys::fs::status(pwd, PWDStatus) &&
-      !llvm::sys::fs::status(".", DotStatus) &&
+  llvm_ks::sys::fs::file_status PWDStatus, DotStatus;
+  if (pwd && llvm_ks::sys::path::is_absolute(pwd) &&
+      !llvm_ks::sys::fs::status(pwd, PWDStatus) &&
+      !llvm_ks::sys::fs::status(".", DotStatus) &&
       PWDStatus.getUniqueID() == DotStatus.getUniqueID()) {
     result.append(pwd, pwd + strlen(pwd));
     return std::error_code();
@@ -623,4 +623,4 @@ void system_temp_directory(bool ErasedOnReboot, SmallVectorImpl<char> &Result) {
 } // end namespace path
 
 } // end namespace sys
-} // end namespace llvm
+} // end namespace llvm_ks

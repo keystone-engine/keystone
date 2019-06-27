@@ -9,7 +9,7 @@
 
 #ifdef GET_SUBTARGETINFO_ENUM
 #undef GET_SUBTARGETINFO_ENUM
-namespace llvm {
+namespace llvm_ks {
 namespace Mips {
 enum : uint64_t {
   FeatureCnMips = 0,
@@ -59,9 +59,9 @@ enum : uint64_t {
 
 #ifdef GET_SUBTARGETINFO_MC_DESC
 #undef GET_SUBTARGETINFO_MC_DESC
-namespace llvm {
+namespace llvm_ks {
 // Sorted (by key) array of values for CPU features.
-extern const llvm::SubtargetFeatureKV MipsFeatureKV[] = {
+extern const llvm_ks::SubtargetFeatureKV MipsFeatureKV[] = {
   { "cnmips", "Octeon cnMIPS Support", { Mips::FeatureCnMips }, { Mips::FeatureMips64r2 } },
   { "dsp", "Mips DSP ASE", { Mips::FeatureDSP }, { } },
   { "dspr2", "Mips DSP-R2 ASE", { Mips::FeatureDSPR2 }, { Mips::FeatureDSP } },
@@ -104,7 +104,7 @@ extern const llvm::SubtargetFeatureKV MipsFeatureKV[] = {
 };
 
 // Sorted (by key) array of values for CPU subtype.
-extern const llvm::SubtargetFeatureKV MipsSubTypeKV[] = {
+extern const llvm_ks::SubtargetFeatureKV MipsSubTypeKV[] = {
   { "mips1", "Select the mips1 processor", { Mips::FeatureMips1 }, { } },
   { "mips2", "Select the mips2 processor", { Mips::FeatureMips2 }, { } },
   { "mips3", "Select the mips3 processor", { Mips::FeatureMips3 }, { } },
@@ -148,7 +148,7 @@ static inline MCSubtargetInfo *createMipsMCSubtargetInfoImpl(const Triple &TT, S
 #include "llvm/Support/raw_ostream.h"
 // ParseSubtargetFeatures - Parses features string setting specified
 // subtarget options.
-void llvm::MipsSubtarget::ParseSubtargetFeatures(StringRef CPU, StringRef FS) {
+void llvm_ks::MipsSubtarget::ParseSubtargetFeatures(StringRef CPU, StringRef FS) {
   DEBUG(dbgs() << "\nFeatures:" << FS);
   DEBUG(dbgs() << "\nCPU:" << CPU << "\n\n");
   InitMCProcessorInfo(CPU, FS);

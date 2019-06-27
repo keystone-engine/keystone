@@ -17,7 +17,7 @@
 
 #include "llvm/Support/Mutex.h"
 
-namespace llvm {
+namespace llvm_ks {
   /// Instances of this class acquire a given Mutex Lock when constructed and
   /// hold that lock until destruction. The intention is to instantiate one of
   /// these on the stack at the top of some scope to be assured that C++

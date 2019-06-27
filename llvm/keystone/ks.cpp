@@ -13,12 +13,16 @@
 #include "llvm/MC/MCObjectFileInfo.h"
 #include "llvm/MC/MCCodeEmitter.h"
 
+// FIXME: setup this with CMake
+#define LLVM_ENABLE_ARCH_EVM
+#include "EVMMapping.h"
+
 // DEBUG
 //#include <iostream>
 
 #include "ks_priv.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 
 KEYSTONE_EXPORT
@@ -45,7 +49,7 @@ const char *ks_strerror(ks_err code)
 {
     switch(code) {
         default:
-            return "Unknow error";  // FIXME
+            return "Unknown error";  // FIXME
         case KS_ERR_OK:
             return "OK (KS_ERR_OK)";
         case KS_ERR_NOMEM:
@@ -172,6 +176,9 @@ bool ks_arch_supported(ks_arch arch)
 #ifdef LLVM_ENABLE_ARCH_SystemZ
         case KS_ARCH_SYSTEMZ:   return true;
 #endif
+#ifdef LLVM_ENABLE_ARCH_EVM
+        case KS_ARCH_EVM:   return true;
+#endif
         /* Invalid or disabled arch */
         default:            return false;
     }
@@ -198,9 +205,9 @@ static ks_err InitKs(int arch, ks_engine *ks, std::string TripleName)
     if (!initialized) {
         initialized = true;
         // Initialize targets and assembly parsers.
-        llvm::InitializeAllTargetInfos();
-        llvm::InitializeAllTargetMCs();
-        llvm::InitializeAllAsmParsers();
+        llvm_ks::InitializeAllTargetInfos();
+        llvm_ks::InitializeAllTargetMCs();
+        llvm_ks::InitializeAllAsmParsers();
     }
 
     ks->TripleName = Triple::normalize(TripleName);
@@ -249,22 +256,13 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
     std::string TripleName = "";
 
     if (arch < KS_ARCH_MAX) {
-        ks = new (std::nothrow) ks_struct();
+        // LLVM-based architectures
+        ks = new (std::nothrow) ks_struct(arch, mode, KS_ERR_OK, KS_OPT_SYNTAX_INTEL);
         
         if (!ks) {
             // memory insufficient
             return KS_ERR_NOMEM;
         }
-        
-        ks->TheTarget = NULL;
-        ks->MAB = NULL;
-        ks->MRI = NULL;
-        ks->MAI = NULL;
-        ks->MCII = NULL;
-        ks->STI = NULL;
-        ks->errnum = KS_ERR_OK;
-        ks->arch = arch;
-        ks->mode = mode;
 
         switch(arch) {
             default: break;
@@ -276,16 +274,36 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
                     return KS_ERR_MODE;
                 }
 
-                if (mode & KS_MODE_THUMB) {
-                    if (mode & KS_MODE_BIG_ENDIAN)
-                        TripleName = "thumbebv7";
-                    else
-                        TripleName = "thumbv7";
-                } else {
-                    if (mode & KS_MODE_BIG_ENDIAN)
+                switch(mode) {
+                    default:
+                        return KS_ERR_MODE;
+                    // big-endian
+                    case KS_MODE_BIG_ENDIAN | KS_MODE_V8 | KS_MODE_ARM:
+                        TripleName = "armv8eb";
+                        break;
+                    case KS_MODE_BIG_ENDIAN | KS_MODE_V8 | KS_MODE_THUMB:
+                        TripleName = "thumbv8eb";
+                        break;
+                    case KS_MODE_BIG_ENDIAN | KS_MODE_ARM:
                         TripleName = "armv7eb";
-                    else
+                        break;
+                    case KS_MODE_BIG_ENDIAN | KS_MODE_THUMB:
+                        TripleName = "thumbebv7";
+                        break;
+
+                    // little-endian
+                    case KS_MODE_LITTLE_ENDIAN | KS_MODE_V8 | KS_MODE_ARM:
+                        TripleName = "armv8";
+                        break;
+                    case KS_MODE_LITTLE_ENDIAN | KS_MODE_V8 | KS_MODE_THUMB:
+                        TripleName = "thumbv8";
+                        break;
+                    case KS_MODE_LITTLE_ENDIAN | KS_MODE_ARM:
                         TripleName = "armv7";
+                        break;
+                    case KS_MODE_LITTLE_ENDIAN | KS_MODE_THUMB:
+                        TripleName = "thumbv7";
+                        break;
                 }
 
                 InitKs(arch, ks, TripleName);
@@ -453,6 +471,12 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
                 break;
             }
 #endif
+#ifdef LLVM_ENABLE_ARCH_EVM
+            case KS_ARCH_EVM: {
+                *result = ks;
+                return KS_ERR_OK;
+            }
+#endif
         }
 
         if (TripleName.empty()) {
@@ -472,6 +496,16 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
 KEYSTONE_EXPORT
 ks_err ks_close(ks_engine *ks)
 {
+    if (!ks)
+        return KS_ERR_HANDLE;
+
+    if (ks->arch == KS_ARCH_EVM) {
+        // handle EVM differently
+        delete ks;
+        return KS_ERR_OK;
+    }
+
+    // LLVM-based architectures
     delete ks->STI;
     delete ks->MCII;
     delete ks->MAI;
@@ -488,6 +522,7 @@ ks_err ks_close(ks_engine *ks)
 KEYSTONE_EXPORT
 ks_err ks_option(ks_engine *ks, ks_opt_type type, size_t value)
 {
+    ks->MAI->setRadix(16);
     switch(type) {
         case KS_OPT_SYNTAX:
             if (ks->arch != KS_ARCH_X86)
@@ -495,11 +530,18 @@ ks_err ks_option(ks_engine *ks, ks_opt_type type, size_t value)
             switch(value) {
                 default:
                     return KS_ERR_OPT_INVALID;
+                case KS_OPT_SYNTAX_RADIX16: // default syntax is Intel
+                case KS_OPT_SYNTAX_NASM | KS_OPT_SYNTAX_RADIX16:
+                case KS_OPT_SYNTAX_INTEL | KS_OPT_SYNTAX_RADIX16:
+                    ks->MAI->setRadix(16);
                 case KS_OPT_SYNTAX_NASM:
                 case KS_OPT_SYNTAX_INTEL:
                     ks->syntax = (ks_opt_value)value;
                     ks->MAI->setAssemblerDialect(1);
                     break;
+                case KS_OPT_SYNTAX_GAS | KS_OPT_SYNTAX_RADIX16:
+                case KS_OPT_SYNTAX_ATT | KS_OPT_SYNTAX_RADIX16:
+                    ks->MAI->setRadix(16);
                 case KS_OPT_SYNTAX_GAS:
                 case KS_OPT_SYNTAX_ATT:
                     ks->syntax = (ks_opt_value)value;
@@ -507,6 +549,9 @@ ks_err ks_option(ks_engine *ks, ks_opt_type type, size_t value)
                     break;
             }
 
+            return KS_ERR_OK;
+        case KS_OPT_SYM_RESOLVER:
+            ks->sym_resolver = (ks_sym_resolver)value;
             return KS_ERR_OK;
     }
 
@@ -520,6 +565,10 @@ void ks_free(unsigned char *p)
     free(p);
 }
 
+/*
+ @return: 0 on success, or -1 on failure.
+ On failure, call ks_errno() for error code.
+*/
 KEYSTONE_EXPORT
 int ks_asm(ks_engine *ks,
         const char *assembly,
@@ -532,6 +581,22 @@ int ks_asm(ks_engine *ks,
     unsigned char *encoding;
     SmallString<1024> Msg;
     raw_svector_ostream OS(Msg);
+
+    if (ks->arch == KS_ARCH_EVM) {
+        // handle EVM differently
+        unsigned short opcode = EVM_opcode(assembly);
+        if (opcode == (unsigned short)-1) {
+            // invalid instruction
+            return -1;
+        }
+
+        *insn_size = 1;
+        *stat_count = 1;
+        encoding = (unsigned char *)malloc(*insn_size);
+        encoding[0] = opcode;
+        *insn = encoding;
+        return 0;
+    }
 
     *insn = NULL;
     *insn_size = 0;
@@ -563,6 +628,8 @@ int ks_asm(ks_engine *ks,
 
     ks->SrcMgr.clearBuffers();
     ks->SrcMgr.AddNewSourceBuffer(std::move(*BufferPtr), SMLoc());
+
+    Streamer->setSymResolver((void *)(ks->sym_resolver));
 
     MCAsmParser *Parser = createMCAsmParser(ks->SrcMgr, Ctx, *Streamer, *ks->MAI);
     if (!Parser) {

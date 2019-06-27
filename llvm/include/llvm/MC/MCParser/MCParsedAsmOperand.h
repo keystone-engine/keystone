@@ -14,7 +14,7 @@
 #include "llvm/ADT/StringRef.h"
 #include "llvm/Support/SMLoc.h"
 
-namespace llvm {
+namespace llvm_ks {
 class raw_ostream;
 
 /// MCParsedAsmOperand - This abstract class represents a source-level assembly
@@ -93,6 +93,6 @@ inline raw_ostream& operator<<(raw_ostream &OS, const MCParsedAsmOperand &MO) {
   return OS;
 }
 
-} // end namespace llvm.
+} // end namespace llvm_ks.
 
 #endif

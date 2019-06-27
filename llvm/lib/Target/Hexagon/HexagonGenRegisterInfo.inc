@@ -9,7 +9,7 @@
 
 #ifdef GET_REGINFO_ENUM
 #undef GET_REGINFO_ENUM
-namespace llvm {
+namespace llvm_ks {
 
 class MCRegisterClass;
 extern const MCRegisterClass HexagonMCRegisterClasses[];
@@ -198,7 +198,7 @@ enum {
 
 #ifdef GET_REGINFO_MC_DESC
 #undef GET_REGINFO_MC_DESC
-namespace llvm {
+namespace llvm_ks {
 
 extern const MCPhysReg HexagonRegDiffLists[] = {
   /* 0 */ 0, 0,

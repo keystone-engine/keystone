@@ -21,7 +21,7 @@
 // undefine PPC here. PPC may be predefined on some hosts.
 #undef PPC
 
-namespace llvm {
+namespace llvm_ks {
 namespace PPC {
   /// Predicate - These are "(BI << 5) | BO"  for various predicates.
   enum Predicate {

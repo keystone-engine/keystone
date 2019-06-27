@@ -21,7 +21,7 @@
 #include "llvm/Support/DataTypes.h" // Needed for uint64_t on Windows.
 #include <random>
 
-namespace llvm {
+namespace llvm_ks {
 
 /// A random number generator.
 ///

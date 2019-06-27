@@ -10,7 +10,7 @@ license:             GPL-2
 author:              Adrian Herrera
 category:            System
 build-type:          Simple
-cabal-version:       >=1.10
+cabal-version:       >= 1.10
 
 library
   exposed-modules:     Keystone.Internal.Core
@@ -25,10 +25,10 @@ library
                        Keystone.CPU.X86
                        Keystone
   other-modules:       Keystone.Internal.Util
-  build-depends:       base >= 4 && < 5,
-                       bytestring >= 0.9.1,
-                       transformers <= 0.5,
-                       either >= 4.4
+  build-depends:         base >= 4 && < 5
+                       , bytestring >= 0.9.1
+                       , transformers < 0.6
+                       , either >= 4.4
   hs-source-dirs:      src
   c-sources:           src/cbits/keystone_wrapper.c
   include-dirs:        src/include

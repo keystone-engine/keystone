@@ -16,7 +16,7 @@
 #include "llvm/MC/MCSubtargetInfo.h"
 #include "llvm/Support/TargetRegistry.h"
 
-namespace llvm {
+namespace llvm_ks {
 
 class ARMAsmBackend : public MCAsmBackend {
   const MCSubtargetInfo *STI;
@@ -74,6 +74,6 @@ public:
   void setIsThumb(bool it) { isThumbMode = it; }
   bool isLittle() const { return IsLittleEndian; }
 };
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

@@ -19,7 +19,7 @@
 #include <cstring>
 #include <utility>
 
-namespace llvm {
+namespace llvm_ks {
   template<typename ValueT>
   class StringMapConstIterator;
   template<typename ValueT>

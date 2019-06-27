@@ -12,7 +12,7 @@
 
 #include "llvm/MC/MCFixup.h"
 
-namespace llvm {
+namespace llvm_ks {
   namespace Sparc {
     enum Fixups {
       // fixup_sparc_call30 - 30-bit PC relative relocation for call

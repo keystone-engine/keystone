@@ -7,7 +7,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// This file declares the llvm::sys::Mutex class.
+// This file declares the llvm_ks::sys::Mutex class.
 //
 //===----------------------------------------------------------------------===//
 
@@ -17,7 +17,7 @@
 #include "llvm/Support/Compiler.h"
 #include <cassert>
 
-namespace llvm
+namespace llvm_ks
 {
   namespace sys
   {

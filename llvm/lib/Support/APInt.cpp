@@ -25,7 +25,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <limits>
-using namespace llvm;
+using namespace llvm_ks;
 
 #define DEBUG_TYPE "apint"
 
@@ -667,7 +667,7 @@ unsigned APInt::getBitsNeeded(StringRef str, uint8_t radix) {
   }
 }
 
-hash_code llvm::hash_value(const APInt &Arg) {
+hash_code llvm_ks::hash_value(const APInt &Arg) {
   if (Arg.isSingleWord())
     return hash_combine(Arg.VAL);
 
@@ -707,14 +707,14 @@ unsigned APInt::countLeadingZerosSlowCase() const {
   unsigned i = getNumWords();
   integerPart MSW = pVal[i-1] & MSWMask;
   if (MSW)
-    return llvm::countLeadingZeros(MSW) - (APINT_BITS_PER_WORD - BitsInMSW);
+    return llvm_ks::countLeadingZeros(MSW) - (APINT_BITS_PER_WORD - BitsInMSW);
 
   unsigned Count = BitsInMSW;
   for (--i; i > 0u; --i) {
     if (pVal[i-1] == 0)
       Count += APINT_BITS_PER_WORD;
     else {
-      Count += llvm::countLeadingZeros(pVal[i-1]);
+      Count += llvm_ks::countLeadingZeros(pVal[i-1]);
       break;
     }
   }
@@ -723,7 +723,7 @@ unsigned APInt::countLeadingZerosSlowCase() const {
 
 unsigned APInt::countLeadingOnes() const {
   if (isSingleWord())
-    return llvm::countLeadingOnes(VAL << (APINT_BITS_PER_WORD - BitWidth));
+    return llvm_ks::countLeadingOnes(VAL << (APINT_BITS_PER_WORD - BitWidth));
 
   unsigned highWordBits = BitWidth % APINT_BITS_PER_WORD;
   unsigned shift;
@@ -734,13 +734,13 @@ unsigned APInt::countLeadingOnes() const {
     shift = APINT_BITS_PER_WORD - highWordBits;
   }
   int i = getNumWords() - 1;
-  unsigned Count = llvm::countLeadingOnes(pVal[i] << shift);
+  unsigned Count = llvm_ks::countLeadingOnes(pVal[i] << shift);
   if (Count == highWordBits) {
     for (i--; i >= 0; --i) {
       if (pVal[i] == -1ULL)
         Count += APINT_BITS_PER_WORD;
       else {
-        Count += llvm::countLeadingOnes(pVal[i]);
+        Count += llvm_ks::countLeadingOnes(pVal[i]);
         break;
       }
     }
@@ -750,13 +750,13 @@ unsigned APInt::countLeadingOnes() const {
 
 unsigned APInt::countTrailingZeros() const {
   if (isSingleWord())
-    return std::min(unsigned(llvm::countTrailingZeros(VAL)), BitWidth);
+    return std::min(unsigned(llvm_ks::countTrailingZeros(VAL)), BitWidth);
   unsigned Count = 0;
   unsigned i = 0;
   for (; i < getNumWords() && pVal[i] == 0; ++i)
     Count += APINT_BITS_PER_WORD;
   if (i < getNumWords())
-    Count += llvm::countTrailingZeros(pVal[i]);
+    Count += llvm_ks::countTrailingZeros(pVal[i]);
   return std::min(Count, BitWidth);
 }
 
@@ -766,14 +766,14 @@ unsigned APInt::countTrailingOnesSlowCase() const {
   for (; i < getNumWords() && pVal[i] == -1ULL; ++i)
     Count += APINT_BITS_PER_WORD;
   if (i < getNumWords())
-    Count += llvm::countTrailingOnes(pVal[i]);
+    Count += llvm_ks::countTrailingOnes(pVal[i]);
   return std::min(Count, BitWidth);
 }
 
 unsigned APInt::countPopulationSlowCase() const {
   unsigned Count = 0;
   for (unsigned i = 0; i < getNumWords(); ++i)
-    Count += llvm::countPopulation(pVal[i]);
+    Count += llvm_ks::countPopulation(pVal[i]);
   return Count;
 }
 
@@ -816,7 +816,7 @@ APInt APInt::byteSwap() const {
   return Result;
 }
 
-APInt llvm::APIntOps::GreatestCommonDivisor(const APInt& API1,
+APInt llvm_ks::APIntOps::GreatestCommonDivisor(const APInt& API1,
                                             const APInt& API2) {
   APInt A = API1, B = API2;
   while (!!B) {
@@ -827,7 +827,7 @@ APInt llvm::APIntOps::GreatestCommonDivisor(const APInt& API1,
   return A;
 }
 
-APInt llvm::APIntOps::RoundDoubleToAPInt(double Double, unsigned width) {
+APInt llvm_ks::APIntOps::RoundDoubleToAPInt(double Double, unsigned width) {
   union {
     double D;
     uint64_t I;

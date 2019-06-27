@@ -37,7 +37,7 @@
 
 #include <keystone/keystone.h>
 
-using namespace llvm;
+using namespace llvm_ks;
 
 namespace {
 class ARMELFObjectWriter : public MCELFObjectTargetWriter {
@@ -351,7 +351,8 @@ static uint32_t joinHalfWords(uint32_t FirstHalf, uint32_t SecondHalf,
 unsigned ARMAsmBackend::adjustFixupValue(const MCFixup &Fixup, uint64_t Value,
                                          bool IsPCRel, MCContext *Ctx,
                                          bool IsLittleEndian,
-                                         bool IsResolved) const {
+                                         bool IsResolved) const
+{
   unsigned Kind = Fixup.getKind();
   switch (Kind) {
   default:
@@ -673,7 +674,8 @@ void ARMAsmBackend::processFixupValue(const MCAssembler &Asm,
                                       const MCFixup &Fixup,
                                       const MCFragment *DF,
                                       const MCValue &Target, uint64_t &Value,
-                                      bool &IsResolved) {
+                                      bool &IsResolved)
+{
   const MCSymbolRefExpr *A = Target.getSymA();
   const MCSymbol *Sym = A ? &A->getSymbol() : nullptr;
   // Some fixups to thumb function symbols need the low bit (thumb bit)
@@ -703,9 +705,10 @@ void ARMAsmBackend::processFixupValue(const MCAssembler &Asm,
   // We must always generate a relocation for BL/BLX instructions if we have
   // a symbol to reference, as the linker relies on knowing the destination
   // symbol's thumb-ness to get interworking right.
-  if (A && ((unsigned)Fixup.getKind() == ARM::fixup_arm_thumb_blx ||
-            (unsigned)Fixup.getKind() == ARM::fixup_arm_blx ||
-            (unsigned)Fixup.getKind() == ARM::fixup_arm_uncondbl ||
+  if (A && (
+            // (unsigned)Fixup.getKind() == ARM::fixup_arm_thumb_blx ||
+            //(unsigned)Fixup.getKind() == ARM::fixup_arm_blx ||
+            //(unsigned)Fixup.getKind() == ARM::fixup_arm_uncondbl ||
             (unsigned)Fixup.getKind() == ARM::fixup_arm_condbl))
     IsResolved = false;
 
@@ -816,7 +819,8 @@ static unsigned getFixupKindContainerSizeBytes(unsigned Kind) {
 
 void ARMAsmBackend::applyFixup(const MCFixup &Fixup, char *Data,
                                unsigned DataSize, uint64_t Value,
-                               bool IsPCRel, unsigned int &KsError) const {
+                               bool IsPCRel, unsigned int &KsError) const
+{
   unsigned NumBytes = getFixupKindNumBytes(Fixup.getKind());
   Value =
       adjustFixupValue(Fixup, Value, IsPCRel, nullptr, IsLittleEndian, true);
@@ -880,7 +884,7 @@ enum CompactUnwindEncodings {
 
 } // end CU namespace
 
-MCAsmBackend *llvm::createARMAsmBackend(const Target &T,
+MCAsmBackend *llvm_ks::createARMAsmBackend(const Target &T,
                                         const MCRegisterInfo &MRI,
                                         const Triple &TheTriple, StringRef CPU,
                                         bool isLittle) {
@@ -894,25 +898,25 @@ MCAsmBackend *llvm::createARMAsmBackend(const Target &T,
   }
 }
 
-MCAsmBackend *llvm::createARMLEAsmBackend(const Target &T,
+MCAsmBackend *llvm_ks::createARMLEAsmBackend(const Target &T,
                                           const MCRegisterInfo &MRI,
                                           const Triple &TT, StringRef CPU) {
   return createARMAsmBackend(T, MRI, TT, CPU, true);
 }
 
-MCAsmBackend *llvm::createARMBEAsmBackend(const Target &T,
+MCAsmBackend *llvm_ks::createARMBEAsmBackend(const Target &T,
                                           const MCRegisterInfo &MRI,
                                           const Triple &TT, StringRef CPU) {
   return createARMAsmBackend(T, MRI, TT, CPU, false);
 }
 
-MCAsmBackend *llvm::createThumbLEAsmBackend(const Target &T,
+MCAsmBackend *llvm_ks::createThumbLEAsmBackend(const Target &T,
                                             const MCRegisterInfo &MRI,
                                             const Triple &TT, StringRef CPU) {
   return createARMAsmBackend(T, MRI, TT, CPU, true);
 }
 
-MCAsmBackend *llvm::createThumbBEAsmBackend(const Target &T,
+MCAsmBackend *llvm_ks::createThumbBEAsmBackend(const Target &T,
                                             const MCRegisterInfo &MRI,
                                             const Triple &TT, StringRef CPU) {
   return createARMAsmBackend(T, MRI, TT, CPU, false);

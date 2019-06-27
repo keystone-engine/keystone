@@ -1,4 +1,4 @@
-This file credits all the contributors of Keystone Engine (keystone-engine.org).
+﻿This file credits all the contributors of Keystone Engine (keystone-engine.org).
 
 
 Beta testers (in no particular order)
@@ -45,3 +45,9 @@ Remco Verhoef: Go & Rust bindings.
 Adrian Herrera: Haskell binding.
 practicalswift: Various cool bugs found by fuzzing.
 Aziem Chawdhary: OCaml binding.
+Ruben Boonen: PowerShell binding.
+Marco Fornaro: C# binding.
+David Zimmer: VB6 binding.
+Michael Mohr: Debian packaging.
+Jämes Ménétrey (ZenLulz): Java binding.
+Philippe Antoine (Catena cyber): fuzzing.

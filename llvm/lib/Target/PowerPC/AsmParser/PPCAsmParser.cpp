@@ -33,7 +33,7 @@
 
 #include "keystone/ppc.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 static const MCPhysReg RRegs[32] = {
   PPC::R0,  PPC::R1,  PPC::R2,  PPC::R3,

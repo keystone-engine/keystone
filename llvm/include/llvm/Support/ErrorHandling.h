@@ -19,7 +19,7 @@
 #include "llvm/Support/Compiler.h"
 #include <string>
 
-namespace llvm {
+namespace llvm_ks {
   class Twine;
 
   /// An error handler callback.
@@ -96,11 +96,11 @@ LLVM_ATTRIBUTE_NORETURN void report_fatal_error(const Twine &reason,
 /// allows compilers to omit some unnecessary code.
 #ifndef NDEBUG
 #define llvm_unreachable(msg) \
-  ::llvm::llvm_unreachable_internal(msg, __FILE__, __LINE__)
+  ::llvm_ks::llvm_unreachable_internal(msg, __FILE__, __LINE__)
 #elif defined(LLVM_BUILTIN_UNREACHABLE)
 #define llvm_unreachable(msg) LLVM_BUILTIN_UNREACHABLE
 #else
-#define llvm_unreachable(msg) ::llvm::llvm_unreachable_internal()
+#define llvm_unreachable(msg) ::llvm_ks::llvm_unreachable_internal()
 #endif
 
 #endif

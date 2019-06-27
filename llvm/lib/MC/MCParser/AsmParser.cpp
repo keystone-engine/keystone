@@ -47,7 +47,7 @@
 #include <keystone/keystone.h>
 //#include <iostream>
 
-using namespace llvm;
+using namespace llvm_ks;
 
 MCAsmParserSemaCallback::~MCAsmParserSemaCallback() {}
 
@@ -245,6 +245,7 @@ public:
 
   bool parseExpression(const MCExpr *&Res);
   bool parseExpression(const MCExpr *&Res, SMLoc &EndLoc) override;
+  bool parsePrimaryExprAux(const MCExpr *&Res, SMLoc &EndLoc, unsigned int depth);
   bool parsePrimaryExpr(const MCExpr *&Res, SMLoc &EndLoc) override;
   bool parseParenExpression(const MCExpr *&Res, SMLoc &EndLoc) override;
   bool parseParenExprOfDepth(unsigned ParenDepth, const MCExpr *&Res,
@@ -529,7 +530,7 @@ private:
 };
 }
 
-namespace llvm {
+namespace llvm_ks {
 
 extern MCAsmParserExtension *createDarwinAsmParser();
 extern MCAsmParserExtension *createELFAsmParser();
@@ -712,12 +713,13 @@ size_t AsmParser::Run(bool NoInitialTextSection, uint64_t Address, bool NoFinali
     //printf(">> 222 error = %u\n", Info.KsError);
     if (!KsError)
         KsError = Info.KsError;
+        return 0;
 
     // We had an error, validate that one was emitted and recover by skipping to
     // the next line.
     // assert(HadError && "Parse statement returned an error, but none emitted!");
 
-    eatToEndOfStatement();
+    //eatToEndOfStatement();
   }
 
   if (TheCondState.TheCond != StartingCondState.TheCond ||
@@ -837,14 +839,12 @@ bool AsmParser::parseBracketExpr(const MCExpr *&Res, SMLoc &EndLoc) {
   return false;
 }
 
-/// \brief Parse a primary expression and return it.
-///  primaryexpr ::= (parenexpr
-///  primaryexpr ::= symbol
-///  primaryexpr ::= number
-///  primaryexpr ::= '.'
-///  primaryexpr ::= ~,+,- primaryexpr
-bool AsmParser::parsePrimaryExpr(const MCExpr *&Res, SMLoc &EndLoc)
+bool AsmParser::parsePrimaryExprAux(const MCExpr *&Res, SMLoc &EndLoc, unsigned int depth)
 {
+  if (depth > 0x100) {
+    KsError = KS_ERR_ASM_EXPR_TOKEN;
+    return true;
+  }
   SMLoc FirstTokenLoc = getLexer().getLoc();
   AsmToken::TokenKind FirstTokenKind = Lexer.getKind();
   switch (FirstTokenKind) {
@@ -857,7 +857,7 @@ bool AsmParser::parsePrimaryExpr(const MCExpr *&Res, SMLoc &EndLoc)
     return true;
   case AsmToken::Exclaim:
     Lex(); // Eat the operator.
-    if (parsePrimaryExpr(Res, EndLoc))
+    if (parsePrimaryExprAux(Res, EndLoc, depth+1))
       return true;
     Res = MCUnaryExpr::createLNot(Res, getContext());
     return false;
@@ -1038,23 +1038,34 @@ bool AsmParser::parsePrimaryExpr(const MCExpr *&Res, SMLoc &EndLoc)
     return parseBracketExpr(Res, EndLoc);
   case AsmToken::Minus:
     Lex(); // Eat the operator.
-    if (parsePrimaryExpr(Res, EndLoc))
+    if (parsePrimaryExprAux(Res, EndLoc, depth+1))
       return true;
     Res = MCUnaryExpr::createMinus(Res, getContext());
     return false;
   case AsmToken::Plus:
     Lex(); // Eat the operator.
-    if (parsePrimaryExpr(Res, EndLoc))
+    if (parsePrimaryExprAux(Res, EndLoc, depth+1))
       return true;
     Res = MCUnaryExpr::createPlus(Res, getContext());
     return false;
   case AsmToken::Tilde:
     Lex(); // Eat the operator.
-    if (parsePrimaryExpr(Res, EndLoc))
+    if (parsePrimaryExprAux(Res, EndLoc, depth+1))
       return true;
     Res = MCUnaryExpr::createNot(Res, getContext());
     return false;
   }
+}
+
+/// \brief Parse a primary expression and return it.
+///  primaryexpr ::= (parenexpr
+///  primaryexpr ::= symbol
+///  primaryexpr ::= number
+///  primaryexpr ::= '.'
+///  primaryexpr ::= ~,+,- primaryexpr
+bool AsmParser::parsePrimaryExpr(const MCExpr *&Res, SMLoc &EndLoc)
+{
+  return parsePrimaryExprAux(Res, EndLoc, 0);
 }
 
 bool AsmParser::parseExpression(const MCExpr *&Res) {
@@ -1680,8 +1691,13 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
 
     // First query the target-specific parser. It will return 'true' if it
     // isn't interested in this directive.
-    if (!getTargetParser().ParseDirective(ID))
-      return false;
+      uint64_t BytesInFragment = getStreamer().getCurrentFragmentSize();
+      if (!getTargetParser().ParseDirective(ID)){
+        // increment the address for the next statement if the directive
+        // has emitted any value to the streamer.
+        Address += getStreamer().getCurrentFragmentSize() - BytesInFragment;
+        return false;
+        }
 
     // Next, check the extension directive map to see if any extension has
     // registered itself to parse this directive.
@@ -6017,7 +6033,7 @@ bool AsmParser::parseMSInlineAsm(
   return false;
 }
 
-namespace llvm {
+namespace llvm_ks {
 namespace MCParserUtils {
 
 /// Returns whether the given symbol is used anywhere in the given expression,
@@ -6116,10 +6132,10 @@ bool parseAssignmentExpression(StringRef Name, bool allow_redef,
 }
 
 } // namespace MCParserUtils
-} // namespace llvm
+} // namespace llvm_ks
 
 /// \brief Create an MCAsmParser instance.
-MCAsmParser *llvm::createMCAsmParser(SourceMgr &SM, MCContext &C,
+MCAsmParser *llvm_ks::createMCAsmParser(SourceMgr &SM, MCContext &C,
                                      MCStreamer &Out, const MCAsmInfo &MAI) {
   return new AsmParser(SM, C, Out, MAI);
 }

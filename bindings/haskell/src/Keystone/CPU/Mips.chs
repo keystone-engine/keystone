@@ -8,16 +8,18 @@ License     : GPL-2
 
 Definitions for the MIPS architecture.
 -}
-module Keystone.CPU.Mips (
-    Error(..),
-) where
+module Keystone.CPU.Mips
+    (
+      Error(..)
+    ) where
 
-{# context lib="keystone" #}
+{# context lib = "keystone" #}
 
 #include <keystone/mips.h>
 
 -- | MIPS errors.
 {# enum ks_err_asm_mips as Error
-    {underscoreToCase}
-    with prefix="KS_ERR_ASM_MIPS_"
-    deriving (Show, Eq, Bounded) #}
+   { underscoreToCase }
+   with prefix = "KS_ERR_ASM_MIPS_"
+   deriving (Show, Eq, Bounded)
+#}

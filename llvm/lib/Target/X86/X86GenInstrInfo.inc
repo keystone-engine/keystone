@@ -9,7 +9,7 @@
 
 #ifdef GET_INSTRINFO_ENUM
 #undef GET_INSTRINFO_ENUM
-namespace llvm {
+namespace llvm_ks {
 
 namespace X86 {
   enum {
@@ -15567,7 +15567,7 @@ namespace Sched {
 
 #ifdef GET_INSTRINFO_MC_DESC
 #undef GET_INSTRINFO_MC_DESC
-namespace llvm {
+namespace llvm_ks {
 
 static const MCPhysReg ImplicitList1[] = { X86::AL, X86::EFLAGS, 0 };
 static const MCPhysReg ImplicitList2[] = { X86::AX, X86::EFLAGS, 0 };
@@ -31194,7 +31194,7 @@ static inline void InitX86MCInstrInfo(MCInstrInfo *II) {
 
 #ifdef GET_INSTRINFO_HEADER
 #undef GET_INSTRINFO_HEADER
-namespace llvm {
+namespace llvm_ks {
 struct X86GenInstrInfo : public TargetInstrInfo {
   explicit X86GenInstrInfo(int CFSetupOpcode = -1, int CFDestroyOpcode = -1, int CatchRetOpcode = -1);
   ~X86GenInstrInfo() override {}

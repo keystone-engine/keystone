@@ -49,7 +49,7 @@
 
 #include "keystone/arm.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 namespace {
 
@@ -6950,7 +6950,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
     const unsigned Opcode =
       (Inst.getOpcode() == ARM::LDRT_POST) ? ARM::LDRT_POST_IMM
                                            : ARM::LDRBT_POST_IMM;
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     TmpInst.setOpcode(Opcode);
     TmpInst.addOperand(Inst.getOperand(0));
     TmpInst.addOperand(Inst.getOperand(1));
@@ -6968,7 +6968,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
     const unsigned Opcode =
       (Inst.getOpcode() == ARM::STRT_POST) ? ARM::STRT_POST_IMM
                                            : ARM::STRBT_POST_IMM;
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     TmpInst.setOpcode(Opcode);
     TmpInst.addOperand(Inst.getOperand(1));
     TmpInst.addOperand(Inst.getOperand(0));
@@ -6986,7 +6986,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
         Inst.getOperand(5).getReg() != 0 ||
         !(Inst.getOperand(2).isExpr() || Inst.getOperand(2).isImm()))
       return false;
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     TmpInst.setOpcode(ARM::ADR);
     TmpInst.addOperand(Inst.getOperand(0));
     if (Inst.getOperand(2).isImm()) {
@@ -7044,7 +7044,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VST1LNdWB_register_Asm_8:
   case ARM::VST1LNdWB_register_Asm_16:
   case ARM::VST1LNdWB_register_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     // Shuffle the operands around so the lane index operand is in the
     // right place.
     unsigned Spacing;
@@ -7066,7 +7066,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VST2LNdWB_register_Asm_32:
   case ARM::VST2LNqWB_register_Asm_16:
   case ARM::VST2LNqWB_register_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     // Shuffle the operands around so the lane index operand is in the
     // right place.
     unsigned Spacing;
@@ -7090,7 +7090,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VST3LNdWB_register_Asm_32:
   case ARM::VST3LNqWB_register_Asm_16:
   case ARM::VST3LNqWB_register_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     // Shuffle the operands around so the lane index operand is in the
     // right place.
     unsigned Spacing;
@@ -7116,7 +7116,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VST4LNdWB_register_Asm_32:
   case ARM::VST4LNqWB_register_Asm_16:
   case ARM::VST4LNqWB_register_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     // Shuffle the operands around so the lane index operand is in the
     // right place.
     unsigned Spacing;
@@ -7142,7 +7142,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VST1LNdWB_fixed_Asm_8:
   case ARM::VST1LNdWB_fixed_Asm_16:
   case ARM::VST1LNdWB_fixed_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     // Shuffle the operands around so the lane index operand is in the
     // right place.
     unsigned Spacing;
@@ -7164,7 +7164,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VST2LNdWB_fixed_Asm_32:
   case ARM::VST2LNqWB_fixed_Asm_16:
   case ARM::VST2LNqWB_fixed_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     // Shuffle the operands around so the lane index operand is in the
     // right place.
     unsigned Spacing;
@@ -7188,7 +7188,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VST3LNdWB_fixed_Asm_32:
   case ARM::VST3LNqWB_fixed_Asm_16:
   case ARM::VST3LNqWB_fixed_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     // Shuffle the operands around so the lane index operand is in the
     // right place.
     unsigned Spacing;
@@ -7214,7 +7214,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VST4LNdWB_fixed_Asm_32:
   case ARM::VST4LNqWB_fixed_Asm_16:
   case ARM::VST4LNqWB_fixed_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     // Shuffle the operands around so the lane index operand is in the
     // right place.
     unsigned Spacing;
@@ -7240,7 +7240,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VST1LNdAsm_8:
   case ARM::VST1LNdAsm_16:
   case ARM::VST1LNdAsm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     // Shuffle the operands around so the lane index operand is in the
     // right place.
     unsigned Spacing;
@@ -7260,7 +7260,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VST2LNdAsm_32:
   case ARM::VST2LNqAsm_16:
   case ARM::VST2LNqAsm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     // Shuffle the operands around so the lane index operand is in the
     // right place.
     unsigned Spacing;
@@ -7282,7 +7282,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VST3LNdAsm_32:
   case ARM::VST3LNqAsm_16:
   case ARM::VST3LNqAsm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     // Shuffle the operands around so the lane index operand is in the
     // right place.
     unsigned Spacing;
@@ -7306,7 +7306,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VST4LNdAsm_32:
   case ARM::VST4LNqAsm_16:
   case ARM::VST4LNqAsm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     // Shuffle the operands around so the lane index operand is in the
     // right place.
     unsigned Spacing;
@@ -7331,7 +7331,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VLD1LNdWB_register_Asm_8:
   case ARM::VLD1LNdWB_register_Asm_16:
   case ARM::VLD1LNdWB_register_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     // Shuffle the operands around so the lane index operand is in the
     // right place.
     unsigned Spacing;
@@ -7354,7 +7354,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VLD2LNdWB_register_Asm_32:
   case ARM::VLD2LNqWB_register_Asm_16:
   case ARM::VLD2LNqWB_register_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     // Shuffle the operands around so the lane index operand is in the
     // right place.
     unsigned Spacing;
@@ -7381,7 +7381,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VLD3LNdWB_register_Asm_32:
   case ARM::VLD3LNqWB_register_Asm_16:
   case ARM::VLD3LNqWB_register_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     // Shuffle the operands around so the lane index operand is in the
     // right place.
     unsigned Spacing;
@@ -7412,7 +7412,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VLD4LNdWB_register_Asm_32:
   case ARM::VLD4LNqWB_register_Asm_16:
   case ARM::VLD4LNqWB_register_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     // Shuffle the operands around so the lane index operand is in the
     // right place.
     unsigned Spacing;
@@ -7445,7 +7445,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VLD1LNdWB_fixed_Asm_8:
   case ARM::VLD1LNdWB_fixed_Asm_16:
   case ARM::VLD1LNdWB_fixed_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     // Shuffle the operands around so the lane index operand is in the
     // right place.
     unsigned Spacing;
@@ -7468,7 +7468,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VLD2LNdWB_fixed_Asm_32:
   case ARM::VLD2LNqWB_fixed_Asm_16:
   case ARM::VLD2LNqWB_fixed_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     // Shuffle the operands around so the lane index operand is in the
     // right place.
     unsigned Spacing;
@@ -7495,7 +7495,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VLD3LNdWB_fixed_Asm_32:
   case ARM::VLD3LNqWB_fixed_Asm_16:
   case ARM::VLD3LNqWB_fixed_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     // Shuffle the operands around so the lane index operand is in the
     // right place.
     unsigned Spacing;
@@ -7526,7 +7526,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VLD4LNdWB_fixed_Asm_32:
   case ARM::VLD4LNqWB_fixed_Asm_16:
   case ARM::VLD4LNqWB_fixed_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     // Shuffle the operands around so the lane index operand is in the
     // right place.
     unsigned Spacing;
@@ -7559,7 +7559,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VLD1LNdAsm_8:
   case ARM::VLD1LNdAsm_16:
   case ARM::VLD1LNdAsm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     // Shuffle the operands around so the lane index operand is in the
     // right place.
     unsigned Spacing;
@@ -7580,7 +7580,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VLD2LNdAsm_32:
   case ARM::VLD2LNqAsm_16:
   case ARM::VLD2LNqAsm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     // Shuffle the operands around so the lane index operand is in the
     // right place.
     unsigned Spacing;
@@ -7605,7 +7605,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VLD3LNdAsm_32:
   case ARM::VLD3LNqAsm_16:
   case ARM::VLD3LNqAsm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     // Shuffle the operands around so the lane index operand is in the
     // right place.
     unsigned Spacing;
@@ -7634,7 +7634,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VLD4LNdAsm_32:
   case ARM::VLD4LNqAsm_16:
   case ARM::VLD4LNqAsm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     // Shuffle the operands around so the lane index operand is in the
     // right place.
     unsigned Spacing;
@@ -7669,7 +7669,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VLD3DUPqAsm_8:
   case ARM::VLD3DUPqAsm_16:
   case ARM::VLD3DUPqAsm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     unsigned Spacing;
     TmpInst.setOpcode(getRealVLDOpcode(Inst.getOpcode(), Spacing));
     TmpInst.addOperand(Inst.getOperand(0)); // Vd
@@ -7691,7 +7691,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VLD3DUPqWB_fixed_Asm_8:
   case ARM::VLD3DUPqWB_fixed_Asm_16:
   case ARM::VLD3DUPqWB_fixed_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     unsigned Spacing;
     TmpInst.setOpcode(getRealVLDOpcode(Inst.getOpcode(), Spacing));
     TmpInst.addOperand(Inst.getOperand(0)); // Vd
@@ -7715,7 +7715,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VLD3DUPqWB_register_Asm_8:
   case ARM::VLD3DUPqWB_register_Asm_16:
   case ARM::VLD3DUPqWB_register_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     unsigned Spacing;
     TmpInst.setOpcode(getRealVLDOpcode(Inst.getOpcode(), Spacing));
     TmpInst.addOperand(Inst.getOperand(0)); // Vd
@@ -7740,7 +7740,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VLD3qAsm_8:
   case ARM::VLD3qAsm_16:
   case ARM::VLD3qAsm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     unsigned Spacing;
     TmpInst.setOpcode(getRealVLDOpcode(Inst.getOpcode(), Spacing));
     TmpInst.addOperand(Inst.getOperand(0)); // Vd
@@ -7762,7 +7762,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VLD3qWB_fixed_Asm_8:
   case ARM::VLD3qWB_fixed_Asm_16:
   case ARM::VLD3qWB_fixed_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     unsigned Spacing;
     TmpInst.setOpcode(getRealVLDOpcode(Inst.getOpcode(), Spacing));
     TmpInst.addOperand(Inst.getOperand(0)); // Vd
@@ -7786,7 +7786,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VLD3qWB_register_Asm_8:
   case ARM::VLD3qWB_register_Asm_16:
   case ARM::VLD3qWB_register_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     unsigned Spacing;
     TmpInst.setOpcode(getRealVLDOpcode(Inst.getOpcode(), Spacing));
     TmpInst.addOperand(Inst.getOperand(0)); // Vd
@@ -7811,7 +7811,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VLD4DUPqAsm_8:
   case ARM::VLD4DUPqAsm_16:
   case ARM::VLD4DUPqAsm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     unsigned Spacing;
     TmpInst.setOpcode(getRealVLDOpcode(Inst.getOpcode(), Spacing));
     TmpInst.addOperand(Inst.getOperand(0)); // Vd
@@ -7835,7 +7835,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VLD4DUPqWB_fixed_Asm_8:
   case ARM::VLD4DUPqWB_fixed_Asm_16:
   case ARM::VLD4DUPqWB_fixed_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     unsigned Spacing;
     TmpInst.setOpcode(getRealVLDOpcode(Inst.getOpcode(), Spacing));
     TmpInst.addOperand(Inst.getOperand(0)); // Vd
@@ -7861,7 +7861,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VLD4DUPqWB_register_Asm_8:
   case ARM::VLD4DUPqWB_register_Asm_16:
   case ARM::VLD4DUPqWB_register_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     unsigned Spacing;
     TmpInst.setOpcode(getRealVLDOpcode(Inst.getOpcode(), Spacing));
     TmpInst.addOperand(Inst.getOperand(0)); // Vd
@@ -7888,7 +7888,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VLD4qAsm_8:
   case ARM::VLD4qAsm_16:
   case ARM::VLD4qAsm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     unsigned Spacing;
     TmpInst.setOpcode(getRealVLDOpcode(Inst.getOpcode(), Spacing));
     TmpInst.addOperand(Inst.getOperand(0)); // Vd
@@ -7912,7 +7912,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VLD4qWB_fixed_Asm_8:
   case ARM::VLD4qWB_fixed_Asm_16:
   case ARM::VLD4qWB_fixed_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     unsigned Spacing;
     TmpInst.setOpcode(getRealVLDOpcode(Inst.getOpcode(), Spacing));
     TmpInst.addOperand(Inst.getOperand(0)); // Vd
@@ -7938,7 +7938,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VLD4qWB_register_Asm_8:
   case ARM::VLD4qWB_register_Asm_16:
   case ARM::VLD4qWB_register_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     unsigned Spacing;
     TmpInst.setOpcode(getRealVLDOpcode(Inst.getOpcode(), Spacing));
     TmpInst.addOperand(Inst.getOperand(0)); // Vd
@@ -7965,7 +7965,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VST3qAsm_8:
   case ARM::VST3qAsm_16:
   case ARM::VST3qAsm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     unsigned Spacing;
     TmpInst.setOpcode(getRealVSTOpcode(Inst.getOpcode(), Spacing));
     TmpInst.addOperand(Inst.getOperand(1)); // Rn
@@ -7987,7 +7987,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VST3qWB_fixed_Asm_8:
   case ARM::VST3qWB_fixed_Asm_16:
   case ARM::VST3qWB_fixed_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     unsigned Spacing;
     TmpInst.setOpcode(getRealVSTOpcode(Inst.getOpcode(), Spacing));
     TmpInst.addOperand(Inst.getOperand(1)); // Rn
@@ -8011,7 +8011,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VST3qWB_register_Asm_8:
   case ARM::VST3qWB_register_Asm_16:
   case ARM::VST3qWB_register_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     unsigned Spacing;
     TmpInst.setOpcode(getRealVSTOpcode(Inst.getOpcode(), Spacing));
     TmpInst.addOperand(Inst.getOperand(1)); // Rn
@@ -8036,7 +8036,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VST4qAsm_8:
   case ARM::VST4qAsm_16:
   case ARM::VST4qAsm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     unsigned Spacing;
     TmpInst.setOpcode(getRealVSTOpcode(Inst.getOpcode(), Spacing));
     TmpInst.addOperand(Inst.getOperand(1)); // Rn
@@ -8060,7 +8060,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VST4qWB_fixed_Asm_8:
   case ARM::VST4qWB_fixed_Asm_16:
   case ARM::VST4qWB_fixed_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     unsigned Spacing;
     TmpInst.setOpcode(getRealVSTOpcode(Inst.getOpcode(), Spacing));
     TmpInst.addOperand(Inst.getOperand(1)); // Rn
@@ -8086,7 +8086,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   case ARM::VST4qWB_register_Asm_8:
   case ARM::VST4qWB_register_Asm_16:
   case ARM::VST4qWB_register_Asm_32: {
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     unsigned Spacing;
     TmpInst.setOpcode(getRealVSTOpcode(Inst.getOpcode(), Spacing));
     TmpInst.addOperand(Inst.getOperand(1)); // Rn
@@ -8123,7 +8123,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
       case ARM::t2ASRri: NewOpc = ARM::tASRri; break;
       }
       // The Thumb1 operands aren't in the same order. Awesome, eh?
-      MCInst TmpInst;
+      MCInst TmpInst(Inst.getAddress());
       TmpInst.setOpcode(NewOpc);
       TmpInst.addOperand(Inst.getOperand(0));
       TmpInst.addOperand(Inst.getOperand(5));
@@ -8150,7 +8150,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
         Inst.getOperand(0).getReg() == Inst.getOperand(1).getReg() &&
         inITBlock() == (Inst.getOpcode() == ARM::t2MOVsr))
       isNarrow = true;
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     unsigned newOpc;
     switch(ARM_AM::getSORegShOp(Inst.getOperand(3).getImm())) {
     default: llvm_unreachable("unexpected opcode!");
@@ -8184,7 +8184,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
         isARMLowRegister(Inst.getOperand(1).getReg()) &&
         inITBlock() == (Inst.getOpcode() == ARM::t2MOVsi))
       isNarrow = true;
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     unsigned newOpc;
     switch(ARM_AM::getSORegShOp(Inst.getOperand(2).getImm())) {
     default: llvm_unreachable("unexpected opcode!");
@@ -8226,7 +8226,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
     case ARM::RORr: ShiftTy = ARM_AM::ror; break;
     }
     unsigned Shifter = ARM_AM::getSORegOpc(ShiftTy, 0);
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     TmpInst.setOpcode(ARM::MOVsr);
     TmpInst.addOperand(Inst.getOperand(0)); // Rd
     TmpInst.addOperand(Inst.getOperand(1)); // Rn
@@ -8257,7 +8257,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
     if (Amt == 32 && (ShiftTy == ARM_AM::lsr || ShiftTy == ARM_AM::asr))
       Amt = 0;
     unsigned Shifter = ARM_AM::getSORegOpc(ShiftTy, Amt);
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     TmpInst.setOpcode(Opc);
     TmpInst.addOperand(Inst.getOperand(0)); // Rd
     TmpInst.addOperand(Inst.getOperand(1)); // Rn
@@ -8271,7 +8271,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
   }
   case ARM::RRXi: {
     unsigned Shifter = ARM_AM::getSORegOpc(ARM_AM::rrx, 0);
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     TmpInst.setOpcode(ARM::MOVsi);
     TmpInst.addOperand(Inst.getOperand(0)); // Rd
     TmpInst.addOperand(Inst.getOperand(1)); // Rn
@@ -8287,7 +8287,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
     // a post-indexed LDR instruction instead, per the ARM ARM.
     if (Inst.getNumOperands() != 5)
       return false;
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     TmpInst.setOpcode(ARM::t2LDR_POST);
     TmpInst.addOperand(Inst.getOperand(4)); // Rt
     TmpInst.addOperand(Inst.getOperand(0)); // Rn_wb
@@ -8303,7 +8303,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
     // a pre-indexed STR instruction instead, per the ARM ARM.
     if (Inst.getNumOperands() != 5)
       return false;
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     TmpInst.setOpcode(ARM::t2STR_PRE);
     TmpInst.addOperand(Inst.getOperand(0)); // Rn_wb
     TmpInst.addOperand(Inst.getOperand(4)); // Rt
@@ -8319,7 +8319,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
     // a post-indexed LDR instruction instead, per the ARM ARM.
     if (static_cast<ARMOperand &>(*Operands[0]).getToken() == "pop" &&
         Inst.getNumOperands() == 5) {
-      MCInst TmpInst;
+      MCInst TmpInst(Inst.getAddress());
       TmpInst.setOpcode(ARM::LDR_POST_IMM);
       TmpInst.addOperand(Inst.getOperand(4)); // Rt
       TmpInst.addOperand(Inst.getOperand(0)); // Rn_wb
@@ -8337,7 +8337,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
     // a pre-indexed STR instruction instead, per the ARM ARM.
     if (static_cast<ARMOperand &>(*Operands[0]).getToken() == "push" &&
         Inst.getNumOperands() == 5) {
-      MCInst TmpInst;
+      MCInst TmpInst(Inst.getAddress());
       TmpInst.setOpcode(ARM::STR_PRE_IMM);
       TmpInst.addOperand(Inst.getOperand(0)); // Rn_wb
       TmpInst.addOperand(Inst.getOperand(4)); // Rt
@@ -8400,7 +8400,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
         (static_cast<ARMOperand &>(*Operands[3]).isToken() &&
          static_cast<ARMOperand &>(*Operands[3]).getToken() == ".w"))
       break;
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     TmpInst.setOpcode(Inst.getOpcode() == ARM::t2ADDri ?
                       ARM::tADDi8 : ARM::tSUBi8);
     TmpInst.addOperand(Inst.getOperand(0));
@@ -8430,7 +8430,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
         (static_cast<ARMOperand &>(*Operands[3]).isToken() &&
          static_cast<ARMOperand &>(*Operands[3]).getToken() == ".w"))
       break;
-    MCInst TmpInst;
+    MCInst TmpInst(Inst.getAddress());
     TmpInst.setOpcode(ARM::tADDhirr);
     TmpInst.addOperand(Inst.getOperand(0));
     TmpInst.addOperand(Inst.getOperand(0));
@@ -8553,7 +8553,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
         (!static_cast<ARMOperand &>(*Operands[2]).isToken() ||
          static_cast<ARMOperand &>(*Operands[2]).getToken() != ".w")) {
       // The operands aren't in the same order for tMOVi8...
-      MCInst TmpInst;
+      MCInst TmpInst(Inst.getAddress());
       TmpInst.setOpcode(ARM::tMOVi8);
       TmpInst.addOperand(Inst.getOperand(0));
       TmpInst.addOperand(Inst.getOperand(4));
@@ -8575,7 +8575,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
         (!static_cast<ARMOperand &>(*Operands[2]).isToken() ||
          static_cast<ARMOperand &>(*Operands[2]).getToken() != ".w")) {
       // The operands aren't the same for tMOV[S]r... (no cc_out)
-      MCInst TmpInst;
+      MCInst TmpInst(Inst.getAddress());
       TmpInst.setOpcode(Inst.getOperand(4).getReg() ? ARM::tMOVSr : ARM::tMOVr);
       TmpInst.addOperand(Inst.getOperand(0));
       TmpInst.addOperand(Inst.getOperand(1));
@@ -8606,7 +8606,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
       case ARM::t2UXTB: NewOpc = ARM::tUXTB; break;
       }
       // The operands aren't the same for thumb1 (no rotate operand).
-      MCInst TmpInst;
+      MCInst TmpInst(Inst.getAddress());
       TmpInst.setOpcode(NewOpc);
       TmpInst.addOperand(Inst.getOperand(0));
       TmpInst.addOperand(Inst.getOperand(1));
@@ -8624,7 +8624,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
       return false;
     if (ARM_AM::getSORegOffset(Inst.getOperand(2).getImm()) == 0) {
       // Shifting by zero is accepted as a vanilla 'MOVr'
-      MCInst TmpInst;
+      MCInst TmpInst(Inst.getAddress());
       TmpInst.setOpcode(ARM::MOVr);
       TmpInst.addOperand(Inst.getOperand(0));
       TmpInst.addOperand(Inst.getOperand(1));
@@ -8658,7 +8658,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
     // The exception is for right shifts, where 0 == 32
     if (ARM_AM::getSORegOffset(Inst.getOperand(3).getImm()) == 0 &&
         !(SOpc == ARM_AM::lsr || SOpc == ARM_AM::asr)) {
-      MCInst TmpInst;
+      MCInst TmpInst(Inst.getAddress());
       TmpInst.setOpcode(newOpc);
       TmpInst.addOperand(Inst.getOperand(0));
       TmpInst.addOperand(Inst.getOperand(1));
@@ -8722,7 +8722,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
         case ARM::t2RORrr: NewOpc = ARM::tROR; break;
         case ARM::t2BICrr: NewOpc = ARM::tBIC; break;
       }
-      MCInst TmpInst;
+      MCInst TmpInst(Inst.getAddress());
       TmpInst.setOpcode(NewOpc);
       TmpInst.addOperand(Inst.getOperand(0));
       TmpInst.addOperand(Inst.getOperand(5));
@@ -8760,7 +8760,7 @@ bool ARMAsmParser::processInstruction(MCInst &Inst,
         case ARM::t2EORrr: NewOpc = ARM::tEOR; break;
         case ARM::t2ORRrr: NewOpc = ARM::tORR; break;
       }
-      MCInst TmpInst;
+      MCInst TmpInst(Inst.getAddress());
       TmpInst.setOpcode(NewOpc);
       TmpInst.addOperand(Inst.getOperand(0));
       TmpInst.addOperand(Inst.getOperand(5));
@@ -8833,7 +8833,7 @@ unsigned ARMAsmParser::checkTargetMatchPredicate(MCInst &Inst) {
   return Match_Success;
 }
 
-namespace llvm {
+namespace llvm_ks {
 template <> inline bool IsCPSRDead<MCInst>(MCInst *Instr) {
   return true; // In an assembly source, no need to second-guess
 }

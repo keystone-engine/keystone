@@ -23,7 +23,7 @@
 #include "llvm/MC/MCSubtargetInfo.h"
 #include "llvm/Support/EndianStream.h"
 #include "llvm/Support/raw_ostream.h"
-using namespace llvm;
+using namespace llvm_ks;
 
 #define DEBUG_TYPE "mccodeemitter"
 
@@ -172,7 +172,7 @@ public:
 
 } // end anonymous namespace
 
-MCCodeEmitter *llvm::createAArch64MCCodeEmitter(const MCInstrInfo &MCII,
+MCCodeEmitter *llvm_ks::createAArch64MCCodeEmitter(const MCInstrInfo &MCII,
                                                 const MCRegisterInfo &MRI,
                                                 MCContext &Ctx) {
   return new AArch64MCCodeEmitter(MCII, Ctx);
@@ -219,7 +219,7 @@ AArch64MCCodeEmitter::getAdrLabelOpValue(const MCInst &MI, unsigned OpIdx,
 
   // If the destination is an immediate, we have nothing to do.
   if (MO.isImm())
-    return MO.getImm();
+      return MO.getImm() - (MI.getAddress() >> 12);
   assert(MO.isExpr() && "Unexpected target type!");
   const MCExpr *Expr = MO.getExpr();
 
@@ -268,7 +268,7 @@ uint32_t AArch64MCCodeEmitter::getCondBranchTargetOpValue(
 
   // If the destination is an immediate, we have nothing to do.
   if (MO.isImm())
-    return MO.getImm();
+    return (MO.getImm() * 4 - MI.getAddress()) / 4;
   assert(MO.isExpr() && "Unexpected target type!");
 
   MCFixupKind Kind = MCFixupKind(AArch64::fixup_aarch64_pcrel_branch19);
@@ -288,7 +288,7 @@ AArch64MCCodeEmitter::getLoadLiteralOpValue(const MCInst &MI, unsigned OpIdx,
 
   // If the destination is an immediate, we have nothing to do.
   if (MO.isImm())
-    return MO.getImm();
+    return (MO.getImm() * 4 - MI.getAddress()) / 4;
   assert(MO.isExpr() && "Unexpected target type!");
 
   MCFixupKind Kind = MCFixupKind(AArch64::fixup_aarch64_ldr_pcrel_imm19);
@@ -332,7 +332,7 @@ uint32_t AArch64MCCodeEmitter::getTestBranchTargetOpValue(
 
   // If the destination is an immediate, we have nothing to do.
   if (MO.isImm())
-    return MO.getImm();
+    return (MO.getImm() * 4 - MI.getAddress()) / 4;
   assert(MO.isExpr() && "Unexpected ADR target type!");
 
   MCFixupKind Kind = MCFixupKind(AArch64::fixup_aarch64_pcrel_branch14);

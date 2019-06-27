@@ -1,0 +1,3 @@
+usr/include/keystone/*.h
+usr/lib/*/libkeystone.so
+usr/lib/*/pkgconfig/keystone.pc

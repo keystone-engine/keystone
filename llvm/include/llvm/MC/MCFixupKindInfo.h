@@ -10,7 +10,7 @@
 #ifndef LLVM_MC_MCFIXUPKINDINFO_H
 #define LLVM_MC_MCFIXUPKINDINFO_H
 
-namespace llvm {
+namespace llvm_ks {
 
 /// \brief Target independent information on a fixup kind.
 struct MCFixupKindInfo {

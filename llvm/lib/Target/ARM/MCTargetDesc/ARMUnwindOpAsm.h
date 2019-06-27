@@ -19,14 +19,14 @@
 #include "llvm/Support/ARMEHABI.h"
 #include "llvm/Support/DataTypes.h"
 
-namespace llvm {
+namespace llvm_ks {
 
 class MCSymbol;
 
 class UnwindOpcodeAssembler {
 private:
-  llvm::SmallVector<uint8_t, 32> Ops;
-  llvm::SmallVector<unsigned, 8> OpBegins;
+  llvm_ks::SmallVector<uint8_t, 32> Ops;
+  llvm_ks::SmallVector<unsigned, 8> OpBegins;
   bool HasPersonality;
 
 public:
@@ -88,6 +88,6 @@ private:
   }
 };
 
-} // namespace llvm
+} // namespace llvm_ks
 
 #endif

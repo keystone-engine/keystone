@@ -1,0 +1,21 @@
+#define IDD_DIALOG 1000
+#define IDC_TxtAsmToEncode 1001
+#define IDC_TxtEncodedBytes 1002
+#define IDC_LblAsmToEncode 1003
+#define IDC_LblEncodedBytes 1004
+#define IDC_BtnExit 1005
+#define IDC_BtnEncode 1006
+IDD_DIALOG DIALOGEX 6,6,211,134
+CAPTION "Keystone Example x64"
+FONT 8,"Segoe UI",400,0
+CLASS "DLGCLASS"
+STYLE 0x10C80800
+EXSTYLE 0x00000000
+BEGIN
+  CONTROL "Enter assembler instructions to encode:",IDC_LblAsmToEncode,"Static",0x50000000,5,7,195,12,0x00000000
+  CONTROL "",IDC_TxtAsmToEncode,"Edit",0x50010000,5,24,200,12,0x00000200
+  CONTROL "Encoded bytes:",IDC_LblEncodedBytes,"Static",0x50000000,5,44,198,12,0x00000000
+  CONTROL "",IDC_TxtEncodedBytes,"Edit",0x50010000,5,61,200,12,0x00000200
+  CONTROL "Encode",IDC_BtnEncode,"Button",0x50010000,72,86,70,15,0x00000000
+  CONTROL "Exit",IDC_BtnExit,"Button",0x50010000,72,110,70,15,0x00000000
+END

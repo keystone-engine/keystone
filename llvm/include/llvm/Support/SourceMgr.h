@@ -23,7 +23,7 @@
 #include "llvm/Support/SMLoc.h"
 #include <string>
 
-namespace llvm {
+namespace llvm_ks {
   class SourceMgr;
   class SMDiagnostic;
   class SMFixIt;
@@ -168,7 +168,7 @@ public:
                     ArrayRef<SMFixIt> FixIts = None,
                     bool ShowColors = true) const;
 
-  /// Emits a diagnostic to llvm::errs().
+  /// Emits a diagnostic to llvm_ks::errs().
   void PrintMessage(SMLoc Loc, DiagKind Kind, const Twine &Msg,
                     ArrayRef<SMRange> Ranges = None,
                     ArrayRef<SMFixIt> FixIts = None,

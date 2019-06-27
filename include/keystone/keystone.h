@@ -19,6 +19,7 @@ extern "C" {
 #define KEYSTONE_EXPORT __declspec(dllexport)
 #else
 #ifdef __GNUC__
+#include <stdbool.h>
 #define KEYSTONE_EXPORT __attribute__((visibility("default")))
 #else
 #define KEYSTONE_EXPORT
@@ -32,6 +33,11 @@ typedef struct ks_struct ks_engine;
 // Keystone API version
 #define KS_API_MAJOR 0
 #define KS_API_MINOR 9
+
+// Package version
+#define KS_VERSION_MAJOR KS_API_MAJOR
+#define KS_VERSION_MINOR KS_API_MINOR
+#define KS_VERSION_EXTRA 1
 
 /*
   Macro to create combined version which can be compared to
@@ -49,6 +55,7 @@ typedef enum ks_arch {
     KS_ARCH_SPARC,      // Sparc architecture
     KS_ARCH_SYSTEMZ,    // SystemZ architecture (S390X)
     KS_ARCH_HEXAGON,    // Hexagon architecture
+    KS_ARCH_EVM,        // Ethereum Virtual Machine architecture
     KS_ARCH_MAX,
 } ks_arch;
 
@@ -140,25 +147,37 @@ typedef enum ks_err {
     KS_ERR_ASM_MNEMONICFAIL,
 } ks_err;
 
+// Resolver callback to provide value for a missing symbol in @symbol.
+// To handle a symbol, the resolver must put value of the symbol in @value,
+// then returns True.
+// If we do not resolve a missing symbol, this function must return False.
+// In that case, ks_asm() would eventually return with error KS_ERR_ASM_SYMBOL_MISSING.
+
+// To register the resolver, pass its function address to ks_option(), using
+// option KS_OPT_SYM_RESOLVER. For example, see samples/sample.c.
+typedef bool (*ks_sym_resolver)(const char *symbol, uint64_t *value);
 
 // Runtime option for the Keystone engine
 typedef enum ks_opt_type {
-	KS_OPT_SYNTAX = 1,	// Choose syntax for input assembly
+	KS_OPT_SYNTAX = 1,    // Choose syntax for input assembly
+	KS_OPT_SYM_RESOLVER,  // Set symbol resolver callback
 } ks_opt_type;
 
 
 // Runtime option value (associated with ks_opt_type above)
 typedef enum ks_opt_value {
-	KS_OPT_SYNTAX_INTEL = 1 << 0, // X86 Intel syntax - default on X86 (KS_OPT_SYNTAX).
-	KS_OPT_SYNTAX_ATT   = 1 << 1, // X86 ATT asm syntax (KS_OPT_SYNTAX).
-	KS_OPT_SYNTAX_NASM  = 1 << 2, // X86 Nasm syntax (KS_OPT_SYNTAX).
-	KS_OPT_SYNTAX_MASM  = 1 << 3, // X86 Masm syntax (KS_OPT_SYNTAX) - unsupported yet.
-	KS_OPT_SYNTAX_GAS   = 1 << 4, // X86 GNU GAS syntax (KS_OPT_SYNTAX).
+	KS_OPT_SYNTAX_INTEL =   1 << 0, // X86 Intel syntax - default on X86 (KS_OPT_SYNTAX).
+	KS_OPT_SYNTAX_ATT   =   1 << 1, // X86 ATT asm syntax (KS_OPT_SYNTAX).
+	KS_OPT_SYNTAX_NASM  =   1 << 2, // X86 Nasm syntax (KS_OPT_SYNTAX).
+	KS_OPT_SYNTAX_MASM  =   1 << 3, // X86 Masm syntax (KS_OPT_SYNTAX) - unsupported yet.
+	KS_OPT_SYNTAX_GAS   =   1 << 4, // X86 GNU GAS syntax (KS_OPT_SYNTAX).
+	KS_OPT_SYNTAX_RADIX16 = 1 << 5, // All immediates are in hex format (i.e 12 is 0x12)
 } ks_opt_value;
 
 
 #include "arm64.h"
 #include "arm.h"
+#include "evm.h"
 #include "hexagon.h"
 #include "mips.h"
 #include "ppc.h"
@@ -256,7 +275,7 @@ const char *ks_strerror(ks_err code);
  Set option for Keystone engine at runtime
 
  @ks: handle returned by ks_open()
- @type: type of option to be set
+ @type: type of option to be set. See ks_opt_type
  @value: option value corresponding with @type
 
  @return: KS_ERR_OK on success, or other value on failure.

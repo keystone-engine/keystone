@@ -26,7 +26,7 @@
 
 #include <string>
 
-namespace llvm {
+namespace llvm_ks {
 class MCAsmBackend;
 class MCCodeEmitter;
 class MCContext;
@@ -156,6 +156,7 @@ private:
 /// a .s file, and implementations that write out .o files of various formats.
 ///
 class MCStreamer {
+  mutable void *KsSymResolver;
   MCContext &Context;
   std::unique_ptr<MCTargetStreamer> TargetStreamer;
 
@@ -197,6 +198,9 @@ protected:
 public:
   virtual ~MCStreamer();
 
+  void setSymResolver(void *h) const { KsSymResolver = h; }
+  void *getSymResolver() const { return KsSymResolver; }
+
   void visitUsedExpr(const MCExpr &Expr);
   virtual void visitUsedSymbol(const MCSymbol &Sym);
 
@@ -225,6 +229,10 @@ public:
   }
 
   void generateCompactUnwindEncodings(MCAsmBackend *MAB);
+
+  // \brief Returns the current size of the fragment to which the streamer
+  // is emitting code to.
+  virtual uint64_t getCurrentFragmentSize() {return 0; }
 
   /// \name Assembly File Formatting.
   /// @{
@@ -766,6 +774,6 @@ MCStreamer *createAsmStreamer(MCContext &Ctx,
                               std::unique_ptr<formatted_raw_ostream> OS,
                               MCCodeEmitter *CE,
                               MCAsmBackend *TAB);
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

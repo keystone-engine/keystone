@@ -18,7 +18,7 @@
 #include "llvm/Support/ErrorHandling.h"
 #include "llvm/Support/raw_ostream.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 namespace {
   class ARMELFObjectWriter : public MCELFObjectTargetWriter {
@@ -250,7 +250,7 @@ unsigned ARMELFObjectWriter::GetRelocTypeInner(const MCValue &Target,
   return Type;
 }
 
-MCObjectWriter *llvm::createARMELFObjectWriter(raw_pwrite_stream &OS,
+MCObjectWriter *llvm_ks::createARMELFObjectWriter(raw_pwrite_stream &OS,
                                                uint8_t OSABI,
                                                bool IsLittleEndian) {
   MCELFObjectTargetWriter *MOTW = new ARMELFObjectWriter(OSABI);

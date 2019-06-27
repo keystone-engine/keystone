@@ -19,7 +19,7 @@
 #include "llvm/ADT/PointerIntPair.h"
 #include "llvm/Support/Compiler.h"
 
-namespace llvm {
+namespace llvm_ks {
 
 template <typename T> struct PointerUnionTypeSelectorReturn {
   typedef T Return;
@@ -117,8 +117,8 @@ public:
 
   /// Test if the Union currently holds the type matching T.
   template <typename T> int is() const {
-    typedef typename ::llvm::PointerUnionTypeSelector<
-        PT1, T, IsPT1, ::llvm::PointerUnionTypeSelector<
+    typedef typename ::llvm_ks::PointerUnionTypeSelector<
+        PT1, T, IsPT1, ::llvm_ks::PointerUnionTypeSelector<
                            PT2, T, IsPT2, UNION_DOESNT_CONTAIN_TYPE<T>>>::Return
         Ty;
     int TyNo = Ty::Num;
@@ -263,9 +263,9 @@ public:
   /// Test if the Union currently holds the type matching T.
   template <typename T> int is() const {
     // If T is PT1/PT2 choose IsInnerUnion otherwise choose IsPT3.
-    typedef typename ::llvm::PointerUnionTypeSelector<
+    typedef typename ::llvm_ks::PointerUnionTypeSelector<
         PT1, T, IsInnerUnion,
-        ::llvm::PointerUnionTypeSelector<PT2, T, IsInnerUnion, IsPT3>>::Return
+        ::llvm_ks::PointerUnionTypeSelector<PT2, T, IsInnerUnion, IsPT3>>::Return
         Ty;
     return Ty(Val).template is<T>();
   }
@@ -276,9 +276,9 @@ public:
   template <typename T> T get() const {
     assert(is<T>() && "Invalid accessor called");
     // If T is PT1/PT2 choose IsInnerUnion otherwise choose IsPT3.
-    typedef typename ::llvm::PointerUnionTypeSelector<
+    typedef typename ::llvm_ks::PointerUnionTypeSelector<
         PT1, T, IsInnerUnion,
-        ::llvm::PointerUnionTypeSelector<PT2, T, IsInnerUnion, IsPT3>>::Return
+        ::llvm_ks::PointerUnionTypeSelector<PT2, T, IsInnerUnion, IsPT3>>::Return
         Ty;
     return Ty(Val).template get<T>();
   }
@@ -367,8 +367,8 @@ public:
   /// Test if the Union currently holds the type matching T.
   template <typename T> int is() const {
     // If T is PT1/PT2 choose InnerUnion1 otherwise choose InnerUnion2.
-    typedef typename ::llvm::PointerUnionTypeSelector<
-        PT1, T, InnerUnion1, ::llvm::PointerUnionTypeSelector<
+    typedef typename ::llvm_ks::PointerUnionTypeSelector<
+        PT1, T, InnerUnion1, ::llvm_ks::PointerUnionTypeSelector<
                                  PT2, T, InnerUnion1, InnerUnion2>>::Return Ty;
     return Val.template is<Ty>() && Val.template get<Ty>().template is<T>();
   }
@@ -379,8 +379,8 @@ public:
   template <typename T> T get() const {
     assert(is<T>() && "Invalid accessor called");
     // If T is PT1/PT2 choose InnerUnion1 otherwise choose InnerUnion2.
-    typedef typename ::llvm::PointerUnionTypeSelector<
-        PT1, T, InnerUnion1, ::llvm::PointerUnionTypeSelector<
+    typedef typename ::llvm_ks::PointerUnionTypeSelector<
+        PT1, T, InnerUnion1, ::llvm_ks::PointerUnionTypeSelector<
                                  PT2, T, InnerUnion1, InnerUnion2>>::Return Ty;
     return Val.template get<Ty>().template get<T>();
   }

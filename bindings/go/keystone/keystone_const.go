@@ -37,7 +37,8 @@ const (
 	ARCH_SPARC Architecture = 6
 	ARCH_SYSTEMZ Architecture = 7
 	ARCH_HEXAGON Architecture = 8
-	ARCH_MAX Architecture = 9
+	ARCH_EVM Architecture = 9
+	ARCH_MAX Architecture = 10
 )
 
 const (
@@ -45,11 +46,13 @@ const (
 )
 
 const (
+	OPT_SYM_RESOLVER OptionValue = 2
 	OPT_SYNTAX_INTEL OptionValue = 1
 	OPT_SYNTAX_ATT OptionValue = 2
 	OPT_SYNTAX_NASM OptionValue = 4
 	OPT_SYNTAX_MASM OptionValue = 8
 	OPT_SYNTAX_GAS OptionValue = 16
+	OPT_SYNTAX_RADIX16 OptionValue = 32
 )
 
 const (

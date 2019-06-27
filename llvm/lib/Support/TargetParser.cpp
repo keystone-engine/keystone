@@ -19,7 +19,7 @@
 #include "llvm/ADT/Twine.h"
 #include <cctype>
 
-using namespace llvm;
+using namespace llvm_ks;
 using namespace ARM;
 
 namespace {
@@ -132,31 +132,31 @@ static const struct {
 // Information by ID
 // ======================================================= //
 
-StringRef llvm::ARM::getFPUName(unsigned FPUKind) {
+StringRef llvm_ks::ARM::getFPUName(unsigned FPUKind) {
   if (FPUKind >= ARM::FK_LAST)
     return StringRef();
   return FPUNames[FPUKind].getName();
 }
 
-unsigned llvm::ARM::getFPUVersion(unsigned FPUKind) {
+unsigned llvm_ks::ARM::getFPUVersion(unsigned FPUKind) {
   if (FPUKind >= ARM::FK_LAST)
     return 0;
   return FPUNames[FPUKind].FPUVersion;
 }
 
-unsigned llvm::ARM::getFPUNeonSupportLevel(unsigned FPUKind) {
+unsigned llvm_ks::ARM::getFPUNeonSupportLevel(unsigned FPUKind) {
   if (FPUKind >= ARM::FK_LAST)
     return 0;
   return FPUNames[FPUKind].NeonSupport;
 }
 
-unsigned llvm::ARM::getFPURestriction(unsigned FPUKind) {
+unsigned llvm_ks::ARM::getFPURestriction(unsigned FPUKind) {
   if (FPUKind >= ARM::FK_LAST)
     return 0;
   return FPUNames[FPUKind].Restriction;
 }
 
-unsigned llvm::ARM::getDefaultFPU(StringRef CPU, unsigned ArchKind) {
+unsigned llvm_ks::ARM::getDefaultFPU(StringRef CPU, unsigned ArchKind) {
   if (CPU == "generic")
     return ARCHNames[ArchKind].DefaultFPU;
 
@@ -167,7 +167,7 @@ unsigned llvm::ARM::getDefaultFPU(StringRef CPU, unsigned ArchKind) {
     .Default(ARM::FK_INVALID);
 }
 
-unsigned llvm::ARM::getDefaultExtensions(StringRef CPU, unsigned ArchKind) {
+unsigned llvm_ks::ARM::getDefaultExtensions(StringRef CPU, unsigned ArchKind) {
   if (CPU == "generic")
     return ARCHNames[ArchKind].ArchBaseExtensions;
 
@@ -178,7 +178,7 @@ unsigned llvm::ARM::getDefaultExtensions(StringRef CPU, unsigned ArchKind) {
     .Default(ARM::AEK_INVALID);
 }
 
-bool llvm::ARM::getHWDivFeatures(unsigned HWDivKind,
+bool llvm_ks::ARM::getHWDivFeatures(unsigned HWDivKind,
                                  std::vector<const char *> &Features) {
 
   if (HWDivKind == ARM::AEK_INVALID)
@@ -197,7 +197,7 @@ bool llvm::ARM::getHWDivFeatures(unsigned HWDivKind,
   return true;
 }
 
-bool llvm::ARM::getExtensionFeatures(unsigned Extensions,
+bool llvm_ks::ARM::getExtensionFeatures(unsigned Extensions,
                                      std::vector<const char *> &Features) {
 
   if (Extensions == ARM::AEK_INVALID)
@@ -216,7 +216,7 @@ bool llvm::ARM::getExtensionFeatures(unsigned Extensions,
   return getHWDivFeatures(Extensions, Features);
 }
 
-bool llvm::ARM::getFPUFeatures(unsigned FPUKind,
+bool llvm_ks::ARM::getFPUFeatures(unsigned FPUKind,
                                std::vector<const char *> &Features) {
 
   if (FPUKind >= ARM::FK_LAST || FPUKind == ARM::FK_INVALID)
@@ -298,31 +298,31 @@ bool llvm::ARM::getFPUFeatures(unsigned FPUKind,
   return true;
 }
 
-StringRef llvm::ARM::getArchName(unsigned ArchKind) {
+StringRef llvm_ks::ARM::getArchName(unsigned ArchKind) {
   if (ArchKind >= ARM::AK_LAST)
     return StringRef();
   return ARCHNames[ArchKind].getName();
 }
 
-StringRef llvm::ARM::getCPUAttr(unsigned ArchKind) {
+StringRef llvm_ks::ARM::getCPUAttr(unsigned ArchKind) {
   if (ArchKind >= ARM::AK_LAST)
     return StringRef();
   return ARCHNames[ArchKind].getCPUAttr();
 }
 
-StringRef llvm::ARM::getSubArch(unsigned ArchKind) {
+StringRef llvm_ks::ARM::getSubArch(unsigned ArchKind) {
   if (ArchKind >= ARM::AK_LAST)
     return StringRef();
   return ARCHNames[ArchKind].getSubArch();
 }
 
-unsigned llvm::ARM::getArchAttr(unsigned ArchKind) {
+unsigned llvm_ks::ARM::getArchAttr(unsigned ArchKind) {
   if (ArchKind >= ARM::AK_LAST)
     return ARMBuildAttrs::CPUArch::Pre_v4;
   return ARCHNames[ArchKind].ArchAttr;
 }
 
-StringRef llvm::ARM::getArchExtName(unsigned ArchExtKind) {
+StringRef llvm_ks::ARM::getArchExtName(unsigned ArchExtKind) {
   for (const auto AE : ARCHExtNames) {
     if (ArchExtKind == AE.ID)
       return AE.getName();
@@ -330,7 +330,7 @@ StringRef llvm::ARM::getArchExtName(unsigned ArchExtKind) {
   return StringRef();
 }
 
-const char *llvm::ARM::getArchExtFeature(StringRef ArchExt) {
+const char *llvm_ks::ARM::getArchExtFeature(StringRef ArchExt) {
   if (ArchExt.startswith("no")) {
     StringRef ArchExtBase(ArchExt.substr(2));
     for (const auto AE : ARCHExtNames) {
@@ -346,7 +346,7 @@ const char *llvm::ARM::getArchExtFeature(StringRef ArchExt) {
   return nullptr;
 }
 
-StringRef llvm::ARM::getHWDivName(unsigned HWDivKind) {
+StringRef llvm_ks::ARM::getHWDivName(unsigned HWDivKind) {
   for (const auto D : HWDivNames) {
     if (HWDivKind == D.ID)
       return D.getName();
@@ -354,7 +354,7 @@ StringRef llvm::ARM::getHWDivName(unsigned HWDivKind) {
   return StringRef();
 }
 
-StringRef llvm::ARM::getDefaultCPU(StringRef Arch) {
+StringRef llvm_ks::ARM::getDefaultCPU(StringRef Arch) {
   unsigned AK = parseArch(Arch);
   if (AK == ARM::AK_INVALID)
     return StringRef();
@@ -420,7 +420,7 @@ static StringRef getArchSynonym(StringRef Arch) {
 // (iwmmxt|xscale)(eb)? is also permitted. If the former, return
 // "v.+", if the latter, return unmodified string, minus 'eb'.
 // If invalid, return empty string.
-StringRef llvm::ARM::getCanonicalArchName(StringRef Arch) {
+StringRef llvm_ks::ARM::getCanonicalArchName(StringRef Arch) {
   size_t offset = StringRef::npos;
   StringRef A = Arch;
   StringRef Error = "";
@@ -469,7 +469,7 @@ StringRef llvm::ARM::getCanonicalArchName(StringRef Arch) {
   return A;
 }
 
-unsigned llvm::ARM::parseHWDiv(StringRef HWDiv) {
+unsigned llvm_ks::ARM::parseHWDiv(StringRef HWDiv) {
   StringRef Syn = getHWDivSynonym(HWDiv);
   for (const auto D : HWDivNames) {
     if (Syn == D.getName())
@@ -478,7 +478,7 @@ unsigned llvm::ARM::parseHWDiv(StringRef HWDiv) {
   return ARM::AEK_INVALID;
 }
 
-unsigned llvm::ARM::parseFPU(StringRef FPU) {
+unsigned llvm_ks::ARM::parseFPU(StringRef FPU) {
   StringRef Syn = getFPUSynonym(FPU);
   for (const auto F : FPUNames) {
     if (Syn == F.getName())
@@ -488,7 +488,7 @@ unsigned llvm::ARM::parseFPU(StringRef FPU) {
 }
 
 // Allows partial match, ex. "v7a" matches "armv7a".
-unsigned llvm::ARM::parseArch(StringRef Arch) {
+unsigned llvm_ks::ARM::parseArch(StringRef Arch) {
   Arch = getCanonicalArchName(Arch);
   StringRef Syn = getArchSynonym(Arch);
   for (const auto A : ARCHNames) {
@@ -498,7 +498,7 @@ unsigned llvm::ARM::parseArch(StringRef Arch) {
   return ARM::AK_INVALID;
 }
 
-unsigned llvm::ARM::parseArchExt(StringRef ArchExt) {
+unsigned llvm_ks::ARM::parseArchExt(StringRef ArchExt) {
   for (const auto A : ARCHExtNames) {
     if (ArchExt == A.getName())
       return A.ID;
@@ -506,7 +506,7 @@ unsigned llvm::ARM::parseArchExt(StringRef ArchExt) {
   return ARM::AEK_INVALID;
 }
 
-unsigned llvm::ARM::parseCPUArch(StringRef CPU) {
+unsigned llvm_ks::ARM::parseCPUArch(StringRef CPU) {
   for (const auto C : CPUNames) {
     if (CPU == C.getName())
       return C.ArchID;
@@ -515,7 +515,7 @@ unsigned llvm::ARM::parseCPUArch(StringRef CPU) {
 }
 
 // ARM, Thumb, AArch64
-unsigned llvm::ARM::parseArchISA(StringRef Arch) {
+unsigned llvm_ks::ARM::parseArchISA(StringRef Arch) {
   return StringSwitch<unsigned>(Arch)
       .StartsWith("aarch64", ARM::IK_AARCH64)
       .StartsWith("arm64", ARM::IK_AARCH64)
@@ -525,7 +525,7 @@ unsigned llvm::ARM::parseArchISA(StringRef Arch) {
 }
 
 // Little/Big endian
-unsigned llvm::ARM::parseArchEndian(StringRef Arch) {
+unsigned llvm_ks::ARM::parseArchEndian(StringRef Arch) {
   if (Arch.startswith("armeb") || Arch.startswith("thumbeb") ||
       Arch.startswith("aarch64_be"))
     return ARM::EK_BIG;
@@ -544,7 +544,7 @@ unsigned llvm::ARM::parseArchEndian(StringRef Arch) {
 }
 
 // Profile A/R/M
-unsigned llvm::ARM::parseArchProfile(StringRef Arch) {
+unsigned llvm_ks::ARM::parseArchProfile(StringRef Arch) {
   Arch = getCanonicalArchName(Arch);
   switch (parseArch(Arch)) {
   case ARM::AK_ARMV6M:
@@ -566,7 +566,7 @@ unsigned llvm::ARM::parseArchProfile(StringRef Arch) {
 }
 
 // Version number (ex. v7 = 7).
-unsigned llvm::ARM::parseArchVersion(StringRef Arch) {
+unsigned llvm_ks::ARM::parseArchVersion(StringRef Arch) {
   Arch = getCanonicalArchName(Arch);
   switch (parseArch(Arch)) {
   case ARM::AK_ARMV2:

@@ -9,9 +9,9 @@
 
 #include "PPC.h"
 #include "llvm/Support/TargetRegistry.h"
-using namespace llvm;
+using namespace llvm_ks;
 
-Target llvm::ThePPC32Target, llvm::ThePPC64Target, llvm::ThePPC64LETarget;
+Target llvm_ks::ThePPC32Target, llvm_ks::ThePPC64Target, llvm_ks::ThePPC64LETarget;
 
 extern "C" void LLVMInitializePowerPCTargetInfo() {
   RegisterTarget<Triple::ppc>

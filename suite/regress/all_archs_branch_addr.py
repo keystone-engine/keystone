@@ -16,6 +16,18 @@ class TestARM(regress.RegressTest):
         encoding, count = ks.asm(b"bl #0x1010", 0x1000)
         self.assertEqual(encoding, [ 0x02, 0x00, 0x00, 0xeb])
 
+class TestARMThumb(regress.RegressTest):
+    def runTest(self):
+        ks = Ks(KS_ARCH_ARM, KS_MODE_THUMB)
+        encoding, count = ks.asm(b"b #0x1010", 0x1000)
+        self.assertEqual(encoding, [ 0x06, 0xe0])
+        encoding, count = ks.asm(b"b.w #0x1010", 0x1000)
+        self.assertEqual(encoding, [ 0x00, 0xf0, 0x06, 0xb8])
+        encoding, count = ks.asm(b"b #0x101010", 0x1000)
+        self.assertEqual(encoding, [ 0x00, 0xf1, 0x06, 0xb8])
+        encoding, count = ks.asm(b"bl #0x1010", 0x1000)
+        self.assertEqual(encoding, [ 0x00, 0xf0, 0x06, 0xf8])
+
 class TestARM64(regress.RegressTest):
     def runTest(self):
         ks = Ks(KS_ARCH_ARM64, 0)

@@ -28,7 +28,7 @@
 #include "llvm/Support/ErrorHandling.h"
 #include "llvm/Support/TargetRegistry.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 #define GET_INSTRINFO_MC_DESC
 #include "HexagonGenInstrInfo.inc"
@@ -39,9 +39,9 @@ using namespace llvm;
 #define GET_REGINFO_MC_DESC
 #include "HexagonGenRegisterInfo.inc"
 
-bool llvm::HexagonDisableCompound;
+bool llvm_ks::HexagonDisableCompound;
 
-bool llvm::HexagonDisableDuplex;
+bool llvm_ks::HexagonDisableDuplex;
 
 StringRef HEXAGON_MC::selectHexagonCPU(const Triple &TT, StringRef CPU) {
   if (CPU.empty())
@@ -49,7 +49,7 @@ StringRef HEXAGON_MC::selectHexagonCPU(const Triple &TT, StringRef CPU) {
   return CPU;
 }
 
-MCInstrInfo *llvm::createHexagonMCInstrInfo() {
+MCInstrInfo *llvm_ks::createHexagonMCInstrInfo() {
   MCInstrInfo *X = new MCInstrInfo();
   InitHexagonMCInstrInfo(X);
   return X;
@@ -77,7 +77,7 @@ public:
       : HexagonTargetStreamer(S) {
     auto Bits = STI.getFeatureBits();
     unsigned Flags;
-    if (Bits.to_ullong() & llvm::Hexagon::ArchV5)
+    if (Bits.to_ullong() & llvm_ks::Hexagon::ArchV5)
       Flags = ELF::EF_HEXAGON_MACH_V5;
     else
       Flags = ELF::EF_HEXAGON_MACH_V4;

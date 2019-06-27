@@ -7,7 +7,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// This file declares the llvm::sys::RWMutex class.
+// This file declares the llvm_ks::sys::RWMutex class.
 //
 //===----------------------------------------------------------------------===//
 
@@ -18,7 +18,7 @@
 #include "llvm/Support/Threading.h"
 #include <cassert>
 
-namespace llvm
+namespace llvm_ks
 {
   namespace sys
   {

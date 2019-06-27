@@ -1,0 +1,3 @@
+#define MANIFEST 						24
+1						MANIFEST  DISCARDABLE "KSExample_x64.xml"
+101						ICON      DISCARDABLE "keystone.ico"

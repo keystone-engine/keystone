@@ -19,7 +19,7 @@
 #include "llvm/Support/type_traits.h"
 #include <cassert>
 
-namespace llvm {
+namespace llvm_ks {
 
 //===----------------------------------------------------------------------===//
 //                          isa<x> Support Templates

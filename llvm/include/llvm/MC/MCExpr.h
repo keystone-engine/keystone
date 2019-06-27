@@ -14,7 +14,7 @@
 #include "llvm/Support/Casting.h"
 #include "llvm/Support/DataTypes.h"
 
-namespace llvm {
+namespace llvm_ks {
 class MCAsmInfo;
 class MCAsmLayout;
 class MCAssembler;
@@ -569,6 +569,6 @@ public:
   }
 };
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

@@ -35,11 +35,11 @@
 
 #include "keystone/mips.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 #define DEBUG_TYPE "mips-asm-parser"
 
-namespace llvm {
+namespace llvm_ks {
 class MCInstrInfo;
 }
 
@@ -415,11 +415,11 @@ public:
 
     // Remember the initial assembler options. The user can not modify these.
     AssemblerOptions.push_back(
-        llvm::make_unique<MipsAssemblerOptions>(getSTI().getFeatureBits()));
+        llvm_ks::make_unique<MipsAssemblerOptions>(getSTI().getFeatureBits()));
 
     // Create an assembler options environment for the user to modify.
     AssemblerOptions.push_back(
-        llvm::make_unique<MipsAssemblerOptions>(getSTI().getFeatureBits()));
+        llvm_ks::make_unique<MipsAssemblerOptions>(getSTI().getFeatureBits()));
 
     //getTargetStreamer().updateABIInfo(*this);
 
@@ -1395,7 +1395,7 @@ public:
 }; // class MipsOperand
 } // namespace
 
-namespace llvm {
+namespace llvm_ks {
 extern const MCInstrDesc MipsInsts[];
 }
 static const MCInstrDesc &getInstDesc(unsigned Opcode) {
@@ -1691,7 +1691,7 @@ bool MipsAsmParser::processInstruction(MCInst &Inst, SMLoc IDLoc,
   // This expansion is not in a function called by tryExpandInstruction()
   // because the pseudo-instruction doesn't have a distinct opcode.
   if ((Inst.getOpcode() == Mips::JAL || Inst.getOpcode() == Mips::JAL_MM) &&
-      inPicMode()) {
+      inPicMode() && Inst.getOperand(0).isExpr()) {
     warnIfNoMacro(IDLoc);
 
     const MCExpr *JalExpr = Inst.getOperand(0).getExpr();

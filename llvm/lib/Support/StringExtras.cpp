@@ -13,12 +13,12 @@
 
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/ADT/StringExtras.h"
-using namespace llvm;
+using namespace llvm_ks;
 
 /// StrInStrNoCase - Portable version of strcasestr.  Locates the first
 /// occurrence of string 's1' in string 's2', ignoring case.  Returns
 /// the offset of s2 in s1 or npos if s2 cannot be found.
-StringRef::size_type llvm::StrInStrNoCase(StringRef s1, StringRef s2) {
+StringRef::size_type llvm_ks::StrInStrNoCase(StringRef s1, StringRef s2) {
   size_t N = s2.size(), M = s1.size();
   if (N > M)
     return StringRef::npos;
@@ -34,7 +34,7 @@ StringRef::size_type llvm::StrInStrNoCase(StringRef s1, StringRef s2) {
 /// there are no tokens in the source string, an empty string is returned.
 /// The function returns a pair containing the extracted token and the
 /// remaining tail string.
-std::pair<StringRef, StringRef> llvm::getToken(StringRef Source,
+std::pair<StringRef, StringRef> llvm_ks::getToken(StringRef Source,
                                                StringRef Delimiters) {
   // Figure out where the token starts.
   StringRef::size_type Start = Source.find_first_not_of(Delimiters);
@@ -47,7 +47,7 @@ std::pair<StringRef, StringRef> llvm::getToken(StringRef Source,
 
 /// SplitString - Split up the specified string according to the specified
 /// delimiters, appending the result fragments to the output list.
-void llvm::SplitString(StringRef Source,
+void llvm_ks::SplitString(StringRef Source,
                        SmallVectorImpl<StringRef> &OutFragments,
                        StringRef Delimiters) {
   std::pair<StringRef, StringRef> S = getToken(Source, Delimiters);

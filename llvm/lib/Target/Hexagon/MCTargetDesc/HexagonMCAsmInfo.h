@@ -17,7 +17,7 @@
 #include "llvm/ADT/StringRef.h"
 #include "llvm/MC/MCAsmInfoELF.h"
 
-namespace llvm {
+namespace llvm_ks {
 class Triple;
 
 class HexagonMCAsmInfo : public MCAsmInfoELF {
@@ -25,6 +25,6 @@ public:
   explicit HexagonMCAsmInfo(const Triple &TT);
 };
 
-} // namespace llvm
+} // namespace llvm_ks
 
 #endif

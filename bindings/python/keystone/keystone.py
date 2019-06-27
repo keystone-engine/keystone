@@ -4,15 +4,13 @@ _python2 = sys.version_info[0] < 3
 if _python2:
     range = xrange
 
-PY_EXTRA_VERSION = ".1"
-
-from . import arm_const, arm64_const, mips_const, sparc_const, hexagon_const, ppc_const, systemz_const, x86_const
+from . import arm_const, arm64_const, mips_const, sparc_const, hexagon_const, ppc_const, systemz_const, x86_const, evm_const
 from .keystone_const import *
 
 from ctypes import *
 from platform import system
 from os.path import split, join, dirname, exists
-import distutils.sysconfig, sys
+import sys
 
 
 import inspect
@@ -26,7 +24,7 @@ _found = False
 for _lib in _all_libs:
     try:
         _lib_file = join(_lib_path, _lib)
-        #print(">> 2: Trying to load %s" %_lib_file);
+        #print(">> 0: Trying to load %s" %_lib_file);
         _ks = cdll.LoadLibrary(_lib_file)
         _found = True
         break
@@ -46,6 +44,7 @@ if _found == False:
 
 if _found == False:
     # last try: loading from python lib directory
+    import distutils.sysconfig
     _lib_path = distutils.sysconfig.get_python_lib()
     for _lib in _all_libs:
         try:
@@ -74,7 +73,7 @@ if (_found == False) and (system() == 'Darwin'):
 if _found == False:
     raise ImportError("ERROR: fail to load the dynamic library.")
 
-__version__ = "%s.%s%s" %(KS_API_MAJOR, KS_API_MINOR, PY_EXTRA_VERSION)
+__version__ = "%u.%u.%u" %(KS_VERSION_MAJOR, KS_VERSION_MINOR, KS_VERSION_EXTRA)
 
 # setup all the function prototype
 def _setup_prototype(lib, fname, restype, *argtypes):
@@ -91,11 +90,12 @@ _setup_prototype(_ks, "ks_open", kserr, c_uint, c_uint, POINTER(ks_engine))
 _setup_prototype(_ks, "ks_close", kserr, ks_engine)
 _setup_prototype(_ks, "ks_strerror", c_char_p, kserr)
 _setup_prototype(_ks, "ks_errno", kserr, ks_engine)
-_setup_prototype(_ks, "ks_option", kserr, ks_engine, c_int, c_size_t)
-# int ks_asm(ks_engine *ks, const char *string, uint64_t address, unsigned char **encoding, size_t *encoding_size, size_t *stat_count);
+_setup_prototype(_ks, "ks_option", kserr, ks_engine, c_int, c_void_p)
 _setup_prototype(_ks, "ks_asm", c_int, ks_engine, c_char_p, c_uint64, POINTER(POINTER(c_ubyte)), POINTER(c_size_t), POINTER(c_size_t))
 _setup_prototype(_ks, "ks_free", None, POINTER(c_ubyte))
 
+# callback for OPT_SYM_RESOLVER option
+KS_SYM_RESOLVER = CFUNCTYPE(c_bool, c_char_p, POINTER(c_uint64))
 
 # access to error code via @errno of KsError
 # this also includes the @stat_count returned by ks_asm
@@ -184,8 +184,23 @@ class Ks(object):
         self._syntax = style
 
 
+    @property
+    def sym_resolver(self):
+        return
+
+
+    @sym_resolver.setter
+    def sym_resolver(self, resolver):
+        callback = KS_SYM_RESOLVER(resolver)
+        status = _ks.ks_option(self._ksh, KS_OPT_SYM_RESOLVER, callback)
+        if status != KS_ERR_OK:
+            raise KsError(status)
+        # save resolver
+        self._sym_resolver = callback
+
+
     # assemble a string of assembly
-    def asm(self, string, addr = 0):
+    def asm(self, string, addr=0, as_bytes=False):
         encode = POINTER(c_ubyte)()
         encode_size = c_size_t()
         stat_count = c_size_t()
@@ -200,9 +215,13 @@ class Ks(object):
             if stat_count.value == 0:
                 return (None, 0)
             else:
-                encoding = []
-                for i in range(encode_size.value):
-                    encoding.append(encode[i])
+                if as_bytes:
+                    encoding = string_at(encode, encode_size.value)
+                else:
+                    encoding = []
+                    for i in range(encode_size.value):
+                        encoding.append(encode[i])
+
                 _ks.ks_free(encode)
                 return (encoding, stat_count.value)
 
@@ -212,7 +231,7 @@ def debug():
     archs = { "arm": KS_ARCH_ARM, "arm64": KS_ARCH_ARM64, \
         "mips": KS_ARCH_MIPS, "sparc": KS_ARCH_SPARC, \
         "systemz": KS_ARCH_SYSTEMZ, "ppc": KS_ARCH_PPC, \
-        "hexagon": KS_ARCH_HEXAGON, "x86": KS_ARCH_X86 }
+        "hexagon": KS_ARCH_HEXAGON, "x86": KS_ARCH_X86, 'evm': KS_ARCH_EVM }
 
     all_archs = ""
     keys = archs.keys()

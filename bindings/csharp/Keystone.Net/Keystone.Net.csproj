@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.1</TargetFramework>
+    <RootNamespace>Keystone</RootNamespace>
+
+    <Version>1.1.0</Version>
+    <AssemblyVersion>$(Version)</AssemblyVersion>
+    <FileVersion>$(Version).0</FileVersion>
+
+    <Description>.NET bindings to the Keystone Engine.</Description>
+    <Authors>Grégoire Geis</Authors>
+
+    <PackageId>Keystone.Net</PackageId>
+    <PackageVersion>$(Version)</PackageVersion>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes>- First release.</PackageReleaseNotes>
+    <PackageTags>assembler x86 arm keystone</PackageTags>
+
+    <PackageProjectUrl>https://github.com/keystone-engine/keystone</PackageProjectUrl>
+    <PackageLicenseUrl>$(PackageProjectUrl)/blob/master/COPYING</PackageLicenseUrl>
+    <PackageIconUrl>http://www.keystone-engine.org/images/keystone.png</PackageIconUrl>
+
+    <RepositoryUrl>$(PackageProjectUrl).git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+</Project>

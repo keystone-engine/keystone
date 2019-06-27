@@ -19,7 +19,7 @@
 #include "llvm/ADT/SmallVector.h"
 #include <set>
 
-namespace llvm {
+namespace llvm_ks {
 
 /// SmallSet - This maintains a set of unique values, optimizing for the case
 /// when the set is small (less than N).  In this case, the set can be
@@ -131,6 +131,6 @@ private:
 template <typename PointeeType, unsigned N>
 class SmallSet<PointeeType*, N> : public SmallPtrSet<PointeeType*, N> {};
 
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

@@ -14,7 +14,7 @@
 #include "llvm/ADT/DenseMap.h"
 #include <cassert>
 
-namespace llvm {
+namespace llvm_ks {
 
 /// \brief Utility for building string tables with deduplicated suffixes.
 class StringTableBuilder {

@@ -19,7 +19,7 @@
 #include "llvm/MC/SubtargetFeature.h"
 #include <string>
 
-namespace llvm {
+namespace llvm_ks {
 
 class StringRef;
 

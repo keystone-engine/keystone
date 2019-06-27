@@ -33,7 +33,7 @@
 #include "MipsGenInstrInfo.inc"
 #undef GET_INSTRMAP_INFO
 
-namespace llvm {
+namespace llvm_ks {
 MCCodeEmitter *createMipsMCCodeEmitterEB(const MCInstrInfo &MCII,
                                          const MCRegisterInfo &MRI,
                                          MCContext &Ctx) {
@@ -45,7 +45,7 @@ MCCodeEmitter *createMipsMCCodeEmitterEL(const MCInstrInfo &MCII,
                                          MCContext &Ctx) {
   return new MipsMCCodeEmitter(MCII, Ctx, true);
 }
-} // End of namespace llvm.
+} // End of namespace llvm_ks.
 
 // If the D<shift> instruction has a shift amount that is greater
 // than 31 (checked in calling routine), lower it to a D<shift>32 instruction

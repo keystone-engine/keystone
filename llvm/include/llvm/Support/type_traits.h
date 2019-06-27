@@ -22,7 +22,7 @@
 #define __has_feature(x) 0
 #endif
 
-namespace llvm {
+namespace llvm_ks {
 
 /// isPodLike - This is a type trait that is used to determine whether a given
 /// type can be copied around with memcpy instead of running ctors etc.

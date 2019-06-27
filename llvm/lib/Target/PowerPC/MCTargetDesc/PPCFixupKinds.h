@@ -14,7 +14,7 @@
 
 #undef PPC
 
-namespace llvm {
+namespace llvm_ks {
 namespace PPC {
 enum Fixups {
   // fixup_ppc_br24 - 24-bit PC relative relocation for direct branches like 'b'

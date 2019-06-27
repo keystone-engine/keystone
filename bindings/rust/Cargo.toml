@@ -1,12 +1,26 @@
 [package]
 name = "keystone"
-version = "0.9.0"
-authors = ["Remco Verhoef <remco.verhoef@dutchcoders.io>"]
+version = "0.9.1"
+authors = [
+  "Remco Verhoef <remco.verhoef@dutchcoders.io>",
+  "Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>"
+]
 description = "Rust bindings for the keystone-engine"
 license = "GPL-2.0"
 readme = "README.md"
-include = ["src/*", "tests/*", "Cargo.toml", "COPYING", "README.md"]
+repository = "https://github.com/keystone-engine/keystone"
+include = [
+  "src/*", "tests/*", "Cargo.toml", "COPYING", "README.md",
+  "keystone-sys/*"
+]
 
 [dependencies]
-libc = "0.2.*"
-bitflags = "0.7.0"
+bitflags = "1.0"
+libc = "0.2"
+keystone-sys = { path = "keystone-sys", version = "0.9.1" }
+
+[features]
+default = []
+
+use_system_keystone = ["keystone-sys/use_system_keystone"]
+build_keystone_cmake = ["keystone-sys/build_keystone_cmake"]

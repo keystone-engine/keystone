@@ -19,7 +19,7 @@
 #include "llvm/Support/Win64EH.h"
 #include <vector>
 
-namespace llvm {
+namespace llvm_ks {
 class MCStreamer;
 class MCSymbol;
 
@@ -58,6 +58,6 @@ public:
   void EmitUnwindInfo(MCStreamer &Streamer, WinEH::FrameInfo *FI) const override;
 };
 }
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

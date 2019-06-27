@@ -8,15 +8,31 @@ INCL_DIR = os.path.join('..', 'include', 'keystone')
 # NOTE: this reflects the value of KS_ERR_ASM_xxx in keystone.h
 ks_err_val = { 'KS_ERR_ASM': '128', 'KS_ERR_ASM_ARCH': '512' }
 
-include = [ 'arm.h', 'arm64.h', 'mips.h', 'x86.h', 'sparc.h', 'ppc.h', 'systemz.h', 'hexagon.h', 'keystone.h' ]
+include = [ 'arm.h', 'arm64.h', 'mips.h', 'x86.h', 'sparc.h', 'ppc.h', 'systemz.h', 'hexagon.h', 'evm.h', 'keystone.h' ]
 
 def CamelCase(s):
     # return re.sub(r'(\w)+\_?', lambda m:m.group(0).capitalize(), s)
     return ''.join(''.join([w[0].upper(), w[1:].lower()]) for w in s.split('_'))
 
 template = {
+    'powershell': {
+            'header': "/// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [%s_h.cs]\n",
+            'footer': "",
+            'out_file': './powershell/Keystone/Const/%s_h.cs',
+            # prefixes for constant filenames of all archs - case sensitive
+            'keystone.h': 'keystone',
+            'comment_open': '///',
+            'comment_close': '',
+            'rules': [
+                {
+                    'regex': r'.*',
+                    'line_format': 'KS_{0} = {1},\n',
+                    'fn': (lambda x: x),
+                },
+            ]
+        },
     'rust': {
-            'header': "// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [%s_const.rs]\nextern crate libc;\n\n",
+            'header': "#![allow(non_camel_case_types)]\n// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [%s_const.rs]\nuse libc;\n",
             'footer': "",
             # prefixes for constant filenames of all archs - case sensitive
             'arm.h': 'keystone',
@@ -27,68 +43,63 @@ template = {
             'systemz.h': 'keystone',
             'ppc.h': 'keystone',
             'hexagon.h': 'keystone',
+            'evm.h': 'keystone',
             'keystone.h': 'keystone',
             'comment_open': '/*',
             'comment_close': '*/',
-            'out_file': './rust/src/%s_const.rs',
+            'out_file': './rust/keystone-sys/src/%s_const.rs',
             'rules': [
                 {
-                    'regex': r'(API|ARCH)_.*',
+                    'regex': r'(API)_.*',
                     'pre': '\n',
-                    'line_format': 'pub const KS_{0} : u32 = {1};\n',
+                    'line_format': 'pub const {0}: u32 = {1};\n',
                     'fn': (lambda x: x),
-                    'post': '\n',
                 },
                 {   'regex': r'MODE_.*',
-                    'pre': 'bitflags! {\n\tpub flags Mode : u32 {\n',
-                    'line_format': '\t\tconst {0} = {1},\n',
-                    'fn': (lambda x: x),
-                    'post': '\t}\n}\n',
+                    'pre': '\n' +
+                            'bitflags! {{\n' +
+                            '#[repr(C)]\n' +
+                            '    pub struct Mode: u32 {{\n',
+                    'line_format': '        const {0} = {1};\n',
+                    'fn': (lambda x: '_'.join(x.split('_')[1:]) if not re.match(r'MODE_\d+', x) else x),
+                    'post': '    }\n}',
                 },
                 {
                     'regex': r'ARCH_.*',
-                    'pre': '#[derive(Debug, PartialEq, Clone, Copy)]\n' + 
-                            'pub enum Arch {\n',
-                    'line_format': '\t{0},\n',
+                    'pre': '\n' +
+                            '#[repr(C)]\n' +
+                            '#[derive(Debug, PartialEq, Clone, Copy)]\n' +
+                            'pub enum Arch {{\n',
+                    'line_format': '    {0} = {1},\n',
                     'fn': (lambda x: '_'.join(x.split('_')[1:])),
-                    'post': '}\n\n',
-                },
-                {   'regex': r'ARCH_.*',
-                    'pre': 'impl Arch {\n\t#[inline]\n\tpub fn val(&self) -> u32 {\n\t\tmatch *self {\n',
-                    'line_format': '\t\t\tArch::{0} => {1},\n',
-                    'fn': (lambda x: '_'.join(x.split('_')[1:])),
-                    'post': '\t\t}\n\t}\n}\n',
+                    'post': '}\n',
                 },
                 {
-                    'regex': r'OPT_([A-Z]+)$',
-                    'pre': '#[derive(Debug, PartialEq, Clone, Copy)]\n' + 
-                            'pub enum OptionType {\n',
-                    'line_format': '\t{0},\n',
+                    'regex': r'(OPT_([A-Z]+)|OPT_SYM_RESOLVER)$',
+                    'pre': '#[repr(C)]\n' +
+                            '#[derive(Debug, PartialEq, Clone, Copy)]\n' +
+                            'pub enum OptionType {{\n',
+                    'line_format': '    {0} = {1},\n',
                     'fn': (lambda x: '_'.join(x.split('_')[1:])),
-                    'post': '\tMAX,\n' +
-                            '}\n',
-                },
-                {   
-                    'regex': r'OPT_([A-Z]+)$',
-                    'pre': 'impl OptionType {\n\t#[inline]\n\tpub fn val(&self) -> u32 {\n\t\tmatch *self {\n',
-                    'line_format': '\t\t\tOptionType::{0} => {1},\n',
-                    'fn': (lambda x: '_'.join(x.split('_')[1:])),
-                    'post': '\t\t\tOptionType::MAX => 99\n' +
-                            '\t\t}\n\t}\n}\n',
+                    'post': '}\n',
                 },
                 {
-                    'regex': r'OPT_([A-Z]+\_)+[A-Z]+',
-                    'pre': 'bitflags! {\n\tpub flags OptionValue : libc::size_t {\n',
-                    'line_format': '\t\tconst {0} = {1},\n',
-                    'fn': (lambda x: x),
-                    'post': '\t}\n}\n',
+                    'regex': r'OPT_(?!SYM)([A-Z]+\_)+[A-Z]+',
+                    'pre': 'bitflags! {{\n'
+                            '#[repr(C)]\n' +
+                            '    pub struct OptionValue: libc::size_t {{\n',
+                    'line_format': '        const {0} = {1};\n',
+                    'fn': (lambda x: '_'.join(x.split('_')[1:])),
+                    'post': '    }\n}\n',
                 },
                 {
-                    'regex': r'ERR_.*',
-                    'pre': 'bitflags! {\n\tpub flags Error : u32 {\n',
-                    'line_format': '\t\tconst {0} = {1},\n',
-                    'fn': (lambda x: x),
-                    'post': '\t}\n}\n',
+                    'regex': r'ERR_(.*)',
+                    'pre': 'bitflags! {{\n' +
+                            '#[repr(C)]\n' +
+                            '    pub struct Error: u32 {{\n',
+                    'line_format': '        const {0} = {1};\n',
+                    'fn': (lambda x: '_'.join(x.split('_')[1:])),
+                    'post': '    }\n}',
                 },
             ],
     },
@@ -104,13 +115,14 @@ template = {
             'systemz.h': 'systemz',
             'ppc.h': 'ppc',
             'hexagon.h': 'hexagon',
+            'evm.h': 'evm',
             'keystone.h': 'keystone',
             'comment_open': '/*',
             'comment_close': '*/',
             'out_file': './go/keystone/%s_const.go',
             'rules': [
                 {
-                    'regex': r'(API)_.*',
+                    'regex': r'API_.*',
                     'pre': 'const (\n',
                     'line_format': '\t{0} = {1}\n',
                     'fn': (lambda x: x),
@@ -165,6 +177,7 @@ template = {
             'systemz.h': 'systemz',
             'ppc.h': 'ppc',
             'hexagon.h': 'hexagon',
+            'evm.h': 'evm',
             'keystone.h': 'keystone',
             'comment_open': '#',
             'comment_close': '',
@@ -189,6 +202,7 @@ template = {
             'systemz.h': 'systemz',
             'ppc.h': 'ppc',
             'hexagon.h': 'hexagon',
+            'evm.h': 'evm',
             'keystone.h': 'keystone',
             'comment_open': '//',
             'comment_close': '',
@@ -213,6 +227,7 @@ template = {
             'systemz.h': 'systemz',
             'ppc.h': 'ppc',
             'hexagon.h': 'hexagon',
+            'evm.h': 'evm',
             'keystone.h': 'keystone',
             'comment_open': '#',
             'comment_close': '',
@@ -220,6 +235,62 @@ template = {
                 {
                     'regex': r'.*',
                     'line_format': '\tKS_{0} = {1}\n',
+                    'fn': (lambda x: x),
+                },
+            ]
+    },
+    'csharp': {
+            'header': "// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [%sConstants.cs]\nnamespace KeystoneNET\n{",
+            'footer': "}",
+            'out_file': './csharp/KeystoneNET/KeystoneNET/Constants/%sConstants.cs',
+            # prefixes for constant filenames of all archs - case sensitive
+            'keystone.h': 'keystone',
+            'arm.h': 'arm',
+            'arm64.h': 'arm64',
+            'mips.h': 'mips',
+            'x86.h': 'x86',
+            'sparc.h': 'sparc',
+            'systemz.h': 'systemz',
+            'ppc.h': 'ppc',
+            'hexagon.h': 'hexagon',
+            'evm.h': 'evm',
+            'keystone.h': 'keystone',
+            'comment_open': '//',
+            'comment_close': '',
+            'rules': [
+                {
+                    'regex': r'(ARCH)_.*',
+                    'pre': '\n\tpublic enum KeystoneArchitecture : int\n\t{{\n',
+                    'post': '\t}',
+                    'line_format': '\t\tKS_{0} = {1},\n',
+                    'fn': (lambda x: x),
+                },
+                {
+                    'regex': r'(MODE)_.*',
+                    'pre': '\n\tpublic enum KeystoneMode : uint\n\t{{\n',
+                    'post': '\t}',
+                    'line_format': '\t\tKS_{0} = {1},\n',
+                    'fn': (lambda x: x),
+                },
+                {
+                    'regex': r'(ERR)_.*',
+                    'pre': '\n\tpublic enum {0}Error : short\n\t{{\n',
+                    'post': '\t}',
+                    'line_format': '\t\tKS_{0} = {1},\n',
+                    'fn': (lambda x: x),
+                },
+                {
+                    'regex': r'((OPT_([A-Z]+))|(OPT_SYM_RESOLVER))$',
+                    'pre': '\n\tpublic enum KeystoneOptionType : short\n\t{{\n',
+                    'post': '\t}',
+                    'line_format': '\t\tKS_{0} = {1},\n',
+                    'fn': (lambda x: x),
+                },
+                {
+                    'regex': r'OPT_(?!SYM)([A-Z]+\_)+[A-Z]+',
+                    'pre': '\n\tpublic enum KeystoneOptionValue : short\n\t{{\n',
+                    'post': '\t}',
+                    'line_format': '\t\tKS_{0} = {1},\n',
                     'fn': (lambda x: x),
                 },
             ]
@@ -236,6 +307,8 @@ def gen(lang):
 
     templ = template[lang]
     for target in include:
+        if target not in templ:
+            continue
         prefix = templ[target]
         if target == 'keystone.h':
             prefix = 'keystone'
@@ -330,7 +403,7 @@ def gen(lang):
                 continue
 
             if rule.get('pre'):
-                outfile.write (rule.get('pre'))
+                outfile.write(rule.get('pre').format(CamelCase(prefix)))
 
             for const in consts2:
                 lhs_strip = const[0]

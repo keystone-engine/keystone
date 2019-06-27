@@ -14,7 +14,7 @@
 #include "llvm/Support/StringPool.h"
 #include "llvm/ADT/StringRef.h"
 
-using namespace llvm;
+using namespace llvm_ks;
 
 StringPool::StringPool() {}
 

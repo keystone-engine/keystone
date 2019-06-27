@@ -2,7 +2,7 @@ Documention of Keystone assembler engine.
 
 * How to compile & install Keystone from source.
 
-    COMPILE.md
+    [COMPILE.md](COMPILE.md)
 
 * How to compile & install Keystone from packages.
 
@@ -14,4 +14,4 @@ Documention of Keystone assembler engine.
 
 * Compare Keystone & LLVM.
 
-	http://keystone-engine.org/docs/beyond_qemu.html
+	http://keystone-engine.org/docs/beyond_llvm.html

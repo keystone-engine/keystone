@@ -18,7 +18,7 @@
 #include "llvm/MC/MCExpr.h"
 #include "llvm/Support/ErrorHandling.h"
 
-namespace llvm {
+namespace llvm_ks {
 
 class AArch64MCExpr : public MCTargetExpr {
 public:
@@ -162,6 +162,6 @@ public:
 
   static bool classof(const AArch64MCExpr *) { return true; }
 };
-} // end namespace llvm
+} // end namespace llvm_ks
 
 #endif

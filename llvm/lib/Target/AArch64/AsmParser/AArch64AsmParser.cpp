@@ -37,7 +37,7 @@
 #include "keystone/arm64.h"
 
 #include <cstdio>
-using namespace llvm;
+using namespace llvm_ks;
 
 namespace {
 
@@ -768,9 +768,7 @@ public:
     if (!MCE)
       return true;
     int64_t Val = MCE->getValue();
-    if (Val & 0x3)
-      return false;
-    return (Val >= -(0x2000000 << 2) && Val <= (0x1ffffff << 2));
+    return ((Val & 0x3) == 0);
   }
   bool isPCRelLabel19() const {
     if (!isImm())
@@ -779,9 +777,7 @@ public:
     if (!MCE)
       return true;
     int64_t Val = MCE->getValue();
-    if (Val & 0x3)
-      return false;
-    return (Val >= -(0x40000 << 2) && Val <= (0x3ffff << 2));
+    return ((Val & 0x3) == 0);
   }
   bool isBranchTarget14() const {
     if (!isImm())
@@ -790,9 +786,7 @@ public:
     if (!MCE)
       return true;
     int64_t Val = MCE->getValue();
-    if (Val & 0x3)
-      return false;
-    return (Val >= -(0x2000 << 2) && Val <= (0x1fff << 2));
+    return ((Val & 0x3) == 0);
   }
 
   bool
@@ -1140,9 +1134,10 @@ public:
 
     if (const MCConstantExpr *CE = dyn_cast<MCConstantExpr>(Imm.Val)) {
       int64_t Val = CE->getValue();
+      int64_t Offset = Val - Ctx.getBaseAddress();
       int64_t Min = - (4096 * (1LL << (21 - 1)));
       int64_t Max = 4096 * ((1LL << (21 - 1)) - 1);
-      return (Val % 4096) == 0 && Val >= Min && Val <= Max;
+      return (Val % 4096) == 0 && Offset >= Min && Offset <= Max;
     }
 
     return true;
@@ -2945,7 +2940,7 @@ bool AArch64AsmParser::parseRegister(OperandVector &Operands)
       bool valid;
       int64_t Val = Tok.getIntVal(valid);
       if (!valid)
-        return MatchOperand_ParseFail;
+        return true;
       if (Val == 1) {
         Parser.Lex();
         if (getLexer().getKind() == AsmToken::RBrac) {
@@ -4499,7 +4494,7 @@ bool AArch64AsmParser::parseDirectiveLOH(StringRef IDVal, SMLoc Loc)
     bool valid;
     int64_t Id = getParser().getTok().getIntVal(valid);
     if (!valid)
-      return MatchOperand_ParseFail;
+      return true;
     if (Id <= -1U && !isValidMCLOHType(Id))
       //return TokError("invalid numeric identifier in directive");
       return true;

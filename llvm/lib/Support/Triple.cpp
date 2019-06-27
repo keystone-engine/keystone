@@ -15,7 +15,7 @@
 #include "llvm/Support/TargetParser.h"
 #include "llvm/Support/Host.h"
 #include <cstring>
-using namespace llvm;
+using namespace llvm_ks;
 
 const char *Triple::getArchTypeName(ArchType Kind) {
   switch (Kind) {
@@ -1086,57 +1086,57 @@ void Triple::setOSAndEnvironmentName(StringRef Str) {
   setTriple(getArchName() + "-" + getVendorName() + "-" + Str);
 }
 
-static unsigned getArchPointerBitWidth(llvm::Triple::ArchType Arch) {
+static unsigned getArchPointerBitWidth(llvm_ks::Triple::ArchType Arch) {
   switch (Arch) {
-  case llvm::Triple::UnknownArch:
+  case llvm_ks::Triple::UnknownArch:
     return 0;
 
-  case llvm::Triple::avr:
-  case llvm::Triple::msp430:
+  case llvm_ks::Triple::avr:
+  case llvm_ks::Triple::msp430:
     return 16;
 
-  case llvm::Triple::arm:
-  case llvm::Triple::armeb:
-  case llvm::Triple::hexagon:
-  case llvm::Triple::le32:
-  case llvm::Triple::mips:
-  case llvm::Triple::mipsel:
-  case llvm::Triple::nvptx:
-  case llvm::Triple::ppc:
-  case llvm::Triple::r600:
-  case llvm::Triple::sparc:
-  case llvm::Triple::sparcel:
-  case llvm::Triple::tce:
-  case llvm::Triple::thumb:
-  case llvm::Triple::thumbeb:
-  case llvm::Triple::x86:
-  case llvm::Triple::xcore:
-  case llvm::Triple::amdil:
-  case llvm::Triple::hsail:
-  case llvm::Triple::spir:
-  case llvm::Triple::kalimba:
-  case llvm::Triple::shave:
-  case llvm::Triple::wasm32:
+  case llvm_ks::Triple::arm:
+  case llvm_ks::Triple::armeb:
+  case llvm_ks::Triple::hexagon:
+  case llvm_ks::Triple::le32:
+  case llvm_ks::Triple::mips:
+  case llvm_ks::Triple::mipsel:
+  case llvm_ks::Triple::nvptx:
+  case llvm_ks::Triple::ppc:
+  case llvm_ks::Triple::r600:
+  case llvm_ks::Triple::sparc:
+  case llvm_ks::Triple::sparcel:
+  case llvm_ks::Triple::tce:
+  case llvm_ks::Triple::thumb:
+  case llvm_ks::Triple::thumbeb:
+  case llvm_ks::Triple::x86:
+  case llvm_ks::Triple::xcore:
+  case llvm_ks::Triple::amdil:
+  case llvm_ks::Triple::hsail:
+  case llvm_ks::Triple::spir:
+  case llvm_ks::Triple::kalimba:
+  case llvm_ks::Triple::shave:
+  case llvm_ks::Triple::wasm32:
     return 32;
 
-  case llvm::Triple::aarch64:
-  case llvm::Triple::aarch64_be:
-  case llvm::Triple::amdgcn:
-  case llvm::Triple::bpfel:
-  case llvm::Triple::bpfeb:
-  case llvm::Triple::le64:
-  case llvm::Triple::mips64:
-  case llvm::Triple::mips64el:
-  case llvm::Triple::nvptx64:
-  case llvm::Triple::ppc64:
-  case llvm::Triple::ppc64le:
-  case llvm::Triple::sparcv9:
-  case llvm::Triple::systemz:
-  case llvm::Triple::x86_64:
-  case llvm::Triple::amdil64:
-  case llvm::Triple::hsail64:
-  case llvm::Triple::spir64:
-  case llvm::Triple::wasm64:
+  case llvm_ks::Triple::aarch64:
+  case llvm_ks::Triple::aarch64_be:
+  case llvm_ks::Triple::amdgcn:
+  case llvm_ks::Triple::bpfel:
+  case llvm_ks::Triple::bpfeb:
+  case llvm_ks::Triple::le64:
+  case llvm_ks::Triple::mips64:
+  case llvm_ks::Triple::mips64el:
+  case llvm_ks::Triple::nvptx64:
+  case llvm_ks::Triple::ppc64:
+  case llvm_ks::Triple::ppc64le:
+  case llvm_ks::Triple::sparcv9:
+  case llvm_ks::Triple::systemz:
+  case llvm_ks::Triple::x86_64:
+  case llvm_ks::Triple::amdil64:
+  case llvm_ks::Triple::hsail64:
+  case llvm_ks::Triple::spir64:
+  case llvm_ks::Triple::wasm64:
     return 64;
   }
   llvm_unreachable("Invalid architecture value");
@@ -1391,17 +1391,17 @@ StringRef Triple::getARMCPUForArch(StringRef MArch) const {
 
   // Some defaults are forced.
   switch (getOS()) {
-  case llvm::Triple::FreeBSD:
-  case llvm::Triple::NetBSD:
+  case llvm_ks::Triple::FreeBSD:
+  case llvm_ks::Triple::NetBSD:
     if (!MArch.empty() && MArch == "v6")
       return "arm1176jzf-s";
     break;
-  case llvm::Triple::Win32:
+  case llvm_ks::Triple::Win32:
     // FIXME: this is invalid for WindowsCE
     return "cortex-a9";
-  case llvm::Triple::MacOSX:
-  case llvm::Triple::IOS:
-  case llvm::Triple::WatchOS:
+  case llvm_ks::Triple::MacOSX:
+  case llvm_ks::Triple::IOS:
+  case llvm_ks::Triple::WatchOS:
     if (MArch == "v7k")
       return "cortex-a7";
     break;
@@ -1419,22 +1419,22 @@ StringRef Triple::getARMCPUForArch(StringRef MArch) const {
   // If no specific architecture version is requested, return the minimum CPU
   // required by the OS and environment.
   switch (getOS()) {
-  case llvm::Triple::NetBSD:
+  case llvm_ks::Triple::NetBSD:
     switch (getEnvironment()) {
-    case llvm::Triple::GNUEABIHF:
-    case llvm::Triple::GNUEABI:
-    case llvm::Triple::EABIHF:
-    case llvm::Triple::EABI:
+    case llvm_ks::Triple::GNUEABIHF:
+    case llvm_ks::Triple::GNUEABI:
+    case llvm_ks::Triple::EABIHF:
+    case llvm_ks::Triple::EABI:
       return "arm926ej-s";
     default:
       return "strongarm";
     }
-  case llvm::Triple::NaCl:
+  case llvm_ks::Triple::NaCl:
     return "cortex-a8";
   default:
     switch (getEnvironment()) {
-    case llvm::Triple::EABIHF:
-    case llvm::Triple::GNUEABIHF:
+    case llvm_ks::Triple::EABIHF:
+    case llvm_ks::Triple::GNUEABIHF:
       return "arm1176jzf-s";
     default:
       return "arm7tdmi";

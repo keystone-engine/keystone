@@ -18,7 +18,7 @@
 #undef mips
 #undef sparc
 
-namespace llvm {
+namespace llvm_ks {
 
 /// Triple - Helper class for working with autoconf configuration names. For
 /// historical reasons, we also call these 'triples' (they used to contain
@@ -611,7 +611,7 @@ public:
   ///
   /// \returns A new triple with a 32-bit architecture or an unknown
   ///          architecture if no such variant can be found.
-  llvm::Triple get32BitArchVariant() const;
+  llvm_ks::Triple get32BitArchVariant() const;
 
   /// Form a triple with a 64-bit variant of the current architecture.
   ///
@@ -619,7 +619,7 @@ public:
   ///
   /// \returns A new triple with a 64-bit architecture or an unknown
   ///          architecture if no such variant can be found.
-  llvm::Triple get64BitArchVariant() const;
+  llvm_ks::Triple get64BitArchVariant() const;
 
   /// Form a triple with a big endian variant of the current architecture.
   ///
@@ -627,7 +627,7 @@ public:
   ///
   /// \returns A new triple with a big endian architecture or an unknown
   ///          architecture if no such variant can be found.
-  llvm::Triple getBigEndianArchVariant() const;
+  llvm_ks::Triple getBigEndianArchVariant() const;
 
   /// Form a triple with a little endian variant of the current architecture.
   ///
@@ -635,7 +635,7 @@ public:
   ///
   /// \returns A new triple with a little endian architecture or an unknown
   ///          architecture if no such variant can be found.
-  llvm::Triple getLittleEndianArchVariant() const;
+  llvm_ks::Triple getLittleEndianArchVariant() const;
 
   /// Get the (LLVM) name of the minimum ARM CPU for the arch we are targeting.
   ///

@@ -9,7 +9,7 @@
 
 #ifdef GET_SUBTARGETINFO_ENUM
 #undef GET_SUBTARGETINFO_ENUM
-namespace llvm {
+namespace llvm_ks {
 namespace ARM {
 enum : uint64_t {
   ARMv2 = 0,
@@ -124,9 +124,9 @@ enum : uint64_t {
 
 #ifdef GET_SUBTARGETINFO_MC_DESC
 #undef GET_SUBTARGETINFO_MC_DESC
-namespace llvm {
+namespace llvm_ks {
 // Sorted (by key) array of values for CPU features.
-extern const llvm::SubtargetFeatureKV ARMFeatureKV[] = {
+extern const llvm_ks::SubtargetFeatureKV ARMFeatureKV[] = {
   { "32bit", "Prefer 32-bit Thumb instrs", { ARM::FeaturePref32BitThumb }, { } },
   { "8msecext", "Enable support for ARMv8-M Security Extensions", { ARM::Feature8MSecExt }, { } },
   { "a12", "Cortex-A12 ARM processors", { ARM::ProcA12 }, { } },
@@ -234,7 +234,7 @@ extern const llvm::SubtargetFeatureKV ARMFeatureKV[] = {
 };
 
 // Sorted (by key) array of values for CPU subtype.
-extern const llvm::SubtargetFeatureKV ARMSubTypeKV[] = {
+extern const llvm_ks::SubtargetFeatureKV ARMSubTypeKV[] = {
   { "arm1020e", "Select the arm1020e processor", { ARM::ARMv5te }, { } },
   { "arm1020t", "Select the arm1020t processor", { ARM::ARMv5t }, { } },
   { "arm1022e", "Select the arm1022e processor", { ARM::ARMv5te }, { } },
@@ -350,7 +350,7 @@ static inline MCSubtargetInfo *createARMMCSubtargetInfoImpl(const Triple &TT, St
 #include "llvm/Support/raw_ostream.h"
 // ParseSubtargetFeatures - Parses features string setting specified
 // subtarget options.
-void llvm::ARMSubtarget::ParseSubtargetFeatures(StringRef CPU, StringRef FS) {
+void llvm_ks::ARMSubtarget::ParseSubtargetFeatures(StringRef CPU, StringRef FS) {
   DEBUG(dbgs() << "\nFeatures:" << FS);
   DEBUG(dbgs() << "\nCPU:" << CPU << "\n\n");
   InitMCProcessorInfo(CPU, FS);

@@ -7,6 +7,8 @@ project(keystone)
 set(KEYSTONE_VERSION_MAJOR 0)
 set(KEYSTONE_VERSION_MINOR 9)
 
+option(KEYSTONE_BUILD_STATIC_RUNTIME "Embed static runtime" ON)
+
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "No build type selected, default to Debug")
   set(CMAKE_BUILD_TYPE "Debug")
@@ -25,6 +27,10 @@ if (POLICY CMP0051)
   cmake_policy(SET CMP0051 OLD)
 endif()
 
+if (POLICY CMP0063)
+  set(CMAKE_POLICY_DEFAULT_CMP0063 NEW) # automatic when 3.3.2 is required
+endif()
+
 if (CMAKE_VERSION VERSION_LESS 3.1.20141117)
   set(cmake_3_2_USES_TERMINAL)
 else()
@@ -33,7 +39,34 @@ endif()
 
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /EHsc")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /EHsc")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /EHsc")
+else()
+    set(CMAKE_C_VISIBILITY_PRESET hidden)
+    set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+
+    # Use GNUInstallDirs to set LLVM_LIBDIR_SUFFIX. This should automatically
+    # handle cases where the libdir should be lib/, lib64/, or lib/<arch>/
+    # depending on the target system and cmake options.
+    include(GNUInstallDirs)
+    string(REGEX REPLACE "lib(.*)$" "\\1" LLVM_LIBDIR_SUFFIX "${CMAKE_INSTALL_LIBDIR}")
+    set(LLVM_LIBDIR_SUFFIX "${LLVM_LIBDIR_SUFFIX}" CACHE STRING "Define suffix of library directory name (32/64)")
 endif()
+
+# Force static runtime libraries
+if (KEYSTONE_BUILD_STATIC_RUNTIME)
+    FOREACH(flag
+        CMAKE_C_FLAGS_RELEASE CMAKE_C_FLAGS_RELWITHDEBINFO
+        CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_DEBUG_INIT
+        CMAKE_CXX_FLAGS_RELEASE  CMAKE_CXX_FLAGS_RELWITHDEBINFO
+        CMAKE_CXX_FLAGS_DEBUG  CMAKE_CXX_FLAGS_DEBUG_INIT)
+        if (MSVC)
+            STRING(REPLACE "/MD"  "/MT" "${flag}" "${${flag}}")
+            SET("${flag}" "${${flag}} /EHsc")
+        endif (MSVC)
+    ENDFOREACH()
+endif ()
 
 add_subdirectory(llvm)
 
@@ -81,3 +114,5 @@ configure_file(
 
 add_custom_target(uninstall
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/CMakeUninstall.cmake)
+
+add_subdirectory(suite/fuzz)

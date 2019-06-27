@@ -30,21 +30,21 @@
 # include <fcntl.h>
 #endif
 
-using namespace llvm;
+using namespace llvm_ks;
 
-void llvm::report_fatal_error(const char *Reason, bool GenCrashDiag) {
+void llvm_ks::report_fatal_error(const char *Reason, bool GenCrashDiag) {
   report_fatal_error(Twine(Reason), GenCrashDiag);
 }
 
-void llvm::report_fatal_error(const std::string &Reason, bool GenCrashDiag) {
+void llvm_ks::report_fatal_error(const std::string &Reason, bool GenCrashDiag) {
   report_fatal_error(Twine(Reason), GenCrashDiag);
 }
 
-void llvm::report_fatal_error(StringRef Reason, bool GenCrashDiag) {
+void llvm_ks::report_fatal_error(StringRef Reason, bool GenCrashDiag) {
   report_fatal_error(Twine(Reason), GenCrashDiag);
 }
 
-void llvm::report_fatal_error(const Twine &Reason, bool GenCrashDiag) {
+void llvm_ks::report_fatal_error(const Twine &Reason, bool GenCrashDiag) {
   // Blast the result out to stderr.  We don't try hard to make sure this
   // succeeds (e.g. handling EINTR) and we can't use errs() here because
   // raw ostreams can call report_fatal_error.
@@ -63,7 +63,7 @@ void llvm::report_fatal_error(const Twine &Reason, bool GenCrashDiag) {
   exit(1);
 }
 
-void llvm::llvm_unreachable_internal(const char *msg, const char *file,
+void llvm_ks::llvm_unreachable_internal(const char *msg, const char *file,
                                      unsigned line) {
   // This code intentionally doesn't call the ErrorHandler callback, because
   // llvm_unreachable is intended to be used to indicate "impossible"
@@ -85,7 +85,7 @@ void llvm::llvm_unreachable_internal(const char *msg, const char *file,
   case x:                                                                      \
     return make_error_code(errc::y)
 
-std::error_code llvm::mapWindowsError(unsigned EV) {
+std::error_code llvm_ks::mapWindowsError(unsigned EV) {
   switch (EV) {
     MAP_ERR_TO_COND(ERROR_ACCESS_DENIED, permission_denied);
     MAP_ERR_TO_COND(ERROR_ALREADY_EXISTS, file_exists);

@@ -27,7 +27,7 @@
 
 //#include <iostream>
 
-using namespace llvm;
+using namespace llvm_ks;
 
 // Pin the vtables to this file.
 MCTargetStreamer::~MCTargetStreamer() {}
