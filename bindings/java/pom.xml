@@ -16,7 +16,7 @@
     <version>0.9.1-0</version>
 
     <name>Keystone Java bindings</name>
-    <description>Keystone assembler framework: Core (Arm, Arm64, Hexagon, Mips, PowerPC, Sparc, SystemZ and X86) orm.</description>
+    <description>Keystone assembler framework: Core (Arm, Arm64, Hexagon, Mips, MSP430, PowerPC, Sparc, SystemZ and X86) orm.</description>
     <url>https://github.com/keystone-engine/keystone/tree/master/bindings/java</url>
 
     <properties>

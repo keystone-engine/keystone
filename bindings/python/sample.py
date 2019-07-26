@@ -94,5 +94,8 @@ if __name__ == '__main__':
     # SystemZ
     test_ks(KS_ARCH_SYSTEMZ, KS_MODE_BIG_ENDIAN, b"a %r0, 4095(%r15,%r1)")
 
+    # MSP430
+    test_ks(KS_ARCH_MSP430, KS_MODE_LITTLE_ENDIAN, b"and r12, r13")
+
     # test symbol resolver
     test_sym_resolver()

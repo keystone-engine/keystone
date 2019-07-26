@@ -11,6 +11,7 @@
 #define LLVM_MC_MCPARSER_MCASMPARSER_H
 
 #include "llvm/ADT/ArrayRef.h"
+#include "llvm/ADT/STLExtras.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/MC/MCParser/AsmLexer.h"
 #include "llvm/Support/DataTypes.h"
@@ -79,6 +80,11 @@ public:
 
   // save Keystone error
   unsigned int KsError;
+
+  bool parseMany(function_ref<bool()> parseOne, bool hasComma = true);
+  bool parseOptionalToken(AsmToken::TokenKind T);
+  bool parseToken(AsmToken::TokenKind T, const Twine &Msg);
+  bool parseEOL(const Twine &Msg);
 
   virtual ~MCAsmParser();
 
