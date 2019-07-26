@@ -816,6 +816,7 @@ addNegOperand(MCInst &Inst, MCOperand &Op, MCContext &Ctx) {
 void PPCAsmParser::ProcessInstruction(MCInst &Inst,
                                       const OperandVector &Operands) {
   int Opcode = Inst.getOpcode();
+  uint64_t address = Inst.getAddress();
   switch (Opcode) {
   case PPC::DCBTx:
   case PPC::DCBTT:
@@ -1181,6 +1182,8 @@ void PPCAsmParser::ProcessInstruction(MCInst &Inst,
     break;
   }
   }
+  // if original instruction was overwritten, need to preserve its address
+  Inst.setAddress(address);
 }
 
 bool PPCAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
