@@ -9,15 +9,18 @@ package: keystone-sys/keystone
 	cd keystone-sys && cargo package -vv
 	cargo package -vv
 
+# For packaging we need to embed the keystone source in the crate
 keystone-sys/keystone:
 	rsync -a ../.. keystone-sys/keystone --exclude bindings --filter ":- ../../.gitignore"
 
 clean:
-	rm -rf target/ keystone-sys/target/ keystone-sys/keystone/
+	rm -rf keystone-sys/keystone/
+	cargo clean
 
 check:
-	cargo test
+# 	Make sure to only use one test thread as keystone isn't thread-safe
+	cargo test -- --test-threads=1
 
 gen_const:
-	cd .. && python const_generator.py rust
+	cd .. && python2 const_generator.py rust
 	cargo fmt

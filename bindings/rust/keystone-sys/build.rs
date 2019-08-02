@@ -1,42 +1,45 @@
+#[cfg(feature = "build_keystone_cmake")]
+extern crate cmake;
 #[cfg(feature = "use_system_keystone")]
 extern crate pkg_config;
 
-use std::env;
-use std::path::PathBuf;
-use std::process::Command;
+#[cfg(all(not(windows), feature = "build_keystone_cmake"))]
+use std::os::unix::fs::symlink;
+#[cfg(all(windows, feature = "build_keystone_cmake"))]
+use std::os::windows::fs::symlink_dir as symlink;
 
+#[cfg(feature = "build_keystone_cmake")]
+use std::path::Path;
+
+#[cfg(feature = "build_keystone_cmake")]
 fn build_with_cmake() {
-    let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
-    let cmake_dir = PathBuf::from("keystone");
-    let build_dir = cmake_dir.join("build");
-
-    if !cmake_dir.exists() {
-        run(Command::new("ln").arg("-s").arg("../../..").arg("keystone"));
+    if !Path::new("keystone").exists() {
+        // This only happens when using the crate via a `git` reference as the
+        // published version already embeds keystone's source.
+        let pwd = std::env::current_dir().unwrap();
+        let keystone_dir = pwd.ancestors().skip(3).next().unwrap();
+        symlink(keystone_dir, "keystone").expect("failed to symlink keystone");
     }
 
-    run(Command::new("mkdir")
-        .current_dir(&cmake_dir)
-        .arg("-p")
-        .arg("build"));
+    let dest = cmake::Config::new("keystone")
+        .define("BUILD_LIBS_ONLY", "1")
+        .define("BUILD_SHARED_LIBS", "OFF")
+        .define("LLVM_TARGETS_TO_BUILD", "all")
+        // Prevent python from leaving behind `.pyc` files which break `cargo package`
+        .env("PYTHONDONTWRITEBYTECODE", "1")
+        .build();
 
-    run(Command::new("../make-share.sh").current_dir(&build_dir));
-
-    run(Command::new("cmake").current_dir(&build_dir).args(&[
-        &format!("-DCMAKE_INSTALL_PREFIX={}", out_dir.display()),
-        "-DCMAKE_BUILD_TYPE=Release",
-        "-DBUILD_LIBS_ONLY=1",
-        "-DCMAKE_OSX_ARCHITECTURES=",
-        "-DBUILD_SHARED_LIBS=ON",
-        "-DLLVM_TARGET_ARCH=host",
-        "-G",
-        "Unix Makefiles",
-        "..",
-    ]));
-
-    run(Command::new("make").current_dir(&build_dir).arg("install"));
-
-    println!("cargo:rustc-link-search=native={}/lib", out_dir.display());
+    println!("cargo:rustc-link-search=native={}/lib", dest.display());
     println!("cargo:rustc-link-lib=keystone");
+
+    let target = std::env::var("TARGET").unwrap();
+    if target.contains("apple") {
+        println!("cargo:rustc-link-lib=dylib=c++");
+    } else if target.contains("linux") {
+        println!("cargo:rustc-link-lib=dylib=stdc++");
+    } else if target.contains("windows") {
+        println!("cargo:rustc-link-lib=dylib=shell32");
+    }
 }
 
 fn main() {
@@ -44,24 +47,7 @@ fn main() {
         #[cfg(feature = "use_system_keystone")]
         pkg_config::find_library("keystone").expect("Could not find system keystone");
     } else {
+        #[cfg(feature = "build_keystone_cmake")]
         build_with_cmake();
     }
-}
-
-fn run(cmd: &mut Command) {
-    println!("run: {:?}", cmd);
-    let status = match cmd.status() {
-        Ok(s) => s,
-        Err(ref e) => fail(&format!("failed to execute command: {}", e)),
-    };
-    if !status.success() {
-        fail(&format!(
-            "command did not execute successfully, got: {}",
-            status
-        ));
-    }
-}
-
-fn fail(s: &str) -> ! {
-    panic!("\n{}\n\nbuild script failed, must exit now", s);
 }

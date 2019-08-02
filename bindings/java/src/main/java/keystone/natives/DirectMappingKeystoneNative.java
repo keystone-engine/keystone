@@ -81,7 +81,7 @@ public final class DirectMappingKeystoneNative {
      * @param numberOfStatements number of statements successfully processed
      * @return 0 on success, or -1 on failure.
      */
-    public static native int ks_asm(Pointer engine, String assembly, int address, PointerByReference machineCodeBuffer,
+    public static native int ks_asm(Pointer engine, String assembly, long address, PointerByReference machineCodeBuffer,
                                     IntByReference machineCodeSize, IntByReference numberOfStatements);
 
     /**
