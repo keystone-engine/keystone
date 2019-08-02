@@ -581,6 +581,10 @@ AsmParser::AsmParser(SourceMgr &SM, MCContext &Ctx, MCStreamer &Out,
 AsmParser::~AsmParser() {
   assert((HadError || ActiveMacros.empty()) &&
          "Unexpected active macro instantiation!");
+    
+  // Restore the saved diagnostics handler and context for use during
+  // finalization
+  SrcMgr.setDiagHandler(SavedDiagHandler, SavedDiagContext);  
 }
 
 void AsmParser::printMacroInstantiations() {
