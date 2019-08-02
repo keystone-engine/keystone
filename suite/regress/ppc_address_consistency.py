@@ -1,25 +1,30 @@
 from keystone import *
 import regress
 
+# Github issue #427
 # Author: Edward Larson
 
 class TestAddressConsistency(regress.RegressTest):
-    def kstest_address_consistency(self, inst_assembly):
+    def kstest_address_consistency(self, preceding_assembly, start_address=0x1000, branch_address=0x1004):
+        """
+        Check that a relative branch to itself at branch_address emits the same machine code, independent of the
+        inst_Assembly comes before it.
+        :param preceding_assembly: Instruction(s) to be assembled before the branch instruction
+        :param start_address: VM address of the beginning of preceding_assembly
+        :param branch_address: VM address of the branch instruction
+        :return:
+        """
         ks = Ks(KS_ARCH_PPC, KS_MODE_32 | KS_MODE_BIG_ENDIAN)
 
+        branch_assembly = 'b ' + hex(branch_address)
+        expected_branch_encoding, _ = ks.asm(branch_assembly, branch_address)
 
-        # relative branch to its own address should always be encoded with branch target 0
-        start_address = 0x1000
-        branch_assembly = "b 0x1004"
-        branch_mc = [0x48, 0x00, 0x00, 0x00]
-
-        code = inst_assembly + "; " + branch_assembly
+        code = preceding_assembly + "; " + branch_assembly
 
         encoding, count = ks.asm(code, start_address)
+        emitted_branch_encoding = encoding[-4:]
 
-        last_instruction_mc = encoding[-4:]
-
-        self.assertEqual(branch_mc, last_instruction_mc)
+        self.assertEqual(emitted_branch_encoding, expected_branch_encoding)
 
     def runTest(self):
         # un-aliased instructions
