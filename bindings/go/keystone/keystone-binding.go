@@ -5,7 +5,7 @@
 // +build darwin,linux,cgo
 package keystone
 
-// #cgo LDFLAGS: -lkeystone
+// #cgo LDFLAGS: -lkeystone -lstdc++ -lm
 // #include <keystone/keystone.h>
 import "C"
 import "unsafe"
