@@ -61,6 +61,12 @@ inline void Writer<big>::write<double>(double Val) {
   write(DoubleToBits(Val));
 }
 
+template <typename value_type>
+inline void write(raw_ostream &os, value_type value, endianness endian) {
+  value = byte_swap<value_type>(value, endian);
+  os.write((const char *)&value, sizeof(value_type));
+}
+
 } // end namespace endian
 
 } // end namespace support

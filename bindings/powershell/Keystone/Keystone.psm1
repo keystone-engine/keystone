@@ -71,6 +71,8 @@ function Get-KeystoneAssembly {
 			'KS_ARCH_SPARC',
 			'KS_ARCH_SYSTEMZ',
 			'KS_ARCH_HEXAGON',
+			'KS_ARCH_EVM',
+			'KS_ARCH_MSP430',
 			'KS_ARCH_MAX')
 		]
 		[String]$Architecture,

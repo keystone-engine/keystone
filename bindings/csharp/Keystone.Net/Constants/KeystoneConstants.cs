@@ -3,38 +3,40 @@ namespace Keystone
 {
 	public enum Architecture : int
 	{
-		ARM = 1,
-		ARM64 = 2,
-		MIPS = 3,
-		X86 = 4,
-		PPC = 5,
-		SPARC = 6,
-		SYSTEMZ = 7,
-		HEXAGON = 8,
-		MAX = 9,
+		KS_ARCH_ARM = 1,
+		KS_ARCH_ARM64 = 2,
+		KS_ARCH_MIPS = 3,
+		KS_ARCH_X86 = 4,
+		KS_ARCH_PPC = 5,
+		KS_ARCH_SPARC = 6,
+		KS_ARCH_SYSTEMZ = 7,
+		KS_ARCH_HEXAGON = 8,
+		KS_ARCH_EVM = 9,
+		KS_ARCH_MSP430 = 10,
+		KS_ARCH_MAX = 11,
 	}
 
 	public enum Mode : uint
 	{
-		LITTLE_ENDIAN = 0,
-		BIG_ENDIAN = 1073741824,
-		ARM = 1,
-		THUMB = 16,
-		V8 = 64,
-		MICRO = 16,
-		MIPS3 = 32,
-		MIPS32R6 = 64,
-		MIPS32 = 4,
-		MIPS64 = 8,
-		X16 = 2,
-		X32 = 4,
-		X64 = 8,
-		PPC32 = 4,
-		PPC64 = 8,
-		QPX = 16,
-		SPARC32 = 4,
-		SPARC64 = 8,
-		V9 = 16,
+		KS_MODE_LITTLE_ENDIAN = 0,
+		KS_MODE_BIG_ENDIAN = 1073741824,
+		KS_MODE_ARM = 1,
+		KS_MODE_THUMB = 16,
+		KS_MODE_V8 = 64,
+		KS_MODE_MICRO = 16,
+		KS_MODE_MIPS3 = 32,
+		KS_MODE_MIPS32R6 = 64,
+		KS_MODE_MIPS32 = 4,
+		KS_MODE_MIPS64 = 8,
+		KS_MODE_16 = 2,
+		KS_MODE_32 = 4,
+		KS_MODE_64 = 8,
+		KS_MODE_PPC32 = 4,
+		KS_MODE_PPC64 = 8,
+		KS_MODE_QPX = 16,
+		KS_MODE_SPARC32 = 4,
+		KS_MODE_SPARC64 = 8,
+		KS_MODE_V9 = 16,
 	}
 
 	public enum KeystoneError : short
@@ -86,22 +88,22 @@ namespace Keystone
 		KS_ERR_ASM_FRAGMENT_INVALID = 163,
 		KS_ERR_ASM_INVALIDOPERAND = 512,
 		KS_ERR_ASM_MISSINGFEATURE = 513,
-		KS_ERR_ASM_MNEMONICFAIL = 514
+		KS_ERR_ASM_MNEMONICFAIL = 514,
 	}
 
-	public enum OptionType : int
+	public enum KeystoneOptionType : short
 	{
-		SYNTAX = 1,
-		SYM_RESOLVER = 2,
+		KS_OPT_SYNTAX = 1,
+		KS_OPT_SYM_RESOLVER = 2,
 	}
 
-	public enum OptionValue : short
+	public enum KeystoneOptionValue : short
 	{
-		SYNTAX_INTEL = 1,
-		SYNTAX_ATT = 2,
-		SYNTAX_NASM = 4,
-		SYNTAX_MASM = 8,
-		SYNTAX_GAS = 16,
-		SYNTAX_RADIX16 = 32
+		KS_OPT_SYNTAX_INTEL = 1,
+		KS_OPT_SYNTAX_ATT = 2,
+		KS_OPT_SYNTAX_NASM = 4,
+		KS_OPT_SYNTAX_MASM = 8,
+		KS_OPT_SYNTAX_GAS = 16,
+		KS_OPT_SYNTAX_RADIX16 = 32,
 	}
 }

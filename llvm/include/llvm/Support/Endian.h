@@ -78,6 +78,17 @@ inline void write(void *memory, value_type value) {
          sizeof(value_type));
 }
 
+constexpr endianness system_endianness() {
+  return sys::IsBigEndianHost ? big : little;
+}
+
+template <typename value_type>
+inline value_type byte_swap(value_type value, endianness endian) {
+  if ((endian != native) && (endian != system_endianness()))
+    sys::swapByteOrder(value);
+  return value;
+}
+
 template <typename value_type>
 using make_unsigned_t = typename std::make_unsigned<value_type>::type;
 

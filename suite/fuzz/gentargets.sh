@@ -33,4 +33,6 @@ sed 's/KS_ARCH_X86/KS_ARCH_SPARC/' fuzz_asm_x86_32.c | sed 's/KS_MODE_32/KS_MODE
 
 sed 's/KS_ARCH_X86/KS_ARCH_SYSTEMZ/' fuzz_asm_x86_32.c | sed 's/KS_MODE_32/KS_MODE_BIG_ENDIAN/' > fuzz_asm_systemz.c
 
+sed 's/KS_ARCH_X86/KS_ARCH_MSP430/' fuzz_asm_x86_32.c | sed 's/KS_MODE_32/KS_MODE_LITTLE_ENDIAN/' > fuzz_asm_msp430.c
+
 sed 's/KS_ARCH_X86/KS_ARCH_EVM/' fuzz_asm_x86_32.c | sed 's/KS_MODE_32/0/' > fuzz_asm_evm.c

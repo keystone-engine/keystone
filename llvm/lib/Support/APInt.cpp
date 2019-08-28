@@ -1517,7 +1517,7 @@ static void KnuthDiv(unsigned *u, unsigned *v, unsigned *q, unsigned* r,
   assert(n>1 && "n must be > 1");
 
   // b denotes the base of the number system. In our case b is 2^32.
-  LLVM_CONSTEXPR uint64_t b = uint64_t(1) << 32;
+  constexpr uint64_t b = uint64_t(1) << 32;
 
   // D1. [Normalize.] Set d = b / (v[n-1] + 1) and multiply all the digits of
   // u and v by d. Note that we have taken Knuth's advice here to use a power
