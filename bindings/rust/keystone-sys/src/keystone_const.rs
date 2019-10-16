@@ -1,13 +1,13 @@
 #![allow(non_camel_case_types)]
 // For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [keystone_const.rs]
-use libc;
+use ::libc::*;
 
-pub const API_MAJOR: u32 = 0;
-pub const API_MINOR: u32 = 9;
+pub const API_MAJOR: c_uint = 0;
+pub const API_MINOR: c_uint = 9;
 
 bitflags! {
 #[repr(C)]
-    pub struct Mode: u32 {
+    pub struct Mode: c_int {
         const LITTLE_ENDIAN = 0;
         const BIG_ENDIAN = 1073741824;
         const ARM = 1;
@@ -54,7 +54,7 @@ pub enum OptionType {
 
 bitflags! {
 #[repr(C)]
-    pub struct OptionValue: libc::size_t {
+    pub struct OptionValue: size_t {
         const SYNTAX_INTEL = 1;
         const SYNTAX_ATT = 2;
         const SYNTAX_NASM = 4;
@@ -66,7 +66,7 @@ bitflags! {
 
 bitflags! {
 #[repr(C)]
-    pub struct Error: u32 {
+    pub struct Error: c_int {
         const ASM = 128;
         const ASM_ARCH = 512;
         const OK = 0;
