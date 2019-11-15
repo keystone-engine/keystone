@@ -2,12 +2,18 @@ Source: keystone-engine
 Maintainer: Michael Mohr <akihana@gmail.com>
 Section: python
 Priority: optional
-Build-Depends: dh-python, python-all (>= 2.6.6-3), debhelper (>= 9)
+Build-Depends: dh-python, python-all (>= 2.6.6-3), debhelper (>= 9),
+ python-setuptools, python3-all, python3-setuptools
 Standards-Version: 3.9.6
+X-Python3-Version: >= 3.4
 Homepage: http://www.keystone-engine.org
 
 Package: python-keystone-engine
 Architecture: all
 Depends: ${misc:Depends}, ${python:Depends}, keystone-engine1
-Description: Keystone assembler engine
+Description: Keystone assembler engine (Python 2)
 
+Package: python3-keystone-engine
+Architecture: all
+Depends: ${misc:Depends}, ${python3:Depends}, keystone-engine1
+Description: Keystone assembler engine (Python 3)
