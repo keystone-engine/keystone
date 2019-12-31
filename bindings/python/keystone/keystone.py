@@ -56,9 +56,9 @@ if _found == False:
         except OSError:
             pass
 
-# Attempt Darwin specific load (10.11 specific),
+# Attempt Linux/Darwin specific load (10.11 specific),
 # since LD_LIBRARY_PATH is not guaranteed to exist
-if (_found == False) and (system() == 'Darwin'):
+if (_found == False) and (system() != 'Windows'):
     _lib_path = '/usr/local/lib/'
     for _lib in _all_libs:
         try:
