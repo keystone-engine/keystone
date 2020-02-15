@@ -32,7 +32,7 @@ template = {
             ]
         },
     'rust': {
-            'header': "#![allow(non_camel_case_types)]\n// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [%s_const.rs]\nuse libc;\n",
+            'header': "#![allow(non_camel_case_types)]\n// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [%s_const.rs]\nuse ::libc::*;\n",
             'footer': "",
             # prefixes for constant filenames of all archs - case sensitive
             'arm.h': 'keystone',
@@ -52,14 +52,14 @@ template = {
                 {
                     'regex': r'(API)_.*',
                     'pre': '\n',
-                    'line_format': 'pub const {0}: u32 = {1};\n',
+                    'line_format': 'pub const {0}: c_uint = {1};\n',
                     'fn': (lambda x: x),
                 },
                 {   'regex': r'MODE_.*',
                     'pre': '\n' +
                             'bitflags! {{\n' +
                             '#[repr(C)]\n' +
-                            '    pub struct Mode: u32 {{\n',
+                            '    pub struct Mode: c_int {{\n',
                     'line_format': '        const {0} = {1};\n',
                     'fn': (lambda x: '_'.join(x.split('_')[1:]) if not re.match(r'MODE_\d+', x) else x),
                     'post': '    }\n}',
@@ -87,7 +87,7 @@ template = {
                     'regex': r'OPT_(?!SYM)([A-Z]+\_)+[A-Z]+',
                     'pre': 'bitflags! {{\n'
                             '#[repr(C)]\n' +
-                            '    pub struct OptionValue: libc::size_t {{\n',
+                            '    pub struct OptionValue: size_t {{\n',
                     'line_format': '        const {0} = {1};\n',
                     'fn': (lambda x: '_'.join(x.split('_')[1:])),
                     'post': '    }\n}\n',
@@ -96,7 +96,7 @@ template = {
                     'regex': r'ERR_(.*)',
                     'pre': 'bitflags! {{\n' +
                             '#[repr(C)]\n' +
-                            '    pub struct Error: u32 {{\n',
+                            '    pub struct Error: c_int {{\n',
                     'line_format': '        const {0} = {1};\n',
                     'fn': (lambda x: '_'.join(x.split('_')[1:])),
                     'post': '    }\n}',
