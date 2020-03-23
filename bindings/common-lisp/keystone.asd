@@ -34,7 +34,6 @@
   :perform
   (test-op (o c) (symbol-call :keystone/test '#:test)))
 
-#+todo
 (defsystem "keystone/clos"
   :author "GrammaTech"
   :licence "MIT"
@@ -42,7 +41,6 @@
   :perform
   (test-op (o c) (symbol-call :keystone/clos-test '#:test)))
 
-#+todo
 (defsystem "keystone/clos-test"
   :author "GrammaTech"
   :licence "MIT"
