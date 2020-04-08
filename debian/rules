@@ -15,7 +15,7 @@
 
 
 %:
-	dh $@
+	dh $@ --parallel
 
 
 # dh_make generated override targets
