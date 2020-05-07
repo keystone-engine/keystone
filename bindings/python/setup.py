@@ -20,8 +20,6 @@ from distutils.core import setup
 PATH_LIB64 = "prebuilt/win64/keystone.dll"
 PATH_LIB32 = "prebuilt/win32/keystone.dll"
 
-LINUX_PATH_LIB64 = "../../build/llvm/lib/x86_64-linux-gnu/libkeystone.so"
-
 # package name can be 'keystone-engine' or 'keystone-engine-windows'
 PKG_NAME = 'keystone-engine'
 if os.path.exists(PATH_LIB64) and os.path.exists(PATH_LIB32):
@@ -122,20 +120,13 @@ class custom_build_clib(build_clib):
             elif os.path.exists(PATH_LIB32):
                 SETUP_DATA_FILES.append(PATH_LIB32)
                 return
-        elif SYSTEM == "linux": 
-            if os.path.exists(LINUX_PATH_LIB64):
-                SETUP_DATA_FILES.append(LINUX_PATH_LIB64)
-
-        # build library from source if src/ is existent
-        if not os.path.exists('src'):
-            return
 
         try:
             for (lib_name, build_info) in libraries:
                 log.info("building '%s' library", lib_name)
 
                 # cd src/build
-                os.chdir("src")
+                os.chdir("../..")
                 if not os.path.isdir('build'):
                     os.mkdir('build')
                 os.chdir("build")
@@ -151,10 +142,11 @@ class custom_build_clib(build_clib):
                 else:  # Unix
                     os.chmod("../make-share.sh", stat.S_IREAD | stat.S_IEXEC)
                     os.system("../make-share.sh lib_only")
+                    base_dir = os.path.realpath(os.curdir)
                     if SYSTEM == "darwin":
-                        SETUP_DATA_FILES.append("src/build/llvm/lib/libkeystone.dylib")
+                        SETUP_DATA_FILES.append(base_dir + "/llvm/lib/libkeystone.dylib")
                     else:  # Non-OSX
-                        SETUP_DATA_FILES.append("src/build/llvm/lib/libkeystone.so")
+                        SETUP_DATA_FILES.append(base_dir + "/llvm/lib/libkeystone.so")
 
                 # back to root dir
                 os.chdir(cur_dir)
