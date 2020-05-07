@@ -121,16 +121,12 @@ class custom_build_clib(build_clib):
                 SETUP_DATA_FILES.append(PATH_LIB32)
                 return
 
-        # build library from source if src/ is existent
-        if not os.path.exists('src'):
-            return
-
         try:
             for (lib_name, build_info) in libraries:
                 log.info("building '%s' library", lib_name)
 
                 # cd src/build
-                os.chdir("src")
+                os.chdir("../..")
                 if not os.path.isdir('build'):
                     os.mkdir('build')
                 os.chdir("build")
@@ -146,10 +142,11 @@ class custom_build_clib(build_clib):
                 else:  # Unix
                     os.chmod("../make-share.sh", stat.S_IREAD | stat.S_IEXEC)
                     os.system("../make-share.sh lib_only")
+                    base_dir = os.path.realpath(os.curdir)
                     if SYSTEM == "darwin":
-                        SETUP_DATA_FILES.append("src/build/llvm/lib/libkeystone.dylib")
+                        SETUP_DATA_FILES.append(base_dir + "/llvm/lib/libkeystone.dylib")
                     else:  # Non-OSX
-                        SETUP_DATA_FILES.append("src/build/llvm/lib/libkeystone.so")
+                        SETUP_DATA_FILES.append(base_dir + "/llvm/lib/libkeystone.so")
 
                 # back to root dir
                 os.chdir(cur_dir)
