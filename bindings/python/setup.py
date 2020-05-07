@@ -20,6 +20,8 @@ from distutils.core import setup
 PATH_LIB64 = "prebuilt/win64/keystone.dll"
 PATH_LIB32 = "prebuilt/win32/keystone.dll"
 
+LINUX_PATH_LIB64 = "../../build/llvm/lib/x86_64-linux-gnu/libkeystone.so"
+
 # package name can be 'keystone-engine' or 'keystone-engine-windows'
 PKG_NAME = 'keystone-engine'
 if os.path.exists(PATH_LIB64) and os.path.exists(PATH_LIB32):
@@ -120,6 +122,9 @@ class custom_build_clib(build_clib):
             elif os.path.exists(PATH_LIB32):
                 SETUP_DATA_FILES.append(PATH_LIB32)
                 return
+        elif SYSTEM == "linux": 
+            if os.path.exists(LINUX_PATH_LIB64):
+                SETUP_DATA_FILES.append(LINUX_PATH_LIB64)
 
         # build library from source if src/ is existent
         if not os.path.exists('src'):
