@@ -145,7 +145,9 @@ class custom_build_clib(build_clib):
                     base_dir = os.path.realpath(os.curdir)
                     if SYSTEM == "darwin":
                         SETUP_DATA_FILES.append(base_dir + "/llvm/lib/libkeystone.dylib")
-                    else:  # Non-OSX
+                    elif os.path.isfile(base_dir+"/llvm/lib64/libkeystone.so"):  # non-osx 64bit
+                        SETUP_DATA_FILES.append(base_dir + "/llvm/lib64/libkeystone.so")
+                    else: # non-osx 32bit
                         SETUP_DATA_FILES.append(base_dir + "/llvm/lib/libkeystone.so")
 
                 # back to root dir
