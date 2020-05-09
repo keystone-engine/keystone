@@ -16,9 +16,9 @@ install:
 	rm -rf prebuilt/win64/keystone.dll
 	rm -rf prebuilt/win32/keystone.dll
 	if test -n "${DESTDIR}"; then \
-		python setup.py build -b $(OBJDIR) install --root="${DESTDIR}"; \
+		python2 setup.py build -b $(OBJDIR) install --root="${DESTDIR}"; \
 	else \
-		python setup.py build -b $(OBJDIR) install; \
+		python2 setup.py build -b $(OBJDIR) install; \
 	fi
 
 install3:
@@ -38,7 +38,7 @@ sdist:
 	rm -rf prebuilt/win32/keystone.dll
 	cp README.pypi-src README
 	cp PKG-INFO.src PKG-INFO
-	python setup.py sdist register upload
+	python2 setup.py sdist register upload
 
 # build & upload PyPi package with source code of the core
 sdist3:
@@ -55,7 +55,7 @@ sdist_win:
 	rm -rf src/ dist/
 	cp README.pypi-win README
 	cp PKG-INFO.win PKG-INFO
-	python setup.py sdist register upload
+	python2 setup.py sdist register upload
 
 # build & upload PyPi package with prebuilt core
 # NOTE: be sure to have precompiled core under prebuilt/win*/ beforehand
