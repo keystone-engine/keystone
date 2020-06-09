@@ -17,12 +17,51 @@ os:
   - osx
 
 matrix:
+  fast_finish: true
   include:
     - if: branch = master
       os: osx
+      osx_image: xcode10.1
       compiler: clang
+      before_cache:
+        - brew cleanup
+        - find /usr/local/Homebrew \! -regex ".+\.git.+" -delete;
+      cache:
+        directories:
+          - $HOME/Library/Caches/Homebrew
+          - /usr/local/Homebrew
+      before_install:
+        - cd /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core && git stash && git clean -d -f
       script: brew update && brew install --HEAD keystone
+
     - if: branch = master
       os: osx
+      osx_image: xcode10.1
       compiler: gcc
+      before_cache:
+        - brew cleanup
+        - find /usr/local/Homebrew \! -regex ".+\.git.+" -delete;
+      cache:
+        directories:
+          - $HOME/Library/Caches/Homebrew
+          - /usr/local/Homebrew
+      before_install:
+        - cd /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core && git stash && git clean -d -f
       script: brew update && brew install --HEAD keystone
+
+    - name: "Windows nmake 32bit"
+      os: windows
+      language: shell
+      script:
+        - mkdir build
+        - cd build
+        - cmd.exe //C 'C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat' x86 '&' cmd.exe //C '..\nmake-dll.bat' X86 '&' cmd.exe //c '..\nmake-lib.bat' X86
+
+    - name: "Windows nmake 64bit"
+      os: windows
+      language: shell
+      script:
+        - mkdir build
+        - cd build
+        - cmd.exe //C 'C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat' amd64 '&' cmd.exe //C '..\nmake-dll.bat' '&' cmd.exe //c '..\nmake-lib.bat'
+
