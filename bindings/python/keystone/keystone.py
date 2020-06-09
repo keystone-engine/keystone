@@ -4,7 +4,8 @@ _python2 = sys.version_info[0] < 3
 if _python2:
     range = xrange
 
-from . import arm_const, arm64_const, mips_const, sparc_const, hexagon_const, ppc_const, systemz_const, x86_const, evm_const
+from . import arm_const, arm64_const, mips_const, sparc_const, hexagon_const, ppc_const, systemz_const, x86_const,\
+    evm_const, msp430_const
 from .keystone_const import *
 
 from ctypes import *
@@ -228,10 +229,11 @@ class Ks(object):
 
 # print out debugging info
 def debug():
-    archs = { "arm": KS_ARCH_ARM, "arm64": KS_ARCH_ARM64, \
-        "mips": KS_ARCH_MIPS, "sparc": KS_ARCH_SPARC, \
-        "systemz": KS_ARCH_SYSTEMZ, "ppc": KS_ARCH_PPC, \
-        "hexagon": KS_ARCH_HEXAGON, "x86": KS_ARCH_X86, 'evm': KS_ARCH_EVM }
+    archs = { "arm": KS_ARCH_ARM, "arm64": KS_ARCH_ARM64,
+        "mips": KS_ARCH_MIPS, "sparc": KS_ARCH_SPARC,
+        "systemz": KS_ARCH_SYSTEMZ, "ppc": KS_ARCH_PPC,
+        "hexagon": KS_ARCH_HEXAGON, "x86": KS_ARCH_X86,
+        "evm": KS_ARCH_EVM, "msp430": KS_ARCH_MSP430 }
 
     all_archs = ""
     keys = archs.keys()

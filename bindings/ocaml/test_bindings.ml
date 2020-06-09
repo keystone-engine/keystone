@@ -56,3 +56,5 @@ let _ =
   test_ks T.KS_ARCH_SPARC T.KS_MODE_SPARC32 ~endian:T.KS_MODE_BIG_ENDIAN "add %g1, %g2, %g3";
 
   test_ks T.KS_ARCH_SYSTEMZ T.KS_MODE_BIG_ENDIAN "a %r0, 4095(%r15, %r1)"
+
+  test_ks T.KS_ARCH_MSP430 T.KS_MODE_LITTLE_ENDIAN "and r12, r13"

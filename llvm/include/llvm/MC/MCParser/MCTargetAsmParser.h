@@ -13,12 +13,12 @@
 #include "llvm/MC/MCExpr.h"
 #include "llvm/MC/MCParser/MCAsmParserExtension.h"
 #include "llvm/MC/MCTargetOptions.h"
+#include "llvm/MC/MCParser/MCParsedAsmOperand.h"
 #include <memory>
 
 namespace llvm_ks {
 class AsmToken;
 class MCInst;
-class MCParsedAsmOperand;
 class MCStreamer;
 class MCSubtargetInfo;
 class SMLoc;
@@ -134,6 +134,15 @@ public:
 
   void setSemaCallback(MCAsmParserSemaCallback *Callback) {
     SemaCallback = Callback;
+  }
+
+  /// Returns whether two registers are equal and is used by the tied-operands
+  /// checks in the AsmMatcher. This method can be overridden allow e.g. a
+  /// sub- or super-register as the tied operand.
+  virtual bool regsEqual(const MCParsedAsmOperand &Op1,
+                         const MCParsedAsmOperand &Op2) const {
+    assert(Op1.isReg() && Op2.isReg() && "Operands not all regs");
+    return Op1.getReg() == Op2.getReg();
   }
 
   virtual bool ParseRegister(unsigned &RegNo, SMLoc &StartLoc,

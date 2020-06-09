@@ -1,4 +1,4 @@
-// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [ppcConstants.cs]
+// For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [PPCConstants.cs]
 namespace Keystone
 {
 	public enum PpcError : short

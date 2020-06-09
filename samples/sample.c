@@ -149,6 +149,9 @@ int main(int argc, char **argv)
     // SystemZ
     test_ks(KS_ARCH_SYSTEMZ, KS_MODE_BIG_ENDIAN, "a %r0, 4095(%r15,%r1)", 0);
 
+    // MSP430
+    test_ks(KS_ARCH_MSP430, KS_MODE_LITTLE_ENDIAN, "and r12, r13", 0);
+
     // Test Symbol Resolver
     test_sym_resolver();
 
