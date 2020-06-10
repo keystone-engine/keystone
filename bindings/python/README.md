@@ -1,5 +1,9 @@
-This documentation explains how to install Python binding for Keystone
-from source.
+To install Python binding from Pypi (binary), simply do:
+
+        pip install keystone-engine
+
+
+In case you want to install from source code, follow the below steps.
 
 
 0. Install the core engine as dependency
