@@ -25,7 +25,8 @@ PKG_NAME = 'keystone-engine'
 if os.path.exists(PATH_LIB64) and os.path.exists(PATH_LIB32):
     PKG_NAME = 'keystone-engine-windows'
 
-VERSION = '0.9.1-3'
+from keystone import __version__ as ksversion
+VERSION = ksversion
 SYSTEM = sys.platform
 
 SETUP_DATA_FILES = []
