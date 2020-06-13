@@ -699,7 +699,7 @@ void ARMAsmBackend::processFixupValue(const MCAssembler &Asm,
 
     // If the symbol is out of range, produce a relocation and hope the
     // linker can handle it. GNU AS produces an error in this case.
-    if (Sym->isExternal() || Value >= 0x400004)
+    if (Sym->isExternal() || ((Value >= 0x400004) && (Value <= (uint64_t)(-0x400000))))
       IsResolved = false;
   }
   // We must always generate a relocation for BL/BLX instructions if we have
