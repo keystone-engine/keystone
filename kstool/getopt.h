@@ -1,5 +1,3 @@
-extern "C" {
-
 #ifndef KSTOOL_GETOPT_H
 #define KSTOOL_GETOPT_H
 
@@ -14,5 +12,3 @@ extern const char *optarg; /* argument associated with option */
 int getopt (int nargc, char *const nargv[], const char *ostr);
 
 #endif
-
-} // end extern "C"

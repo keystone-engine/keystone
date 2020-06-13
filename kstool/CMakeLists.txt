@@ -9,7 +9,7 @@ include_directories("../include")
 
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
   include_directories("./")
-  add_executable(kstool getopt.c kstool.cpp)
+  add_executable(kstool getopt.cpp kstool.cpp)
 else()
   add_executable(kstool kstool.cpp)
 endif()
