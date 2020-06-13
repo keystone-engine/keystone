@@ -171,8 +171,34 @@ if 'bdist_wheel' in sys.argv and '--plat-name' not in sys.argv:
         sys.argv.insert(idx + 1, name.replace('.', '_').replace('-', '_'))
 
 
-with open("README.pypi-src", "r") as ld:
-    long_desc = ld.read()
+long_desc = '''
+Keystone is a lightweight multi-platform, multi-architecture assembler framework.
+It offers some unparalleled features:
+
+- Multi-architecture, with support for Arm, Arm64 (AArch64/Armv8), Ethereum Virtual Machine, Hexagon, Mips, PowerPC, Sparc, SystemZ & X86 (include 16/32/64bit).
+- Clean/simple/lightweight/intuitive architecture-neutral API.
+- Implemented in C/C++ languages, with bindings for Java, Masm, C#, PowerShell, Perl, Python, NodeJS, Ruby, Go, Rust, Haskell, VB6 & OCaml available.
+- Native support for Windows & \*nix (with Mac OSX, Linux, \*BSD & Solaris confirmed).
+- Thread-safe by design.
+- Open source - with a dual license.
+
+Further information is available at http://www.keystone-engine.org
+
+
+License
+-------
+
+Keystone is available under a dual license:
+
+- Version 2 of the GNU General Public License (GPLv2). (I.e. Without the "any later version" clause.).
+  License information can be found in the COPYING file EXCEPTIONS-CLIENT file.
+
+  This combination allows almost all of open source projects to use Keystone without conflicts.
+
+- For commercial usage in production environments, contact the authors of Keystone to buy a royalty-free license.
+
+  See LICENSE-COM.TXT for more information.
+'''
 
 setup(
     provides=['keystone'],
