@@ -7,7 +7,12 @@ project(kstool)
 
 include_directories("../include")
 
-add_executable(kstool kstool.cpp)
+if (${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
+  include_directories("./")
+  add_executable(kstool getopt.cpp kstool.cpp)
+else()
+  add_executable(kstool kstool.cpp)
+endif()
 
 target_link_libraries(kstool keystone)
 

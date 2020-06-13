@@ -23,3 +23,7 @@ samples/sample
 _sample*.txt
 tmp
 MANIFEST
+
+bindings/python/dist/
+bindings/python/src/
+

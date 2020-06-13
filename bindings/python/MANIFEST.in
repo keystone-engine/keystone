@@ -2,3 +2,5 @@ recursive-include src *
 recursive-include prebuilt *
 include LICENSE.TXT
 include README
+global-exclude *.pyc
+global-exclude __pycache__

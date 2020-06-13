@@ -18,7 +18,7 @@ if not hasattr(sys.modules[__name__], '__file__'):
     __file__ = inspect.getfile(inspect.currentframe())
 
 _lib_path = split(__file__)[0]
-_all_libs = ('keystone.dll', 'libkeystone.so', 'libkeystone.dylib')
+_all_libs = ('keystone.dll', 'libkeystone.so', 'libkeystone.so.%u' %KS_API_MAJOR, 'libkeystone.dylib')
 _found = False
 
 for _lib in _all_libs:
