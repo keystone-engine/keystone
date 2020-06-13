@@ -58,13 +58,22 @@ jobs:
   publish:
     needs: [build]
     runs-on: ubuntu-latest
-    if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags')
+    if: startsWith(github.ref, 'refs/tags')
     steps:
       - uses: actions/download-artifact@v2
         with:
           name: artifact
           path: dist
+
+      - name: Publish distribution 📦 to test PyPI
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          user: __token__
+          password: ${{ secrets.testpypi_pass }}
+          repository_url: https://test.pypi.org/legacy/
+
       - name: Publish distribution 📦 to PyPI
+        if: ${{ success() }}
         uses: pypa/gh-action-pypi-publish@master
         with:
           user: __token__
