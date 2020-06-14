@@ -7,33 +7,39 @@
 import glob
 import os
 import shutil
+import subprocess
 import stat
 import sys
-from distutils import dir_util, file_util
+import platform
 from distutils import log
-from distutils.command.build_clib import build_clib
-from distutils.command.install_lib import install_lib
-from distutils.command.sdist import sdist
-from distutils.core import setup
+from setuptools import setup
+from distutils.util import get_platform
+from distutils.command.build import build as _build
+from distutils.command.sdist import sdist as _sdist
+from setuptools.command.bdist_egg import bdist_egg as _bdist_egg
+from setuptools.command.develop import develop as _develop
+
+VERSION = '0.9.2' + 'rc1' + '.post2'
+SYSTEM = sys.platform
+IS_64BITS = platform.architecture()[0] == '64bit'
+
+# paths
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+LIBS_DIR = os.path.join(ROOT_DIR, 'keystone')
+SRC_DIR = os.path.join(ROOT_DIR, 'src')
+BUILD_DIR = os.path.join(SRC_DIR, 'build')
+
+if SYSTEM == 'darwin':
+    LIBRARY_FILE = "libkeystone.dylib"
+    MAC_LIBRARY_FILE = "libkeystone*.dylib"
+elif SYSTEM in ('win32', 'cygwin'):
+    LIBRARY_FILE = "keystone.dll"
+else:
+    LIBRARY_FILE = "libkeystone.so"
 
 # prebuilt libraries for Windows - for sdist
-PATH_LIB64 = "prebuilt/win64/keystone.dll"
-PATH_LIB32 = "prebuilt/win32/keystone.dll"
-
-# package name can be 'keystone-engine' or 'keystone-engine-windows'
-PKG_NAME = 'keystone-engine'
-if os.path.exists(PATH_LIB64) and os.path.exists(PATH_LIB32):
-    PKG_NAME = 'keystone-engine-windows'
-
-VERSION = '0.9.1-3'
-SYSTEM = sys.platform
-
-SETUP_DATA_FILES = []
-
-# adapted from commit e504b81 of Nguyen Tan Cong
-# Reference: https://docs.python.org/2/library/platform.html#cross-platform
-is_64bits = sys.maxsize > 2 ** 32
-
+PATH_LIB64 = os.path.join(ROOT_DIR, 'prebuilt', 'win64')
+PATH_LIB32 = os.path.join(ROOT_DIR, 'prebuilt', 'win32')
 
 def copy_sources():
     """Copy the C sources into the source directory.
@@ -42,161 +48,190 @@ def copy_sources():
     """
     src = []
 
-    try:
-        dir_util.remove_tree("src/")
-    except (IOError, OSError):
-        pass
+    os.system('make clean')
+    shutil.rmtree(SRC_DIR, ignore_errors=True)
+    os.mkdir(SRC_DIR)
 
-    dir_util.copy_tree("../../llvm", "src/llvm/")
-    dir_util.copy_tree("../../include", "src/include/")
-    dir_util.copy_tree("../../suite", "src/suite")
+    shutil.copytree(os.path.join(ROOT_DIR, '../../llvm'), os.path.join(SRC_DIR, 'llvm/'))
+    shutil.copytree(os.path.join(ROOT_DIR, '../../include'), os.path.join(SRC_DIR, 'include/'))
+    shutil.copytree(os.path.join(ROOT_DIR, '../../suite'), os.path.join(SRC_DIR, 'suite/'))
 
-    src.extend(glob.glob("../../*.h"))
-    src.extend(glob.glob("../../*.cpp"))
-    src.extend(glob.glob("../../*.inc"))
-    src.extend(glob.glob("../../*.def"))
+    src.extend(glob.glob(os.path.join(ROOT_DIR, "../../*.h")))
+    src.extend(glob.glob(os.path.join(ROOT_DIR, "../../*.cpp")))
+    src.extend(glob.glob(os.path.join(ROOT_DIR, "../../*.inc")))
+    src.extend(glob.glob(os.path.join(ROOT_DIR, "../../*.def")))
 
-    src.extend(glob.glob("../../CMakeLists.txt"))
-    src.extend(glob.glob("../../CMakeUninstall.in"))
-    src.extend(glob.glob("../../*.txt"))
-    src.extend(glob.glob("../../*.TXT"))
-    src.extend(glob.glob("../../COPYING"))
-    src.extend(glob.glob("../../LICENSE*"))
-    src.extend(glob.glob("../../EXCEPTIONS-CLIENT"))
-    src.extend(glob.glob("../../README.md"))
-    src.extend(glob.glob("../../RELEASE_NOTES"))
-    src.extend(glob.glob("../../ChangeLog"))
-    src.extend(glob.glob("../../SPONSORS.TXT"))
-    src.extend(glob.glob("../../*.cmake"))
-    src.extend(glob.glob("../../*.sh"))
-    src.extend(glob.glob("../../*.bat"))
+    src.extend(glob.glob(os.path.join(ROOT_DIR, "../../CMakeLists.txt")))
+    src.extend(glob.glob(os.path.join(ROOT_DIR, "../../CMakeUninstall.in")))
+    src.extend(glob.glob(os.path.join(ROOT_DIR, "../../*.txt")))
+    src.extend(glob.glob(os.path.join(ROOT_DIR, "../../*.TXT")))
+    src.extend(glob.glob(os.path.join(ROOT_DIR, "../../COPYING")))
+    src.extend(glob.glob(os.path.join(ROOT_DIR, "../../LICENSE*")))
+    src.extend(glob.glob(os.path.join(ROOT_DIR, "../../EXCEPTIONS-CLIENT")))
+    src.extend(glob.glob(os.path.join(ROOT_DIR, "../../README.md")))
+    src.extend(glob.glob(os.path.join(ROOT_DIR, "../../RELEASE_NOTES")))
+    src.extend(glob.glob(os.path.join(ROOT_DIR, "../../ChangeLog")))
+    src.extend(glob.glob(os.path.join(ROOT_DIR, "../../SPONSORS.TXT")))
+    src.extend(glob.glob(os.path.join(ROOT_DIR, "../../*.cmake")))
+    src.extend(glob.glob(os.path.join(ROOT_DIR, "../../*.sh")))
+    src.extend(glob.glob(os.path.join(ROOT_DIR, "../../*.bat")))
 
     for filename in src:
-        outpath = os.path.join("./src/", os.path.basename(filename))
+        outpath = os.path.join(SRC_DIR, os.path.basename(filename))
         log.info("%s -> %s" % (filename, outpath))
         shutil.copy(filename, outpath)
 
+def build_libraries():
+    cur_dir = os.getcwd()
 
-class custom_sdist(sdist):
-    """Reshuffle files for distribution."""
-
-    def run(self):
-        # if prebuilt libraries are existent, then do not copy source
-        if os.path.exists(PATH_LIB64) and os.path.exists(PATH_LIB32):
-            return sdist.run(self)
-        copy_sources()
-        return sdist.run(self)
-
-
-class custom_build_clib(build_clib):
-    """Customized build_clib command."""
-
-    def run(self):
-        log.info('running custom_build_clib')
-        build_clib.run(self)
-
-    def finalize_options(self):
-        # We want build-clib to default to build-lib as defined by the "build"
-        # command.  This is so the compiled library will be put in the right
-        # place along side the python code.
-        self.set_undefined_options('build',
-                                   ('build_lib', 'build_clib'),
-                                   ('build_temp', 'build_temp'),
-                                   ('compiler', 'compiler'),
-                                   ('debug', 'debug'),
-                                   ('force', 'force'))
-
-        build_clib.finalize_options(self)
-
-    def build_libraries(self, libraries):
-
-        cur_dir = os.path.realpath(os.curdir)
-
-        if SYSTEM in ("win32", "cygwin"):
-            # if Windows prebuilt library is available, then include it
-            if is_64bits and os.path.exists(PATH_LIB64):
-                SETUP_DATA_FILES.append(PATH_LIB64)
-                return
-            elif os.path.exists(PATH_LIB32):
-                SETUP_DATA_FILES.append(PATH_LIB32)
-                return
-
-        # build library from source if src/ is existent
-        if not os.path.exists('src'):
+    if SYSTEM in ("win32", "cygwin"):
+        # if Windows prebuilt library is available, then include it
+        if IS_64BITS and os.path.exists(os.path.join(PATH_LIB64, LIBRARY_FILE)):
+            shutil.copy(os.path.join(PATH_LIB64, LIBRARY_FILE), LIBS_DIR)
             return
+        elif os.path.exists(os.path.join(PATH_LIB32, LIBRARY_FILE)):
+            shutil.copy(os.path.join(PATH_LIB32, LIBRARY_FILE), LIBS_DIR)
+            return
+        # cd src/build
+    if not os.path.isdir(SRC_DIR):
+        copy_sources()
+    os.chdir(SRC_DIR)
+    if not os.path.isdir(BUILD_DIR):
+        os.mkdir(BUILD_DIR)
+    os.chdir(BUILD_DIR)
 
-        try:
-            for (lib_name, build_info) in libraries:
-                log.info("building '%s' library", lib_name)
+    if SYSTEM == "win32":
+        if IS_64BITS:
+            subprocess.call([r'..\nmake-dll.bat'])
+        else:
+            subprocess.call([r'..\nmake-dll.bat', 'X86'])
+        winobj_dir = os.path.join(BUILD_DIR, 'llvm', 'bin')  
+        shutil.copy(os.path.join(winobj_dir, LIBRARY_FILE), LIBS_DIR)
+    else:
+        cmd = ['sh', '../make-share.sh', 'lib_only']
+        subprocess.call(cmd)
+        obj_dir = os.path.join(BUILD_DIR, 'llvm', 'lib')
+        obj64_dir = os.path.join(BUILD_DIR, 'llvm', 'lib64')
+        if SYSTEM == 'darwin':
+            for file in glob.glob(os.path.join(obj_dir, MAC_LIBRARY_FILE)):
+                try:
+                    shutil.copy(file, LIBS_DIR, follow_symlinks=False)
+                except:
+                    shutil.copy(file, LIBS_DIR)
+        else:
+            try:
+                shutil.copy(os.path.join(obj_dir, LIBRARY_FILE), LIBS_DIR)
+            except:
+                shutil.copy(os.path.join(obj64_dir, LIBRARY_FILE), LIBS_DIR)
+    # back to root dir
+    os.chdir(cur_dir)
 
-                # cd src/build
-                os.chdir("src")
-                if not os.path.isdir('build'):
-                    os.mkdir('build')
-                os.chdir("build")
+class sdist(_sdist):
+    def run(self):
+        copy_sources()
+        return _sdist.run(self)
 
-                # platform description refers at https://docs.python.org/2/library/sys.html#sys.platform
-                if SYSTEM == "cygwin":
-                    os.chmod("make.sh", stat.S_IREAD | stat.S_IEXEC)
-                    if is_64bits:
-                        os.system("KEYSTONE_BUILD_CORE_ONLY=yes ./make.sh cygwin-mingw64")
-                    else:
-                        os.system("KEYSTONE_BUILD_CORE_ONLY=yes ./make.sh cygwin-mingw32")
-                    SETUP_DATA_FILES.append("src/build/keystone.dll")
-                else:  # Unix
-                    os.chmod("../make-share.sh", stat.S_IREAD | stat.S_IEXEC)
-                    os.system("../make-share.sh lib_only")
-                    if SYSTEM == "darwin":
-                        SETUP_DATA_FILES.append("src/build/llvm/lib/libkeystone.dylib")
-                    else:  # Non-OSX
-                        SETUP_DATA_FILES.append("src/build/llvm/lib/libkeystone.so")
+class build(_build):
+    def run(self):
+        log.info("Building C++ extensions")
+        build_libraries()
+        return _build.run(self)
 
-                # back to root dir
-                os.chdir(cur_dir)
+class develop(_develop):
+    def run(self):
+        log.info("Building C++ extensions")
+        build_libraries()
+        return _develop.run(self)
 
-        except Exception as e:
-            log.error(e)
-        finally:
-            os.chdir(cur_dir)
-
-
-class custom_install(install_lib):
-    def install(self):
-        install_lib.install(self)
-        ks_install_dir = os.path.join(self.install_dir, 'keystone')
-        for lib_file in SETUP_DATA_FILES:
-            file_util.copy_file(lib_file, ks_install_dir)
-
-
+class bdist_egg(_bdist_egg):
+    def run(self):
+        self.run_command('build')
+        return _bdist_egg.run(self)
+    
 def dummy_src():
     return []
 
+if 'bdist_wheel' in sys.argv and '--plat-name' not in sys.argv:
+    idx = sys.argv.index('bdist_wheel') + 1
+    sys.argv.insert(idx, '--plat-name')
+    name = get_platform()
+    if 'linux' in name:
+        # linux_* platform tags are disallowed because the python ecosystem is fubar
+        # linux builds should be built in the centos 5 vm for maximum compatibility
+        # see https://github.com/pypa/manylinux
+        # see also https://github.com/angr/angr-dev/blob/master/bdist.sh
+        sys.argv.insert(idx + 1, 'manylinux1_' + platform.machine())
+    elif 'mingw' in name:
+        if IS_64BITS:
+            sys.argv.insert(idx + 1, 'win_amd64')
+        else:
+            sys.argv.insert(idx + 1, 'win32')
+    else:
+        # https://www.python.org/dev/peps/pep-0425/
+        sys.argv.insert(idx + 1, name.replace('.', '_').replace('-', '_'))
+
+
+long_desc = '''
+Keystone is a lightweight multi-platform, multi-architecture assembler framework.
+It offers some unparalleled features:
+
+- Multi-architecture, with support for Arm, Arm64 (AArch64/Armv8), Ethereum Virtual Machine, Hexagon, Mips, PowerPC, Sparc, SystemZ & X86 (include 16/32/64bit).
+- Clean/simple/lightweight/intuitive architecture-neutral API.
+- Implemented in C/C++ languages, with bindings for Java, Masm, C#, PowerShell, Perl, Python, NodeJS, Ruby, Go, Rust, Haskell, VB6 & OCaml available.
+- Native support for Windows & \*nix (with Mac OSX, Linux, \*BSD & Solaris confirmed).
+- Thread-safe by design.
+- Open source - with a dual license.
+
+Further information is available at http://www.keystone-engine.org
+
+
+License
+-------
+
+Keystone is available under a dual license:
+
+- Version 2 of the GNU General Public License (GPLv2). (I.e. Without the "any later version" clause.).
+  License information can be found in the COPYING file EXCEPTIONS-CLIENT file.
+
+  This combination allows almost all of open source projects to use Keystone without conflicts.
+
+- For commercial usage in production environments, contact the authors of Keystone to buy a royalty-free license.
+
+  See LICENSE-COM.TXT for more information.
+'''
 
 setup(
     provides=['keystone'],
     packages=['keystone'],
-    name=PKG_NAME,
+    name='keystone-engine',
     version=VERSION,
     author='Nguyen Anh Quynh',
     author_email='aquynh@gmail.com',
     description='Keystone assembler engine',
-    url='http://www.keystone-engine.org',
+    long_description=long_desc,
+    long_description_content_type="text/markdown",
+    url='https://www.keystone-engine.org',
     classifiers=[
+        # How mature is this project? Common values are
+        #   3 - Alpha
+        #   4 - Beta
+        #   5 - Production/Stable
+        'Development Status :: 5 - Production/Stable',
+
+        # Indicate who your project is intended for
+        'Intended Audience :: Developers',
+        'Topic :: Software Development :: Build Tools',
+
         'License :: OSI Approved :: BSD License',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3',
     ],
     requires=['ctypes'],
-    cmdclass=dict(
-        build_clib=custom_build_clib,
-        sdist=custom_sdist,
-        install_lib=custom_install,
-    ),
-
-    libraries=[(
-        'keystone', dict(
-            package='keystone',
-            sources=dummy_src()
-        ),
-    )],
+    cmdclass={'build': build, 'develop': develop, 'sdist': sdist, 'bdist_egg': bdist_egg},
+    zip_safe=True,
+    include_package_data=True,
+    is_pure=False,
+    package_data={
+        'keystone': ['*']
+    }
 )

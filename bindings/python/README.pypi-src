@@ -1,18 +1,3 @@
-NOTE: This PyPi package "keystone-engine" includes source code of the core of Keystone.
-So installing this would also compile the core with C compiler (either "gcc" or
-"msvc" on Windows).
-
-On Windows, CMake & MSVC needs compiler environmental setup, you would need to either
-run "pip install keystone-engine" or "python setup.py install" from "Developer Command
-Prompt".
-
-For Windows, if you do not want to compile the core, try the "keystone-engine-windows"
-package instead, which already includes the prebuilt "keystone.dll" inside.
-
-    https://pypi.python.org/pypi/keystone-engine-windows
-
---------------------------------------------------------------------------------
-
 Keystone is a lightweight multi-platform, multi-architecture assembler framework.
 It offers some unparalleled features:
 

@@ -1,4 +1,4 @@
-Version 0.9.1 works quite well for all architectures, but is known to not be able
+Version 0.9.2 works quite well for all architectures, but is known to not be able
 to deal with some malformed craft input. In such a case, Keystone usually exits
 with some error messages. Report if you experience this issue, so we can fix
 that in the next release.

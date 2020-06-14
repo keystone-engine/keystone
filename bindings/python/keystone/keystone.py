@@ -19,7 +19,7 @@ if not hasattr(sys.modules[__name__], '__file__'):
     __file__ = inspect.getfile(inspect.currentframe())
 
 _lib_path = split(__file__)[0]
-_all_libs = ('keystone.dll', 'libkeystone.so', 'libkeystone.dylib')
+_all_libs = ('keystone.dll', 'libkeystone.so', 'libkeystone.so.%u' %KS_API_MAJOR, 'libkeystone.dylib')
 _found = False
 
 for _lib in _all_libs:
@@ -57,9 +57,9 @@ if _found == False:
         except OSError:
             pass
 
-# Attempt Darwin specific load (10.11 specific),
+# Attempt Linux/Darwin specific load (10.11 specific),
 # since LD_LIBRARY_PATH is not guaranteed to exist
-if (_found == False) and (system() == 'Darwin'):
+if (_found == False) and (system() != 'Windows'):
     _lib_path = '/usr/local/lib/'
     for _lib in _all_libs:
         try:
