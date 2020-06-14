@@ -23,6 +23,7 @@ subdirectories =
  AArch64
  Hexagon
  Mips
+ MSP430
  PowerPC
  Sparc
  SystemZ

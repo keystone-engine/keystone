@@ -18,6 +18,9 @@
 *.github.io
 _*.diff
 
+.idea/
+cmake-build-debug
+
 build*/
 samples/sample
 _sample*.txt

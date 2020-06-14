@@ -24,6 +24,8 @@ module Types (F: Cstubs.Types.TYPE) =
       | KS_ARCH_SPARC
       | KS_ARCH_SYSTEMZ
       | KS_ARCH_HEXAGON
+      | KS_ARCH_EVM
+      | KS_ARCH_MSP430
       | KS_ARCH_MAX
 
 
@@ -221,6 +223,8 @@ module Types (F: Cstubs.Types.TYPE) =
     let ks_arch_sparc =  constant "KS_ARCH_SPARC" int64_t
     let ks_arch_systemz =  constant "KS_ARCH_SYSTEMZ" int64_t
     let ks_arch_hexagon =  constant "KS_ARCH_HEXAGON" int64_t
+    let ks_arch_evm =  constant "KS_ARCH_EVM" int64_t
+    let ks_arch_msp430 =  constant "KS_ARCH_MSP430" int64_t
     let ks_arch_max =  constant "KS_ARCH_MAX" int64_t
 
     let ks_arch = enum "ks_arch" [
@@ -232,6 +236,8 @@ module Types (F: Cstubs.Types.TYPE) =
                          KS_ARCH_SPARC, ks_arch_sparc;
                          KS_ARCH_SYSTEMZ, ks_arch_systemz;
                          KS_ARCH_HEXAGON, ks_arch_hexagon;
+                         KS_ARCH_EVM, ks_arch_evm;
+                         KS_ARCH_MSP430, ks_arch_msp430;
                          KS_ARCH_MAX, ks_arch_max
                        ]
 
@@ -521,6 +527,44 @@ module Types (F: Cstubs.Types.TYPE) =
                                    KS_ERR_ASM_SYSTEMZ_INVALIDOPERAND, ks_err_asm_systemz_invalidoperand;
                                    KS_ERR_ASM_SYSTEMZ_MISSINGFEATURE, ks_err_asm_systemz_missingfeature;
                                    KS_ERR_ASM_SYSTEMZ_MNEMONICFAIL, ks_err_asm_systemz_mnemonicfail;
+                                 ]
+      end
+
+    module EVM =
+      struct
+        type ks_err_asm_evm =
+          | KS_ERR_ASM_EVM_INVALIDOPERAND
+          | KS_ERR_ASM_EVM_MISSINGFEATURE
+          | KS_ERR_ASM_EVM_MNEMONICFAIL
+
+
+        let ks_err_asm_evm_invalidoperand = constant "KS_ERR_ASM_EVM_INVALIDOPERAND" int64_t
+        let ks_err_asm_evm_missingfeature = constant "KS_ERR_ASM_EVM_MISSINGFEATURE" int64_t
+        let ks_err_asm_evm_mnemonicfail = constant "KS_ERR_ASM_EVM_MNEMONICFAIL" int64_t
+
+        let ks_err_asm_evm = enum "ks_err_asm_evm" [
+                                   KS_ERR_ASM_EVM_INVALIDOPERAND, ks_err_asm_evm_invalidoperand;
+                                   KS_ERR_ASM_EVM_MISSINGFEATURE, ks_err_asm_evm_missingfeature;
+                                   KS_ERR_ASM_EVM_MNEMONICFAIL, ks_err_asm_evm_mnemonicfail;
+                                 ]
+      end
+
+    module MSP430 =
+      struct
+        type ks_err_asm_msp430 =
+          | KS_ERR_ASM_MSP430_INVALIDOPERAND
+          | KS_ERR_ASM_MSP430_MISSINGFEATURE
+          | KS_ERR_ASM_MSP430_MNEMONICFAIL
+
+
+        let ks_err_asm_msp430_invalidoperand = constant "KS_ERR_ASM_MSP430_INVALIDOPERAND" int64_t
+        let ks_err_asm_msp430_missingfeature = constant "KS_ERR_ASM_MSP430_MISSINGFEATURE" int64_t
+        let ks_err_asm_msp430_mnemonicfail = constant "KS_ERR_ASM_MSP430_MNEMONICFAIL" int64_t
+
+        let ks_err_asm_msp430 = enum "ks_err_asm_msp430" [
+                                   KS_ERR_ASM_MSP430_INVALIDOPERAND, ks_err_asm_msp430_invalidoperand;
+                                   KS_ERR_ASM_MSP430_MISSINGFEATURE, ks_err_asm_msp430_missingfeature;
+                                   KS_ERR_ASM_MSP430_MNEMONICFAIL, ks_err_asm_msp430_mnemonicfail;
                                  ]
       end
 

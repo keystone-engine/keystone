@@ -32,7 +32,9 @@ KS_ARCH_PPC                     EQU 5       ; PowerPC architecture (currently un
 KS_ARCH_SPARC                   EQU 6       ; Sparc architecture
 KS_ARCH_SYSTEMZ                 EQU 7       ; SystemZ architecture (S390X)
 KS_ARCH_HEXAGON                 EQU 8       ; Hexagon architecture
-KS_ARCH_MAX                     EQU 9       ; 
+KS_ARCH_EVM                     EQU 9       ; EVM architecture
+KS_ARCH_MSP430                  EQU 10      ; MSP430 architecture
+KS_ARCH_MAX                     EQU 11      ;
 
 ; Mode type ks_mode
 KS_MODE_LITTLE_ENDIAN           EQU 0       ; little-endian mode (default mode)

@@ -161,6 +161,9 @@ bool ks_arch_supported(ks_arch arch)
 #ifdef LLVM_ENABLE_ARCH_Mips
         case KS_ARCH_MIPS:  return true;
 #endif
+#ifdef LLVM_ENABLE_ARCH_MSP430
+        case KS_ARCH_MSP430:  return true;
+#endif
 #ifdef LLVM_ENABLE_ARCH_PowerPC
         case KS_ARCH_PPC:   return true;
 #endif
@@ -407,6 +410,21 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
 
                 InitKs(arch, ks, TripleName);
 
+                break;
+#endif
+
+#ifdef LLVM_ENABLE_ARCH_MSP430
+            case KS_ARCH_MSP430:
+                if (mode & ~KS_MODE_MSP430_MASK) {
+                    delete ks;
+                    return KS_ERR_MODE;
+                }
+
+                TripleName = "msp430";
+
+                InitKs(arch, ks, TripleName);
+
+                //ks->init_arch = arm_ks_init;
                 break;
 #endif
 

@@ -43,5 +43,42 @@ bool MCAsmParser::parseExpression(const MCExpr *&Res) {
   return parseExpression(Res, L);
 }
 
+bool MCAsmParser::parseEOL(const Twine &Msg) {
+  if (getTok().getKind() != AsmToken::EndOfStatement)
+    return Error(getTok().getLoc(), Msg);
+  Lex();
+  return false;
+}
+
+bool MCAsmParser::parseToken(AsmToken::TokenKind T, const Twine &Msg = "unexpected token") {
+  if (T == AsmToken::EndOfStatement)
+    return parseEOL(Msg);
+  if (getTok().getKind() != T)
+    return Error(getTok().getLoc(), Msg);
+  Lex();
+  return false;
+}
+
+bool MCAsmParser::parseOptionalToken(AsmToken::TokenKind T) {
+  bool Present = (getTok().getKind() == T);
+  if (Present)
+    parseToken(T);
+  return Present;
+}
+
+bool MCAsmParser::parseMany(function_ref<bool()> parseOne, bool hasComma) {
+  if (parseOptionalToken(AsmToken::EndOfStatement))
+    return false;
+  while (true) {
+    if (parseOne())
+      return true;
+    if (parseOptionalToken(AsmToken::EndOfStatement))
+      return false;
+    if (hasComma && parseToken(AsmToken::Comma))
+      return true;
+  }
+  return false;
+}
+
 LLVM_DUMP_METHOD void MCParsedAsmOperand::dump() const {
 }

@@ -51,4 +51,5 @@ David Zimmer: VB6 binding.
 Michael Mohr: Debian packaging.
 Jämes Ménétrey (ZenLulz): Java binding.
 Philippe Antoine (Catena cyber): fuzzing.
+Trey Keown: MSP430 support.
 Kevin Foo (chfl4gs): PyPI packaging, Travis-CI, fixes for Python binding.

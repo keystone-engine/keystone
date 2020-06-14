@@ -34,7 +34,7 @@ For Windows, see [COMPILE-WINDOWS.md](COMPILE-WINDOWS.md)
         $ ../make-share.sh lib64
 
    By default, this builds all architectures, which is: AArch64, ARM, Hexagon,
-   Mips, PowerPC, Sparc, SystemZ & X86. To compile just some selected ones,
+   Mips, MSP430, PowerPC, Sparc, SystemZ & X86. To compile just some selected ones,
    pass a semicolon-separated list of targets to LLVM_TARGETS_TO_BUILD,
    like follows if we only want AArch64 & X86.
 

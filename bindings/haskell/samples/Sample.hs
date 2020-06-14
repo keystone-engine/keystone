@@ -72,3 +72,6 @@ main = do
 
     -- SystemZ
     testKs ArchSystemz [ModeBigEndian] ["a %r0, 4095(%r15,%r1)"] Nothing
+
+    -- MSP430
+    testKs ArchMsp430 [ModeLittleEndian] ["and r12, r13"] Nothing

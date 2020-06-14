@@ -63,6 +63,10 @@ static void usage(char *prog)
         printf("        mips64be:  Mips64 - big endian\n");
     }
 
+    if (ks_arch_supported(KS_ARCH_MSP430)) {
+        printf("        msp430:    MSP430\n");
+    }
+
     if (ks_arch_supported(KS_ARCH_PPC)) {
         printf("        ppc32be:   PowerPC32 - big endian\n");
         printf("        ppc64:     PowerPC64 - little endian\n");
@@ -261,6 +265,10 @@ int main(int argc, char **argv)
 
     if (!strcmp(mode, "mips")) {
         err = ks_open(KS_ARCH_MIPS, KS_MODE_MIPS32+KS_MODE_LITTLE_ENDIAN, &ks);
+    }
+
+    if (!strcmp(mode, "msp430")) {
+        err = ks_open(KS_ARCH_MSP430, KS_MODE_LITTLE_ENDIAN, &ks);
     }
 
     if (!strcmp(mode, "mipsbe")) {

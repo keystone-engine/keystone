@@ -174,6 +174,7 @@ set(LLVM_ALL_TARGETS
   ARM
   Hexagon
   Mips
+  MSP430
   PowerPC
   Sparc
   SystemZ
