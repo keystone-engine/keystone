@@ -1,5 +1,6 @@
 Checklist for a new release:
 
+- update ChangeLog
 - cd bindings; make
 - update API version in keystone.h
 - update API version in CMakeLists.txt
