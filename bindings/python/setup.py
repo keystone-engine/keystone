@@ -19,7 +19,8 @@ from distutils.command.sdist import sdist as _sdist
 from setuptools.command.bdist_egg import bdist_egg as _bdist_egg
 from setuptools.command.develop import develop as _develop
 
-VERSION = '0.9.2' + 'rc1' + '.post2'
+#VERSION = '0.9.2' + 'rc1' + '.post2'
+VERSION = '0.9.2'
 SYSTEM = sys.platform
 IS_64BITS = platform.architecture()[0] == '64bit'
 
