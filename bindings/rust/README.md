@@ -29,7 +29,7 @@ Add a dependency line into `Cargo.toml`.
 
 ```
 [dependencies]
-keystone = "0.10.0"
+keystone = "0.9.2"
 ```
 
 This package attempts to build keystone. That requires cmake and c/c++ compiler.
@@ -38,7 +38,7 @@ If you want to use keystone already installed in the system, specify `use_system
 
 ```
 [dependencies.keystone]
-version = "0.10.0"
+version = "0.9.2"
 default-features = false
 features = ["use_system_keystone"]
 ```
