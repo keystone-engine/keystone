@@ -53,6 +53,14 @@ set_target_properties(
   SOVERSION ${KEYSTONE_VERSION_MAJOR}
 )
 
+if(NOT BUILD_SHARED_LIBS)
+  target_compile_definitions(
+    keystone
+    PUBLIC
+    KEYSTONE_STATIC
+  )
+endif()
+
 if (APPLE)
   set_target_properties(keystone
                         PROPERTIES

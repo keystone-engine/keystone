@@ -16,11 +16,19 @@ extern "C" {
 #ifdef _MSC_VER     // MSVC compiler
 #pragma warning(disable:4201)
 #pragma warning(disable:4100)
+#ifndef KEYSTONE_STATIC
 #define KEYSTONE_EXPORT __declspec(dllexport)
+#else
+#define KEYSTONE_EXPORT
+#endif
 #else
 #ifdef __GNUC__
 #include <stdbool.h>
+#ifndef KEYSTONE_STATIC
 #define KEYSTONE_EXPORT __attribute__((visibility("default")))
+#else
+#define KEYSTONE_EXPORT
+#endif
 #else
 #define KEYSTONE_EXPORT
 #endif
