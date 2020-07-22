@@ -1,3 +1,20 @@
+keystone-engine (0.9.2-1) unstable; urgency=medium
+
+  * Default radix set to 16
+  * kstool accepts -b option to print out encoding binary to output
+  * Do not build Universal binaries for Mac
+  * Better installer for Linux
+  * Add Ethereum VM architecture
+  * Better support for older compiler
+  * Add Masm binding
+  * Rename namespace llvm to llvm_ks
+  * Better cross compile with Android NDK
+  * Add KS_VERSION_{MAJOR, MINOR, EXTRA}
+  * Add new option KS_OPT_SYM_RESOLVER
+  * Fix memory leaks in ks_asm()
+
+ -- Michael Mohr <akihana@gmail.com>  Tue, 21 Jul 2020 21:16:03 -0700
+
 keystone-engine (0.9.1-1) unstable; urgency=medium
 
   * Initial packaging.
