@@ -8,6 +8,7 @@ set(KEYSTONE_VERSION_MAJOR 0)
 set(KEYSTONE_VERSION_MINOR 9)
 
 option(KEYSTONE_BUILD_STATIC_RUNTIME "Embed static runtime" ON)
+option(BUILD_LIBS_ONLY "Only build keystone library" 0)
 
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "No build type selected, default to Debug")
@@ -73,7 +74,7 @@ add_subdirectory(llvm)
 # for Windows, do not build kstool if buiding DLL
 # TODO: fix this
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
-if (NOT BUILD_SHARED_LIBS)
+if (NOT BUILD_LIBS_ONLY AND NOT BUILD_SHARED_LIBS)
     add_subdirectory(kstool)
 endif()
 else()
@@ -112,7 +113,11 @@ configure_file(
     "${CMAKE_CURRENT_BINARY_DIR}/CMakeUninstall.cmake"
     IMMEDIATE @ONLY)
 
-add_custom_target(uninstall
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/CMakeUninstall.cmake)
+if(NOT BUILD_LIBS_ONLY)
+    add_custom_target(uninstall
+        COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/CMakeUninstall.cmake)
+endif()
 
-add_subdirectory(suite/fuzz)
+if(NOT BUILD_LIBS_ONLY)
+    add_subdirectory(suite/fuzz)
+endif()
