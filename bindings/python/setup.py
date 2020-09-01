@@ -33,8 +33,10 @@ BUILD_DIR = os.path.join(SRC_DIR, 'build')
 if SYSTEM == 'darwin':
     LIBRARY_FILE = "libkeystone.dylib"
     MAC_LIBRARY_FILE = "libkeystone*.dylib"
-elif SYSTEM in ('win32', 'cygwin'):
+elif SYSTEM == 'win32':
     LIBRARY_FILE = "keystone.dll"
+elif SYSTEM == 'cygwin':
+    LIBRARY_FILE = "cygkeystone-0.dll"
 else:
     LIBRARY_FILE = "libkeystone.so"
 
@@ -111,7 +113,10 @@ def build_libraries():
     else:
         cmd = ['sh', '../make-share.sh', 'lib_only']
         subprocess.call(cmd)
-        obj_dir = os.path.join(BUILD_DIR, 'llvm', 'lib')
+        if SYSTEM == "cygwin":
+            obj_dir = os.path.join(BUILD_DIR, 'llvm', 'bin')
+        else:
+            obj_dir = os.path.join(BUILD_DIR, 'llvm', 'lib')
         obj64_dir = os.path.join(BUILD_DIR, 'llvm', 'lib64')
         if SYSTEM == 'darwin':
             for file in glob.glob(os.path.join(obj_dir, MAC_LIBRARY_FILE)):
@@ -229,7 +234,7 @@ setup(
     ],
     requires=['ctypes'],
     cmdclass={'build': build, 'develop': develop, 'sdist': sdist, 'bdist_egg': bdist_egg},
-    zip_safe=True,
+    zip_safe=False,
     include_package_data=True,
     is_pure=False,
     package_data={
