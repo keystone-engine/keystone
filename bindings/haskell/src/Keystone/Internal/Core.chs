@@ -14,7 +14,7 @@ way cabal handles ordering of chs files.
 module Keystone.Internal.Core where
 
 import Control.Monad
-import Control.Monad.Trans.Either (EitherT)
+import Control.Monad.Trans.Except (ExceptT)
 import Foreign
 
 {# context lib = "keystone" #}
@@ -48,4 +48,4 @@ mkEngine ptr =
 
 -- | The assembler runs in the IO monad and allows for the handling of errors
 -- "under the hood".
-type Assembler a = EitherT Error IO a
+type Assembler a = ExceptT Error IO a
