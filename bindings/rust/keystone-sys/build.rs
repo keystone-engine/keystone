@@ -22,6 +22,7 @@ fn build_with_cmake() {
     }
 
     let dest = cmake::Config::new("keystone")
+        .define("CMAKE_INSTALL_LIBDIR", "lib")
         .define("BUILD_LIBS_ONLY", "1")
         .define("BUILD_SHARED_LIBS", "OFF")
         .define("LLVM_TARGETS_TO_BUILD", "all")
