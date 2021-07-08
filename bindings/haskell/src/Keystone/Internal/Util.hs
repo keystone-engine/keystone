@@ -6,6 +6,7 @@ License     : GPL-2
 -}
 module Keystone.Internal.Util where
 
+import Control.Applicative ((<$>))
 import Data.Bits
 
 -- | Combine a list of Enums by performing a bitwise-OR.

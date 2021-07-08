@@ -32,7 +32,7 @@ module Keystone
     ) where
 
 import Control.Monad.Trans.Class (lift)
-import Control.Monad.Trans.Either (left, right, runEitherT)
+import Control.Monad.Trans.Except (runExceptT, throwE)
 import Data.ByteString (ByteString, packCStringLen)
 import Data.List (intercalate)
 import Foreign
@@ -50,7 +50,7 @@ runAssembler :: Assembler a         -- ^ The assembler code to execute
              -> IO (Either Error a) -- ^ A result on success, or an 'Error' on
                                     -- failure
 runAssembler =
-    runEitherT
+    runExceptT
 
 -- | Create a new instance of the Keystone assembler.
 open :: Architecture        -- ^ CPU architecture
@@ -65,7 +65,7 @@ open arch mode = do
         lift $ mkEngine ksPtr
     else
         -- Otherwise return an error
-        left err
+        throwE err
 
 option :: Engine        -- ^ 'Keystone' engine handle
        -> OptionType    -- ^ Type of option to set
@@ -74,9 +74,9 @@ option :: Engine        -- ^ 'Keystone' engine handle
 option ks optType optValue = do
     err <- lift $ ksOption ks optType optValue
     if err == ErrOk then
-        right ()
+        return ()
     else
-        left err
+        throwE err
 
 -- | Assemble a list of statements.
 assemble :: Engine                      -- ^ 'Keystone' engine handle
@@ -97,11 +97,11 @@ assemble ks stmts addr = do
         -- statement count
         bs <- lift $ packCStringLen (castPtr encPtr, encSize)
         lift $ ksFree encPtr
-        right (bs, statCount)
+        return (bs, statCount)
     else do
         -- On failure, call errno for error code
         err <- errno ks
-        left err
+        throwE err
     where maybeZ = maybe 0 id
 
 -------------------------------------------------------------------------------
