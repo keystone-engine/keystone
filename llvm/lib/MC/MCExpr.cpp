@@ -781,7 +781,12 @@ bool MCExpr::evaluateAsRelocatableImpl(MCValue &Res, const MCAssembler *Asm,
         return false;
       Result = LHS % RHS;
       break;
-    case MCBinaryExpr::Mul:  Result = LHS * RHS; break;
+    case MCBinaryExpr::Mul:
+        // Avoid overflow
+        if (LHS != 0 && RHS > LLONG_MAX / LHS) {
+            return false;
+        }
+        Result = LHS * RHS; break;
     case MCBinaryExpr::NE:   Result = LHS != RHS; break;
     case MCBinaryExpr::Or:   Result = LHS | RHS; break;
     case MCBinaryExpr::Shl:  Result = uint64_t(LHS) << uint64_t(RHS); break;
