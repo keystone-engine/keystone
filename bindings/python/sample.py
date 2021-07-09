@@ -22,11 +22,11 @@ def test_ks(arch, mode, code, syntax=0):
 
 # test symbol resolver
 def test_sym_resolver():
-    def sym_resolver(symbol, value):
+    def sym_resolver(symbol, p_value):
         # is this the missing symbol we want to handle?
         if symbol == "_l1":
             # put value of this symbol in @value
-            value = 0x1002
+            p_value.contents.value = 0x1002
             # we handled this symbol, so return true
             return True
 
