@@ -4202,6 +4202,17 @@ bool AArch64AsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
     }
   }
 
+  if (NumOperands == 3 && Tok == "adrp") {
+	  AArch64Operand &ImmOp = static_cast<AArch64Operand &>(*Operands[2]);
+	  const MCConstantExpr *Op2CE = dyn_cast<MCConstantExpr>(ImmOp.getImm());
+	  uint64_t NewOp2Val = Op2CE->getValue() - (Address & ~0xFFF);
+	  
+	  const MCExpr *NewOp2 =
+		  MCConstantExpr::create(NewOp2Val, getContext());
+	  Operands[2] = AArch64Operand::CreateImm(
+		  NewOp2, ImmOp.getStartLoc(), ImmOp.getEndLoc(), getContext());
+  }
+
   MCInst Inst(Address);
   // First try to match against the secondary set of tables containing the
   // short-form NEON instructions (e.g. "fadd.2s v0, v1, v2").
