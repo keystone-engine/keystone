@@ -927,6 +927,11 @@ static bool CheckBaseRegAndIndexReg(unsigned BaseReg, unsigned IndexReg,
   // If we have both a base register and an index register make sure they are
   // both 64-bit or 32-bit registers.
   // To support VSIB, IndexReg can be 128-bit or 256-bit registers.
+
+  if ((BaseReg == X86::RIP && IndexReg != 0) || (IndexReg == X86::RIP)) {
+    ErrMsg = "invalid base+index expression";
+    return true;
+  }
   if (BaseReg != 0 && IndexReg != 0) {
     if (X86MCRegisterClasses[X86::GR64RegClassID].contains(BaseReg) &&
         (X86MCRegisterClasses[X86::GR16RegClassID].contains(IndexReg) ||
@@ -2057,10 +2062,12 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseIntelOperand(std::string Mnem, un
   if (!ParseRegister(RegNo, Start, End, ErrorCode)) {
     // If this is a segment register followed by a ':', then this is the start
     // of a segment override, otherwise this is a normal register reference.
-    // In case it is a normal register and there is ptr in the operand this 
+    // In case it is a normal register and there is ptr in the operand this
     // is an error
-    if (getLexer().isNot(AsmToken::Colon)){
-      if (PtrInOperand){
+    if (RegNo == X86::RIP)
+      return ErrorOperand(Start, "rip can only be used as a base register");
+    if (getLexer().isNot(AsmToken::Colon)) {
+      if (PtrInOperand) {
         return ErrorOperand(Start, "expected memory operand after "
                                    "'ptr', found register operand instead");
       }
@@ -2090,6 +2097,12 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseATTOperand(unsigned int &KsError)
     if (RegNo == X86::EIZ || RegNo == X86::RIZ) {
       //Error(Start, "%eiz and %riz can only be used as index registers",
       //      SMRange(Start, End));
+      KsError = KS_ERR_ASM_INVALIDOPERAND;
+      return nullptr;
+    }
+    if (RegNo == X86::RIP) {
+      // Error(Start, "%rip can only be used as a base register",
+      //       SMRange(Start, End));
       KsError = KS_ERR_ASM_INVALIDOPERAND;
       return nullptr;
     }
@@ -2310,6 +2323,21 @@ std::unique_ptr<X86Operand> X86AsmParser::ParseMemOperand(unsigned SegReg,
       if (ParseRegister(IndexReg, L, L, ErrorCode)) {
           KsError = KS_ERR_ASM_INVALIDOPERAND;
           return nullptr;
+      }
+
+      if (ParseRegister(IndexReg, L, L, ErrorCode)) {
+        KsError = KS_ERR_ASM_X86_INVALIDOPERAND;
+        return nullptr;
+      }
+      if (BaseReg == X86::RIP) {
+        // Error(IndexLoc, "%rip as base register can not have an index register");
+        KsError = KS_ERR_ASM_INVALIDOPERAND;
+        return nullptr;
+      }
+      if (IndexReg == X86::RIP) {
+        // Error(IndexLoc, "%rip is not allowed as an index register");
+        KsError = KS_ERR_ASM_INVALIDOPERAND;
+        return nullptr;
       }
 
       if (getLexer().isNot(AsmToken::RParen)) {
