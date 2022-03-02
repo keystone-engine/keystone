@@ -4,7 +4,7 @@ Option Explicit
 'These are old library functions
 
 'Author:  David Zimmer <david.zimmer@fireeye.com>, <dzzie@yahoo.com>
-'License: Apache
+'License: Apache 2.0
 'Copyright: David Zimmer
 
 

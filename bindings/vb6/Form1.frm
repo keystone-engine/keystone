@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "mscomctl.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
 Begin VB.Form Form1 
    Caption         =   "Keystone Assembler Engine VB6 Bindings - Contributed by FireEye FLARE team"
    ClientHeight    =   4680
@@ -64,7 +64,7 @@ Option Explicit
 'Keystone Assembly Engine bindings for VB6
 'Contributed by FireEye FLARE Team
 'Author:  David Zimmer <david.zimmer@fireeye.com>, <dzzie@yahoo.com>
-'License: Apache
+'License: Apache 2.0
 'Copyright: FireEye 2017
 
 'NOTE: the VB code was built and tested against the latest binary release: Keystone 0.9.1
