@@ -4,7 +4,7 @@ Option Explicit
 'Keystone Assembly Engine bindings for VB6
 'Contributed by FireEye FLARE Team
 'Author:  David Zimmer <david.zimmer@fireeye.com>, <dzzie@yahoo.com>
-'License: Apache
+'License: Apache 2.0
 'Copyright: FireEye 2017
 
 'NOTE: the VB code was built and tested against the latest binary release: Keystone 0.9.1
