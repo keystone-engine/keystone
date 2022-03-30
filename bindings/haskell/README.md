@@ -1,6 +1,5 @@
-This documentation explains how to install the Keystone Haskell bindings from
-source.
-
+# Keystone Haskell bindings
+## Building
 1. Install the core Keystone Assembler as a dependency:
 
    Follow docs/COMPILE.md in the root directory to compile & install the core.
@@ -24,4 +23,29 @@ To build a sample (after having built and installed the Haskell bindings):
 ```
 $ cd bindings/haskell
 $ ghc --make samples/Sample.hs
+```
+
+## Using as a dependency
+### In a Cabal project
+Add the following to the `cabal.project` file in the project root:
+
+```text
+source-repository-package
+  type: git
+  location: https://github.com/keystone-engine/keystone
+  subdir:
+    bindings/haskell
+  tag: master
+
+-- if the file didn't already exist, add the following also
+packages: .
+```
+
+### In a Stack project
+Add the following to the `stack.yaml` file in the project root:
+
+```yaml
+extra-deps:
+- git: https://github.com/keystone-engine/keystone
+  subdir: bindings/haskell
 ```
