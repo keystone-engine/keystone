@@ -12,7 +12,7 @@ import regress
 
 def sym_resolver(symbol, value):
     if symbol == b'GetPhoneBuildString':
-        value = 0x41b000
+        value.contents.value = 0x41b000
         return True
     return False
 
