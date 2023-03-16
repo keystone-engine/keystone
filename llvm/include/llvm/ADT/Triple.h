@@ -63,6 +63,8 @@ public:
     ppc64,      // PPC64: powerpc64, ppu
     ppc64le,    // PPC64LE: powerpc64le
     r600,       // R600: AMD GPUs HD2XXX - HD6XXX
+    riscv32,    // RISCV: 32-bit RISCV
+    riscv64,    // RISCV: 64-bit RISCV
     amdgcn,     // AMDGCN: AMD GCN GPUs
     sparc,      // Sparc: sparc
     sparcv9,    // Sparcv9: Sparcv9

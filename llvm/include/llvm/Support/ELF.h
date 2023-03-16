@@ -310,6 +310,7 @@ enum {
   EM_NORC          = 218, // Nanoradio Optimized RISC
   EM_CSR_KALIMBA   = 219, // CSR Kalimba architecture family
   EM_AMDGPU        = 224, // AMD GPU architecture
+  EM_RISCV = 243,         // RISC-V
 
   // A request has been made to the maintainer of the official registry for
   // such numbers for an official value for WebAssembly. As soon as one is
@@ -587,6 +588,11 @@ enum {
 // ELF Relocation types for Hexagon
 enum {
 #include "ELFRelocs/Hexagon.def"
+};
+
+// ELF Relocation types for RISC-V
+enum {
+#include "ELFRelocs/RISCV.def"
 };
 
 // ELF Relocation types for S390/zSeries

@@ -179,6 +179,9 @@ bool ks_arch_supported(ks_arch arch)
 #ifdef LLVM_ENABLE_ARCH_EVM
         case KS_ARCH_EVM:   return true;
 #endif
+#ifdef LLVM_ENABLE_ARCH_RISCV
+        case KS_ARCH_RISCV: return true;
+#endif
         /* Invalid or disabled arch */
         default:            return false;
     }
@@ -383,6 +386,31 @@ ks_err ks_open(ks_arch arch, int mode, ks_engine **result)
                 InitKs(arch, ks, TripleName);
 
                 break;
+#endif
+
+#ifdef LLVM_ENABLE_ARCH_RISCV
+            case KS_ARCH_RISCV: {
+                if ((mode & ~KS_MODE_RISCV_MASK) ||
+                        (mode & KS_MODE_BIG_ENDIAN) ||
+                        !(mode & (KS_MODE_RISCV32|KS_MODE_RISCV64))) {
+                    delete ks;
+                    return KS_ERR_MODE;
+                }
+
+                switch(mode) {
+                    default: break;
+                    case KS_MODE_RISCV32:
+                        TripleName = "riscv32";
+                        break;
+                    case KS_MODE_RISCV64:
+                        TripleName = "riscv64";
+                        break;
+                }
+
+                InitKs(arch, ks, TripleName);
+
+                break;
+            }
 #endif
 
 #ifdef LLVM_ENABLE_ARCH_Mips
