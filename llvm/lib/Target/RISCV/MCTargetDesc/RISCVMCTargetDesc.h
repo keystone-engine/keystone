@@ -23,7 +23,7 @@ class MCAsmBackend;
 class MCCodeEmitter;
 class MCContext;
 class MCInstrInfo;
-class MCObjectTargetWriter;
+class MCObjectWriter;
 class MCRegisterInfo;
 class MCSubtargetInfo;
 class StringRef;
@@ -40,7 +40,7 @@ MCAsmBackend *createRISCVAsmBackend(const Target &T, const MCSubtargetInfo &STI,
                                     const MCRegisterInfo &MRI,
                                     const MCTargetOptions &Options);
 
-std::unique_ptr<MCObjectTargetWriter> createRISCVELFObjectWriter(uint8_t OSABI,
+MCObjectWriter *createRISCVELFObjectWriter(raw_pwrite_stream &OS, uint8_t OSABI,
                                                                  bool Is64Bit);
 }
 

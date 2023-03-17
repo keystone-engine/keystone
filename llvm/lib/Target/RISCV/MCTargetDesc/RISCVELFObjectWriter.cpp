@@ -12,6 +12,7 @@
 #include "llvm/MC/MCFixup.h"
 #include "llvm/MC/MCObjectWriter.h"
 #include "llvm/Support/ErrorHandling.h"
+#include "llvm/ADT/STLExtras.h"
 
 using namespace llvm_ks;
 
@@ -127,7 +128,7 @@ unsigned RISCVELFObjectWriter::getRelocType(MCContext &Ctx,
   }
 }
 
-std::unique_ptr<MCObjectTargetWriter>
-llvm_ks::createRISCVELFObjectWriter(uint8_t OSABI, bool Is64Bit) {
-  return llvm_ks::make_unique<RISCVELFObjectWriter>(OSABI, Is64Bit);
+MCObjectWriter *llvm_ks::createRISCVELFObjectWriter(raw_pwrite_stream &OS, uint8_t OSABI, bool Is64Bit) {
+  MCELFObjectTargetWriter *MOTW = new RISCVELFObjectWriter(OSABI, Is64Bit);
+  return createELFObjectWriter(MOTW, OS, /*isLittleEndian*/ true);
 }

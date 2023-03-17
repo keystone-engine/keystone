@@ -14,7 +14,7 @@
 #include "MCTargetDesc/RISCVAsmBackend.h"
 #include "RISCVMCTargetDesc.h"
 #include "Utils/RISCVBaseInfo.h"
-#include "llvm/BinaryFormat/ELF.h"
+#include "llvm/Support/ELF.h"
 #include "llvm/MC/MCSubtargetInfo.h"
 
 using namespace llvm_ks;

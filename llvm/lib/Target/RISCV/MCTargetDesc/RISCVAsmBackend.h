@@ -52,18 +52,18 @@ public:
   // Generate diff expression relocations if the relax feature is enabled or had
   // previously been enabled, otherwise it is safe for the assembler to
   // calculate these internally.
-  bool requiresDiffExpressionRelocations() const override {
+  bool requiresDiffExpressionRelocations() const {
     return willForceRelocations();
   }
 
   // Return Size with extra Nop Bytes for alignment directive in code section.
   bool shouldInsertExtraNopBytesForCodeAlign(const MCAlignFragment &AF,
-                                             unsigned &Size) override;
+                                             unsigned &Size);
 
   // Insert target specific fixup type for alignment directive in code section.
   bool shouldInsertFixupForCodeAlign(MCAssembler &Asm,
                                      const MCAsmLayout &Layout,
-                                     MCAlignFragment &AF) override;
+                                     MCAlignFragment &AF);
 
   void applyFixup(const MCAssembler &Asm, const MCFixup &Fixup,
                   const MCValue &Target, MutableArrayRef<char> Data,
