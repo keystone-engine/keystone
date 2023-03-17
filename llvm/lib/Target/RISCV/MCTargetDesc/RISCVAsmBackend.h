@@ -70,8 +70,7 @@ public:
                   uint64_t Value, bool IsResolved,
                   const MCSubtargetInfo *STI, unsigned int &KsError) const override;
 
-  std::unique_ptr<MCObjectWriter>
-  createObjectWriter(raw_pwrite_stream &OS) const override;
+  MCObjectWriter *createObjectWriter(raw_pwrite_stream &OS) const override;
 
   bool shouldForceRelocation(const MCAssembler &Asm, const MCFixup &Fixup,
                              const MCValue &Target) override;
