@@ -354,8 +354,8 @@ bool RISCVAsmBackend::shouldInsertFixupForCodeAlign(MCAssembler &Asm,
   return true;
 }
 
-std::unique_ptr<MCObjectTargetWriter>
-RISCVAsmBackend::createObjectTargetWriter() const {
+std::unique_ptr<MCObjectWriter>
+RISCVAsmBackend::createObjectWriter(raw_pwrite_stream &OS) const {
   return createRISCVELFObjectWriter(OS, OSABI, Is64Bit);
 }
 

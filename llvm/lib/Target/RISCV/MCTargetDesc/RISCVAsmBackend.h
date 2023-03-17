@@ -18,7 +18,7 @@
 
 namespace llvm_ks {
 class MCAssembler;
-class MCObjectTargetWriter;
+class MCObjectWriter;
 class raw_ostream;
 
 class RISCVAsmBackend : public MCAsmBackend {
@@ -70,8 +70,8 @@ public:
                   uint64_t Value, bool IsResolved,
                   const MCSubtargetInfo *STI, unsigned int &KsError) const override;
 
-  std::unique_ptr<MCObjectTargetWriter>
-  createObjectTargetWriter() const override;
+  std::unique_ptr<MCObjectWriter>
+  createObjectWriter(raw_pwrite_stream &OS) const override;
 
   bool shouldForceRelocation(const MCAssembler &Asm, const MCFixup &Fixup,
                              const MCValue &Target) override;
