@@ -15,6 +15,8 @@
 #include "llvm/MC/MCAsmBackend.h"
 #include "llvm/MC/MCFixupKindInfo.h"
 #include "llvm/MC/MCSubtargetInfo.h"
+#include "llvm/ADT/STLExtras.h"
+
 
 namespace llvm_ks {
 class MCAssembler;
@@ -32,7 +34,7 @@ class RISCVAsmBackend : public MCAsmBackend {
 public:
   RISCVAsmBackend(const MCSubtargetInfo &STI, uint8_t OSABI, bool Is64Bit,
                   const MCTargetOptions &Options)
-      : MCAsmBackend(support::little), STI(STI), OSABI(OSABI), Is64Bit(Is64Bit),
+      : MCAsmBackend(), STI(STI), OSABI(OSABI), Is64Bit(Is64Bit),
         TargetOptions(Options) {
     TargetABI = RISCVABI::computeTargetABI(
         STI.getTargetTriple(), STI.getFeatureBits(), Options.getABIName());
@@ -73,19 +75,18 @@ public:
   MCObjectWriter *createObjectWriter(raw_pwrite_stream &OS) const override;
 
   bool shouldForceRelocation(const MCAssembler &Asm, const MCFixup &Fixup,
-                             const MCValue &Target) override;
+                             const MCValue &Target);
 
   bool fixupNeedsRelaxation(const MCFixup &Fixup, uint64_t Value,
                             const MCRelaxableFragment *DF,
-                            const MCAsmLayout &Layout) const override {
+                            const MCAsmLayout &Layout, unsigned &KsError) const override {
     llvm_unreachable("Handled by fixupNeedsRelaxationAdvanced");
   }
 
   bool fixupNeedsRelaxationAdvanced(const MCFixup &Fixup, bool Resolved,
                                     uint64_t Value,
                                     const MCRelaxableFragment *DF,
-                                    const MCAsmLayout &Layout,
-                                    const bool WasForced) const override;
+                                    const MCAsmLayout &Layout) const override;
 
   unsigned getNumFixupKinds() const override {
     return RISCV::NumTargetFixupKinds;
@@ -130,15 +131,14 @@ public:
     return Infos[Kind - FirstTargetFixupKind];
   }
 
-  bool mayNeedRelaxation(const MCInst &Inst,
-                         const MCSubtargetInfo &STI) const override;
+  bool mayNeedRelaxation(const MCInst &Inst) const override;
   unsigned getRelaxedOpcode(unsigned Op) const;
 
-  void relaxInstruction(const MCInst &Inst, const MCSubtargetInfo &STI,
+  void relaxInstruction(const MCInst &Inst,
                         MCInst &Res) const override;
 
 
-  bool writeNopData(raw_ostream &OS, uint64_t Count) const override;
+  bool writeNopData(uint64_t Count, MCObjectWriter * OW) const override;
 
   const MCTargetOptions &getTargetOptions() const { return TargetOptions; }
   RISCVABI::ABI getTargetABI() const { return TargetABI; }

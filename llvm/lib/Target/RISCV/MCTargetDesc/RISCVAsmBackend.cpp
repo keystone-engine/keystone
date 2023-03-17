@@ -73,13 +73,12 @@ bool RISCVAsmBackend::fixupNeedsRelaxationAdvanced(const MCFixup &Fixup,
                                                    bool Resolved,
                                                    uint64_t Value,
                                                    const MCRelaxableFragment *DF,
-                                                   const MCAsmLayout &Layout,
-                                                   const bool WasForced) const {
+                                                   const MCAsmLayout &Layout) const {
   // Return true if the symbol is actually unresolved.
   // Resolved could be always false when shouldForceRelocation return true.
-  // We use !WasForced to indicate that the symbol is unresolved and not forced
-  // by shouldForceRelocation.
-  if (!Resolved && !WasForced)
+  // ~We use !WasForced to indicate that the symbol is unresolved and not forced
+  // by shouldForceRelocation.~ - removed for backport compatibility
+  if (!Resolved)
     return true;
 
   int64_t Offset = int64_t(Value);
@@ -98,7 +97,6 @@ bool RISCVAsmBackend::fixupNeedsRelaxationAdvanced(const MCFixup &Fixup,
 }
 
 void RISCVAsmBackend::relaxInstruction(const MCInst &Inst,
-                                       const MCSubtargetInfo &STI,
                                        MCInst &Res) const {
   // TODO: replace this with call to auto generated uncompressinstr() function.
   switch (Inst.getOpcode()) {
@@ -149,12 +147,11 @@ unsigned RISCVAsmBackend::getRelaxedOpcode(unsigned Op) const {
   }
 }
 
-bool RISCVAsmBackend::mayNeedRelaxation(const MCInst &Inst,
-                                        const MCSubtargetInfo &STI) const {
+bool RISCVAsmBackend::mayNeedRelaxation(const MCInst &Inst) const {
   return getRelaxedOpcode(Inst.getOpcode()) != Inst.getOpcode();
 }
 
-bool RISCVAsmBackend::writeNopData(raw_ostream &OS, uint64_t Count) const {
+bool RISCVAsmBackend::writeNopData(uint64_t Count, MCObjectWriter * OW) const {
   bool HasStdExtC = STI.getFeatureBits()[RISCV::FeatureStdExtC];
   unsigned MinNopLen = HasStdExtC ? 2 : 4;
 
@@ -163,11 +160,11 @@ bool RISCVAsmBackend::writeNopData(raw_ostream &OS, uint64_t Count) const {
 
   // The canonical nop on RISC-V is addi x0, x0, 0.
   for (; Count >= 4; Count -= 4)
-    OS.write("\x13\0\0\0", 4);
+    OW->write32(0x00000013);
 
   // The canonical nop on RVC is c.nop.
   if (Count && HasStdExtC)
-    OS.write("\x01\0", 2);
+    OW->write16(0x0001);
 
   return true;
 }
