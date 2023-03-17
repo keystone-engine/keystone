@@ -277,7 +277,7 @@ void RISCVAsmBackend::applyFixup(const MCAssembler &Asm, const MCFixup &Fixup,
                                  const MCValue &Target,
                                  MutableArrayRef<char> Data, uint64_t Value,
                                  bool IsResolved,
-                                 const MCSubtargetInfo *STI) const {
+                                 const MCSubtargetInfo *STI, unsigned int &KsError) const {
   MCContext &Ctx = Asm.getContext();
   MCFixupKindInfo Info = getFixupKindInfo(Fixup.getKind());
   if (!Value)

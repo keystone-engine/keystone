@@ -68,7 +68,7 @@ public:
   void applyFixup(const MCAssembler &Asm, const MCFixup &Fixup,
                   const MCValue &Target, MutableArrayRef<char> Data,
                   uint64_t Value, bool IsResolved,
-                  const MCSubtargetInfo *STI) const override;
+                  const MCSubtargetInfo *STI, unsigned int &KsError) const override;
 
   std::unique_ptr<MCObjectTargetWriter>
   createObjectTargetWriter() const override;
