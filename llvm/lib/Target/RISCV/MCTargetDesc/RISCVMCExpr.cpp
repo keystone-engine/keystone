@@ -15,7 +15,7 @@
 #include "MCTargetDesc/RISCVAsmBackend.h"
 #include "RISCV.h"
 #include "RISCVFixupKinds.h"
-#include "llvm/BinaryFormat/ELF.h"
+#include "llvm/Support/ELF.h"
 #include "llvm/MC/MCAsmLayout.h"
 #include "llvm/MC/MCAssembler.h"
 #include "llvm/MC/MCContext.h"

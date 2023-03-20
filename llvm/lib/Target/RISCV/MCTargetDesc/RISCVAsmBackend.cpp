@@ -169,8 +169,8 @@ bool RISCVAsmBackend::writeNopData(uint64_t Count, MCObjectWriter * OW) const {
   return true;
 }
 
-static uint64_t adjustFixupValue(const MCFixup &Fixup, uint64_t Value,
-                                 MCContext &Ctx) {
+static uint64_t adjustFixupValue(const MCFixup &Fixup, uint64_t Value) {
+                                  
   unsigned Kind = Fixup.getKind();
   switch (Kind) {
   default:
@@ -199,9 +199,11 @@ static uint64_t adjustFixupValue(const MCFixup &Fixup, uint64_t Value,
     return ((Value + 0x800) >> 12) & 0xfffff;
   case RISCV::fixup_riscv_jal: {
     if (!isInt<21>(Value))
-      Ctx.reportError(Fixup.getLoc(), "fixup value out of range");
+      //Ctx.reportError(Fixup.getLoc(), "fixup value out of range");
+      return -1;
     if (Value & 0x1)
-      Ctx.reportError(Fixup.getLoc(), "fixup value must be 2-byte aligned");
+      //Ctx.reportError(Fixup.getLoc(), "fixup value must be 2-byte aligned");
+      return -1;
     // Need to produce imm[19|10:1|11|19:12] from the 21-bit Value.
     unsigned Sbit = (Value >> 20) & 0x1;
     unsigned Hi8 = (Value >> 12) & 0xff;
@@ -216,9 +218,11 @@ static uint64_t adjustFixupValue(const MCFixup &Fixup, uint64_t Value,
   }
   case RISCV::fixup_riscv_branch: {
     if (!isInt<13>(Value))
-      Ctx.reportError(Fixup.getLoc(), "fixup value out of range");
+      //Ctx.reportError(Fixup.getLoc(), "fixup value out of range");
+      return -1;
     if (Value & 0x1)
-      Ctx.reportError(Fixup.getLoc(), "fixup value must be 2-byte aligned");
+      //Ctx.reportError(Fixup.getLoc(), "fixup value must be 2-byte aligned");
+      return -1;
     // Need to extract imm[12], imm[10:5], imm[4:1], imm[11] from the 13-bit
     // Value.
     unsigned Sbit = (Value >> 12) & 0x1;
@@ -270,17 +274,14 @@ static uint64_t adjustFixupValue(const MCFixup &Fixup, uint64_t Value,
   }
 }
 
-void RISCVAsmBackend::applyFixup(const MCAssembler &Asm, const MCFixup &Fixup,
-                                 const MCValue &Target,
-                                 MutableArrayRef<char> Data, uint64_t Value,
-                                 bool IsResolved,
-                                 const MCSubtargetInfo *STI, unsigned int &KsError) const {
-  MCContext &Ctx = Asm.getContext();
+void RISCVAsmBackend::applyFixup(const MCFixup &Fixup, char *Data, unsigned DataSize,
+                          uint64_t Value, bool IsPCRel, unsigned int &KsError) const {
+
   MCFixupKindInfo Info = getFixupKindInfo(Fixup.getKind());
   if (!Value)
     return; // Doesn't change encoding.
   // Apply any target-specific value adjustments.
-  Value = adjustFixupValue(Fixup, Value, Ctx);
+  Value = adjustFixupValue(Fixup, Value);
 
   // Shift the value into position.
   Value <<= Info.TargetOffset;
@@ -288,8 +289,9 @@ void RISCVAsmBackend::applyFixup(const MCAssembler &Asm, const MCFixup &Fixup,
   unsigned Offset = Fixup.getOffset();
   unsigned NumBytes = alignTo(Info.TargetSize + Info.TargetOffset, 8) / 8;
 
-  assert(Offset + NumBytes <= Data.size() && "Invalid fixup offset!");
-
+//FIXME .size() into a valid method for char* type 
+/*   assert(Offset + NumBytes <= Data.size() && "Invalid fixup offset!");
+ */
   // For each byte of the fragment that the fixup touches, mask in the
   // bits from the fixup value.
   for (unsigned i = 0; i != NumBytes; ++i) {
@@ -345,8 +347,8 @@ bool RISCVAsmBackend::shouldInsertFixupForCodeAlign(MCAssembler &Asm,
   uint64_t FixedValue = 0;
   MCValue NopBytes = MCValue::get(Count);
 
-  Asm.getWriter().recordRelocation(Asm, Layout, &AF, Fixup, NopBytes,
-                                   FixedValue);
+/*   Asm.getWriter().recordRelocation(Asm, Layout, &AF, Fixup, NopBytes, isPCRel,
+                                   FixedValue); */
 
   return true;
 }

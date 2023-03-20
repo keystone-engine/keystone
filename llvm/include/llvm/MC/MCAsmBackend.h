@@ -90,7 +90,7 @@ public:
   virtual void applyFixup(const MCFixup &Fixup, char *Data, unsigned DataSize,
                           uint64_t Value, bool IsPCRel, unsigned int &KsError) const = 0;
 
-  /// Apply the \p Value for given \p Fixup into the provided data fragment, at
+/*   /// Apply the \p Value for given \p Fixup into the provided data fragment, at
   /// the offset specified by the fixup and following the fixup kind as
   /// appropriate. Errors (such as an out of range fixup value) should be
   /// reported via \p Ctx.
@@ -99,7 +99,7 @@ public:
   virtual void applyFixup(const MCAssembler &Asm, const MCFixup &Fixup,
                           const MCValue &Target, MutableArrayRef<char> Data,
                           uint64_t Value, bool IsResolved,
-                          const MCSubtargetInfo *STI, unsigned int &KsError) const = 0;
+                          const MCSubtargetInfo *STI, unsigned int &KsError) const = 0; */
                           
   /// @}
 

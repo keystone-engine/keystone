@@ -67,10 +67,8 @@ public:
                                      const MCAsmLayout &Layout,
                                      MCAlignFragment &AF);
 
-  void applyFixup(const MCAssembler &Asm, const MCFixup &Fixup,
-                  const MCValue &Target, MutableArrayRef<char> Data,
-                  uint64_t Value, bool IsResolved,
-                  const MCSubtargetInfo *STI, unsigned int &KsError) const override;
+  void applyFixup(const MCFixup &Fixup, char *Data, unsigned DataSize,
+                          uint64_t Value, bool IsPCRel, unsigned int &KsError) const override;
 
   MCObjectWriter *createObjectWriter(raw_pwrite_stream &OS) const override;
 

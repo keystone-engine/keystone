@@ -5,7 +5,7 @@
 |* Automatically generated file, do not edit!                                 *|
 |*                                                                            *|
 \*===----------------------------------------------------------------------===*/
-
+#include "llvm/MC/LaneBitmask.h"
 
 #ifdef GET_REGINFO_ENUM
 #undef GET_REGINFO_ENUM

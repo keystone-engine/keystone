@@ -14,7 +14,6 @@
 #include "MCTargetDesc/RISCVMCExpr.h"
 #include "MCTargetDesc/RISCVMCTargetDesc.h"
 #include "Utils/RISCVBaseInfo.h"
-#include "llvm/ADT/Statistic.h"
 #include "llvm/MC/MCAsmInfo.h"
 #include "llvm/MC/MCCodeEmitter.h"
 #include "llvm/MC/MCContext.h"
@@ -32,8 +31,6 @@ using namespace llvm_ks;
 
 #define DEBUG_TYPE "mccodeemitter"
 
-STATISTIC(MCNumEmitted, "Number of MC instructions emitted");
-STATISTIC(MCNumFixups, "Number of MC fixups created");
 
 namespace {
 class RISCVMCCodeEmitter : public MCCodeEmitter {
@@ -48,9 +45,10 @@ public:
 
   ~RISCVMCCodeEmitter() override {}
 
-  void encodeInstruction(const MCInst &MI, raw_ostream &OS,
-                         SmallVectorImpl<MCFixup> &Fixups,
-                         const MCSubtargetInfo &STI) const override;
+  void encodeInstruction(MCInst &Inst, raw_ostream &OS,
+                                 SmallVectorImpl<MCFixup> &Fixups,
+                                 const MCSubtargetInfo &STI,
+                                 unsigned int &KsError) const override;
 
   void expandFunctionCall(const MCInst &MI, raw_ostream &OS,
                           SmallVectorImpl<MCFixup> &Fixups,
@@ -122,7 +120,7 @@ void RISCVMCCodeEmitter::expandFunctionCall(const MCInst &MI, raw_ostream &OS,
                 .addReg(Ra)
                 .addOperand(MCOperand::createExpr(CallExpr));
   Binary = getBinaryCodeForInstr(TmpInst, Fixups, STI);
-  support::endian::write(OS, Binary, support::little);
+  support::endian::Writer<support::little>(OS).write<uint32_t>(Binary);
 
   if (MI.getOpcode() == RISCV::PseudoTAIL)
     // Emit JALR X0, X6, 0
@@ -131,7 +129,7 @@ void RISCVMCCodeEmitter::expandFunctionCall(const MCInst &MI, raw_ostream &OS,
     // Emit JALR Ra, Ra, 0
     TmpInst = MCInstBuilder(RISCV::JALR).addReg(Ra).addReg(Ra).addImm(0);
   Binary = getBinaryCodeForInstr(TmpInst, Fixups, STI);
-  support::endian::write(OS, Binary, support::little);
+  support::endian::Writer<support::little>(OS).write<uint32_t>(Binary);
 }
 
 // Expand PseudoAddTPRel to a simple ADD with the correct relocation.
@@ -169,12 +167,14 @@ void RISCVMCCodeEmitter::expandAddTPRel(const MCInst &MI, raw_ostream &OS,
                        .addOperand(SrcReg)
                        .addOperand(TPReg);
   uint32_t Binary = getBinaryCodeForInstr(TmpInst, Fixups, STI);
-  support::endian::write(OS, Binary, support::little);
+  support::endian::Writer<support::little>(OS).write<uint32_t>(Binary);
 }
 
-void RISCVMCCodeEmitter::encodeInstruction(const MCInst &MI, raw_ostream &OS,
-                                           SmallVectorImpl<MCFixup> &Fixups,
-                                           const MCSubtargetInfo &STI) const {
+void RISCVMCCodeEmitter::encodeInstruction(MCInst &Inst, raw_ostream &OS,
+                                 SmallVectorImpl<MCFixup> &Fixups,
+                                 const MCSubtargetInfo &STI,
+                                 unsigned int &KsError) const {
+  KsError = 0;
   const MCInstrDesc &Desc = MCII.get(MI.getOpcode());
   // Get byte count of instruction.
   unsigned Size = Desc.getSize();
@@ -198,12 +198,13 @@ void RISCVMCCodeEmitter::encodeInstruction(const MCInst &MI, raw_ostream &OS,
     llvm_unreachable("Unhandled encodeInstruction length!");
   case 2: {
     uint16_t Bits = getBinaryCodeForInstr(MI, Fixups, STI);
-    support::endian::write<uint16_t>(OS, Bits, support::little);
+    support::endian::Writer<support::little>(OS).write<uint16_t>(Bits);
     break;
   }
   case 4: {
     uint32_t Bits = getBinaryCodeForInstr(MI, Fixups, STI);
-    support::endian::write(OS, Bits, support::little);
+    support::endian::Writer<support::little>(OS).write<uint32_t>(Bits);
+
     break;
   }
   }

@@ -36,10 +36,6 @@
 
 using namespace llvm_ks;
 
-// Include the auto-generated portion of the compress emitter.
-#define GEN_COMPRESS_INSTR
-#include "RISCVGenCompressInstEmitter.inc"
-
 namespace {
 struct RISCVOperand;
 
@@ -64,12 +60,12 @@ class RISCVAsmParser : public MCTargetAsmParser {
   bool MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
                                OperandVector &Operands, MCStreamer &Out,
                                uint64_t &ErrorInfo,
-                               bool MatchingInlineAsm) override;
+                               bool MatchingInlineAsm, unsigned int &ErrorCode, uint64_t &Address) override;
 
-  bool ParseRegister(unsigned &RegNo, SMLoc &StartLoc, SMLoc &EndLoc) override;
+  bool ParseRegister(unsigned &RegNo, SMLoc &StartLoc, SMLoc &EndLoc, unsigned int &ErrorCode) override;
 
   bool ParseInstruction(ParseInstructionInfo &Info, StringRef Name,
-                        SMLoc NameLoc, OperandVector &Operands) override;
+                        SMLoc NameLoc, OperandVector &Operands, unsigned int &ErrorCode) override;
 
   bool ParseDirective(AsmToken DirectiveID) override;
 
@@ -125,7 +121,7 @@ class RISCVAsmParser : public MCTargetAsmParser {
   OperandMatchResultTy parseCSRSystemRegister(OperandVector &Operands);
   OperandMatchResultTy parseImmediate(OperandVector &Operands);
   OperandMatchResultTy parseRegister(OperandVector &Operands,
-                                     bool AllowParens = false);
+                                     bool AllowParens = false, unsigned int &ErrorCode = 0);
   OperandMatchResultTy parseMemOpBaseReg(OperandVector &Operands);
   OperandMatchResultTy parseOperandWithModifier(OperandVector &Operands);
   OperandMatchResultTy parseBareSymbol(OperandVector &Operands);
@@ -805,8 +801,8 @@ bool RISCVAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
                                              OperandVector &Operands,
                                              MCStreamer &Out,
                                              uint64_t &ErrorInfo,
-                                             bool MatchingInlineAsm) {
-  MCInst Inst;
+                                             bool MatchingInlineAsm, unsigned int &ErrorCode, uint64_t &Address) {
+  MCInst Inst(Address);
 
   auto Result =
     MatchInstructionImpl(Operands, Inst, ErrorInfo, MatchingInlineAsm);
@@ -816,20 +812,27 @@ bool RISCVAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
   case Match_Success:
     return processInstruction(Inst, IDLoc, Operands, Out);
   case Match_MissingFeature:
-    return Error(IDLoc, "instruction use requires an option to be enabled");
+    // return Error(IDLoc, "instruction use requires an option to be enabled");
+    ErrorCode = KS_ERR_ASM_RISCV_MISSINGFEATURE;
+    return true;
   case Match_MnemonicFail:
-    return Error(IDLoc, "unrecognized instruction mnemonic");
+    // return Error(IDLoc, "unrecognized instruction mnemonic");
+    ErrorCode = KS_ERR_ASM_RISCV_MNEMONICFAIL;
+    return true;
   case Match_InvalidOperand: {
     SMLoc ErrorLoc = IDLoc;
     if (ErrorInfo != ~0U) {
       if (ErrorInfo >= Operands.size())
-        return Error(ErrorLoc, "too few operands for instruction");
+        // return Error(ErrorLoc, "too few operands for instruction");
+        ErrorCode = KS_ERR_ASM_RISCV_INVALIDOPERAND;
 
       ErrorLoc = ((RISCVOperand &)*Operands[ErrorInfo]).getStartLoc();
       if (ErrorLoc == SMLoc())
         ErrorLoc = IDLoc;
     }
     return Error(ErrorLoc, "invalid operand for instruction");
+    // ErrorCode = KS_ERR_ASM_RISCV_INVALIDOPERAND;
+    // return true;
   }
   }
 
@@ -840,6 +843,8 @@ bool RISCVAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
     SMLoc ErrorLoc = IDLoc;
     if (ErrorInfo != ~0U && ErrorInfo >= Operands.size())
         return Error(ErrorLoc, "too few operands for instruction");
+        // ErrorCode = KS_ERR_ASM_RISCV_INVALIDOPERAND;
+        // return true;
   }
 
   switch(Result) {
@@ -979,7 +984,7 @@ static bool matchRegisterNameHelper(bool IsRV32E, unsigned &RegNo,
 }
 
 bool RISCVAsmParser::ParseRegister(unsigned &RegNo, SMLoc &StartLoc,
-                                   SMLoc &EndLoc) {
+                                   SMLoc &EndLoc, unsigned int &ErrorCode) {
   const AsmToken &Tok = getParser().getTok();
   StartLoc = Tok.getLoc();
   EndLoc = Tok.getEndLoc();
@@ -1332,7 +1337,9 @@ bool RISCVAsmParser::parseOperand(OperandVector &Operands, StringRef Mnemonic) {
 
 bool RISCVAsmParser::ParseInstruction(ParseInstructionInfo &Info,
                                       StringRef Name, SMLoc NameLoc,
-                                      OperandVector &Operands) {
+                                      OperandVector &Operands, unsigned int &ErrorCode) {
+  
+  DEBUG(dbgs() << "ParseInstruction\n");
   // Ensure that if the instruction occurs when relaxation is enabled,
   // relocations are forced for the file. Ideally this would be done when there
   // is enough information to reliably determine if the instruction itself may
@@ -1536,9 +1543,7 @@ bool RISCVAsmParser::parseDirectiveOption() {
 
 void RISCVAsmParser::emitToStreamer(MCStreamer &S, const MCInst &Inst) {
   MCInst CInst;
-  bool Res = compressInst(CInst, Inst, getSTI(), S.getContext());
-  CInst.setLoc(Inst.getLoc());
-  S.EmitInstruction((Res ? CInst : Inst), getSTI());
+  S.EmitInstruction(Inst, getSTI());
 }
 
 void RISCVAsmParser::emitLoadImm(unsigned DestReg, int64_t Value,
