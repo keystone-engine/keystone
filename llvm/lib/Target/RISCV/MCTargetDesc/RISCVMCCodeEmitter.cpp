@@ -175,21 +175,19 @@ void RISCVMCCodeEmitter::encodeInstruction(MCInst &Inst, raw_ostream &OS,
                                  const MCSubtargetInfo &STI,
                                  unsigned int &KsError) const {
   KsError = 0;
-  const MCInstrDesc &Desc = MCII.get(MI.getOpcode());
+  const MCInstrDesc &Desc = MCII.get(Inst.getOpcode());
   // Get byte count of instruction.
   unsigned Size = Desc.getSize();
 
-  if (MI.getOpcode() == RISCV::PseudoCALLReg ||
-      MI.getOpcode() == RISCV::PseudoCALL ||
-      MI.getOpcode() == RISCV::PseudoTAIL) {
-    expandFunctionCall(MI, OS, Fixups, STI);
-    MCNumEmitted += 2;
+  if (Inst.getOpcode() == RISCV::PseudoCALLReg ||
+      Inst.getOpcode() == RISCV::PseudoCALL ||
+      Inst.getOpcode() == RISCV::PseudoTAIL) {
+    expandFunctionCall(Inst, OS, Fixups, STI);
     return;
   }
 
-  if (MI.getOpcode() == RISCV::PseudoAddTPRel) {
-    expandAddTPRel(MI, OS, Fixups, STI);
-    MCNumEmitted += 1;
+  if (Inst.getOpcode() == RISCV::PseudoAddTPRel) {
+    expandAddTPRel(Inst, OS, Fixups, STI);
     return;
   }
 
@@ -197,19 +195,18 @@ void RISCVMCCodeEmitter::encodeInstruction(MCInst &Inst, raw_ostream &OS,
   default:
     llvm_unreachable("Unhandled encodeInstruction length!");
   case 2: {
-    uint16_t Bits = getBinaryCodeForInstr(MI, Fixups, STI);
+    uint16_t Bits = getBinaryCodeForInstr(Inst, Fixups, STI);
     support::endian::Writer<support::little>(OS).write<uint16_t>(Bits);
     break;
   }
   case 4: {
-    uint32_t Bits = getBinaryCodeForInstr(MI, Fixups, STI);
+    uint32_t Bits = getBinaryCodeForInstr(Inst, Fixups, STI);
     support::endian::Writer<support::little>(OS).write<uint32_t>(Bits);
 
     break;
   }
   }
 
-  ++MCNumEmitted; // Keep track of the # of mi's emitted.
 }
 
 unsigned
@@ -351,7 +348,7 @@ unsigned RISCVMCCodeEmitter::getImmOpValue(const MCInst &MI, unsigned OpNo,
 
   Fixups.push_back(
       MCFixup::create(0, Expr, MCFixupKind(FixupKind), MI.getLoc()));
-  ++MCNumFixups;
+
 
   // Ensure an R_RISCV_RELAX relocation will be emitted if linker relaxation is
   // enabled and the current fixup will result in a relocation that may be
@@ -361,7 +358,7 @@ unsigned RISCVMCCodeEmitter::getImmOpValue(const MCInst &MI, unsigned OpNo,
     Fixups.push_back(
     MCFixup::create(0, Dummy, MCFixupKind(RISCV::fixup_riscv_relax),
                     MI.getLoc()));
-    ++MCNumFixups;
+
   }
 
   return 0;

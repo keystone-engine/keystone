@@ -214,9 +214,9 @@ extern const MCPhysReg RISCVRegDiffLists[] = {
   /* 66 */ 65535, 0,
 };
 
-extern const LaneBitmask RISCVLaneMaskLists[] = {
-  /* 0 */ LaneBitmask(0x00000000), LaneBitmask::getAll(),
-  /* 2 */ LaneBitmask(0x00000001), LaneBitmask::getAll(),
+extern const unsigned RISCVLaneMaskLists[] = {
+  /* 0 */ 0x00000000, ~0u,
+  /* 2 */ 0x00000001, ~0u,
 };
 
 extern const uint16_t RISCVSubRegIdxLists[] = {

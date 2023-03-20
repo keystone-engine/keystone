@@ -12,7 +12,7 @@
 
 namespace llvm_ks {
 namespace RISCV {
-enum {
+enum : uint64_t {
   Feature64Bit = 0,
   FeatureRV32E = 1,
   FeatureRelax = 2,
@@ -35,14 +35,14 @@ enum {
 namespace llvm_ks {
 // Sorted (by key) array of values for CPU features.
 extern const llvm_ks::SubtargetFeatureKV RISCVFeatureKV[] = {
-  { "64bit", "Implements RV64", RISCV::Feature64Bit, { { { 0x0ULL, 0x0ULL, 0x0ULL, } } } },
-  { "a", "'A' (Atomic Instructions)", RISCV::FeatureStdExtA, { { { 0x0ULL, 0x0ULL, 0x0ULL, } } } },
-  { "c", "'C' (Compressed Instructions)", RISCV::FeatureStdExtC, { { { 0x0ULL, 0x0ULL, 0x0ULL, } } } },
-  { "d", "'D' (Double-Precision Floating-Point)", RISCV::FeatureStdExtD, { { { 0x40ULL, 0x0ULL, 0x0ULL, } } } },
-  { "e", "Implements RV32E (provides 16 rather than 32 GPRs)", RISCV::FeatureRV32E, { { { 0x0ULL, 0x0ULL, 0x0ULL, } } } },
-  { "f", "'F' (Single-Precision Floating-Point)", RISCV::FeatureStdExtF, { { { 0x0ULL, 0x0ULL, 0x0ULL, } } } },
-  { "m", "'M' (Integer Multiplication and Division)", RISCV::FeatureStdExtM, { { { 0x0ULL, 0x0ULL, 0x0ULL, } } } },
-  { "relax", "Enable Linker relaxation.", RISCV::FeatureRelax, { { { 0x0ULL, 0x0ULL, 0x0ULL, } } } },
+  { "64bit", "Implements RV64", {RISCV::Feature64Bit}, {  } },
+  { "a", "'A' (Atomic Instructions)", {RISCV::FeatureStdExtA}, {  } },
+  { "c", "'C' (Compressed Instructions)", {RISCV::FeatureStdExtC}, { } },
+  { "d", "'D' (Double-Precision Floating-Point)", {RISCV::FeatureStdExtD}, {  } },
+  { "e", "Implements RV32E (provides 16 rather than 32 GPRs)", {RISCV::FeatureRV32E}, {  } },
+  { "f", "'F' (Single-Precision Floating-Point)", {RISCV::FeatureStdExtF}, { } },
+  { "m", "'M' (Integer Multiplication and Division)", {RISCV::FeatureStdExtM}, {  } },
+  { "relax", "Enable Linker relaxation.", {RISCV::FeatureRelax}, {  } },
 };
 
 #ifdef DBGFIELD
@@ -85,14 +85,12 @@ static const llvm_ks::MCSchedModel NoSchedModel = {
   false, // CompleteModel
   0, // Processor ID
   nullptr, nullptr, 0, 0, // No instruction-level machine model.
-  nullptr, // No Itinerary
-  nullptr // No extra processor descriptor
 };
 
 // Sorted (by key) array of values for CPU subtype.
 extern const llvm_ks::SubtargetSubTypeKV RISCVSubTypeKV[] = {
- { "generic-rv32", { { { 0x0ULL, 0x0ULL, 0x0ULL, } } }, &NoSchedModel },
- { "generic-rv64", { { { 0x1ULL, 0x0ULL, 0x0ULL, } } }, &NoSchedModel },
+ { "generic-rv32", { }, &NoSchedModel },
+ { "generic-rv64", { }, &NoSchedModel },
 };
 
 namespace RISCV_MC {
@@ -103,7 +101,7 @@ unsigned resolveVariantSchedClassImpl(unsigned SchedClass,
 }
 } // end of namespace RISCV_MC
 
-struct RISCVGenMCSubtargetInfo : public MCSubtargetInfo {
+/* struct RISCVGenMCSubtargetInfo : public MCSubtargetInfo {
   RISCVGenMCSubtargetInfo(const Triple &TT, 
     StringRef CPU, StringRef FS, ArrayRef<SubtargetFeatureKV> PF,
     ArrayRef<SubtargetSubTypeKV> PD,
@@ -118,12 +116,12 @@ struct RISCVGenMCSubtargetInfo : public MCSubtargetInfo {
       const MCInst *MI, unsigned CPUID) const override {
     return RISCV_MC::resolveVariantSchedClassImpl(SchedClass, MI, CPUID); 
   }
-};
+}; */
 
 static inline MCSubtargetInfo *createRISCVMCSubtargetInfoImpl(const Triple &TT, StringRef CPU, StringRef FS) {
-  return new RISCVGenMCSubtargetInfo(TT, CPU, FS, RISCVFeatureKV, RISCVSubTypeKV, 
+  return new MCSubtargetInfo(TT, CPU, FS, RISCVFeatureKV, RISCVSubTypeKV,/*  
                       RISCVWriteProcResTable, RISCVWriteLatencyTable, RISCVReadAdvanceTable, 
-                      nullptr, nullptr, nullptr);
+                      nullptr, nullptr, nullptr */NULL);
 }
 
 } // end namespace llvm_ks
@@ -191,8 +189,8 @@ extern const llvm_ks::MCWriteLatencyEntry RISCVWriteLatencyTable[];
 extern const llvm_ks::MCReadAdvanceEntry RISCVReadAdvanceTable[];
 RISCVGenSubtargetInfo::RISCVGenSubtargetInfo(const Triple &TT, StringRef CPU, StringRef FS)
   : TargetSubtargetInfo(TT, CPU, FS, makeArrayRef(RISCVFeatureKV, 8), makeArrayRef(RISCVSubTypeKV, 2), 
-                        RISCVWriteProcResTable, RISCVWriteLatencyTable, RISCVReadAdvanceTable, 
-                        nullptr, nullptr, nullptr) {}
+                        /* RISCVWriteProcResTable, RISCVWriteLatencyTable, RISCVReadAdvanceTable, 
+                        nullptr, nullptr, nullptr */, NULL) {}
 
 unsigned RISCVGenSubtargetInfo
 ::resolveSchedClass(unsigned SchedClass, const MachineInstr *MI, const TargetSchedModel *SchedModel) const {

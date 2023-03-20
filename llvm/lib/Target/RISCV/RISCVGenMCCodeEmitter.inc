@@ -1188,25 +1188,25 @@ static const char *SubtargetFeatureNames[] = {
 };
 
 #endif // NDEBUG
-FeatureBitset RISCVMCCodeEmitter::
+uint64_t RISCVMCCodeEmitter::
 computeAvailableFeatures(const FeatureBitset& FB) const {
-  FeatureBitset Features;
+  uint64_t Features = 0;
   if ((FB[RISCV::FeatureStdExtM]))
-    Features[Feature_HasStdExtMBit] = 1;
+    Features |= Feature_HasStdExtMBit;
   if ((FB[RISCV::FeatureStdExtA]))
-    Features[Feature_HasStdExtABit] = 1;
+    Features |= Feature_HasStdExtABit;
   if ((FB[RISCV::FeatureStdExtF]))
-    Features[Feature_HasStdExtFBit] = 1;
+    Features |= Feature_HasStdExtFBit;
   if ((FB[RISCV::FeatureStdExtD]))
-    Features[Feature_HasStdExtDBit] = 1;
+    Features |= Feature_HasStdExtDBit;
   if ((FB[RISCV::FeatureStdExtC]))
-    Features[Feature_HasStdExtCBit] = 1;
+    Features |= Feature_HasStdExtCBit;
   if ((FB[RISCV::Feature64Bit]))
-    Features[Feature_IsRV64Bit] = 1;
+    Features |= Feature_IsRV64Bit;
   if ((!FB[RISCV::Feature64Bit]))
-    Features[Feature_IsRV32Bit] = 1;
+    Features |= Feature_IsRV32Bit;
   if ((FB[RISCV::FeatureRV32E]))
-    Features[Feature_IsRV32EBit] = 1;
+    Features |= Feature_IsRV32EBit;
   return Features;
 }
 
@@ -1753,7 +1753,8 @@ void RISCVMCCodeEmitter::verifyInstructionPredicates(
     Msg << "Attempting to emit " << MCII.getName(Inst.getOpcode()).str()
         << " instruction but the ";
     for (unsigned i = 0, e = MissingFeatures.size(); i != e; ++i)
-      if (MissingFeatures.test(i))
+    if ((MissingFeatures & MissingFeatures[i]) == MissingFeatures[i])
+      /* if (MissingFeatures.test(i)) */
         Msg << SubtargetFeatureNames[i] << " ";
     Msg << "predicate(s) are not met";
     report_fatal_error(Msg.str());

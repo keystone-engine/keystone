@@ -32,19 +32,23 @@
 #include "llvm/Support/MathExtras.h"
 #include "llvm/Support/TargetRegistry.h"
 
+#include "RISCVGenAsmMatcher.inc"
 #include <limits>
 
 using namespace llvm_ks;
 
-namespace {
+namespace llvm_ks{
 struct RISCVOperand;
-
+unsigned int ErrCd = 0;
 class RISCVAsmParser : public MCTargetAsmParser {
   SmallVector<FeatureBitset, 4> FeatureBitStack;
 
   SMLoc getLoc() const { return getParser().getTok().getLoc(); }
-  bool isRV64() const { return getSTI().hasFeature(RISCV::Feature64Bit); }
-  bool isRV32E() const { return getSTI().hasFeature(RISCV::FeatureRV32E); }
+  /* bool isRV64() const { return getSTI().hasFeature(RISCV::Feature64Bit); }
+  bool isRV32E() const { return getSTI().hasFeature(RISCV::FeatureRV32E); } */
+  //FIXME: find a way to properly extract the features from FeatureBitSet
+  bool isRV64() const { return true; }
+  bool isRV32E() const { return true; }
 
   RISCVTargetStreamer &getTargetStreamer() {
     MCTargetStreamer &TS = *getParser().getStreamer().getTargetStreamer();
@@ -117,11 +121,11 @@ class RISCVAsmParser : public MCTargetAsmParser {
 // Auto-generated instruction matching functions
 #define GET_ASSEMBLER_HEADER
 #include "RISCVGenAsmMatcher.inc"
-
+  
   OperandMatchResultTy parseCSRSystemRegister(OperandVector &Operands);
   OperandMatchResultTy parseImmediate(OperandVector &Operands);
   OperandMatchResultTy parseRegister(OperandVector &Operands,
-                                     bool AllowParens = false, unsigned int &ErrorCode = 0);
+                                     bool AllowParens = false, unsigned int &ErrorCode = ErrCd);
   OperandMatchResultTy parseMemOpBaseReg(OperandVector &Operands);
   OperandMatchResultTy parseOperandWithModifier(OperandVector &Operands);
   OperandMatchResultTy parseBareSymbol(OperandVector &Operands);
@@ -176,7 +180,7 @@ public:
 
   RISCVAsmParser(const MCSubtargetInfo &STI, MCAsmParser &Parser,
                  const MCInstrInfo &MII, const MCTargetOptions &Options)
-      : MCTargetAsmParser(Options, STI, MII) {
+      : MCTargetAsmParser(Options, STI) {
     Parser.addAliasForDirective(".half", ".2byte");
     Parser.addAliasForDirective(".hword", ".2byte");
     Parser.addAliasForDirective(".word", ".4byte");
@@ -998,8 +1002,8 @@ bool RISCVAsmParser::ParseRegister(unsigned &RegNo, SMLoc &StartLoc,
   return false;
 }
 
-OperandMatchResultTy RISCVAsmParser::parseRegister(OperandVector &Operands,
-                                                   bool AllowParens) {
+RISCVAsmParser::OperandMatchResultTy RISCVAsmParser::parseRegister(OperandVector &Operands,
+                                                   bool AllowParens, unsigned int &KsError) {
   SMLoc FirstS = getLoc();
   bool HadParens = false;
   AsmToken LParen;
@@ -1047,7 +1051,7 @@ OperandMatchResultTy RISCVAsmParser::parseRegister(OperandVector &Operands,
   return MatchOperand_Success;
 }
 
-OperandMatchResultTy
+RISCVAsmParser::OperandMatchResultTy
 RISCVAsmParser::parseCSRSystemRegister(OperandVector &Operands) {
   SMLoc S = getLoc();
   const MCExpr *Res;
@@ -1115,7 +1119,7 @@ RISCVAsmParser::parseCSRSystemRegister(OperandVector &Operands) {
   return MatchOperand_NoMatch;
 }
 
-OperandMatchResultTy RISCVAsmParser::parseImmediate(OperandVector &Operands) {
+RISCVAsmParser::OperandMatchResultTy RISCVAsmParser::parseImmediate(OperandVector &Operands) {
   SMLoc S = getLoc();
   SMLoc E = SMLoc::getFromPointer(S.getPointer() - 1);
   const MCExpr *Res;
@@ -1143,7 +1147,7 @@ OperandMatchResultTy RISCVAsmParser::parseImmediate(OperandVector &Operands) {
   return MatchOperand_Success;
 }
 
-OperandMatchResultTy
+RISCVAsmParser::OperandMatchResultTy
 RISCVAsmParser::parseOperandWithModifier(OperandVector &Operands) {
   SMLoc S = getLoc();
   SMLoc E = SMLoc::getFromPointer(S.getPointer() - 1);
@@ -1183,7 +1187,7 @@ RISCVAsmParser::parseOperandWithModifier(OperandVector &Operands) {
   return MatchOperand_Success;
 }
 
-OperandMatchResultTy RISCVAsmParser::parseBareSymbol(OperandVector &Operands) {
+RISCVAsmParser::OperandMatchResultTy RISCVAsmParser::parseBareSymbol(OperandVector &Operands) {
   SMLoc S = getLoc();
   SMLoc E = SMLoc::getFromPointer(S.getPointer() - 1);
   const MCExpr *Res;
@@ -1235,7 +1239,7 @@ OperandMatchResultTy RISCVAsmParser::parseBareSymbol(OperandVector &Operands) {
   return MatchOperand_Success;
 }
 
-OperandMatchResultTy RISCVAsmParser::parseCallSymbol(OperandVector &Operands) {
+RISCVAsmParser::OperandMatchResultTy RISCVAsmParser::parseCallSymbol(OperandVector &Operands) {
   SMLoc S = getLoc();
   SMLoc E = SMLoc::getFromPointer(S.getPointer() - 1);
   const MCExpr *Res;
@@ -1262,7 +1266,7 @@ OperandMatchResultTy RISCVAsmParser::parseCallSymbol(OperandVector &Operands) {
   return MatchOperand_Success;
 }
 
-OperandMatchResultTy RISCVAsmParser::parseJALOffset(OperandVector &Operands) {
+RISCVAsmParser::OperandMatchResultTy RISCVAsmParser::parseJALOffset(OperandVector &Operands) {
   // Parsing jal operands is fiddly due to the `jal foo` and `jal ra, foo`
   // both being acceptable forms. When parsing `jal ra, foo` this function
   // will be called for the `ra` register operand in an attempt to match the
@@ -1279,7 +1283,7 @@ OperandMatchResultTy RISCVAsmParser::parseJALOffset(OperandVector &Operands) {
   return parseImmediate(Operands);
 }
 
-OperandMatchResultTy
+RISCVAsmParser::OperandMatchResultTy
 RISCVAsmParser::parseMemOpBaseReg(OperandVector &Operands) {
   if (getLexer().isNot(AsmToken::LParen)) {
     Error(getLoc(), "expected '('");
@@ -1312,7 +1316,7 @@ bool RISCVAsmParser::parseOperand(OperandVector &Operands, StringRef Mnemonic) {
   // Check if the current operand has a custom associated parser, if so, try to
   // custom parse the operand, or fallback to the general approach.
   OperandMatchResultTy Result =
-      MatchOperandParserImpl(Operands, Mnemonic, /*ParseForAllFeatures=*/true);
+      MatchOperandParserImpl(Operands, Mnemonic);
   if (Result == MatchOperand_Success)
     return false;
   if (Result == MatchOperand_ParseFail)
@@ -1347,7 +1351,8 @@ bool RISCVAsmParser::ParseInstruction(ParseInstructionInfo &Info,
   // same pass as relocation emission, so it's too late to set a 'sticky bit'
   // for the entire file.
   if (getSTI().getFeatureBits()[RISCV::FeatureRelax]) {
-    auto *Assembler = getTargetStreamer().getStreamer().getAssemblerPtr();
+    /* auto *Assembler = getTargetStreamer().getStreamer().getAssemblerPtr(); */
+    MCAssembler *Assembler = nullptr;
     if (Assembler != nullptr) {
       RISCVAsmBackend &MAB =
           static_cast<RISCVAsmBackend &>(Assembler->getBackend());

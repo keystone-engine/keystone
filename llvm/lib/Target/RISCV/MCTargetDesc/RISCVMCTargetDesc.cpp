@@ -76,8 +76,7 @@ createRISCVObjectTargetStreamer(MCStreamer &S, const MCSubtargetInfo &STI) {
 }
 
 static MCTargetStreamer *createRISCVAsmTargetStreamer(MCStreamer &S,
-                                                      formatted_raw_ostream &OS,
-                                                      bool isVerboseAsm) {
+                                                      formatted_raw_ostream &OS) {
   return new RISCVTargetAsmStreamer(S, OS);
 }
 
