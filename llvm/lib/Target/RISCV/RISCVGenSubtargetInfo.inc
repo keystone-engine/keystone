@@ -88,10 +88,11 @@ static const llvm_ks::MCSchedModel NoSchedModel = {
 };
 
 // Sorted (by key) array of values for CPU subtype.
-extern const llvm_ks::SubtargetSubTypeKV RISCVSubTypeKV[] = {
- { "generic-rv32", { }, &NoSchedModel },
- { "generic-rv64", { }, &NoSchedModel },
+extern const llvm_ks::SubtargetFeatureKV RISCVSubTypeKV[] = {
+ { "generic-rv32", "select rv32 CPU", {RISCV::Feature64Bit} },
+ { "generic-rv64", "select rv64 CPU", {} },
 };
+
 
 namespace RISCV_MC {
 unsigned resolveVariantSchedClassImpl(unsigned SchedClass,

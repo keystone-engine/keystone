@@ -1343,7 +1343,7 @@ bool RISCVAsmParser::ParseInstruction(ParseInstructionInfo &Info,
                                       StringRef Name, SMLoc NameLoc,
                                       OperandVector &Operands, unsigned int &ErrorCode) {
   
-  DEBUG(dbgs() << "ParseInstruction\n");
+/*   DEBUG(dbgs() << "ParseInstruction\n"); */
   // Ensure that if the instruction occurs when relaxation is enabled,
   // relocations are forced for the file. Ideally this would be done when there
   // is enough information to reliably determine if the instruction itself may
@@ -1548,7 +1548,10 @@ bool RISCVAsmParser::parseDirectiveOption() {
 
 void RISCVAsmParser::emitToStreamer(MCStreamer &S, const MCInst &Inst) {
   MCInst CInst;
-  S.EmitInstruction(Inst, getSTI());
+  /* bool Res = compressInst(CInst, Inst, getSTI(), S.getContext()); */
+  CInst.setLoc(Inst.getLoc());
+  unsigned int ErrorCode = 0;
+  S.EmitInstruction(CInst, getSTI(),ErrorCode);
 }
 
 void RISCVAsmParser::emitLoadImm(unsigned DestReg, int64_t Value,
