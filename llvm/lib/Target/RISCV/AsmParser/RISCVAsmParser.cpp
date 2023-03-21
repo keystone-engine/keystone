@@ -47,8 +47,8 @@ class RISCVAsmParser : public MCTargetAsmParser {
   /* bool isRV64() const { return getSTI().hasFeature(RISCV::Feature64Bit); }
   bool isRV32E() const { return getSTI().hasFeature(RISCV::FeatureRV32E); } */
   //FIXME: find a way to properly extract the features from FeatureBitSet
-  bool isRV64() const { return true; }
-  bool isRV32E() const { return true; }
+  bool isRV64() const { return false; }
+  bool isRV32E() const { return false; }
 
   RISCVTargetStreamer &getTargetStreamer() {
     MCTargetStreamer &TS = *getParser().getStreamer().getTargetStreamer();
@@ -75,7 +75,7 @@ class RISCVAsmParser : public MCTargetAsmParser {
 
   // Helper to actually emit an instruction to the MCStreamer. Also, when
   // possible, compression of the instruction is performed.
-  void emitToStreamer(MCStreamer &S, const MCInst &Inst);
+  void emitToStreamer(MCStreamer &S, MCInst &Inst);
 
   // Helper to emit a combination of LUI, ADDI(W), and SLLI instructions that
   // synthesize the desired immedate value into the destination register.
@@ -807,8 +807,7 @@ bool RISCVAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
                                              uint64_t &ErrorInfo,
                                              bool MatchingInlineAsm, unsigned int &ErrorCode, uint64_t &Address) {
   MCInst Inst(Address);
-
-  auto Result =
+  unsigned Result =
     MatchInstructionImpl(Operands, Inst, ErrorInfo, MatchingInlineAsm);
   switch (Result) {
   default:
@@ -816,19 +815,19 @@ bool RISCVAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
   case Match_Success:
     return processInstruction(Inst, IDLoc, Operands, Out);
   case Match_MissingFeature:
-    // return Error(IDLoc, "instruction use requires an option to be enabled");
-    ErrorCode = KS_ERR_ASM_RISCV_MISSINGFEATURE;
-    return true;
+    return Error(IDLoc, "instruction use requires an option to be enabled");
+    /* ErrorCode = KS_ERR_ASM_RISCV_MISSINGFEATURE;
+    return true; */
   case Match_MnemonicFail:
-    // return Error(IDLoc, "unrecognized instruction mnemonic");
-    ErrorCode = KS_ERR_ASM_RISCV_MNEMONICFAIL;
-    return true;
+    return Error(IDLoc, "unrecognized instruction mnemonic");
+    /* ErrorCode = KS_ERR_ASM_RISCV_MNEMONICFAIL;
+    return true; */
   case Match_InvalidOperand: {
     SMLoc ErrorLoc = IDLoc;
     if (ErrorInfo != ~0U) {
       if (ErrorInfo >= Operands.size())
-        // return Error(ErrorLoc, "too few operands for instruction");
-        ErrorCode = KS_ERR_ASM_RISCV_INVALIDOPERAND;
+        return Error(ErrorLoc, "too few operands for instruction");
+        /* ErrorCode = KS_ERR_ASM_RISCV_INVALIDOPERAND; */
 
       ErrorLoc = ((RISCVOperand &)*Operands[ErrorInfo]).getStartLoc();
       if (ErrorLoc == SMLoc())
@@ -1546,12 +1545,14 @@ bool RISCVAsmParser::parseDirectiveOption() {
   return false;
 }
 
-void RISCVAsmParser::emitToStreamer(MCStreamer &S, const MCInst &Inst) {
-  MCInst CInst;
+void RISCVAsmParser::emitToStreamer(MCStreamer &S, MCInst &Inst) {
+/*   MCInst &CInst; */
   /* bool Res = compressInst(CInst, Inst, getSTI(), S.getContext()); */
-  CInst.setLoc(Inst.getLoc());
+/*   CInst.setLoc(Inst.getLoc());
+  CInst.setOpcode(Inst.getOpcode());
+  CInst.setAddress(Inst.getAddress()); */
   unsigned int ErrorCode = 0;
-  S.EmitInstruction(CInst, getSTI(),ErrorCode);
+  S.EmitInstruction(Inst, getSTI(),ErrorCode);
 }
 
 void RISCVAsmParser::emitLoadImm(unsigned DestReg, int64_t Value,
@@ -1801,6 +1802,6 @@ bool RISCVAsmParser::processInstruction(MCInst &Inst, SMLoc IDLoc,
 }
 
 extern "C" void LLVMInitializeRISCVAsmParser() {
-  RegisterMCAsmParser<RISCVAsmParser> X(getTheRISCV32Target());
-  RegisterMCAsmParser<RISCVAsmParser> Y(getTheRISCV64Target());
+  RegisterMCAsmParser<RISCVAsmParser> X(TheRISCV32Target);
+  RegisterMCAsmParser<RISCVAsmParser> Y(TheRISCV64Target);
 }

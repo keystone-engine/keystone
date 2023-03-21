@@ -276,8 +276,6 @@ void MCObjectFileInfo::initELFMCObjectFileInfo(Triple T) {
     break;
   case Triple::x86_64:
     break;
-  case Triple::riscv64:
-    break;
   default:
     FDECFIEncoding = dwarf::DW_EH_PE_pcrel | dwarf::DW_EH_PE_sdata4;
     break;
@@ -295,10 +293,6 @@ void MCObjectFileInfo::initELFMCObjectFileInfo(Triple T) {
   case Triple::x86:
     break;
   case Triple::x86_64:
-    break;
-  case Triple::riscv32:
-    break;
-  case Triple::riscv64:
     break;
   case Triple::aarch64:
   case Triple::aarch64_be:

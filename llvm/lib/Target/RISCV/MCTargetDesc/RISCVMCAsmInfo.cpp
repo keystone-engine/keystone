@@ -22,4 +22,7 @@ RISCVMCAsmInfo::RISCVMCAsmInfo(const Triple &TT) {
   ExceptionsType = ExceptionHandling::DwarfCFI;
   Data16bitsDirective = "\t.half\t";
   Data32bitsDirective = "\t.word\t";
+  PrivateGlobalPrefix = "L";
+  PrivateLabelPrefix = "L";
+
 }

@@ -32,6 +32,9 @@ class Triple;
 class raw_ostream;
 class raw_pwrite_stream;
 
+extern Target TheRISCV64Target;
+extern Target TheRISCV32Target; 
+
 MCCodeEmitter *createRISCVMCCodeEmitter(const MCInstrInfo &MCII,
                                         const MCRegisterInfo &MRI,
                                         MCContext &Ctx);

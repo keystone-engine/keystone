@@ -26,12 +26,13 @@ RISCVTargetELFStreamer::RISCVTargetELFStreamer(MCStreamer &S,
   MCAssembler &MCA = getStreamer().getAssembler();
   const FeatureBitset &Features = STI.getFeatureBits();
   auto &MAB = static_cast<RISCVAsmBackend &>(MCA.getBackend());
-  RISCVABI::ABI ABI = MAB.getTargetABI();
-  assert(ABI != RISCVABI::ABI_Unknown && "Improperly initialised target ABI");
+  //FIXME: import ABI correctly for float (and other) extensions to work - maybe from STI above like it is done otherwise when parsing
+/*   RISCVABI::ABI ABI = MAB.getTargetABI();
+  assert(ABI != RISCVABI::ABI_Unknown && "Improperly initialised target ABI"); */
 
   unsigned EFlags = MCA.getELFHeaderEFlags();
 
-  if (Features[RISCV::FeatureStdExtC])
+/*   if (Features[RISCV::FeatureStdExtC])
     EFlags |= ELF::EF_RISCV_RVC;
 
   switch (ABI) {
@@ -52,7 +53,7 @@ RISCVTargetELFStreamer::RISCVTargetELFStreamer(MCStreamer &S,
   case RISCVABI::ABI_Unknown:
     llvm_unreachable("Improperly initialised target ABI");
   }
-
+ */
   MCA.setELFHeaderEFlags(EFlags);
 }
 

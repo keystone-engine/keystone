@@ -12,9 +12,9 @@
 namespace llvm_ks {
 
 class Target;
-
+/* 
 Target &getTheRISCV32Target();
-Target &getTheRISCV64Target();
+Target &getTheRISCV64Target(); */
 
 } // namespace llvm_ks
 
