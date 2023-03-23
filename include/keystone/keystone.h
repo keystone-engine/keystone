@@ -45,7 +45,7 @@ typedef struct ks_struct ks_engine;
 // Package version
 #define KS_VERSION_MAJOR KS_API_MAJOR
 #define KS_VERSION_MINOR KS_API_MINOR
-#define KS_VERSION_EXTRA 2
+#define KS_VERSION_EXTRA 3
 
 /*
   Macro to create combined version which can be compared to

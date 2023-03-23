@@ -12,9 +12,9 @@ gen_const:
 	cd .. && python const_generator.py python
 
 install:
-	rm -rf $(OBJDIR) src/
-	rm -rf prebuilt/win64/keystone.dll
-	rm -rf prebuilt/win32/keystone.dll
+	#rm -rf $(OBJDIR) src/
+	#rm -rf prebuilt/win64/keystone.dll
+	#rm -rf prebuilt/win32/keystone.dll
 	if test -n "${DESTDIR}"; then \
 		python setup.py build -b $(OBJDIR) install --root="${DESTDIR}"; \
 	else \
@@ -22,9 +22,9 @@ install:
 	fi
 
 install3:
-	rm -rf $(OBJDIR) src/
-	rm -rf prebuilt/win64/keystone.dll
-	rm -rf prebuilt/win32/keystone.dll
+	#rm -rf $(OBJDIR) src/
+	#rm -rf prebuilt/win64/keystone.dll
+	#rm -rf prebuilt/win32/keystone.dll
 	if test -n "${DESTDIR}"; then \
 		python3 setup.py build -b $(OBJDIR) install --root="${DESTDIR}"; \
 	else \

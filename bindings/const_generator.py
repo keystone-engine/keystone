@@ -393,7 +393,7 @@ def gen(lang):
 
     for prefix in consts.keys():
         outfile = open(templ['out_file'] % prefix, 'wb')   # open as binary prevents windows newlines
-        outfile.write (templ['header'] % prefix)
+        outfile.write (str.encode(templ['header'] % prefix))
 
         for rule in rules:
             regex = rule['regex']
@@ -409,7 +409,7 @@ def gen(lang):
                 continue
 
             if rule.get('pre'):
-                outfile.write(rule.get('pre').format(CamelCase(prefix)))
+                outfile.write(str.encode(rule.get('pre').format(CamelCase(prefix))))
 
             for const in consts2:
                 lhs_strip = const[0]
@@ -417,10 +417,10 @@ def gen(lang):
                 outfile.write(rule['line_format'].format(rule['fn'](lhs_strip), rhs, lhs_strip).encode("utf-8"))
 
             if rule.get('post'):
-                outfile.write (rule.get('post'))
-                outfile.write ('\n')
+                outfile.write(str.encode (rule.get('post')))
+                outfile.write(str.encode ('\n'))
 
-        outfile.write (templ['footer'])
+        outfile.write(str.encode(templ['footer']))
         outfile.close()
 
 def main():
