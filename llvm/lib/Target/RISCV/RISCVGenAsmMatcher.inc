@@ -11,7 +11,7 @@
 #undef GET_ASSEMBLER_HEADER
   // This should be included into the middle of the declaration of
   // your subclasses implementation of MCTargetAsmParser.
-  FeatureBitset ComputeAvailableFeatures(const FeatureBitset& FB) const;
+  FeatureBitset ComputeAvailableFeaturesFB(const FeatureBitset& FB) const;
   void convertToMCInst(unsigned Kind, MCInst &Inst, unsigned Opcode,
                        const OperandVector &Operands);
   void convertToMapAndConstraints(unsigned Kind,
@@ -1719,7 +1719,7 @@ ComputeAvailableFeatures(const FeatureBitset& FB) const {
   return Features;
 } */
 FeatureBitset RISCVAsmParser::
-ComputeAvailableFeatures(const FeatureBitset& FB) const {
+ComputeAvailableFeaturesFB(const FeatureBitset& FB) const {
   FeatureBitset Features;
   if ((FB[RISCV::FeatureStdExtM]))
     Features[Feature_HasStdExtMBit] = 1;
@@ -2361,13 +2361,14 @@ MatchInstructionImpl(const OperandVector &Operands,
   }
 
   // Get the current feature set.
-  const FeatureBitset &AvailableFeatures = getAvailableFeaturesFB();
+  const FeatureBitset &AvailableFeaturesFB = getAvailableFeaturesFB();
+  ComputeAvailableFeaturesFB(AvailableFeaturesFB);
 
   // Get the instruction mnemonic, which is the first token.
   StringRef Mnemonic = ((RISCVOperand&)*Operands[0]).getToken();
 
   // Process all MnemonicAliases to remap the mnemonic.
-  applyMnemonicAliases(Mnemonic, AvailableFeatures, VariantID);
+  applyMnemonicAliases(Mnemonic, AvailableFeaturesFB, VariantID);
 
   // Some state to try to produce better error messages.
   bool HadMatchOtherThanFeatures = false;
@@ -2399,8 +2400,7 @@ MatchInstructionImpl(const OperandVector &Operands,
        it != ie; ++it) {
     const FeatureBitset &RequiredFeatures = FeatureBitsets[it->RequiredFeaturesIdx];
     bool HasRequiredFeatures =
-      (AvailableFeatures & RequiredFeatures) == RequiredFeatures;
-    //FIXME: calculate features correctly
+      (AvailableFeaturesFB & RequiredFeatures) == RequiredFeatures;
     DEBUG_WITH_TYPE("asm-matcher", dbgs() << "Trying to match opcode "
                                           << MII.getName(it->Opcode) << "\n");
     // equal_range guarantees that instruction mnemonic matches.
@@ -2472,28 +2472,9 @@ MatchInstructionImpl(const OperandVector &Operands,
                                                "this opcode\n");
       continue;
     }
-    // if (!HasRequiredFeatures) {
-    //   printf("%ld\n", it->RequiredFeatures);
-    //   printf("%ld\n", AvailableFeatures);
-    //   HadMatchOtherThanFeatures = true;
-    //   uint64_t NewMissingFeatures = it->RequiredFeatures & ~AvailableFeatures;
-    //   /* DEBUG_WITH_TYPE("asm-matcher", dbgs() << "Missing target features:";
-    //                    for (unsigned I = 0, E = NewMissingFeatures.size(); I != E; ++I)
-    //                      if (NewMissingFeatures[I])
-    //                        dbgs() << ' ' << I;
-    //                    dbgs() << "\n");
-    //   if (NewMissingFeatures.count() <=
-    //       MissingFeatures.count())
-    //     MissingFeatures = NewMissingFeatures; */
-    //     //FIXME: align all features to uint64_t and fix their comparisons
-    //     if (countPopulation(NewMissingFeatures) <=
-    //       countPopulation(MissingFeatures))
-    //     MissingFeatures = NewMissingFeatures;
-    //   continue;
-    // }
     if (!HasRequiredFeatures) {
       HadMatchOtherThanFeatures = true;
-      FeatureBitset NewMissingFeatures = RequiredFeatures & ~AvailableFeatures;
+      FeatureBitset NewMissingFeatures = RequiredFeatures & ~AvailableFeaturesFB;
       DEBUG_WITH_TYPE("asm-matcher", dbgs() << "Missing target features:";
                        for (unsigned I = 0, E = NewMissingFeatures.size(); I != E; ++I)
                          if (NewMissingFeatures[I])
@@ -2669,7 +2650,7 @@ RISCVAsmParser::OperandMatchResultTy RISCVAsmParser::
 MatchOperandParserImpl(OperandVector &Operands,
                        StringRef Mnemonic) {
   // Get the current feature set.
-  const FeatureBitset &AvailableFeatures = getAvailableFeaturesFB();
+  const FeatureBitset &AvailableFeaturesFB = getAvailableFeaturesFB();
 
   // Get the next operand index.
   unsigned NextOpNum = Operands.size() - 1;
@@ -2690,7 +2671,7 @@ MatchOperandParserImpl(OperandVector &Operands,
 /*     const FeatureBitset &RequiredFeatures = FeatureBitsets[it->RequiredFeaturesIdx];
     const uint64_t &ReqFeat = ComputeAvailableFeatures(RequiredFeatures); */
     const FeatureBitset &RequiredFeatures = FeatureBitsets[it->RequiredFeaturesIdx];
-    if ((AvailableFeatures & RequiredFeatures) != RequiredFeatures)
+    if ((AvailableFeaturesFB & RequiredFeatures) != RequiredFeatures)
         continue;
 
     // check if the operand in question has a custom parser.

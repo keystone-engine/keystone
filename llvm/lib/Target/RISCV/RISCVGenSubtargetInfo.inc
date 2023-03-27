@@ -35,14 +35,14 @@ enum : uint64_t {
 namespace llvm_ks {
 // Sorted (by key) array of values for CPU features.
 extern const llvm_ks::SubtargetFeatureKV RISCVFeatureKV[] = {
-  { "64bit", "Implements RV64", {RISCV::Feature64Bit}, {  } },
-  { "a", "'A' (Atomic Instructions)", {RISCV::FeatureStdExtA}, {  } },
+  { "64bit", "Implements RV64", {RISCV::Feature64Bit}, { } },
+  { "a", "'A' (Atomic Instructions)", {RISCV::FeatureStdExtA}, { } },
   { "c", "'C' (Compressed Instructions)", {RISCV::FeatureStdExtC}, { } },
-  { "d", "'D' (Double-Precision Floating-Point)", {RISCV::FeatureStdExtD}, {  } },
-  { "e", "Implements RV32E (provides 16 rather than 32 GPRs)", {RISCV::FeatureRV32E}, {  } },
+  { "d", "'D' (Double-Precision Floating-Point)", {RISCV::FeatureStdExtD}, {RISCV::FeatureStdExtF} },
+  { "e", "Implements RV32E (provides 16 rather than 32 GPRs)", {RISCV::FeatureRV32E}, { } },
   { "f", "'F' (Single-Precision Floating-Point)", {RISCV::FeatureStdExtF}, { } },
-  { "m", "'M' (Integer Multiplication and Division)", {RISCV::FeatureStdExtM}, {  } },
-  { "relax", "Enable Linker relaxation.", {RISCV::FeatureRelax}, {  } },
+  { "m", "'M' (Integer Multiplication and Division)", {RISCV::FeatureStdExtM}, { } },
+  { "relax", "Enable Linker relaxation.", {RISCV::FeatureRelax}, { } },
 };
 
 #ifdef DBGFIELD
@@ -85,14 +85,20 @@ static const llvm_ks::MCSchedModel NoSchedModel = {
   false, // CompleteModel
   0, // Processor ID
   nullptr, nullptr, 0, 0, // No instruction-level machine model.
+  nullptr, // No Itinerary
 };
 
 // Sorted (by key) array of values for CPU subtype.
-extern const llvm_ks::SubtargetFeatureKV RISCVSubTypeKV[] = {
- { "generic-rv32", "select rv32 CPU", {RISCV::Feature64Bit} },
- { "generic-rv64", "select rv64 CPU", {} },
+extern const llvm_ks::SubtargetFeatureKV RISCVSubTypeKV[] = { 
+ { "generic-rv32", "select rv32 CPU", {}, {}},
+ { "generic-rv64", "select rv64 CPU", {RISCV::Feature64Bit}, {}},
 };
 
+// Sorted (by key) array of values for CPU subtype.
+extern const llvm_ks::SubtargetInfoKV RISCVProcSchedKV[] = {
+ { "generic-rv32",  (const void *)&NoSchedModel },
+ { "generic-rv64",  (const void *)&NoSchedModel },
+};
 
 namespace RISCV_MC {
 unsigned resolveVariantSchedClassImpl(unsigned SchedClass,
@@ -122,7 +128,7 @@ unsigned resolveVariantSchedClassImpl(unsigned SchedClass,
 static inline MCSubtargetInfo *createRISCVMCSubtargetInfoImpl(const Triple &TT, StringRef CPU, StringRef FS) {
   return new MCSubtargetInfo(TT, CPU, FS, RISCVFeatureKV, RISCVSubTypeKV,/*  
                       RISCVWriteProcResTable, RISCVWriteLatencyTable, RISCVReadAdvanceTable, 
-                      nullptr, nullptr, nullptr */NULL);
+                      nullptr, nullptr, nullptr */RISCVProcSchedKV);
 }
 
 } // end namespace llvm_ks

@@ -289,9 +289,8 @@ void RISCVAsmBackend::applyFixup(const MCFixup &Fixup, char *Data, unsigned Data
   unsigned Offset = Fixup.getOffset();
   unsigned NumBytes = alignTo(Info.TargetSize + Info.TargetOffset, 8) / 8;
 
-//FIXME .size() into a valid method for char* type 
-/*   assert(Offset + NumBytes <= Data.size() && "Invalid fixup offset!");
- */
+  assert(Offset + NumBytes <= DataSize && "Invalid fixup offset!");
+
   // For each byte of the fragment that the fixup touches, mask in the
   // bits from the fixup value.
   for (unsigned i = 0; i != NumBytes; ++i) {
@@ -354,15 +353,14 @@ bool RISCVAsmBackend::shouldInsertFixupForCodeAlign(MCAssembler &Asm,
 }
 
 MCObjectWriter* RISCVAsmBackend::createObjectWriter(raw_pwrite_stream &OS) const {
-  //hardcode to 0 (default OSABI) for now, FIXME change to actual getOSABI later
-  uint8_t OSABI = 0;
+  uint8_t OSABI = MCELFObjectTargetWriter::getOSABI(STI.getTargetTriple().getOS());
   return createRISCVELFObjectWriter(OS, OSABI, Is64Bit);
 }
 
 MCAsmBackend *llvm_ks::createRISCVAsmBackend(const Target &T,
                                              const MCRegisterInfo &MRI,
                                              const Triple &TT, StringRef CPU, const MCSubtargetInfo &STI, const MCTargetOptions &Options) {
-/*   const Triple &TT = STI.getTargetTriple();
-  uint8_t OSABI = MCELFObjectTargetWriter::getOSABI(TT.getOS()); */
-  return new RISCVAsmBackend(T, TT.getOS(), /*IsLittle*/ true, /*Is64Bit*/ ((TT.getArchName().equals("riscv32")) ? false : true), STI, Options);
+  // const Triple &TT = STI.getTargetTriple();
+  // uint8_t OSABI = MCELFObjectTargetWriter::getOSABI(TT.getOS()); 
+  return new RISCVAsmBackend(T, TT.getOS(), /*IsLittle*/ true, /*Is64Bit*/ TT.isArch64Bit()/* ((TT.getArchName().equals("riscv32")) ? false : true) */, STI, Options);
 }

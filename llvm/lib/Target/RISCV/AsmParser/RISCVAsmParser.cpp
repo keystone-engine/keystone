@@ -139,7 +139,7 @@ class RISCVAsmParser : public MCTargetAsmParser {
     if (!(getSTI().getFeatureBits()[Feature])) {
       MCSubtargetInfo &STI = copySTI();
       setAvailableFeaturesFB(
-          ComputeAvailableFeatures(STI.ToggleFeature(FeatureString)));
+          ComputeAvailableFeaturesFB(STI.ToggleFeature(FeatureString)));
     }
   }
 
@@ -147,7 +147,7 @@ class RISCVAsmParser : public MCTargetAsmParser {
     if (getSTI().getFeatureBits()[Feature]) {
       MCSubtargetInfo &STI = copySTI();
       setAvailableFeaturesFB(
-          ComputeAvailableFeatures(STI.ToggleFeature(FeatureString)));
+          ComputeAvailableFeaturesFB(STI.ToggleFeature(FeatureString)));
     }
   }
 
@@ -161,7 +161,7 @@ class RISCVAsmParser : public MCTargetAsmParser {
 
     FeatureBitset FeatureBits = FeatureBitStack.pop_back_val();
     copySTI().setFeatureBits(FeatureBits);
-    setAvailableFeaturesFB(ComputeAvailableFeatures(FeatureBits));
+    setAvailableFeaturesFB(ComputeAvailableFeaturesFB(FeatureBits));
 
     return false;
   }
@@ -185,7 +185,7 @@ public:
     Parser.addAliasForDirective(".hword", ".2byte");
     Parser.addAliasForDirective(".word", ".4byte");
     Parser.addAliasForDirective(".dword", ".8byte");
-    setAvailableFeaturesFB(ComputeAvailableFeatures(STI.getFeatureBits()));
+    setAvailableFeaturesFB(ComputeAvailableFeaturesFB(STI.getFeatureBits()));
   }
 };
 

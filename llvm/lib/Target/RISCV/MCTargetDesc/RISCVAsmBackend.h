@@ -32,7 +32,7 @@ class RISCVAsmBackend : public MCAsmBackend {
   bool ForceRelocs = false;
   RISCVABI::ABI TargetABI = RISCVABI::ABI_Unknown;
   const MCSubtargetInfo &STI;
-  uint8_t OSABI = 0;
+  uint8_t OSABI;
 
 public:
   RISCVAsmBackend(const Target &T, Triple::OSType OSType, bool IsLittle,

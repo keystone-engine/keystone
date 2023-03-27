@@ -39,8 +39,8 @@ const char *Triple::getArchTypeName(ArchType Kind) {
   case ppc:         return "powerpc";
   case r600:        return "r600";
   case amdgcn:      return "amdgcn";
-  case riscv32:        return "riscv32";
-  case riscv64:        return "riscv64";
+  case riscv32:     return "riscv32";
+  case riscv64:     return "riscv64";
   case sparc:       return "sparc";
   case sparcv9:     return "sparcv9";
   case sparcel:     return "sparcel";
