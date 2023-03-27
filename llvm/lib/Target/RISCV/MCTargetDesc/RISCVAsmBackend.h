@@ -24,22 +24,24 @@ class MCObjectWriter;
 class raw_ostream;
 
 class RISCVAsmBackend : public MCAsmBackend {
-  /* const MCTargetOptions &TargetOptions; */
+  const MCTargetOptions &TargetOptions;
 
   Triple::OSType OSType;
   bool IsLittle; // Big or little endian
   bool Is64Bit;  // 32 or 64 bit words
   bool ForceRelocs = false;
   RISCVABI::ABI TargetABI = RISCVABI::ABI_Unknown;
+  const MCSubtargetInfo &STI;
   uint8_t OSABI = 0;
 
 public:
   RISCVAsmBackend(const Target &T, Triple::OSType OSType, bool IsLittle,
-                 bool Is64Bit)
-      : MCAsmBackend(), OSType(OSType), IsLittle(IsLittle), Is64Bit(Is64Bit){
-    /* TargetABI = RISCVABI::computeTargetABI(
-        STI.getTargetTriple(), STI.getFeatureBits(), Options.getABIName()); */
-    /* RISCVFeatures::validate(TT.getTargetTriple(), STI.getFeatureBits()); */
+                 bool Is64Bit, const MCSubtargetInfo &STI, const MCTargetOptions &Options)
+      : MCAsmBackend(), OSType(OSType), IsLittle(IsLittle), Is64Bit(Is64Bit),STI(STI), TargetOptions(Options){
+    TargetABI = RISCVABI::computeTargetABI(
+        STI.getTargetTriple(), STI.getFeatureBits(), Options.getABIName());
+    RISCVFeatures::validate(STI.getTargetTriple(), STI.getFeatureBits());
+    
   }
   ~RISCVAsmBackend() override {}
 
@@ -139,7 +141,7 @@ public:
 
   bool writeNopData(uint64_t Count, MCObjectWriter * OW) const override;
 
-/*   const MCTargetOptions &getTargetOptions() const { return TargetOptions; } */
+  const MCTargetOptions &getTargetOptions() const { return TargetOptions; }
   RISCVABI::ABI getTargetABI() const { return TargetABI; }
 };
 }

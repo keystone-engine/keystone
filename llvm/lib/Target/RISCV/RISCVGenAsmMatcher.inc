@@ -19,7 +19,7 @@
   unsigned MatchInstructionImpl(const OperandVector &Operands,
                                 MCInst &Inst,
                                 uint64_t &ErrorInfo,
-                                FeatureBitset &MissingFeatures,
+                                uint64_t MissingFeatures,
                                 bool matchingInlineAsm,
                                 unsigned VariantID = 0);
   unsigned MatchInstructionImpl(const OperandVector &Operands,
@@ -27,7 +27,7 @@
                                 uint64_t &ErrorInfo,
                                 bool matchingInlineAsm,
                                 unsigned VariantID = 0) {
-    FeatureBitset MissingFeatures;
+    uint64_t MissingFeatures = ~0ULL;
     return MatchInstructionImpl(Operands, Inst, ErrorInfo, MissingFeatures,
                                 matchingInlineAsm, VariantID);
   }
@@ -83,15 +83,15 @@
 #undef GET_REGISTER_MATCHER
 
 // Bits for subtarget features that participate in instruction matching.
-enum SubtargetFeatureBits : uint8_t {
-  Feature_HasStdExtMBit = 4,
-  Feature_HasStdExtABit = 0,
-  Feature_HasStdExtFBit = 3,
-  Feature_HasStdExtDBit = 2,
-  Feature_HasStdExtCBit = 1,
-  Feature_IsRV64Bit = 7,
-  Feature_IsRV32Bit = 5,
-  Feature_IsRV32EBit = 6,
+enum SubtargetFeatureFlag : uint8_t {
+  Feature_HasStdExtMBit = (1ULL << 4), 
+  Feature_HasStdExtABit = (1ULL << 0),
+  Feature_HasStdExtFBit = (1ULL << 3),
+  Feature_HasStdExtDBit = (1ULL << 2),
+  Feature_HasStdExtCBit = (1ULL << 1),
+  Feature_IsRV64Bit = (1ULL << 7),
+  Feature_IsRV32Bit = (1ULL << 5),
+  Feature_IsRV32EBit = (1ULL << 6),
 };
 
 static unsigned MatchRegisterName(StringRef Name) {
@@ -1819,7 +1819,7 @@ enum : uint8_t {
   AMFBS_HasStdExtM_IsRV64,
   AMFBS_HasStdExtC_HasStdExtF_IsRV32,
 };
-
+/* 
 const static FeatureBitset FeatureBitsets[] {
   {}, // AMFBS_None
   {Feature_HasStdExtABit, },
@@ -1837,14 +1837,14 @@ const static FeatureBitset FeatureBitsets[] {
   {Feature_HasStdExtFBit, Feature_IsRV64Bit, },
   {Feature_HasStdExtMBit, Feature_IsRV64Bit, },
   {Feature_HasStdExtCBit, Feature_HasStdExtFBit, Feature_IsRV32Bit, },
-};
+}; */
 
 namespace {
   struct MatchEntry {
     uint16_t Mnemonic;
     uint16_t Opcode;
     uint8_t ConvertFn;
-    uint8_t RequiredFeaturesIdx;
+    uint8_t RequiredFeatures;
     uint8_t Classes[5];
     StringRef getMnemonic() const {
       return StringRef(MnemonicTable + Mnemonic + 1,
@@ -2327,7 +2327,7 @@ unsigned RISCVAsmParser::
 MatchInstructionImpl(const OperandVector &Operands,
                      MCInst &Inst,
                      uint64_t &ErrorInfo,
-                     FeatureBitset &MissingFeatures,
+                     uint64_t MissingFeatures,
                      bool matchingInlineAsm, unsigned VariantID) {
   // Eliminate obvious mismatches.
   if (Operands.size() > 6) {
@@ -2336,7 +2336,7 @@ MatchInstructionImpl(const OperandVector &Operands,
   }
 
   // Get the current feature set.
-  const uint64_t &AvailableFeatures = getAvailableFeatures();
+  uint64_t AvailableFeatures = getAvailableFeatures();
 
   // Get the instruction mnemonic, which is the first token.
   StringRef Mnemonic = ((RISCVOperand&)*Operands[0]).getToken();
@@ -2348,7 +2348,8 @@ MatchInstructionImpl(const OperandVector &Operands,
   bool HadMatchOtherThanFeatures = false;
   bool HadMatchOtherThanPredicate = false;
   unsigned RetCode = Match_InvalidOperand;
-  MissingFeatures.set();
+
+  MissingFeatures = ~0ULL;
   // Set ErrorInfo to the operand that mismatches if it is
   // wrong for all instances of the instruction.
   ErrorInfo = ~0ULL;
@@ -2371,11 +2372,10 @@ MatchInstructionImpl(const OperandVector &Operands,
 
   for (const MatchEntry *it = MnemonicRange.first, *ie = MnemonicRange.second;
        it != ie; ++it) {
-    const FeatureBitset &RequiredFeatures = FeatureBitsets[it->RequiredFeaturesIdx];
-    const uint64_t &ReqFeat = ComputeAvailableFeatures(RequiredFeatures);
-    bool HasRequiredFeatures = true;
+ /*    const FeatureBitset &RequiredFeatures = it->RequiredFeatures;
+    const uint64_t &ReqFeat = ComputeAvailableFeatures(RequiredFeatures); */
+    bool HasRequiredFeatures = (AvailableFeatures & it->RequiredFeatures) == it->RequiredFeatures;/* true; */
     //FIXME: calculate features correctly
-      /* (AvailableFeatures && ReqFeat) == ReqFeat; */
     DEBUG_WITH_TYPE("asm-matcher", dbgs() << "Trying to match opcode "
                                           << MII.getName(it->Opcode) << "\n");
     // equal_range guarantees that instruction mnemonic matches.
@@ -2448,8 +2448,10 @@ MatchInstructionImpl(const OperandVector &Operands,
       continue;
     }
     if (!HasRequiredFeatures) {
+      printf("%ld\n", it->RequiredFeatures);
+      printf("%ld\n", AvailableFeatures);
       HadMatchOtherThanFeatures = true;
-      uint64_t NewMissingFeatures = ReqFeat && ~AvailableFeatures;
+      uint64_t NewMissingFeatures = it->RequiredFeatures & ~AvailableFeatures;
       /* DEBUG_WITH_TYPE("asm-matcher", dbgs() << "Missing target features:";
                        for (unsigned I = 0, E = NewMissingFeatures.size(); I != E; ++I)
                          if (NewMissingFeatures[I])
@@ -2459,6 +2461,9 @@ MatchInstructionImpl(const OperandVector &Operands,
           MissingFeatures.count())
         MissingFeatures = NewMissingFeatures; */
         //FIXME: align all features to uint64_t and fix their comparisons
+        if (countPopulation(NewMissingFeatures) <=
+          countPopulation(MissingFeatures))
+        MissingFeatures = NewMissingFeatures;
       continue;
     }
 
@@ -2530,7 +2535,7 @@ namespace {
     uint16_t Mnemonic;
     uint8_t OperandMask;
     uint8_t Class;
-    uint8_t RequiredFeaturesIdx;
+    uint8_t RequiredFeatures;
 
     StringRef getMnemonic() const {
       return StringRef(MnemonicTable + Mnemonic + 1,
@@ -2644,9 +2649,9 @@ MatchOperandParserImpl(OperandVector &Operands,
     assert(Mnemonic == it->getMnemonic());
 
     // check if the available features match
-    const FeatureBitset &RequiredFeatures = FeatureBitsets[it->RequiredFeaturesIdx];
-    const uint64_t &ReqFeat = ComputeAvailableFeatures(RequiredFeatures);
-    if ((AvailableFeatures && ReqFeat) != ReqFeat)
+/*     const FeatureBitset &RequiredFeatures = FeatureBitsets[it->RequiredFeaturesIdx];
+    const uint64_t &ReqFeat = ComputeAvailableFeatures(RequiredFeatures); */
+    if ((AvailableFeatures & it->RequiredFeatures) != it->RequiredFeatures)
         continue;
 
     // check if the operand in question has a custom parser.
@@ -2666,47 +2671,48 @@ MatchOperandParserImpl(OperandVector &Operands,
 #endif // GET_MATCHER_IMPLEMENTATION
 
 
-#ifdef GET_MNEMONIC_SPELL_CHECKER
-#undef GET_MNEMONIC_SPELL_CHECKER
+// #ifdef GET_MNEMONIC_SPELL_CHECKER
+// #undef GET_MNEMONIC_SPELL_CHECKER
 
-static std::string RISCVMnemonicSpellCheck(StringRef S, const FeatureBitset &FBS, unsigned VariantID) {
-  const unsigned MaxEditDist = 2;
-  std::vector<StringRef> Candidates;
-  StringRef Prev = "";
+// static std::string RISCVMnemonicSpellCheck(StringRef S, const uint8_t &FBS, unsigned VariantID) {
+//   const unsigned MaxEditDist = 2;
+//   std::vector<StringRef> Candidates;
+//   StringRef Prev = "";
 
-  // Find the appropriate table for this asm variant.
-  const MatchEntry *Start, *End;
-  switch (VariantID) {
-  default: llvm_unreachable("invalid variant!");
-  case 0: Start = std::begin(MatchTable0); End = std::end(MatchTable0); break;
-  }
+//   // Find the appropriate table for this asm variant.
+//   const MatchEntry *Start, *End;
+//   switch (VariantID) {
+//   default: llvm_unreachable("invalid variant!");
+//   case 0: Start = std::begin(MatchTable0); End = std::end(MatchTable0); break;
+//   }
 
-  for (auto I = Start; I < End; I++) {
-    // Ignore unsupported instructions.
-    const FeatureBitset &RequiredFeatures = FeatureBitsets[I->RequiredFeaturesIdx];
-    if ((FBS & RequiredFeatures) != RequiredFeatures)
-      continue;
+//   for (auto I = Start; I < End; I++) {
+//     // Ignore unsupported instructions.
+// /*     const FeatureBitset &RequiredFeatures = FeatureBitsets[I->RequiredFeaturesIdx];
+//     const uint64_t &ReqFeat = ComputeAvailableFeatures(RequiredFeatures); */
+//     if ((FBS & it->RequiredFeatures) != it->RequiredFeatures)
+//       continue;
 
-    StringRef T = I->getMnemonic();
-    // Avoid recomputing the edit distance for the same string.
-    if (T.equals(Prev))
-      continue;
+//     StringRef T = I->getMnemonic();
+//     // Avoid recomputing the edit distance for the same string.
+//     if (T.equals(Prev))
+//       continue;
 
-    Prev = T;
-    unsigned Dist = S.edit_distance(T, false, MaxEditDist);
-    if (Dist <= MaxEditDist)
-      Candidates.push_back(T);
-  }
+//     Prev = T;
+//     unsigned Dist = S.edit_distance(T, false, MaxEditDist);
+//     if (Dist <= MaxEditDist)
+//       Candidates.push_back(T);
+//   }
 
-  if (Candidates.empty())
-    return "";
+//   if (Candidates.empty())
+//     return "";
 
-  std::string Res = ", did you mean: ";
-  unsigned i = 0;
-  for( ; i < Candidates.size() - 1; i++)
-    Res += Candidates[i].str() + ", ";
-  return Res + Candidates[i].str() + "?";
-}
+//   std::string Res = ", did you mean: ";
+//   unsigned i = 0;
+//   for( ; i < Candidates.size() - 1; i++)
+//     Res += Candidates[i].str() + ", ";
+//   return Res + Candidates[i].str() + "?";
+// }
 
-#endif // GET_MNEMONIC_SPELL_CHECKER
+// #endif // GET_MNEMONIC_SPELL_CHECKER
 

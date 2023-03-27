@@ -85,7 +85,8 @@ extern "C" void LLVMInitializeRISCVTargetMC() {
     TargetRegistry::RegisterMCAsmInfo(*T, createRISCVMCAsmInfo);
     TargetRegistry::RegisterMCInstrInfo(*T, createRISCVMCInstrInfo);
     TargetRegistry::RegisterMCRegInfo(*T, createRISCVMCRegisterInfo);
-    TargetRegistry::RegisterMCAsmBackend(*T, createRISCVAsmBackend);
+    // TargetRegistry::RegisterMCAsmBackend(*T, createRISCVAsmBackend);
+    TargetRegistry::RegisterMCAsmBackend2(*T, createRISCVAsmBackend);
     TargetRegistry::RegisterMCCodeEmitter(*T, createRISCVMCCodeEmitter);
     TargetRegistry::RegisterMCSubtargetInfo(*T, createRISCVMCSubtargetInfo);
     TargetRegistry::RegisterObjectTargetStreamer(

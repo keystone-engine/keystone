@@ -505,20 +505,20 @@ namespace RISCV {
 } // end llvm namespace
 #endif // GET_INSTRINFO_ENUM
 
-#ifdef GET_INSTRINFO_SCHED_ENUM
-#undef GET_INSTRINFO_SCHED_ENUM
-namespace llvm_ks {
+// #ifdef GET_INSTRINFO_SCHED_ENUM
+// #undef GET_INSTRINFO_SCHED_ENUM
+// namespace llvm_ks {
 
-namespace RISCV {
-namespace Sched {
-  enum {
-    NoInstrModel	= 0,
-    SCHED_LIST_END = 1
-  };
-} // end Sched namespace
-} // end RISCV namespace
-} // end llvm namespace
-#endif // GET_INSTRINFO_SCHED_ENUM
+// namespace RISCV {
+// namespace Sched {
+//   enum {
+//     NoInstrModel	= 0,
+//     SCHED_LIST_END = 1
+//   };
+// } // end Sched namespace
+// } // end RISCV namespace
+// } // end llvm namespace
+// #endif // GET_INSTRINFO_SCHED_ENUM
 
 #ifdef GET_INSTRINFO_MC_DESC
 #undef GET_INSTRINFO_MC_DESC
@@ -1634,29 +1634,29 @@ struct RISCVGenInstrInfo : public TargetInstrInfo {
 } // end llvm namespace
 #endif // GET_INSTRINFO_HEADER
 
-#ifdef GET_INSTRINFO_HELPER_DECLS
-#undef GET_INSTRINFO_HELPER_DECLS
+// #ifdef GET_INSTRINFO_HELPER_DECLS
+// #undef GET_INSTRINFO_HELPER_DECLS
 
 
-#endif // GET_INSTRINFO_HELPER_DECLS
+// #endif // GET_INSTRINFO_HELPER_DECLS
 
-#ifdef GET_INSTRINFO_HELPERS
-#undef GET_INSTRINFO_HELPERS
+// #ifdef GET_INSTRINFO_HELPERS
+// #undef GET_INSTRINFO_HELPERS
 
-#endif // GET_INSTRINFO_HELPERS
+// #endif // GET_INSTRINFO_HELPERS
 
-#ifdef GET_INSTRINFO_CTOR_DTOR
-#undef GET_INSTRINFO_CTOR_DTOR
-namespace llvm_ks {
-extern const MCInstrDesc RISCVInsts[];
-extern const unsigned RISCVInstrNameIndices[];
-extern const char RISCVInstrNameData[];
-RISCVGenInstrInfo::RISCVGenInstrInfo(int CFSetupOpcode, int CFDestroyOpcode, int CatchRetOpcode, int ReturnOpcode)
-  : TargetInstrInfo(CFSetupOpcode, CFDestroyOpcode, CatchRetOpcode, ReturnOpcode) {
-  InitMCInstrInfo(RISCVInsts, RISCVInstrNameIndices, RISCVInstrNameData, 486);
-}
-} // end llvm namespace
-#endif // GET_INSTRINFO_CTOR_DTOR
+// #ifdef GET_INSTRINFO_CTOR_DTOR
+// #undef GET_INSTRINFO_CTOR_DTOR
+// namespace llvm_ks {
+// extern const MCInstrDesc RISCVInsts[];
+// extern const unsigned RISCVInstrNameIndices[];
+// extern const char RISCVInstrNameData[];
+// RISCVGenInstrInfo::RISCVGenInstrInfo(int CFSetupOpcode, int CFDestroyOpcode, int CatchRetOpcode, int ReturnOpcode)
+//   : TargetInstrInfo(CFSetupOpcode, CFDestroyOpcode, CatchRetOpcode, ReturnOpcode) {
+//   InitMCInstrInfo(RISCVInsts, RISCVInstrNameIndices, RISCVInstrNameData, 486);
+// }
+// } // end llvm namespace
+// #endif // GET_INSTRINFO_CTOR_DTOR
 
 #ifdef GET_INSTRINFO_OPERAND_ENUM
 #undef GET_INSTRINFO_OPERAND_ENUM

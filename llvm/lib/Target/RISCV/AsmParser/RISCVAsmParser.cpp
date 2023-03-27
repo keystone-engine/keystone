@@ -42,13 +42,26 @@ struct RISCVOperand;
 unsigned int ErrCd = 0;
 class RISCVAsmParser : public MCTargetAsmParser {
   SmallVector<FeatureBitset, 4> FeatureBitStack;
+  RISCVABI::ABI ABI;
 
   SMLoc getLoc() const { return getParser().getTok().getLoc(); }
   /* bool isRV64() const { return getSTI().hasFeature(RISCV::Feature64Bit); }
   bool isRV32E() const { return getSTI().hasFeature(RISCV::FeatureRV32E); } */
   //FIXME: find a way to properly extract the features from FeatureBitSet
-  bool isRV64() const { return false; }
-  bool isRV32E() const { return false; }
+  // Bits for subtarget features that participate in instruction matching.
+  enum SubtargetFeatureFlag : uint8_t {
+  Feature_HasStdExtMBit = (1ULL << 4),
+  Feature_HasStdExtABit = (1ULL << 0),
+  Feature_HasStdExtFBit = (1ULL << 3),
+  Feature_HasStdExtDBit = (1ULL << 2),
+  Feature_HasStdExtCBit = (1ULL << 1),
+  Feature_IsRV64Bit = (1ULL << 7),
+  Feature_IsRV32Bit = (1ULL << 5),
+  Feature_IsRV32EBit = (1ULL << 6),
+};
+
+  bool isRV64() const { return (getAvailableFeatures() & Feature_IsRV64Bit) == Feature_IsRV64Bit; }
+  bool isRV32E() const { return (getAvailableFeatures() & Feature_IsRV32EBit) == Feature_IsRV32EBit;}
 
   RISCVTargetStreamer &getTargetStreamer() {
     MCTargetStreamer &TS = *getParser().getStreamer().getTargetStreamer();
@@ -166,6 +179,7 @@ class RISCVAsmParser : public MCTargetAsmParser {
 
     return false;
   }
+
 public:
   enum RISCVMatchResultTy {
     Match_Dummy = FIRST_TARGET_MATCH_RESULT_TY,
@@ -815,27 +829,27 @@ bool RISCVAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
   case Match_Success:
     return processInstruction(Inst, IDLoc, Operands, Out);
   case Match_MissingFeature:
-    return Error(IDLoc, "instruction use requires an option to be enabled");
-    /* ErrorCode = KS_ERR_ASM_RISCV_MISSINGFEATURE;
-    return true; */
+//     return Error(IDLoc, "instruction use requires an option to be enabled");
+    ErrorCode = KS_ERR_ASM_RISCV_MISSINGFEATURE;
+    return true;
   case Match_MnemonicFail:
-    return Error(IDLoc, "unrecognized instruction mnemonic");
-    /* ErrorCode = KS_ERR_ASM_RISCV_MNEMONICFAIL;
-    return true; */
+    // return Error(IDLoc, "unrecognized instruction mnemonic");
+    ErrorCode = KS_ERR_ASM_RISCV_MNEMONICFAIL;
+    return true;
   case Match_InvalidOperand: {
     SMLoc ErrorLoc = IDLoc;
     if (ErrorInfo != ~0U) {
       if (ErrorInfo >= Operands.size())
-        return Error(ErrorLoc, "too few operands for instruction");
-        /* ErrorCode = KS_ERR_ASM_RISCV_INVALIDOPERAND; */
+        // return Error(ErrorLoc, "too few operands for instruction");
+        ErrorCode = KS_ERR_ASM_RISCV_INVALIDOPERAND;
 
       ErrorLoc = ((RISCVOperand &)*Operands[ErrorInfo]).getStartLoc();
       if (ErrorLoc == SMLoc())
         ErrorLoc = IDLoc;
     }
-    return Error(ErrorLoc, "invalid operand for instruction");
-    // ErrorCode = KS_ERR_ASM_RISCV_INVALIDOPERAND;
-    // return true;
+    // return Error(ErrorLoc, "invalid operand for instruction");
+    ErrorCode = KS_ERR_ASM_RISCV_INVALIDOPERAND;
+    return true;
   }
   }
 

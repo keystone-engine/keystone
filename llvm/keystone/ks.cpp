@@ -244,7 +244,11 @@ static ks_err InitKs(int arch, ks_engine *ks, std::string TripleName)
 
     ks->MCII = ks->TheTarget->createMCInstrInfo();
     ks->STI = ks->TheTarget->createMCSubtargetInfo(ks->TripleName, MCPU, ks->FeaturesStr);
-    ks->MAB = ks->TheTarget->createMCAsmBackend(*ks->MRI, ks->TripleName, MCPU);
+    if(ks->TripleName.rfind("riscv",0)==0){
+        ks->MAB = ks->TheTarget->createMCAsmBackend2(*ks->MRI, ks->TripleName, MCPU, *ks->STI, ks->MCOptions);
+    } else {
+        ks->MAB = ks->TheTarget->createMCAsmBackend(*ks->MRI, ks->TripleName, MCPU);
+    }
     ks->MAB->setArch(arch);
     ks->MCOptions = InitMCTargetOptionsFromFlags();
 
