@@ -45,23 +45,9 @@ class RISCVAsmParser : public MCTargetAsmParser {
   RISCVABI::ABI ABI;
 
   SMLoc getLoc() const { return getParser().getTok().getLoc(); }
-  /* bool isRV64() const { return getSTI().hasFeature(RISCV::Feature64Bit); }
-  bool isRV32E() const { return getSTI().hasFeature(RISCV::FeatureRV32E); } */
-  //FIXME: find a way to properly extract the features from FeatureBitSet
-  // Bits for subtarget features that participate in instruction matching.
-  enum SubtargetFeatureFlag : uint8_t {
-  Feature_HasStdExtMBit = (1ULL << 4),
-  Feature_HasStdExtABit = (1ULL << 0),
-  Feature_HasStdExtFBit = (1ULL << 3),
-  Feature_HasStdExtDBit = (1ULL << 2),
-  Feature_HasStdExtCBit = (1ULL << 1),
-  Feature_IsRV64Bit = (1ULL << 7),
-  Feature_IsRV32Bit = (1ULL << 5),
-  Feature_IsRV32EBit = (1ULL << 6),
-};
 
-  bool isRV64() const { return (getAvailableFeatures() & Feature_IsRV64Bit) == Feature_IsRV64Bit; }
-  bool isRV32E() const { return (getAvailableFeatures() & Feature_IsRV32EBit) == Feature_IsRV32EBit;}
+  bool isRV64() const { return getSTI().hasFeature(RISCV::Feature64Bit); }
+  bool isRV32E() const { return getSTI().hasFeature(RISCV::FeatureRV32E); }
 
   RISCVTargetStreamer &getTargetStreamer() {
     MCTargetStreamer &TS = *getParser().getStreamer().getTargetStreamer();
@@ -152,7 +138,7 @@ class RISCVAsmParser : public MCTargetAsmParser {
   void setFeatureBits(uint64_t Feature, StringRef FeatureString) {
     if (!(getSTI().getFeatureBits()[Feature])) {
       MCSubtargetInfo &STI = copySTI();
-      setAvailableFeatures(
+      setAvailableFeaturesFB(
           ComputeAvailableFeatures(STI.ToggleFeature(FeatureString)));
     }
   }
@@ -160,7 +146,7 @@ class RISCVAsmParser : public MCTargetAsmParser {
   void clearFeatureBits(uint64_t Feature, StringRef FeatureString) {
     if (getSTI().getFeatureBits()[Feature]) {
       MCSubtargetInfo &STI = copySTI();
-      setAvailableFeatures(
+      setAvailableFeaturesFB(
           ComputeAvailableFeatures(STI.ToggleFeature(FeatureString)));
     }
   }
@@ -175,7 +161,7 @@ class RISCVAsmParser : public MCTargetAsmParser {
 
     FeatureBitset FeatureBits = FeatureBitStack.pop_back_val();
     copySTI().setFeatureBits(FeatureBits);
-    setAvailableFeatures(ComputeAvailableFeatures(FeatureBits));
+    setAvailableFeaturesFB(ComputeAvailableFeatures(FeatureBits));
 
     return false;
   }
@@ -199,7 +185,7 @@ public:
     Parser.addAliasForDirective(".hword", ".2byte");
     Parser.addAliasForDirective(".word", ".4byte");
     Parser.addAliasForDirective(".dword", ".8byte");
-    setAvailableFeatures(ComputeAvailableFeatures(STI.getFeatureBits()));
+    setAvailableFeaturesFB(ComputeAvailableFeatures(STI.getFeatureBits()));
   }
 };
 

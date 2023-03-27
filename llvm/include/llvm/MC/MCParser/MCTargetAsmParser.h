@@ -13,6 +13,7 @@
 #include "llvm/MC/MCExpr.h"
 #include "llvm/MC/MCParser/MCAsmParserExtension.h"
 #include "llvm/MC/MCTargetOptions.h"
+#include "llvm/MC/SubtargetFeature.h"
 #include <memory>
 
 namespace llvm_ks {
@@ -102,6 +103,7 @@ protected: // Can only create subclasses.
 
   /// AvailableFeatures - The current set of available features.
   uint64_t AvailableFeatures;
+  FeatureBitset AvailableFeaturesFB;
 
   /// ParsingInlineAsm - Are we parsing ms-style inline assembly?
   bool ParsingInlineAsm;
@@ -125,7 +127,9 @@ public:
   const MCSubtargetInfo &getSTI() const;
 
   uint64_t getAvailableFeatures() const { return AvailableFeatures; }
+  FeatureBitset getAvailableFeaturesFB() const { return AvailableFeaturesFB; }
   void setAvailableFeatures(uint64_t Value) { AvailableFeatures = Value; }
+  void setAvailableFeaturesFB(FeatureBitset Value) { AvailableFeaturesFB = Value; }
 
   bool isParsingInlineAsm () { return ParsingInlineAsm; }
   void setParsingInlineAsm (bool Value) { ParsingInlineAsm = Value; }

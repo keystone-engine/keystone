@@ -11,7 +11,7 @@
 #undef GET_ASSEMBLER_HEADER
   // This should be included into the middle of the declaration of
   // your subclasses implementation of MCTargetAsmParser.
-  uint64_t ComputeAvailableFeatures(const FeatureBitset& FB) const;
+  FeatureBitset ComputeAvailableFeatures(const FeatureBitset& FB) const;
   void convertToMCInst(unsigned Kind, MCInst &Inst, unsigned Opcode,
                        const OperandVector &Operands);
   void convertToMapAndConstraints(unsigned Kind,
@@ -19,7 +19,7 @@
   unsigned MatchInstructionImpl(const OperandVector &Operands,
                                 MCInst &Inst,
                                 uint64_t &ErrorInfo,
-                                uint64_t MissingFeatures,
+                                FeatureBitset MissingFeatures,
                                 bool matchingInlineAsm,
                                 unsigned VariantID = 0);
   unsigned MatchInstructionImpl(const OperandVector &Operands,
@@ -27,7 +27,7 @@
                                 uint64_t &ErrorInfo,
                                 bool matchingInlineAsm,
                                 unsigned VariantID = 0) {
-    uint64_t MissingFeatures = ~0ULL;
+    FeatureBitset MissingFeatures;
     return MatchInstructionImpl(Operands, Inst, ErrorInfo, MissingFeatures,
                                 matchingInlineAsm, VariantID);
   }
@@ -84,14 +84,14 @@
 
 // Bits for subtarget features that participate in instruction matching.
 enum SubtargetFeatureFlag : uint8_t {
-  Feature_HasStdExtMBit = (1ULL << 4), 
-  Feature_HasStdExtABit = (1ULL << 0),
-  Feature_HasStdExtFBit = (1ULL << 3),
-  Feature_HasStdExtDBit = (1ULL << 2),
-  Feature_HasStdExtCBit = (1ULL << 1),
-  Feature_IsRV64Bit = (1ULL << 7),
-  Feature_IsRV32Bit = (1ULL << 5),
-  Feature_IsRV32EBit = (1ULL << 6),
+  Feature_HasStdExtMBit = 4, 
+  Feature_HasStdExtABit = 0,
+  Feature_HasStdExtFBit = 3,
+  Feature_HasStdExtDBit = 2,
+  Feature_HasStdExtCBit = 1,
+  Feature_IsRV64Bit = 7,
+  Feature_IsRV32Bit = 5,
+  Feature_IsRV32EBit = 6,
 };
 
 static unsigned MatchRegisterName(StringRef Name) {
@@ -538,7 +538,7 @@ static const char *getSubtargetFeatureName(uint64_t Val) {
 #ifdef GET_MATCHER_IMPLEMENTATION
 #undef GET_MATCHER_IMPLEMENTATION
 
-static void applyMnemonicAliases(StringRef &Mnemonic, const uint64_t &Features, unsigned VariantID) {
+static void applyMnemonicAliases(StringRef &Mnemonic, const FeatureBitset &Features, unsigned VariantID) {
   switch (VariantID) {
     case 0:
       switch (Mnemonic.size()) {
@@ -566,13 +566,15 @@ static void applyMnemonicAliases(StringRef &Mnemonic, const uint64_t &Features, 
         case 's':	 // 1 string to match.
           if (memcmp(Mnemonic.data()+5, ".x", 2) != 0)
             break;
-          if ((Features & Feature_HasStdExtFBit) == Feature_HasStdExtFBit)	 // "fmv.s.x"
+          // if ((Features & Feature_HasStdExtFBit) == Feature_HasStdExtFBit)	 // "fmv.s.x"
+          if (Features.test(Feature_HasStdExtFBit))	 // "fmv.s.x"
             Mnemonic = "fmv.w.x";
           return;
         case 'x':	 // 1 string to match.
           if (memcmp(Mnemonic.data()+5, ".s", 2) != 0)
             break;
-          if ((Features & Feature_HasStdExtFBit) == Feature_HasStdExtFBit)	 // "fmv.x.s"
+          // if ((Features & Feature_HasStdExtFBit) == Feature_HasStdExtFBit)	 // "fmv.x.s"
+          if (Features.test(Feature_HasStdExtFBit))	 // "fmv.x.s"
             Mnemonic = "fmv.x.w";
           return;
         }
@@ -605,13 +607,15 @@ static void applyMnemonicAliases(StringRef &Mnemonic, const uint64_t &Features, 
     case 's':	 // 1 string to match.
       if (memcmp(Mnemonic.data()+5, ".x", 2) != 0)
         break;
-      if ((Features & Feature_HasStdExtFBit) == Feature_HasStdExtFBit)	 // "fmv.s.x"
+      // if ((Features & Feature_HasStdExtFBit) == Feature_HasStdExtFBit)	 // "fmv.s.x"
+      if (Features.test(Feature_HasStdExtFBit))	 // "fmv.s.x"
         Mnemonic = "fmv.w.x";
       return;
     case 'x':	 // 1 string to match.
       if (memcmp(Mnemonic.data()+5, ".s", 2) != 0)
         break;
-      if ((Features & Feature_HasStdExtFBit) == Feature_HasStdExtFBit)	 // "fmv.x.s"
+      // if ((Features & Feature_HasStdExtFBit) == Feature_HasStdExtFBit)	 // "fmv.x.s"
+      if (Features.test(Feature_HasStdExtFBit))	 // "fmv.x.s"
         Mnemonic = "fmv.x.w";
       return;
     }
@@ -1693,7 +1697,7 @@ const char *getMatchClassName(MatchClassKind Kind) {
 }
 
 #endif // NDEBUG
-uint64_t RISCVAsmParser::
+/* uint64_t RISCVAsmParser::
 ComputeAvailableFeatures(const FeatureBitset& FB) const {
   uint64_t Features = 0;
   if ((FB[RISCV::FeatureStdExtM]))
@@ -1712,6 +1716,27 @@ ComputeAvailableFeatures(const FeatureBitset& FB) const {
     Features |= Feature_IsRV32Bit;
   if ((FB[RISCV::FeatureRV32E]))
     Features |= Feature_IsRV32EBit;
+  return Features;
+} */
+FeatureBitset RISCVAsmParser::
+ComputeAvailableFeatures(const FeatureBitset& FB) const {
+  FeatureBitset Features;
+  if ((FB[RISCV::FeatureStdExtM]))
+    Features[Feature_HasStdExtMBit] = 1;
+  if ((FB[RISCV::FeatureStdExtA]))
+    Features[Feature_HasStdExtABit] = 1;
+  if ((FB[RISCV::FeatureStdExtF]))
+    Features[Feature_HasStdExtFBit] = 1;
+  if ((FB[RISCV::FeatureStdExtD]))
+    Features[Feature_HasStdExtDBit] = 1;
+  if ((FB[RISCV::FeatureStdExtC]))
+    Features[Feature_HasStdExtCBit] = 1;
+  if ((FB[RISCV::Feature64Bit]))
+    Features[Feature_IsRV64Bit] = 1;
+  if ((!FB[RISCV::Feature64Bit]))
+    Features[Feature_IsRV32Bit] = 1;
+  if ((FB[RISCV::FeatureRV32E]))
+    Features[Feature_IsRV32EBit] = 1;
   return Features;
 }
 
@@ -1819,7 +1844,7 @@ enum : uint8_t {
   AMFBS_HasStdExtM_IsRV64,
   AMFBS_HasStdExtC_HasStdExtF_IsRV32,
 };
-/* 
+
 const static FeatureBitset FeatureBitsets[] {
   {}, // AMFBS_None
   {Feature_HasStdExtABit, },
@@ -1837,14 +1862,14 @@ const static FeatureBitset FeatureBitsets[] {
   {Feature_HasStdExtFBit, Feature_IsRV64Bit, },
   {Feature_HasStdExtMBit, Feature_IsRV64Bit, },
   {Feature_HasStdExtCBit, Feature_HasStdExtFBit, Feature_IsRV32Bit, },
-}; */
+};
 
 namespace {
   struct MatchEntry {
     uint16_t Mnemonic;
     uint16_t Opcode;
     uint8_t ConvertFn;
-    uint8_t RequiredFeatures;
+    uint8_t RequiredFeaturesIdx;
     uint8_t Classes[5];
     StringRef getMnemonic() const {
       return StringRef(MnemonicTable + Mnemonic + 1,
@@ -2327,7 +2352,7 @@ unsigned RISCVAsmParser::
 MatchInstructionImpl(const OperandVector &Operands,
                      MCInst &Inst,
                      uint64_t &ErrorInfo,
-                     uint64_t MissingFeatures,
+                     FeatureBitset MissingFeatures,
                      bool matchingInlineAsm, unsigned VariantID) {
   // Eliminate obvious mismatches.
   if (Operands.size() > 6) {
@@ -2336,7 +2361,7 @@ MatchInstructionImpl(const OperandVector &Operands,
   }
 
   // Get the current feature set.
-  uint64_t AvailableFeatures = getAvailableFeatures();
+  const FeatureBitset &AvailableFeatures = getAvailableFeaturesFB();
 
   // Get the instruction mnemonic, which is the first token.
   StringRef Mnemonic = ((RISCVOperand&)*Operands[0]).getToken();
@@ -2349,7 +2374,7 @@ MatchInstructionImpl(const OperandVector &Operands,
   bool HadMatchOtherThanPredicate = false;
   unsigned RetCode = Match_InvalidOperand;
 
-  MissingFeatures = ~0ULL;
+  MissingFeatures.set();
   // Set ErrorInfo to the operand that mismatches if it is
   // wrong for all instances of the instruction.
   ErrorInfo = ~0ULL;
@@ -2372,9 +2397,9 @@ MatchInstructionImpl(const OperandVector &Operands,
 
   for (const MatchEntry *it = MnemonicRange.first, *ie = MnemonicRange.second;
        it != ie; ++it) {
- /*    const FeatureBitset &RequiredFeatures = it->RequiredFeatures;
-    const uint64_t &ReqFeat = ComputeAvailableFeatures(RequiredFeatures); */
-    bool HasRequiredFeatures = (AvailableFeatures & it->RequiredFeatures) == it->RequiredFeatures;/* true; */
+    const FeatureBitset &RequiredFeatures = FeatureBitsets[it->RequiredFeaturesIdx];
+    bool HasRequiredFeatures =
+      (AvailableFeatures & RequiredFeatures) == RequiredFeatures;
     //FIXME: calculate features correctly
     DEBUG_WITH_TYPE("asm-matcher", dbgs() << "Trying to match opcode "
                                           << MII.getName(it->Opcode) << "\n");
@@ -2447,22 +2472,35 @@ MatchInstructionImpl(const OperandVector &Operands,
                                                "this opcode\n");
       continue;
     }
+    // if (!HasRequiredFeatures) {
+    //   printf("%ld\n", it->RequiredFeatures);
+    //   printf("%ld\n", AvailableFeatures);
+    //   HadMatchOtherThanFeatures = true;
+    //   uint64_t NewMissingFeatures = it->RequiredFeatures & ~AvailableFeatures;
+    //   /* DEBUG_WITH_TYPE("asm-matcher", dbgs() << "Missing target features:";
+    //                    for (unsigned I = 0, E = NewMissingFeatures.size(); I != E; ++I)
+    //                      if (NewMissingFeatures[I])
+    //                        dbgs() << ' ' << I;
+    //                    dbgs() << "\n");
+    //   if (NewMissingFeatures.count() <=
+    //       MissingFeatures.count())
+    //     MissingFeatures = NewMissingFeatures; */
+    //     //FIXME: align all features to uint64_t and fix their comparisons
+    //     if (countPopulation(NewMissingFeatures) <=
+    //       countPopulation(MissingFeatures))
+    //     MissingFeatures = NewMissingFeatures;
+    //   continue;
+    // }
     if (!HasRequiredFeatures) {
-      printf("%ld\n", it->RequiredFeatures);
-      printf("%ld\n", AvailableFeatures);
       HadMatchOtherThanFeatures = true;
-      uint64_t NewMissingFeatures = it->RequiredFeatures & ~AvailableFeatures;
-      /* DEBUG_WITH_TYPE("asm-matcher", dbgs() << "Missing target features:";
+      FeatureBitset NewMissingFeatures = RequiredFeatures & ~AvailableFeatures;
+      DEBUG_WITH_TYPE("asm-matcher", dbgs() << "Missing target features:";
                        for (unsigned I = 0, E = NewMissingFeatures.size(); I != E; ++I)
                          if (NewMissingFeatures[I])
                            dbgs() << ' ' << I;
                        dbgs() << "\n");
       if (NewMissingFeatures.count() <=
           MissingFeatures.count())
-        MissingFeatures = NewMissingFeatures; */
-        //FIXME: align all features to uint64_t and fix their comparisons
-        if (countPopulation(NewMissingFeatures) <=
-          countPopulation(MissingFeatures))
         MissingFeatures = NewMissingFeatures;
       continue;
     }
@@ -2535,7 +2573,7 @@ namespace {
     uint16_t Mnemonic;
     uint8_t OperandMask;
     uint8_t Class;
-    uint8_t RequiredFeatures;
+    uint8_t RequiredFeaturesIdx;
 
     StringRef getMnemonic() const {
       return StringRef(MnemonicTable + Mnemonic + 1,
@@ -2631,7 +2669,7 @@ RISCVAsmParser::OperandMatchResultTy RISCVAsmParser::
 MatchOperandParserImpl(OperandVector &Operands,
                        StringRef Mnemonic) {
   // Get the current feature set.
-  const uint64_t &AvailableFeatures = getAvailableFeatures();
+  const FeatureBitset &AvailableFeatures = getAvailableFeaturesFB();
 
   // Get the next operand index.
   unsigned NextOpNum = Operands.size() - 1;
@@ -2651,7 +2689,8 @@ MatchOperandParserImpl(OperandVector &Operands,
     // check if the available features match
 /*     const FeatureBitset &RequiredFeatures = FeatureBitsets[it->RequiredFeaturesIdx];
     const uint64_t &ReqFeat = ComputeAvailableFeatures(RequiredFeatures); */
-    if ((AvailableFeatures & it->RequiredFeatures) != it->RequiredFeatures)
+    const FeatureBitset &RequiredFeatures = FeatureBitsets[it->RequiredFeaturesIdx];
+    if ((AvailableFeatures & RequiredFeatures) != RequiredFeatures)
         continue;
 
     // check if the operand in question has a custom parser.
