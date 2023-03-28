@@ -1693,27 +1693,6 @@ const char *getMatchClassName(MatchClassKind Kind) {
 }
 
 #endif // NDEBUG
-/* uint64_t RISCVAsmParser::
-ComputeAvailableFeatures(const FeatureBitset& FB) const {
-  uint64_t Features = 0;
-  if ((FB[RISCV::FeatureStdExtM]))
-    Features |= Feature_HasStdExtMBit;
-  if ((FB[RISCV::FeatureStdExtA]))
-    Features |= Feature_HasStdExtABit;
-  if ((FB[RISCV::FeatureStdExtF]))
-    Features |= Feature_HasStdExtFBit;
-  if ((FB[RISCV::FeatureStdExtD]))
-    Features |= Feature_HasStdExtDBit;
-  if ((FB[RISCV::FeatureStdExtC]))
-    Features |= Feature_HasStdExtCBit;
-  if ((FB[RISCV::Feature64Bit]))
-    Features |= Feature_IsRV64Bit;
-  if ((!FB[RISCV::Feature64Bit]))
-    Features |= Feature_IsRV32Bit;
-  if ((FB[RISCV::FeatureRV32E]))
-    Features |= Feature_IsRV32EBit;
-  return Features;
-} */
 FeatureBitset RISCVAsmParser::
 ComputeAvailableFeaturesFB(const FeatureBitset& FB) const {
   FeatureBitset Features;
@@ -2683,50 +2662,3 @@ MatchOperandParserImpl(OperandVector &Operands,
 }
 
 #endif // GET_MATCHER_IMPLEMENTATION
-
-
-// #ifdef GET_MNEMONIC_SPELL_CHECKER
-// #undef GET_MNEMONIC_SPELL_CHECKER
-
-// static std::string RISCVMnemonicSpellCheck(StringRef S, const uint8_t &FBS, unsigned VariantID) {
-//   const unsigned MaxEditDist = 2;
-//   std::vector<StringRef> Candidates;
-//   StringRef Prev = "";
-
-//   // Find the appropriate table for this asm variant.
-//   const MatchEntry *Start, *End;
-//   switch (VariantID) {
-//   default: llvm_unreachable("invalid variant!");
-//   case 0: Start = std::begin(MatchTable0); End = std::end(MatchTable0); break;
-//   }
-
-//   for (auto I = Start; I < End; I++) {
-//     // Ignore unsupported instructions.
-// /*     const FeatureBitset &RequiredFeatures = FeatureBitsets[I->RequiredFeaturesIdx];
-//     const uint64_t &ReqFeat = ComputeAvailableFeatures(RequiredFeatures); */
-//     if ((FBS & it->RequiredFeatures) != it->RequiredFeatures)
-//       continue;
-
-//     StringRef T = I->getMnemonic();
-//     // Avoid recomputing the edit distance for the same string.
-//     if (T.equals(Prev))
-//       continue;
-
-//     Prev = T;
-//     unsigned Dist = S.edit_distance(T, false, MaxEditDist);
-//     if (Dist <= MaxEditDist)
-//       Candidates.push_back(T);
-//   }
-
-//   if (Candidates.empty())
-//     return "";
-
-//   std::string Res = ", did you mean: ";
-//   unsigned i = 0;
-//   for( ; i < Candidates.size() - 1; i++)
-//     Res += Candidates[i].str() + ", ";
-//   return Res + Candidates[i].str() + "?";
-// }
-
-// #endif // GET_MNEMONIC_SPELL_CHECKER
-

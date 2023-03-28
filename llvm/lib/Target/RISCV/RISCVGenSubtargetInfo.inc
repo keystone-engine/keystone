@@ -108,22 +108,6 @@ unsigned resolveVariantSchedClassImpl(unsigned SchedClass,
 }
 } // end of namespace RISCV_MC
 
-/* struct RISCVGenMCSubtargetInfo : public MCSubtargetInfo {
-  RISCVGenMCSubtargetInfo(const Triple &TT, 
-    StringRef CPU, StringRef FS, ArrayRef<SubtargetFeatureKV> PF,
-    ArrayRef<SubtargetSubTypeKV> PD,
-    const MCWriteProcResEntry *WPR,
-    const MCWriteLatencyEntry *WL,
-    const MCReadAdvanceEntry *RA, const InstrStage *IS,
-    const unsigned *OC, const unsigned *FP) :
-      MCSubtargetInfo(TT, CPU, FS, PF, PD,
-                      WPR, WL, RA, IS, OC, FP) { }
-
-  unsigned resolveVariantSchedClass(unsigned SchedClass,
-      const MCInst *MI, unsigned CPUID) const override {
-    return RISCV_MC::resolveVariantSchedClassImpl(SchedClass, MI, CPUID); 
-  }
-}; */
 
 static inline MCSubtargetInfo *createRISCVMCSubtargetInfoImpl(const Triple &TT, StringRef CPU, StringRef FS) {
   return new MCSubtargetInfo(TT, CPU, FS, RISCVFeatureKV, RISCVSubTypeKV,/*  
@@ -159,74 +143,3 @@ void llvm_ks::RISCVSubtarget::ParseSubtargetFeatures(StringRef CPU, StringRef FS
   if (Bits[RISCV::FeatureStdExtM]) HasStdExtM = true;
 }
 #endif // GET_SUBTARGETINFO_TARGET_DESC
-
-
-// #ifdef GET_SUBTARGETINFO_HEADER
-// #undef GET_SUBTARGETINFO_HEADER
-
-// namespace llvm_ks {
-// class DFAPacketizer;
-// namespace RISCV_MC {
-// unsigned resolveVariantSchedClassImpl(unsigned SchedClass, const MCInst *MI, unsigned CPUID);
-// }
-
-// struct RISCVGenSubtargetInfo : public TargetSubtargetInfo {
-//   explicit RISCVGenSubtargetInfo(const Triple &TT, StringRef CPU, StringRef FS);
-// public:
-//   unsigned resolveSchedClass(unsigned SchedClass,  const MachineInstr *DefMI, const TargetSchedModel *SchedModel) const override;
-//   unsigned resolveVariantSchedClass(unsigned SchedClass, const MCInst *MI, unsigned CPUID) const override;
-//   DFAPacketizer *createDFAPacketizer(const InstrItineraryData *IID) const;
-//   unsigned getHwMode() const override;
-// };
-// } // end namespace llvm_ks
-
-// #endif // GET_SUBTARGETINFO_HEADER
-
-
-// #ifdef GET_SUBTARGETINFO_CTOR
-// #undef GET_SUBTARGETINFO_CTOR
-
-// #include "llvm/CodeGen/TargetSchedule.h"
-
-// namespace llvm_ks {
-// extern const llvm_ks::SubtargetFeatureKV RISCVFeatureKV[];
-// extern const llvm_ks::SubtargetFeatureKV RISCVSubTypeKV[];
-// extern const llvm_ks::MCWriteProcResEntry RISCVWriteProcResTable[];
-// extern const llvm_ks::MCWriteLatencyEntry RISCVWriteLatencyTable[];
-// extern const llvm_ks::MCReadAdvanceEntry RISCVReadAdvanceTable[];
-// RISCVGenSubtargetInfo::RISCVGenSubtargetInfo(const Triple &TT, StringRef CPU, StringRef FS)
-// namespace llvm_ks
-//                         /* RISCVWriteProcResTable, RISCVWriteLatencyTable, RISCVReadAdvanceTable, 
-//                         nullptr, nullptr, nullptr */, NULL) {}
-
-// unsigned RISCVGenSubtargetInfo
-// ::resolveSchedClass(unsigned SchedClass, const MachineInstr *MI, const TargetSchedModel *SchedModel) const {
-//   report_fatal_error("Expected a variant SchedClass");
-// } // RISCVGenSubtargetInfo::resolveSchedClass
-
-// unsigned RISCVGenSubtargetInfo
-// ::resolveVariantSchedClass(unsigned SchedClass, const MCInst *MI, unsigned CPUID) const {
-//   return RISCV_MC::resolveVariantSchedClassImpl(SchedClass, MI, CPUID);
-// } // RISCVGenSubtargetInfo::resolveVariantSchedClass
-
-// unsigned RISCVGenSubtargetInfo::getHwMode() const {
-//   if (checkFeatures("-64bit")) return 1;
-//   if (checkFeatures("+64bit")) return 2;
-//   return 0;
-// }
-// } // end namespace llvm_ks
-
-// #endif // GET_SUBTARGETINFO_CTOR
-
-
-// #ifdef GET_STIPREDICATE_DECLS_FOR_MC_ANALYSIS
-// #undef GET_STIPREDICATE_DECLS_FOR_MC_ANALYSIS
-
-// #endif // GET_STIPREDICATE_DECLS_FOR_MC_ANALYSIS
-
-
-// #ifdef GET_STIPREDICATE_DEFS_FOR_MC_ANALYSIS
-// #undef GET_STIPREDICATE_DEFS_FOR_MC_ANALYSIS
-
-// #endif // GET_STIPREDICATE_DEFS_FOR_MC_ANALYSIS
-
