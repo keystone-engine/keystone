@@ -23,6 +23,7 @@ samples/sample
 _sample*.txt
 tmp
 MANIFEST
+.vscode
 
 bindings/python/dist/
 bindings/python/src/

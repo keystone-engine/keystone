@@ -5,7 +5,7 @@ OBJDIR = ./build
 else
 OBJDIR = $(abspath $(BUILDDIR))/obj/bindings/python
 endif
-
+ 
 .PHONY: gen_const install install3 clean
 
 gen_const:
