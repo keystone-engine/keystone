@@ -10,6 +10,7 @@ SAMPLE_MIPS = $(TMPDIR)/sample_mips
 SAMPLE_M68K = $(TMPDIR)/sample_m68k
 SAMPLE_SPARC = $(TMPDIR)/sample_sparc
 SAMPLE_X86 = $(TMPDIR)/sample_x86
+SAMPLE_RISCV = $(TMPDIR)/sample_riscv
 
 .PHONY: all expected python rust go nodejs ruby
 
@@ -34,6 +35,7 @@ expected:
 	../samples/sample_sparc > $(SAMPLE_SPARC)_e
 	../samples/sample_m68k > $(SAMPLE_M68K)_e
 	../samples/sample_x86 > $(SAMPLE_X86)_e
+	../samples/sample_riscv > $(SAMPLE_RISCV)_e
 
 python: FORCE
 	cd python && $(MAKE)
@@ -43,6 +45,7 @@ python: FORCE
 	python python/sample_sparc.py > $(SAMPLE_SPARC)_o
 	python python/sample_m68k.py > $(SAMPLE_M68K)_o
 	python python/sample_x86.py > $(SAMPLE_X86)_o
+	python python/sample_riscv.py > $(SAMPLE_RISCV)_o
 	$(MAKE) sample_diff
 
 ruby: FORCE
@@ -67,6 +70,7 @@ sample_diff: FORCE
 	$(DIFF) $(SAMPLE_SPARC)_e $(SAMPLE_SPARC)_o
 	$(DIFF) $(SAMPLE_M68K)_e $(SAMPLE_M68K)_o
 	$(DIFF) $(SAMPLE_X86)_e $(SAMPLE_X86)_o
+	$(DIFF) $(SAMPLE_RISCV)_e $(SAMPLE_RISCV)_o
 
 clean:
 	rm -rf $(TMPDIR)

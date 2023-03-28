@@ -13,7 +13,7 @@ using namespace llvm_ks;
 
 MCTargetAsmParser::MCTargetAsmParser(MCTargetOptions const &MCOptions,
                                      const MCSubtargetInfo &STI)
-  : AvailableFeatures(0), ParsingInlineAsm(false), MCOptions(MCOptions),
+  : AvailableFeatures(0),AvailableFeaturesFB(), ParsingInlineAsm(false), MCOptions(MCOptions),
     STI(&STI)
 {
 }

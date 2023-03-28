@@ -46,7 +46,17 @@ enum OperandType {
   OPERAND_REGISTER = 2,
   OPERAND_MEMORY = 3,
   OPERAND_PCREL = 4,
-  OPERAND_FIRST_TARGET = 5
+
+  OPERAND_FIRST_GENERIC = 6,
+  OPERAND_GENERIC_0 = 6,
+  OPERAND_GENERIC_1 = 7,
+  OPERAND_GENERIC_2 = 8,
+  OPERAND_GENERIC_3 = 9,
+  OPERAND_GENERIC_4 = 10,
+  OPERAND_GENERIC_5 = 11,
+  OPERAND_LAST_GENERIC = 11,
+
+  OPERAND_FIRST_TARGET = 12,
 };
 }
 
@@ -82,6 +92,15 @@ public:
 
   /// \brief Set if this operand is a optional def.
   bool isOptionalDef() const { return Flags & (1 << MCOI::OptionalDef); }
+  bool isGenericType() const {
+    return OperandType >= MCOI::OPERAND_FIRST_GENERIC &&
+           OperandType <= MCOI::OPERAND_LAST_GENERIC;
+  }
+
+  unsigned getGenericTypeIndex() const {
+    assert(isGenericType() && "non-generic types don't have an index");
+    return OperandType - MCOI::OPERAND_FIRST_GENERIC;
+  }
 };
 
 //===----------------------------------------------------------------------===//

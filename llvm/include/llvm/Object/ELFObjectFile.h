@@ -844,6 +844,8 @@ StringRef ELFObjectFile<ELFT>::getFileFormatName() const {
       return "ELF32-sparc";
     case ELF::EM_WEBASSEMBLY:
       return "ELF32-wasm";
+    case ELF::EM_RISCV:
+      return "ELF32-riscv";
     default:
       return "ELF32-unknown";
     }
@@ -865,6 +867,8 @@ StringRef ELFObjectFile<ELFT>::getFileFormatName() const {
       return "ELF64-mips";
     case ELF::EM_WEBASSEMBLY:
       return "ELF64-wasm";
+    case ELF::EM_RISCV:
+      return "ELF64-riscv";
     default:
       return "ELF64-unknown";
     }
@@ -918,7 +922,12 @@ unsigned ELFObjectFile<ELFT>::getArch() const {
     case ELF::ELFCLASS64: return Triple::wasm64;
     default: return Triple::UnknownArch;
     }
-
+  case ELF::EM_RISCV:
+    switch (EF.getHeader()->e_ident[ELF::EI_CLASS]) {
+    case ELF::ELFCLASS32: return Triple::riscv32;
+    case ELF::ELFCLASS64: return Triple::riscv64;
+    default: return Triple::UnknownArch;
+    }
   default:
     return Triple::UnknownArch;
   }

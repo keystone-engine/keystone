@@ -24,6 +24,8 @@ bitflags! {
         const PPC32 = 4;
         const PPC64 = 8;
         const QPX = 16;
+        const RISCV32 = 4;
+        const RISCV64 = 8;
         const SPARC32 = 4;
         const SPARC64 = 8;
         const V9 = 16;
@@ -38,11 +40,12 @@ pub enum Arch {
     MIPS = 3,
     X86 = 4,
     PPC = 5,
-    SPARC = 6,
-    SYSTEMZ = 7,
-    HEXAGON = 8,
-    EVM = 9,
-    MAX = 10,
+    RISCV = 6,
+    SPARC = 7,
+    SYSTEMZ = 8,
+    HEXAGON = 9,
+    EVM = 10,
+    MAX = 11,
 }
 
 #[repr(C)]

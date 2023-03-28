@@ -559,6 +559,15 @@ namespace llvm_ks {
     StringRef trim(StringRef Chars = " \t\n\v\f\r") const {
       return ltrim(Chars).rtrim(Chars);
     }
+    /// Returns true if this StringRef has the given suffix and removes that
+    /// suffix.
+    bool consume_back(StringRef Suffix) {
+      if (!endswith(Suffix))
+        return false;
+
+      *this = drop_back(Suffix.size());
+      return true;
+    }
 
     /// @}
   };

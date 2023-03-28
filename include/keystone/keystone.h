@@ -45,7 +45,7 @@ typedef struct ks_struct ks_engine;
 // Package version
 #define KS_VERSION_MAJOR KS_API_MAJOR
 #define KS_VERSION_MINOR KS_API_MINOR
-#define KS_VERSION_EXTRA 2
+#define KS_VERSION_EXTRA 3
 
 /*
   Macro to create combined version which can be compared to
@@ -60,6 +60,7 @@ typedef enum ks_arch {
     KS_ARCH_MIPS,       // Mips architecture
     KS_ARCH_X86,        // X86 architecture (including x86 & x86-64)
     KS_ARCH_PPC,        // PowerPC architecture (currently unsupported)
+    KS_ARCH_RISCV,      // RISC-V architecture
     KS_ARCH_SPARC,      // Sparc architecture
     KS_ARCH_SYSTEMZ,    // SystemZ architecture (S390X)
     KS_ARCH_HEXAGON,    // Hexagon architecture
@@ -89,6 +90,9 @@ typedef enum ks_mode {
     KS_MODE_PPC32 = 1 << 2,       // 32-bit mode
     KS_MODE_PPC64 = 1 << 3,       // 64-bit mode
     KS_MODE_QPX = 1 << 4,         // Quad Processing eXtensions mode
+        //riscv
+    KS_MODE_RISCV32 = 1 << 2,     // 32-bit mode
+    KS_MODE_RISCV64 = 1 << 3,     // 64-bit mode
     // sparc
     KS_MODE_SPARC32 = 1 << 2,     // 32-bit mode
     KS_MODE_SPARC64 = 1 << 3,     // 64-bit mode
@@ -189,6 +193,7 @@ typedef enum ks_opt_value {
 #include "hexagon.h"
 #include "mips.h"
 #include "ppc.h"
+#include "riscv.h"
 #include "sparc.h"
 #include "systemz.h"
 #include "x86.h"

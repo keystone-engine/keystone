@@ -83,6 +83,11 @@ static void usage(char *prog)
         printf("        evm:       Ethereum Virtual Machine\n");
     }
 
+    if (ks_arch_supported(KS_ARCH_RISCV)){
+        printf("        riscv32:     RISC-V32 - little endian\n");
+        printf("        riscv64:     RISC-V64 - little endian\n");
+    }
+
     printf("\nExtra options:\n");
     printf("        -b binary output\n\n");
 }
@@ -307,6 +312,14 @@ int main(int argc, char **argv)
         err = ks_open(KS_ARCH_EVM, 0, &ks);
     }
 
+    if (!strcmp(mode, "riscv32")) {
+        err = ks_open(KS_ARCH_RISCV, KS_MODE_RISCV32+KS_MODE_LITTLE_ENDIAN, &ks);
+    }
+
+    if (!strcmp(mode, "riscv64")) {
+        err = ks_open(KS_ARCH_RISCV, KS_MODE_RISCV64+KS_MODE_LITTLE_ENDIAN, &ks);
+    }
+    
     if (err) {
         printf("ERROR: failed on ks_open()\n");
         usage(argv[0]);

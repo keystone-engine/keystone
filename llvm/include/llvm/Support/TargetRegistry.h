@@ -93,6 +93,9 @@ public:
   typedef MCAsmBackend *(*MCAsmBackendCtorTy)(const Target &T,
                                               const MCRegisterInfo &MRI,
                                               const Triple &TT, StringRef CPU);
+  typedef MCAsmBackend *(*MCAsmBackendCtorTy2)(const Target &T,
+                                              const MCRegisterInfo &MRI,
+                                              const Triple &TT, StringRef CPU, const MCSubtargetInfo &STI, const MCTargetOptions &Options);
   typedef MCTargetAsmParser *(*MCAsmParserCtorTy)(
       const MCSubtargetInfo &STI, MCAsmParser &P, const MCInstrInfo &MII,
       const MCTargetOptions &Options);
@@ -157,6 +160,7 @@ private:
   /// MCAsmBackendCtorFn - Construction function for this target's
   /// MCAsmBackend, if registered.
   MCAsmBackendCtorTy MCAsmBackendCtorFn;
+  MCAsmBackendCtorTy2 MCAsmBackendCtorFn2;
 
   /// MCAsmParserCtorFn - Construction function for this target's
   /// MCTargetAsmParser, if registered.
@@ -300,6 +304,12 @@ public:
     return MCAsmBackendCtorFn(*this, MRI, Triple(TheTriple), CPU);
   }
 
+  MCAsmBackend *createMCAsmBackend2(const MCRegisterInfo &MRI,
+                                   StringRef TheTriple, StringRef CPU, const MCSubtargetInfo &STI, const MCTargetOptions &Options) const {
+    if (!MCAsmBackendCtorFn2)
+      return nullptr;
+    return MCAsmBackendCtorFn2(*this, MRI, Triple(TheTriple), CPU, STI, Options);
+  }
   /// createMCAsmParser - Create a target specific assembly parser.
   ///
   /// \param Parser The target independent parser implementation to use for
@@ -570,6 +580,9 @@ struct TargetRegistry {
   /// @param Fn - A function to construct an AsmBackend for the target.
   static void RegisterMCAsmBackend(Target &T, Target::MCAsmBackendCtorTy Fn) {
     T.MCAsmBackendCtorFn = Fn;
+  }
+  static void RegisterMCAsmBackend2(Target &T, Target::MCAsmBackendCtorTy2 Fn) {
+    T.MCAsmBackendCtorFn2 = Fn;
   }
 
   /// RegisterMCAsmParser - Register a MCTargetAsmParser implementation for
