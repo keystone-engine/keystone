@@ -566,14 +566,12 @@ static void applyMnemonicAliases(StringRef &Mnemonic, const FeatureBitset &Featu
         case 's':	 // 1 string to match.
           if (memcmp(Mnemonic.data()+5, ".x", 2) != 0)
             break;
-          // if ((Features & Feature_HasStdExtFBit) == Feature_HasStdExtFBit)	 // "fmv.s.x"
           if (Features.test(Feature_HasStdExtFBit))	 // "fmv.s.x"
             Mnemonic = "fmv.w.x";
           return;
         case 'x':	 // 1 string to match.
           if (memcmp(Mnemonic.data()+5, ".s", 2) != 0)
-            break;
-          // if ((Features & Feature_HasStdExtFBit) == Feature_HasStdExtFBit)	 // "fmv.x.s"
+            break;// if ((Features & Feature_HasStdExtFBit) == Feature_HasStdExtFBit)	 // "fmv.x.s"
           if (Features.test(Feature_HasStdExtFBit))	 // "fmv.x.s"
             Mnemonic = "fmv.x.w";
           return;
@@ -607,14 +605,12 @@ static void applyMnemonicAliases(StringRef &Mnemonic, const FeatureBitset &Featu
     case 's':	 // 1 string to match.
       if (memcmp(Mnemonic.data()+5, ".x", 2) != 0)
         break;
-      // if ((Features & Feature_HasStdExtFBit) == Feature_HasStdExtFBit)	 // "fmv.s.x"
       if (Features.test(Feature_HasStdExtFBit))	 // "fmv.s.x"
         Mnemonic = "fmv.w.x";
       return;
     case 'x':	 // 1 string to match.
       if (memcmp(Mnemonic.data()+5, ".s", 2) != 0)
         break;
-      // if ((Features & Feature_HasStdExtFBit) == Feature_HasStdExtFBit)	 // "fmv.x.s"
       if (Features.test(Feature_HasStdExtFBit))	 // "fmv.x.s"
         Mnemonic = "fmv.x.w";
       return;
@@ -2668,8 +2664,6 @@ MatchOperandParserImpl(OperandVector &Operands,
     assert(Mnemonic == it->getMnemonic());
 
     // check if the available features match
-/*     const FeatureBitset &RequiredFeatures = FeatureBitsets[it->RequiredFeaturesIdx];
-    const uint64_t &ReqFeat = ComputeAvailableFeatures(RequiredFeatures); */
     const FeatureBitset &RequiredFeatures = FeatureBitsets[it->RequiredFeaturesIdx];
     if ((AvailableFeaturesFB & RequiredFeatures) != RequiredFeatures)
         continue;

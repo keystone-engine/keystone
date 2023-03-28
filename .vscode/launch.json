@@ -34,7 +34,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "/home/kali/keystone/build/kstool/kstool",
-            "args": ["riscv64", "'addiw x0, x0, 10'"],
+            "args": ["riscv64", "'mul a2, a1, a1'"],
             "stopAtEntry": true,
             "cwd": "${workspaceFolder}",
             "environment": [],

@@ -65,7 +65,7 @@ bool RISCVAsmBackend::shouldForceRelocation(const MCAssembler &Asm,
     break;
   }
 
-  return ShouldForce /* || STI.getFeatureBits()[RISCV::FeatureRelax] */ ||
+  return ShouldForce || STI.getFeatureBits()[RISCV::FeatureRelax] ||
          ForceRelocs;
 }
 
@@ -152,7 +152,7 @@ bool RISCVAsmBackend::mayNeedRelaxation(const MCInst &Inst) const {
 }
 
 bool RISCVAsmBackend::writeNopData(uint64_t Count, MCObjectWriter * OW) const {
-  bool HasStdExtC = /* STI.getFeatureBits()[RISCV::FeatureStdExtC]; */false;
+  bool HasStdExtC = STI.getFeatureBits()[RISCV::FeatureStdExtC];
   unsigned MinNopLen = HasStdExtC ? 2 : 4;
 
   if ((Count % MinNopLen) != 0)
@@ -200,9 +200,11 @@ static uint64_t adjustFixupValue(const MCFixup &Fixup, uint64_t Value) {
   case RISCV::fixup_riscv_jal: {
     if (!isInt<21>(Value))
       //Ctx.reportError(Fixup.getLoc(), "fixup value out of range");
+      // FIXME: report an error to keystone
       return -1;
     if (Value & 0x1)
       //Ctx.reportError(Fixup.getLoc(), "fixup value must be 2-byte aligned");
+      // FIXME: report an error to keystone
       return -1;
     // Need to produce imm[19|10:1|11|19:12] from the 21-bit Value.
     unsigned Sbit = (Value >> 20) & 0x1;
@@ -305,10 +307,10 @@ void RISCVAsmBackend::applyFixup(const MCFixup &Fixup, char *Data, unsigned Data
 bool RISCVAsmBackend::shouldInsertExtraNopBytesForCodeAlign(
     const MCAlignFragment &AF, unsigned &Size) {
   // Calculate Nops Size only when linker relaxation enabled.
-/*   if (!STI.getFeatureBits()[RISCV::FeatureRelax]) */
+  if (!STI.getFeatureBits()[RISCV::FeatureRelax])
     return false;
 
-  /* bool HasStdExtC = STI.getFeatureBits()[RISCV::FeatureStdExtC];
+  bool HasStdExtC = STI.getFeatureBits()[RISCV::FeatureStdExtC];
   unsigned MinNopLen = HasStdExtC ? 2 : 4;
 
   if (AF.getAlignment() <= MinNopLen) {
@@ -316,7 +318,7 @@ bool RISCVAsmBackend::shouldInsertExtraNopBytesForCodeAlign(
   } else {
     Size = AF.getAlignment() - MinNopLen;
     return true;
-  } */
+  }
 }
 
 // We need to insert R_RISCV_ALIGN relocation type to indicate the
@@ -328,7 +330,7 @@ bool RISCVAsmBackend::shouldInsertFixupForCodeAlign(MCAssembler &Asm,
                                                     const MCAsmLayout &Layout,
                                                     MCAlignFragment &AF) {
   // Insert the fixup only when linker relaxation enabled.
-/*   if (!STI.getFeatureBits()[RISCV::FeatureRelax]) */
+  if (!STI.getFeatureBits()[RISCV::FeatureRelax])
     return false;
 
   // Calculate total Nops we need to insert. If there are none to insert
@@ -345,9 +347,11 @@ bool RISCVAsmBackend::shouldInsertFixupForCodeAlign(MCAssembler &Asm,
 
   uint64_t FixedValue = 0;
   MCValue NopBytes = MCValue::get(Count);
-
-/*   Asm.getWriter().recordRelocation(Asm, Layout, &AF, Fixup, NopBytes, isPCRel,
-                                   FixedValue); */
+  MCAsmBackend &Backend = Asm.getBackend();
+  bool isPCRel = Backend.getFixupKindInfo(Fixup.getKind()).Flags &
+                 MCFixupKindInfo::FKF_IsPCRel;
+  Asm.getWriter().recordRelocation(Asm, Layout, &AF, Fixup, NopBytes, isPCRel,
+                                   FixedValue);
 
   return true;
 }
@@ -360,7 +364,5 @@ MCObjectWriter* RISCVAsmBackend::createObjectWriter(raw_pwrite_stream &OS) const
 MCAsmBackend *llvm_ks::createRISCVAsmBackend(const Target &T,
                                              const MCRegisterInfo &MRI,
                                              const Triple &TT, StringRef CPU, const MCSubtargetInfo &STI, const MCTargetOptions &Options) {
-  // const Triple &TT = STI.getTargetTriple();
-  // uint8_t OSABI = MCELFObjectTargetWriter::getOSABI(TT.getOS()); 
-  return new RISCVAsmBackend(T, TT.getOS(), /*IsLittle*/ true, /*Is64Bit*/ TT.isArch64Bit()/* ((TT.getArchName().equals("riscv32")) ? false : true) */, STI, Options);
+  return new RISCVAsmBackend(T, TT.getOS(), /*IsLittle*/ true, /*Is64Bit*/ TT.isArch64Bit(), STI, Options);
 }

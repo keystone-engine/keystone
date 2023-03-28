@@ -32,10 +32,15 @@
 #include "llvm/Support/MathExtras.h"
 #include "llvm/Support/TargetRegistry.h"
 
+#include "llvm/MC/MCELFStreamer.h"
 #include "RISCVGenAsmMatcher.inc"
 #include <limits>
 
 using namespace llvm_ks;
+
+// Include the auto-generated portion of the compress emitter.
+#define GEN_COMPRESS_INSTR
+#include "RISCVGenCompressInstEmitter.inc"
 
 namespace llvm_ks{
 struct RISCVOperand;
@@ -799,6 +804,7 @@ bool RISCVAsmParser::generateImmOutOfRangeError(
     Twine Msg = "immediate must be an integer in the range") {
   SMLoc ErrorLoc = ((RISCVOperand &)*Operands[ErrorInfo]).getStartLoc();
   return Error(ErrorLoc, Msg + " [" + Twine(Lower) + ", " + Twine(Upper) + "]");
+  //FIXME: gracefully return error to keystone
 }
 
 bool RISCVAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
@@ -815,25 +821,25 @@ bool RISCVAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
   case Match_Success:
     return processInstruction(Inst, IDLoc, Operands, Out);
   case Match_MissingFeature:
-//     return Error(IDLoc, "instruction use requires an option to be enabled");
+    // Return error to Keystone 
     ErrorCode = KS_ERR_ASM_RISCV_MISSINGFEATURE;
     return true;
   case Match_MnemonicFail:
-    // return Error(IDLoc, "unrecognized instruction mnemonic");
+    // Return error to Keystone
     ErrorCode = KS_ERR_ASM_RISCV_MNEMONICFAIL;
     return true;
   case Match_InvalidOperand: {
     SMLoc ErrorLoc = IDLoc;
     if (ErrorInfo != ~0U) {
       if (ErrorInfo >= Operands.size())
-        // return Error(ErrorLoc, "too few operands for instruction");
+        // Return error to Keystone
         ErrorCode = KS_ERR_ASM_RISCV_INVALIDOPERAND;
 
       ErrorLoc = ((RISCVOperand &)*Operands[ErrorInfo]).getStartLoc();
       if (ErrorLoc == SMLoc())
         ErrorLoc = IDLoc;
     }
-    // return Error(ErrorLoc, "invalid operand for instruction");
+    // Return error to Keystone
     ErrorCode = KS_ERR_ASM_RISCV_INVALIDOPERAND;
     return true;
   }
@@ -846,8 +852,8 @@ bool RISCVAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
     SMLoc ErrorLoc = IDLoc;
     if (ErrorInfo != ~0U && ErrorInfo >= Operands.size())
         return Error(ErrorLoc, "too few operands for instruction");
-        // ErrorCode = KS_ERR_ASM_RISCV_INVALIDOPERAND;
-        // return true;
+        // throw a separate error, since there is no errorcode in Keystone
+        // FIXME: add situation specific error to indicate this and avoid throwing errors in favor of gracefully returning keystone error code
   }
 
   switch(Result) {
@@ -857,6 +863,7 @@ bool RISCVAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
     if (isRV64()) {
       SMLoc ErrorLoc = ((RISCVOperand &)*Operands[ErrorInfo]).getStartLoc();
       return Error(ErrorLoc, "operand must be a constant 64-bit integer");
+      //FIXME: gracefully return error to keystone
     }
     return generateImmOutOfRangeError(Operands, ErrorInfo,
                                       std::numeric_limits<int32_t>::min(),
@@ -1342,7 +1349,7 @@ bool RISCVAsmParser::ParseInstruction(ParseInstructionInfo &Info,
                                       StringRef Name, SMLoc NameLoc,
                                       OperandVector &Operands, unsigned int &ErrorCode) {
   
-/*   DEBUG(dbgs() << "ParseInstruction\n"); */
+  DEBUG(dbgs() << "ParseInstruction\n");
   // Ensure that if the instruction occurs when relaxation is enabled,
   // relocations are forced for the file. Ideally this would be done when there
   // is enough information to reliably determine if the instruction itself may
@@ -1350,11 +1357,11 @@ bool RISCVAsmParser::ParseInstruction(ParseInstructionInfo &Info,
   // same pass as relocation emission, so it's too late to set a 'sticky bit'
   // for the entire file.
   if (getSTI().getFeatureBits()[RISCV::FeatureRelax]) {
-    /* auto *Assembler = getTargetStreamer().getStreamer().getAssemblerPtr(); */
-    MCAssembler *Assembler = nullptr;
-    if (Assembler != nullptr) {
+    MCAssembler &Assembler = static_cast<MCELFStreamer &>(getStreamer()).getAssembler();
+    auto *AssemblerPtr = &Assembler;
+    if (AssemblerPtr != nullptr) {
       RISCVAsmBackend &MAB =
-          static_cast<RISCVAsmBackend &>(Assembler->getBackend());
+          static_cast<RISCVAsmBackend &>(AssemblerPtr->getBackend());
       MAB.setForceRelocs();
     }
   }
@@ -1546,13 +1553,11 @@ bool RISCVAsmParser::parseDirectiveOption() {
 }
 
 void RISCVAsmParser::emitToStreamer(MCStreamer &S, MCInst &Inst) {
-/*   MCInst &CInst; */
-  /* bool Res = compressInst(CInst, Inst, getSTI(), S.getContext()); */
-/*   CInst.setLoc(Inst.getLoc());
-  CInst.setOpcode(Inst.getOpcode());
-  CInst.setAddress(Inst.getAddress()); */
+  MCInst CInst;
+  bool Res = compressInst(CInst, Inst, getSTI(), S.getContext());
+  CInst.setLoc(Inst.getLoc());
   unsigned int ErrorCode = 0;
-  S.EmitInstruction(Inst, getSTI(),ErrorCode);
+  S.EmitInstruction((Res ? CInst : Inst), getSTI(),ErrorCode);
 }
 
 void RISCVAsmParser::emitLoadImm(unsigned DestReg, int64_t Value,

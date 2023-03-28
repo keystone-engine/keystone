@@ -24,7 +24,7 @@ class MCObjectWriter;
 class raw_ostream;
 
 class RISCVAsmBackend : public MCAsmBackend {
-  const MCTargetOptions &TargetOptions;
+  
 
   Triple::OSType OSType;
   bool IsLittle; // Big or little endian
@@ -32,6 +32,7 @@ class RISCVAsmBackend : public MCAsmBackend {
   bool ForceRelocs = false;
   RISCVABI::ABI TargetABI = RISCVABI::ABI_Unknown;
   const MCSubtargetInfo &STI;
+  const MCTargetOptions &TargetOptions;
   uint8_t OSABI;
 
 public:
@@ -51,7 +52,7 @@ public:
   // default. This will be true if relaxation is enabled or had previously
   // been enabled.
   bool willForceRelocations() const {
-    return ForceRelocs /* || STI.getFeatureBits()[RISCV::FeatureRelax] */;
+    return ForceRelocs || STI.getFeatureBits()[RISCV::FeatureRelax];
   }
 
   // Generate diff expression relocations if the relax feature is enabled or had

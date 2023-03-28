@@ -36,13 +36,13 @@ namespace llvm_ks {
 // Sorted (by key) array of values for CPU features.
 extern const llvm_ks::SubtargetFeatureKV RISCVFeatureKV[] = {
   { "64bit", "Implements RV64", {RISCV::Feature64Bit}, { } },
-  { "a", "'A' (Atomic Instructions)", {RISCV::FeatureStdExtA}, { } },
-  { "c", "'C' (Compressed Instructions)", {RISCV::FeatureStdExtC}, { } },
-  { "d", "'D' (Double-Precision Floating-Point)", {RISCV::FeatureStdExtD}, {RISCV::FeatureStdExtF} },
+  { "a", "'A' (Atomic Instructions)", {RISCV::FeatureStdExtA,}, { } },
+  { "c", "'C' (Compressed Instructions)", {RISCV::FeatureStdExtC,}, { } },
+  { "d", "'D' (Double-Precision Floating-Point)", {RISCV::FeatureStdExtD,}, {RISCV::FeatureStdExtF} },
   { "e", "Implements RV32E (provides 16 rather than 32 GPRs)", {RISCV::FeatureRV32E}, { } },
-  { "f", "'F' (Single-Precision Floating-Point)", {RISCV::FeatureStdExtF}, { } },
-  { "m", "'M' (Integer Multiplication and Division)", {RISCV::FeatureStdExtM}, { } },
-  { "relax", "Enable Linker relaxation.", {RISCV::FeatureRelax}, { } },
+  { "f", "'F' (Single-Precision Floating-Point)", {RISCV::FeatureStdExtF,}, { } },
+  { "m", "'M' (Integer Multiplication and Division)", {RISCV::FeatureStdExtM,}, { } },
+  { "relax", "Enable Linker relaxation.", {RISCV::FeatureRelax,}, { } },
 };
 
 #ifdef DBGFIELD
@@ -90,8 +90,8 @@ static const llvm_ks::MCSchedModel NoSchedModel = {
 
 // Sorted (by key) array of values for CPU subtype.
 extern const llvm_ks::SubtargetFeatureKV RISCVSubTypeKV[] = { 
- { "generic-rv32", "select rv32 CPU", {}, {}},
- { "generic-rv64", "select rv64 CPU", {RISCV::Feature64Bit}, {}},
+ { "generic-rv32", "select rv32 CPU", {RISCV::FeatureStdExtA,RISCV::FeatureStdExtC,RISCV::FeatureStdExtD,RISCV::FeatureStdExtF,RISCV::FeatureStdExtM,RISCV::FeatureRelax,}, {}},
+ { "generic-rv64", "select rv64 CPU", {RISCV::Feature64Bit,RISCV::FeatureStdExtA,RISCV::FeatureStdExtC,RISCV::FeatureStdExtD,RISCV::FeatureStdExtF,RISCV::FeatureStdExtM,RISCV::FeatureRelax,}, {}},
 };
 
 // Sorted (by key) array of values for CPU subtype.
@@ -195,7 +195,7 @@ void llvm_ks::RISCVSubtarget::ParseSubtargetFeatures(StringRef CPU, StringRef FS
 // extern const llvm_ks::MCWriteLatencyEntry RISCVWriteLatencyTable[];
 // extern const llvm_ks::MCReadAdvanceEntry RISCVReadAdvanceTable[];
 // RISCVGenSubtargetInfo::RISCVGenSubtargetInfo(const Triple &TT, StringRef CPU, StringRef FS)
-//   : TargetSubtargetInfo(TT, CPU, FS, makeArrayRef(RISCVFeatureKV, 8), makeArrayRef(RISCVSubTypeKV, 2), 
+// namespace llvm_ks
 //                         /* RISCVWriteProcResTable, RISCVWriteLatencyTable, RISCVReadAdvanceTable, 
 //                         nullptr, nullptr, nullptr */, NULL) {}
 
