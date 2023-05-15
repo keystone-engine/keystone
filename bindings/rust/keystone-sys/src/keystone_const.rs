@@ -40,11 +40,11 @@ pub enum Arch {
     MIPS = 3,
     X86 = 4,
     PPC = 5,
-    RISCV = 6,
-    SPARC = 7,
-    SYSTEMZ = 8,
-    HEXAGON = 9,
-    EVM = 10,
+    SPARC = 6,
+    SYSTEMZ = 7,
+    HEXAGON = 8,
+    EVM = 9,
+    RISCV = 10,
     MAX = 11,
 }
 

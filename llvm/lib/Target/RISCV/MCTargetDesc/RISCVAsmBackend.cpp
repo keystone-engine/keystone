@@ -169,7 +169,7 @@ bool RISCVAsmBackend::writeNopData(uint64_t Count, MCObjectWriter * OW) const {
   return true;
 }
 
-static uint64_t adjustFixupValue(const MCFixup &Fixup, uint64_t Value) {
+static uint64_t adjustFixupValue(const MCFixup &Fixup, uint64_t Value, unsigned int KsError) {
                                   
   unsigned Kind = Fixup.getKind();
   switch (Kind) {
@@ -200,11 +200,13 @@ static uint64_t adjustFixupValue(const MCFixup &Fixup, uint64_t Value) {
   case RISCV::fixup_riscv_jal: {
     if (!isInt<21>(Value))
       //Ctx.reportError(Fixup.getLoc(), "fixup value out of range");
-      // FIXME: report an error to keystone
+      // FIXME: report a more specific error to keystone
+      KsError = KS_ERR_ASM_FIXUP_INVALID;
       return -1;
     if (Value & 0x1)
       //Ctx.reportError(Fixup.getLoc(), "fixup value must be 2-byte aligned");
-      // FIXME: report an error to keystone
+      // FIXME: report a more specific error to keystone
+      KsError = KS_ERR_ASM_FIXUP_INVALID;
       return -1;
     // Need to produce imm[19|10:1|11|19:12] from the 21-bit Value.
     unsigned Sbit = (Value >> 20) & 0x1;
@@ -221,9 +223,11 @@ static uint64_t adjustFixupValue(const MCFixup &Fixup, uint64_t Value) {
   case RISCV::fixup_riscv_branch: {
     if (!isInt<13>(Value))
       //Ctx.reportError(Fixup.getLoc(), "fixup value out of range");
+      KsError = KS_ERR_ASM_FIXUP_INVALID;
       return -1;
     if (Value & 0x1)
       //Ctx.reportError(Fixup.getLoc(), "fixup value must be 2-byte aligned");
+      KsError = KS_ERR_ASM_FIXUP_INVALID;
       return -1;
     // Need to extract imm[12], imm[10:5], imm[4:1], imm[11] from the 13-bit
     // Value.
@@ -283,7 +287,7 @@ void RISCVAsmBackend::applyFixup(const MCFixup &Fixup, char *Data, unsigned Data
   if (!Value)
     return; // Doesn't change encoding.
   // Apply any target-specific value adjustments.
-  Value = adjustFixupValue(Fixup, Value);
+  Value = adjustFixupValue(Fixup, Value, KsError);
 
   // Shift the value into position.
   Value <<= Info.TargetOffset;

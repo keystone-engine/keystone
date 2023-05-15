@@ -99,3 +99,13 @@ echo "::PPC64 BE"
 kstool ppc64be "add 1, 2, 3"
 #encoding: [0x7c,0x22,0x1a,0x14]
 echo
+
+echo "::RISCV32"
+kstool riscv "addi x0, x0, 10"
+#encoding: [0x13,0x00,0xa0,0x00]
+echo
+
+echo "::RISCV64"
+kstool riscv64 "addiw x0, x0, 10" 
+#encoding: [0x1b,0x00,0xa0,0x00]
+echo

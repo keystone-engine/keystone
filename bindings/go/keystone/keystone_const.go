@@ -36,11 +36,11 @@ const (
 	ARCH_MIPS Architecture = 3
 	ARCH_X86 Architecture = 4
 	ARCH_PPC Architecture = 5
-	ARCH_RISCV Architecture = 6
-	ARCH_SPARC Architecture = 7
-	ARCH_SYSTEMZ Architecture = 8
-	ARCH_HEXAGON Architecture = 9
-	ARCH_EVM Architecture = 10
+	ARCH_SPARC Architecture = 6
+	ARCH_SYSTEMZ Architecture = 7
+	ARCH_HEXAGON Architecture = 8
+	ARCH_EVM Architecture = 9
+	ARCH_RISCV Architecture = 10
 	ARCH_MAX Architecture = 11
 )
 

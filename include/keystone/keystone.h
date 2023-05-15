@@ -45,7 +45,7 @@ typedef struct ks_struct ks_engine;
 // Package version
 #define KS_VERSION_MAJOR KS_API_MAJOR
 #define KS_VERSION_MINOR KS_API_MINOR
-#define KS_VERSION_EXTRA 3
+#define KS_VERSION_EXTRA 2
 
 /*
   Macro to create combined version which can be compared to
@@ -60,11 +60,11 @@ typedef enum ks_arch {
     KS_ARCH_MIPS,       // Mips architecture
     KS_ARCH_X86,        // X86 architecture (including x86 & x86-64)
     KS_ARCH_PPC,        // PowerPC architecture (currently unsupported)
-    KS_ARCH_RISCV,      // RISC-V architecture
     KS_ARCH_SPARC,      // Sparc architecture
     KS_ARCH_SYSTEMZ,    // SystemZ architecture (S390X)
     KS_ARCH_HEXAGON,    // Hexagon architecture
     KS_ARCH_EVM,        // Ethereum Virtual Machine architecture
+    KS_ARCH_RISCV,      // RISC-V architecture
     KS_ARCH_MAX,
 } ks_arch;
 
