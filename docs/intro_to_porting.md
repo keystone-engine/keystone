@@ -49,11 +49,11 @@ Each architecture and each mode has different options that need to get parsed ou
 - llvm/keystone/ks.cpp
 - llvm/lib/Support/Triple.cpp
 
-### Expanding MCAsmBakend
-Because the MCAsmBackend constructor does not allow passing the subtarget info and target options that the new LLVM versions require for the backend construction, a new backend constructor must be created (in order to prevent having to change the other architecture's code). This is supported in `llvm/include/llvm/Support/TargetRegistry.h`. 
+### Expanding MCAsmBackend
+Because the MCAsmBackend constructor does not allow passing the subtarget info and target options that the new llvm versions require for the backend construction, a new backend constructor must be created (in order to prevent having to change the other architecture's code). This is supported in `llvm/include/llvm/Support/TargetRegistry.h`. 
 
 ### Expanding core llvm code (llvm/include/llvm)
-Adding the required supporting functions that are used in the newer llvm files but do not yet exist in Keystone's version of LLVM:
+Adding the required supporting functions that are used in the newer llvm files but do not yet exist in Keystone's version of llvm:
 - llvm/include/llvm/ADT/StringRef.h
 - llvm/include/llvm/ADT/Triple.h
 - llvm/include/llvm/MC/MCFixup.h
@@ -69,7 +69,7 @@ Adding the required supporting functions that are used in the newer llvm files b
 FeatureBitset is a class for storing features of an architecture. Instead of having an unsigned integer variable and then using bitwise operators on it, this class extends the standard bitset class from c++ which comes with many built-in methods (https://en.cppreference.com/w/cpp/utility/bitset). Keystone does not use one or the other exclusively in other architectures, but the new llvm versions do. I have added the support methods with added suffix FB to Keystone to support this. RISC-V part of Keystone also uses exclusively FeatureBitsets to increase the understandability of code and bring more consistency. If a big update to Keystone could be made - i.e. rebuilding Keystone from a newer llvm version as base, this should become the standard.
 
 ## RISCV folder - llvm/lib/Target/RISCV
-This is the "meat" of the implementation, so I will explain each folder and file separately. To aquire the base files from llvm (in my case llvm v9.0.1), one has to download the llvm release and build it, then copy the llvm/lib/Target/RISCV folder into the same of Keystone, then go to the llvm v9.0.1's build/lib/Target/RISCV and copy *.inc files to llvm/lib/Target/RISCV folder of Keystone.
+This is the "meat" of the implementation, so I will explain each folder and file separately. To aquire the base files from llvm (in my case llvm v9.0.1), one has to download the llvm release and build it, then copy the `llvm/lib/Target/RISCV` folder into the same of Keystone, then go to the llvm v9.0.1's build/lib/Target/RISCV and copy \*.inc files to `llvm/lib/Target/RISCV` folder of Keystone.
 
 >  A note when building llvm v9.0.1 specifically, `#include <limits>` is missing in `llvm/utils/benchmark/src/benchmark_register.h` and thus the build errors out. Add it to the top of the file to get llvm v9.0.1 to build correctly.
 
@@ -99,7 +99,7 @@ Before reading the code, I recommend getting familiar with the following concept
 	- assembler API that takes one virtual method per directive and one EmitInstruction method with MCInst as input 
 - Assembler Backend
 	- one implementation of the MCStreamer API (with MCAsmStreamer) 
-	- implements relaxation!
+	- implements relaxation
 	- lays out fragments into sections, resolves instructions with symbolic operands to immediates and passes this info off to a .o object file
 
 
@@ -116,7 +116,7 @@ In the root folder, there are:
     - Other than these main function implementations, there are also many helper functions that parse the register names, apply aliases, check features and others. This file also contains conversion tables, mnemonic tables, defines the restraints for each instruction and all its allowed formats.  
 - llvm/lib/Target/RISCV/RISCVGenCompressInstEmitter.inc: 
     - Responsible for compressing instructions (whenever possible) from 4 bytes (default) to 2 bytes. 
-- llvm/lib/Target/RISCV/RISCVGenInstrInfo:
+- llvm/lib/Target/RISCV/RISCVGenInstrInfo.inc:
     - Instruction and operand constants, does not need changing.
 - llvm/lib/Target/RISCV/RISCVGenMCCodeEmitter.inc:
     - Matches MCInst and emits machine code. Also contains constants for mnemonics' machine code.
@@ -217,7 +217,7 @@ cd ../bindings
 make all
 ```
 
-To install the pip package for using Keystone in python, move into bindings/python directory and install for python with the following:
+To install the pip package for using Keystone in python, move into `bindings/python` directory and install for python with the following:
 ```bash
 make install
 ```
@@ -225,9 +225,9 @@ Or alternatively for python3:
 ```bash
 make install3
 ```
-Pay attention to bindings/pyton/Makefile however, as python versions differ. Since python 3.11.\*, a user cannot manually install system wide pip packages (Debian). One option is to run the install commands from the Makefile install command yourself in a virtual environment, the second one is to change the Makefile itself to do the same and the last one is to use a python version 3.10.\* and lower. 
+Pay attention to `bindings/pyton/Makefile` however, as python versions differ. Since python 3.11.\*, a user cannot manually install system wide pip packages (Debian). One option is to run the install commands from the Makefile install command yourself in a virtual environment, the second one is to change the Makefile itself to do the same and the last one is to use a python version 3.10.\* and lower. 
 
-Additionally, one may have to add the following to the top of the bindings/python/Makefile if they want to have a system-wide pip install:
+Additionally, one may have to add the following to the top of the `bindings/python/Makefile` if they want to have a system-wide pip install:
 ```bash
 DESTDIR = /
 ```
