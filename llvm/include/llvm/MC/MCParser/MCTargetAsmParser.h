@@ -13,6 +13,7 @@
 #include "llvm/MC/MCExpr.h"
 #include "llvm/MC/MCParser/MCAsmParserExtension.h"
 #include "llvm/MC/MCTargetOptions.h"
+#include "llvm/MC/SubtargetFeature.h"
 #include <memory>
 
 namespace llvm_ks {
@@ -102,6 +103,7 @@ protected: // Can only create subclasses.
 
   /// AvailableFeatures - The current set of available features.
   uint64_t AvailableFeatures;
+  FeatureBitset AvailableFeaturesFB;
 
   /// ParsingInlineAsm - Are we parsing ms-style inline assembly?
   bool ParsingInlineAsm;
@@ -125,7 +127,9 @@ public:
   const MCSubtargetInfo &getSTI() const;
 
   uint64_t getAvailableFeatures() const { return AvailableFeatures; }
+  FeatureBitset getAvailableFeaturesFB() const { return AvailableFeaturesFB; }
   void setAvailableFeatures(uint64_t Value) { AvailableFeatures = Value; }
+  void setAvailableFeaturesFB(FeatureBitset Value) { AvailableFeaturesFB = Value; }
 
   bool isParsingInlineAsm () { return ParsingInlineAsm; }
   void setParsingInlineAsm (bool Value) { ParsingInlineAsm = Value; }
@@ -220,6 +224,58 @@ public:
   virtual void onLabelParsed(MCSymbol *Symbol) { }
 };
 
+enum OperandMatchResultTy {
+  MatchOperand_Success,  // operand matched successfully
+  MatchOperand_NoMatch,  // operand did not match
+  MatchOperand_ParseFail // operand matched but had errors
+};
+
+enum class DiagnosticPredicateTy {
+  Match,
+  NearMatch,
+  NoMatch,
+};
+
+// When an operand is parsed, the assembler will try to iterate through a set of
+// possible operand classes that the operand might match and call the
+// corresponding PredicateMethod to determine that.
+//
+// If there are two AsmOperands that would give a specific diagnostic if there
+// is no match, there is currently no mechanism to distinguish which operand is
+// a closer match. The DiagnosticPredicate distinguishes between 'completely
+// no match' and 'near match', so the assembler can decide whether to give a
+// specific diagnostic, or use 'InvalidOperand' and continue to find a
+// 'better matching' diagnostic.
+//
+// For example:
+//    opcode opnd0, onpd1, opnd2
+//
+// where:
+//    opnd2 could be an 'immediate of range [-8, 7]'
+//    opnd2 could be a  'register + shift/extend'.
+//
+// If opnd2 is a valid register, but with a wrong shift/extend suffix, it makes
+// little sense to give a diagnostic that the operand should be an immediate
+// in range [-8, 7].
+//
+// This is a light-weight alternative to the 'NearMissInfo' approach
+// below which collects *all* possible diagnostics. This alternative
+// is optional and fully backward compatible with existing
+// PredicateMethods that return a 'bool' (match or no match).
+struct DiagnosticPredicate {
+  DiagnosticPredicateTy Type;
+
+  explicit DiagnosticPredicate(bool Match)
+      : Type(Match ? DiagnosticPredicateTy::Match
+                   : DiagnosticPredicateTy::NearMatch) {}
+  DiagnosticPredicate(DiagnosticPredicateTy T) : Type(T) {}
+  DiagnosticPredicate(const DiagnosticPredicate &) = default;
+
+  operator bool() const { return Type == DiagnosticPredicateTy::Match; }
+  bool isMatch() const { return Type == DiagnosticPredicateTy::Match; }
+  bool isNearMatch() const { return Type == DiagnosticPredicateTy::NearMatch; }
+  bool isNoMatch() const { return Type == DiagnosticPredicateTy::NoMatch; }
+};
 } // End llvm namespace
 
 #endif

@@ -178,6 +178,7 @@ set(LLVM_ALL_TARGETS
   Sparc
   SystemZ
   X86
+  RISCV
   )
 
 set(LLVM_TARGETS_TO_BUILD "all"

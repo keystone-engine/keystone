@@ -333,11 +333,13 @@ public:
   MCSection *getEHFrameSection() {
     return EHFrameSection;
   }
+  bool isPositionIndependent() const { return PositionIndependent; }
 
   enum Environment { IsMachO, IsELF, IsCOFF };
   Environment getObjectFileType() const { return Env; }
 
 private:
+  bool PositionIndependent = false;
   Environment Env;
   MCContext *Ctx;
   Triple TT;

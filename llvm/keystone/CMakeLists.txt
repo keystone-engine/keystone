@@ -18,6 +18,7 @@ file(GLOB_RECURSE src_PowerPC "../lib/Target/PowerPC/*.cpp")
 file(GLOB_RECURSE src_Sparc "../lib/Target/Sparc/*.cpp")
 file(GLOB_RECURSE src_SystemZ "../lib/Target/SystemZ/*.cpp")
 file(GLOB_RECURSE src_X86 "../lib/Target/X86/*.cpp")
+file(GLOB_RECURSE src_RISCV "../lib/Target/RISCV/*.cpp")
 
 set(src_all ${src_core})
 
@@ -35,6 +36,7 @@ include_directories(
   "../lib/Target/Sparc"
   "../lib/Target/SystemZ"
   "../lib/Target/X86"
+  "../lib/Target/RISCV"
 )
 
 add_library(keystone

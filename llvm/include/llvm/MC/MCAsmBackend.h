@@ -89,7 +89,7 @@ public:
   /// appropriate.
   virtual void applyFixup(const MCFixup &Fixup, char *Data, unsigned DataSize,
                           uint64_t Value, bool IsPCRel, unsigned int &KsError) const = 0;
-
+                          
   /// @}
 
   /// \name Target Relaxation Interfaces

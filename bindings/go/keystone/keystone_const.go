@@ -23,6 +23,8 @@ const (
 	MODE_PPC32 Mode = 4
 	MODE_PPC64 Mode = 8
 	MODE_QPX Mode = 16
+	MODE_RISCV32 Mode = 4
+	MODE_RISCV64 Mode = 8
 	MODE_SPARC32 Mode = 4
 	MODE_SPARC64 Mode = 8
 	MODE_V9 Mode = 16
@@ -38,7 +40,8 @@ const (
 	ARCH_SYSTEMZ Architecture = 7
 	ARCH_HEXAGON Architecture = 8
 	ARCH_EVM Architecture = 9
-	ARCH_MAX Architecture = 10
+	ARCH_RISCV Architecture = 10
+	ARCH_MAX Architecture = 11
 )
 
 const (

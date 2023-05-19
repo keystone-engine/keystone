@@ -142,6 +142,10 @@ int main(int argc, char **argv)
     test_ks(KS_ARCH_PPC, KS_MODE_PPC64, "add 1, 2, 3", 0);
     test_ks(KS_ARCH_PPC, KS_MODE_PPC64 + KS_MODE_BIG_ENDIAN, "add 1, 2, 3", 0);
 
+    // RISCV
+    test_ks(KS_ARCH_RISCV, KS_MODE_RISCV32 + KS_MODE_LITTLE_ENDIAN, "addi x0, x0, 10", 0);
+    test_ks(KS_ARCH_RISCV, KS_MODE_RISCV64 + KS_MODE_LITTLE_ENDIAN, "addiw x0, x0, 10", 0);
+
     // Sparc
     test_ks(KS_ARCH_SPARC, KS_MODE_SPARC32 + KS_MODE_LITTLE_ENDIAN, "add %g1, %g2, %g3", 0);
     test_ks(KS_ARCH_SPARC, KS_MODE_SPARC32 + KS_MODE_BIG_ENDIAN, "add %g1, %g2, %g3", 0);

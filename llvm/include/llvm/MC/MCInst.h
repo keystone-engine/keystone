@@ -140,6 +140,8 @@ public:
 
   void print(raw_ostream &OS) const;
   void dump() const;
+  bool isBareSymbolRef() const;
+  bool evaluateAsConstantImm(int64_t &Imm) const;
 };
 
 template <> struct isPodLike<MCOperand> { static const bool value = true; };
