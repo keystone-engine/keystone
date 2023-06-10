@@ -1,6 +1,7 @@
 name: PyPI 📦 Distribution
 
 on:
+  workflow_dispatch:
   pull_request: # Ensures PRs don't break the build process
   push:
 
@@ -15,8 +16,6 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 
       - name: Set up python 3.11
         uses: actions/setup-python@v4
@@ -56,8 +55,6 @@ jobs:
 
       - name: Check out repository
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.12.3
@@ -85,8 +82,6 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 
       - name: Set up QEMU
         if: matrix.cibw_archs != 'x86_64'
@@ -147,8 +142,6 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 
       - uses: actions/setup-python@v4
         with:
@@ -190,7 +183,9 @@ jobs:
           path: wheelhouse/*.whl
 
   upload_to_pypi:
-    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/')
+    if: |
+      (github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/'))
+      || github.event_name == 'workflow_dispatch'
     needs:
       [
         "build_sdist",
