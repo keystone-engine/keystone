@@ -558,6 +558,13 @@ ks_err ks_option(ks_engine *ks, ks_opt_type type, size_t value)
         case KS_OPT_SYNTAX:
             if (ks->arch != KS_ARCH_X86)
                 return KS_ERR_OPT_INVALID;
+
+            // Reset to radix 10, the default, first. When
+            // KS_OPT_SYNTAX_RADIX16 is given, this will be set to 16 again.
+            // This allows to switch the radix on a keystone instance from 16
+            // to 10 again.
+            ks->MAI->setRadix(10);
+
             switch(value) {
                 default:
                     return KS_ERR_OPT_INVALID;
