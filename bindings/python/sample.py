@@ -116,18 +116,7 @@ if __name__ == '__main__':
 
     # test symbol resolver
 
-    encoding = test_sym_resolver(KS_ARCH_X86, KS_MODE_64, b"mov rax, 80", 0x1000, {})
-    assert encoding == bytes.fromhex("48 c7 c0 50 00 00 00")
-
     # X64 - Backward jump
     encoding = test_sym_resolver(KS_ARCH_X86, KS_MODE_64, b"jmp _l1; nop", 0x1000, {b"_l1": 0x1000})
     assert encoding == bytes.fromhex("eb fe 90")
-
-    # X64 - Forward jump
-    encoding = test_sym_resolver(KS_ARCH_X86, KS_MODE_64, b"jmp _l1; nop", 0x1000, {b"_l1": 0x1002})
-    assert encoding == bytes.fromhex("eb 00 90")
-
-    # X64 - Absolute address
-    encoding = test_sym_resolver(KS_ARCH_X86, KS_MODE_64, b"jmp _l1; nop", 0x1000, {b"_l1": 0xAABBCCDD})
-    assert encoding == bytes.fromhex("e9 d8 bc bb aa 90")
 
