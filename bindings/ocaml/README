@@ -1,4 +1,4 @@
-OCaml bindings to the Keystone library (www.keytone-engine.org)
+OCaml bindings to the Keystone library (www.keystone-engine.org)
 
 Make sure Keystone is built and installed.
 
