@@ -1697,12 +1697,12 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
     // First query the target-specific parser. It will return 'true' if it
     // isn't interested in this directive.
       uint64_t BytesInFragment = getStreamer().getCurrentFragmentSize();
-      if (!getTargetParser().ParseDirective(ID)){
+      if (!getTargetParser().ParseDirective(ID)) {
         // increment the address for the next statement if the directive
         // has emitted any value to the streamer.
         Address += getStreamer().getCurrentFragmentSize() - BytesInFragment;
         return false;
-        }
+      }
 
     // Next, check the extension directive map to see if any extension has
     // registered itself to parse this directive.
@@ -1713,222 +1713,321 @@ bool AsmParser::parseStatement(ParseStatementInfo &Info,
 
     // Finally, if no one else is interested in this directive, it must be
     // generic and familiar to this class.
+    bool is_error;
     switch (DirKind) {
     default:
       break;
     case DK_SET:
     case DK_EQU:
-      return parseDirectiveSet(IDVal, true);
+      is_error = parseDirectiveSet(IDVal, true);
+      break;
     case DK_EQUIV:
-      return parseDirectiveSet(IDVal, false);
+      is_error = parseDirectiveSet(IDVal, false);
+      break;
     case DK_ASCII:
-      return parseDirectiveAscii(IDVal, false);
+      is_error = parseDirectiveAscii(IDVal, false);
+      break;
     case DK_ASCIZ:
     case DK_STRING:
-      return parseDirectiveAscii(IDVal, true);
+      is_error = parseDirectiveAscii(IDVal, true);
+      break;
     case DK_BYTE:
-      return parseDirectiveValue(1, Info.KsError);
+      is_error = parseDirectiveValue(1, Info.KsError);
+      break;
     case DK_SHORT:
     case DK_VALUE:
     case DK_2BYTE:
-      return parseDirectiveValue(2, Info.KsError);
+      is_error = parseDirectiveValue(2, Info.KsError);
+      break;
     case DK_LONG:
     case DK_INT:
     case DK_4BYTE:
-      return parseDirectiveValue(4, Info.KsError);
+      is_error = parseDirectiveValue(4, Info.KsError);
+      break;
     case DK_QUAD:
     case DK_8BYTE:
-      return parseDirectiveValue(8, Info.KsError);
+      is_error = parseDirectiveValue(8, Info.KsError);
+      break;
     case DK_OCTA:
-      return parseDirectiveOctaValue(Info.KsError);
+      is_error = parseDirectiveOctaValue(Info.KsError);
+      break;
     case DK_SINGLE:
     case DK_FLOAT:
-      return parseDirectiveRealValue(APFloat::IEEEsingle);
+      is_error = parseDirectiveRealValue(APFloat::IEEEsingle);
+      break;
     case DK_DOUBLE:
-      return parseDirectiveRealValue(APFloat::IEEEdouble);
+      is_error = parseDirectiveRealValue(APFloat::IEEEdouble);
+      break;
     case DK_ALIGN: {
       bool IsPow2 = !getContext().getAsmInfo()->getAlignmentIsInBytes();
-      return parseDirectiveAlign(IsPow2, /*ExprSize=*/1);
+      is_error = parseDirectiveAlign(IsPow2, /*ExprSize=*/1);
+      break;
     }
     case DK_ALIGN32: {
       bool IsPow2 = !getContext().getAsmInfo()->getAlignmentIsInBytes();
-      return parseDirectiveAlign(IsPow2, /*ExprSize=*/4);
+      is_error = parseDirectiveAlign(IsPow2, /*ExprSize=*/4);
+      break;
     }
     case DK_BALIGN:
-      return parseDirectiveAlign(/*IsPow2=*/false, /*ExprSize=*/1);
+      is_error = parseDirectiveAlign(/*IsPow2=*/false, /*ExprSize=*/1);
+      break;
     case DK_BALIGNW:
-      return parseDirectiveAlign(/*IsPow2=*/false, /*ExprSize=*/2);
+      is_error = parseDirectiveAlign(/*IsPow2=*/false, /*ExprSize=*/2);
+      break;
     case DK_BALIGNL:
-      return parseDirectiveAlign(/*IsPow2=*/false, /*ExprSize=*/4);
+      is_error = parseDirectiveAlign(/*IsPow2=*/false, /*ExprSize=*/4);
+      break;
     case DK_P2ALIGN:
-      return parseDirectiveAlign(/*IsPow2=*/true, /*ExprSize=*/1);
+      is_error = parseDirectiveAlign(/*IsPow2=*/true, /*ExprSize=*/1);
+      break;
     case DK_P2ALIGNW:
-      return parseDirectiveAlign(/*IsPow2=*/true, /*ExprSize=*/2);
+      is_error = parseDirectiveAlign(/*IsPow2=*/true, /*ExprSize=*/2);
+      break;
     case DK_P2ALIGNL:
-      return parseDirectiveAlign(/*IsPow2=*/true, /*ExprSize=*/4);
+      is_error = parseDirectiveAlign(/*IsPow2=*/true, /*ExprSize=*/4);
+      break;
     case DK_ORG:
-      return parseDirectiveOrg();
+      is_error = parseDirectiveOrg();
+      break;
     case DK_FILL:
-      return parseDirectiveFill();
+      is_error = parseDirectiveFill();
+      break;
     case DK_ZERO:
-      return parseDirectiveZero();
+      is_error = parseDirectiveZero();
+      break;
     case DK_EXTERN:
       eatToEndOfStatement(); // .extern is the default, ignore it.
-      return false;
+      is_error = false;
+      break;
     case DK_GLOBL:
     case DK_GLOBAL:
-      return parseDirectiveSymbolAttribute(MCSA_Global);
+      is_error = parseDirectiveSymbolAttribute(MCSA_Global);
+      break;
     case DK_LAZY_REFERENCE:
-      return parseDirectiveSymbolAttribute(MCSA_LazyReference);
+      is_error = parseDirectiveSymbolAttribute(MCSA_LazyReference);
+      break;
     case DK_NO_DEAD_STRIP:
-      return parseDirectiveSymbolAttribute(MCSA_NoDeadStrip);
+      is_error = parseDirectiveSymbolAttribute(MCSA_NoDeadStrip);
+      break;
     case DK_SYMBOL_RESOLVER:
-      return parseDirectiveSymbolAttribute(MCSA_SymbolResolver);
+      is_error = parseDirectiveSymbolAttribute(MCSA_SymbolResolver);
+      break;
     case DK_PRIVATE_EXTERN:
-      return parseDirectiveSymbolAttribute(MCSA_PrivateExtern);
+      is_error = parseDirectiveSymbolAttribute(MCSA_PrivateExtern);
+      break;
     case DK_REFERENCE:
-      return parseDirectiveSymbolAttribute(MCSA_Reference);
+      is_error = parseDirectiveSymbolAttribute(MCSA_Reference);
+      break;
     case DK_WEAK_DEFINITION:
-      return parseDirectiveSymbolAttribute(MCSA_WeakDefinition);
+      is_error = parseDirectiveSymbolAttribute(MCSA_WeakDefinition);
+      break;
     case DK_WEAK_REFERENCE:
-      return parseDirectiveSymbolAttribute(MCSA_WeakReference);
+      is_error = parseDirectiveSymbolAttribute(MCSA_WeakReference);
+      break;
     case DK_WEAK_DEF_CAN_BE_HIDDEN:
-      return parseDirectiveSymbolAttribute(MCSA_WeakDefAutoPrivate);
+      is_error = parseDirectiveSymbolAttribute(MCSA_WeakDefAutoPrivate);
+      break;
     case DK_COMM:
     case DK_COMMON:
-      return parseDirectiveComm(/*IsLocal=*/false);
+      is_error = parseDirectiveComm(/*IsLocal=*/false);
+      break;
     case DK_LCOMM:
-      return parseDirectiveComm(/*IsLocal=*/true);
+      is_error = parseDirectiveComm(/*IsLocal=*/true);
+      break;
     case DK_ABORT:
-      return parseDirectiveAbort();
+      is_error = parseDirectiveAbort();
+      break;
     case DK_INCLUDE:
-      return parseDirectiveInclude();
+      is_error = parseDirectiveInclude();
+      break;
     case DK_INCBIN:
-      return parseDirectiveIncbin();
+      is_error = parseDirectiveIncbin();
+      break;
     case DK_CODE16:
     case DK_CODE16GCC:
       // return TokError(Twine(IDVal) + " not supported yet");
       Info.KsError = KS_ERR_ASM_UNSUPPORTED;
-      return true;
+      is_error = true;
+      break;
     case DK_REPT:
-      return parseDirectiveRept(IDLoc, IDVal);
+      is_error = parseDirectiveRept(IDLoc, IDVal);
+      break;
     case DK_IRP:
-      return parseDirectiveIrp(IDLoc);
+      is_error = parseDirectiveIrp(IDLoc);
+      break;
     case DK_IRPC:
-      return parseDirectiveIrpc(IDLoc);
+      is_error = parseDirectiveIrpc(IDLoc);
+      break;
     case DK_ENDR:
-      return parseDirectiveEndr(IDLoc);
+      is_error = parseDirectiveEndr(IDLoc);
+      break;
     case DK_BUNDLE_ALIGN_MODE:
-      return parseDirectiveBundleAlignMode();
+      is_error = parseDirectiveBundleAlignMode();
+      break;
     case DK_BUNDLE_LOCK:
-      return parseDirectiveBundleLock();
+      is_error = parseDirectiveBundleLock();
+      break;
     case DK_BUNDLE_UNLOCK:
-      return parseDirectiveBundleUnlock();
+      is_error = parseDirectiveBundleUnlock();
+      break;
     case DK_SLEB128:
-      return parseDirectiveLEB128(true);
+      is_error = parseDirectiveLEB128(true);
+      break;
     case DK_ULEB128:
-      return parseDirectiveLEB128(false);
+      is_error = parseDirectiveLEB128(false);
+      break;
     case DK_SPACE:
     case DK_SKIP:
-      return parseDirectiveSpace(IDVal);
+      is_error = parseDirectiveSpace(IDVal);
+      break;
     case DK_FILE:
-      return parseDirectiveFile(IDLoc);
+      is_error = parseDirectiveFile(IDLoc);
+      break;
     case DK_LINE:
-      return parseDirectiveLine();
+      is_error = parseDirectiveLine();
+      break;
     case DK_LOC:
-      return parseDirectiveLoc();
+      is_error = parseDirectiveLoc();
+      break;
     case DK_STABS:
-      return parseDirectiveStabs();
+      is_error = parseDirectiveStabs();
+      break;
     case DK_CV_FILE:
-      return parseDirectiveCVFile();
+      is_error = parseDirectiveCVFile();
+      break;
     case DK_CV_LOC:
-      return parseDirectiveCVLoc();
+      is_error = parseDirectiveCVLoc();
+      break;
     case DK_CV_LINETABLE:
-      return parseDirectiveCVLinetable();
+      is_error = parseDirectiveCVLinetable();
+      break;
     case DK_CV_INLINE_LINETABLE:
-      return parseDirectiveCVInlineLinetable();
+      is_error = parseDirectiveCVInlineLinetable();
+      break;
     case DK_CV_STRINGTABLE:
-      return parseDirectiveCVStringTable();
+      is_error = parseDirectiveCVStringTable();
+      break;
     case DK_CV_FILECHECKSUMS:
-      return parseDirectiveCVFileChecksums();
+      is_error = parseDirectiveCVFileChecksums();
+      break;
     case DK_CFI_SECTIONS:
-      return parseDirectiveCFISections();
+      is_error = parseDirectiveCFISections();
+      break;
     case DK_CFI_STARTPROC:
-      return parseDirectiveCFIStartProc();
+      is_error = parseDirectiveCFIStartProc();
+      break;
     case DK_CFI_ENDPROC:
-      return parseDirectiveCFIEndProc();
+      is_error = parseDirectiveCFIEndProc();
+      break;
     case DK_CFI_DEF_CFA:
-      return parseDirectiveCFIDefCfa(IDLoc);
+      is_error = parseDirectiveCFIDefCfa(IDLoc);
+      break;
     case DK_CFI_DEF_CFA_OFFSET:
-      return parseDirectiveCFIDefCfaOffset();
+      is_error = parseDirectiveCFIDefCfaOffset();
+      break;
     case DK_CFI_ADJUST_CFA_OFFSET:
-      return parseDirectiveCFIAdjustCfaOffset();
+      is_error = parseDirectiveCFIAdjustCfaOffset();
+      break;
     case DK_CFI_DEF_CFA_REGISTER:
-      return parseDirectiveCFIDefCfaRegister(IDLoc);
+      is_error = parseDirectiveCFIDefCfaRegister(IDLoc);
+      break;
     case DK_CFI_OFFSET:
-      return parseDirectiveCFIOffset(IDLoc);
+      is_error = parseDirectiveCFIOffset(IDLoc);
+      break;
     case DK_CFI_REL_OFFSET:
-      return parseDirectiveCFIRelOffset(IDLoc);
+      is_error = parseDirectiveCFIRelOffset(IDLoc);
+      break;
     case DK_CFI_PERSONALITY:
-      return parseDirectiveCFIPersonalityOrLsda(true);
+      is_error = parseDirectiveCFIPersonalityOrLsda(true);
+      break;
     case DK_CFI_LSDA:
-      return parseDirectiveCFIPersonalityOrLsda(false);
+      is_error = parseDirectiveCFIPersonalityOrLsda(false);
+      break;
     case DK_CFI_REMEMBER_STATE:
-      return parseDirectiveCFIRememberState();
+      is_error = parseDirectiveCFIRememberState();
+      break;
     case DK_CFI_RESTORE_STATE:
-      return parseDirectiveCFIRestoreState();
+      is_error = parseDirectiveCFIRestoreState();
+      break;
     case DK_CFI_SAME_VALUE:
-      return parseDirectiveCFISameValue(IDLoc);
+      is_error = parseDirectiveCFISameValue(IDLoc);
+      break;
     case DK_CFI_RESTORE:
-      return parseDirectiveCFIRestore(IDLoc);
+      is_error = parseDirectiveCFIRestore(IDLoc);
+      break;
     case DK_CFI_ESCAPE:
-      return parseDirectiveCFIEscape();
+      is_error = parseDirectiveCFIEscape();
+      break;
     case DK_CFI_SIGNAL_FRAME:
-      return parseDirectiveCFISignalFrame();
+      is_error = parseDirectiveCFISignalFrame();
+      break;
     case DK_CFI_UNDEFINED:
-      return parseDirectiveCFIUndefined(IDLoc);
+      is_error = parseDirectiveCFIUndefined(IDLoc);
+      break;
     case DK_CFI_REGISTER:
-      return parseDirectiveCFIRegister(IDLoc);
+      is_error = parseDirectiveCFIRegister(IDLoc);
+      break;
     case DK_CFI_WINDOW_SAVE:
-      return parseDirectiveCFIWindowSave();
+      is_error = parseDirectiveCFIWindowSave();
+      break;
     case DK_MACROS_ON:
     case DK_MACROS_OFF:
-      return parseDirectiveMacrosOnOff(IDVal);
+      is_error = parseDirectiveMacrosOnOff(IDVal);
+      break;
     case DK_MACRO:
-      return parseDirectiveMacro(IDLoc);
+      is_error = parseDirectiveMacro(IDLoc);
+      break;
     case DK_EXITM:
-      return parseDirectiveExitMacro(IDVal);
+      is_error = parseDirectiveExitMacro(IDVal);
+      break;
     case DK_ENDM:
     case DK_ENDMACRO:
-      return parseDirectiveEndMacro(IDVal);
+      is_error = parseDirectiveEndMacro(IDVal);
+      break;
     case DK_PURGEM:
-      return parseDirectivePurgeMacro(IDLoc);
+      is_error = parseDirectivePurgeMacro(IDLoc);
+      break;
     case DK_END:
-      return parseDirectiveEnd(IDLoc);
+      is_error = parseDirectiveEnd(IDLoc);
+      break;
     case DK_ERR:
-      return parseDirectiveError(IDLoc, false);
+      is_error = parseDirectiveError(IDLoc, false);
+      break;
     case DK_ERROR:
-      return parseDirectiveError(IDLoc, true);
+      is_error = parseDirectiveError(IDLoc, true);
+      break;
     case DK_WARNING:
-      return parseDirectiveWarning(IDLoc);
+      is_error = parseDirectiveWarning(IDLoc);
+      break;
     case DK_RELOC:
-      return parseDirectiveReloc(IDLoc);
+      is_error = parseDirectiveReloc(IDLoc);
+      break;
     case DK_NASM_BITS:
       if (parseNasmDirectiveBits()) {
           Info.KsError = KS_ERR_ASM_DIRECTIVE_ID;
-          return true;
+          is_error = true;
       } else {
-          return false;
+          is_error = false;
       }
+      break;
     case DK_NASM_USE32:
-      return parseNasmDirectiveUse32();
+      is_error = parseNasmDirectiveUse32();
+      break;
     case DK_NASM_DEFAULT:
       if (parseNasmDirectiveDefault()) {
         Info.KsError = KS_ERR_ASM_DIRECTIVE_ID;
-        return true;
+        is_error = true;
       } else {
-        return false;
+        is_error = false;
       }
+      break;
+    }
+
+    if (!is_error) {
+      // increment the address for the next statement if the directive
+      // has emitted any value to the streamer.
+      Address += getStreamer().getCurrentFragmentSize() - BytesInFragment;
+      return false;
     }
 
     //return Error(IDLoc, "unknown directive");
