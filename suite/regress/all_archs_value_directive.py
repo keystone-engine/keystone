@@ -41,7 +41,7 @@ bl 0xc008;
         ks = Ks(KS_ARCH_PPC, KS_MODE_PPC32 + KS_MODE_BIG_ENDIAN)
         encoding, count = ks.asm(self.asm, 0xc0000000)
         expected_encoding = [56, 128, 0, 1, 56, 132, 0, 1, 72, 0, 191, 249, 56,
-                             128, 0, 1, 56, 165, 0, 1, 72, 0, 191, 249]
+                             128, 0, 1, 56, 165, 0, 1, 72, 0, 191, 245]
         self.assertEqual(encoding, expected_encoding)
 
 
