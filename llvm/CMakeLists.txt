@@ -182,7 +182,7 @@ set(LLVM_ALL_TARGETS
   )
 
 set(LLVM_TARGETS_TO_BUILD "all"
-    CACHE STRING "Semicolon-separated list of targets to build, or \"all\".")
+    CACHE STRING "Space-separated list of targets to build, or \"all\".")
 
 set(LLVM_EXPERIMENTAL_TARGETS_TO_BUILD ""
   CACHE STRING "Semicolon-separated list of experimental targets to build.")
@@ -218,8 +218,12 @@ option(LLVM_ENABLE_THREADS "Use threads if available." ON)
 
 option(LLVM_ENABLE_ZLIB "Use zlib for compression/decompression if available." ON)
 
+message(STATUS "LLVM_TARGETS_TO_BUILD: ${LLVM_TARGETS_TO_BUILD}")
+
 if( LLVM_TARGETS_TO_BUILD STREQUAL "all" )
-  set( LLVM_TARGETS_TO_BUILD ${LLVM_ALL_TARGETS} )
+  set(LLVM_TARGETS_TO_BUILD ${LLVM_ALL_TARGETS})
+else()
+  separate_arguments(LLVM_TARGETS_TO_BUILD)
 endif()
 
 set(LLVM_TARGETS_TO_BUILD
@@ -373,6 +377,7 @@ if (LLVM_USE_OPROFILE)
 endif (LLVM_USE_OPROFILE)
 
 message(STATUS "Constructing LLVMBuild project information")
+message(STATUS "LLVM targets to build: ${LLVM_TARGETS_TO_BUILD}")
 execute_process(
   COMMAND ${PYTHON_EXECUTABLE} ${LLVMBUILDTOOL}
             --native-target "${LLVM_NATIVE_ARCH}"
