@@ -44,9 +44,9 @@ using namespace llvm_ks;
 StringRef MIPS_MC::selectMipsCPU(const Triple &TT, StringRef CPU) {
   if (CPU.empty() || CPU == "generic") {
     if (TT.getArch() == Triple::mips || TT.getArch() == Triple::mipsel)
-      CPU = "mips32";
+      CPU = "mips32r6";
     else
-      CPU = "mips64";
+      CPU = "mips64r6";
   }
   return CPU;
 }
