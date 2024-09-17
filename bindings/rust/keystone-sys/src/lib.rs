@@ -6,11 +6,10 @@
 
 #[macro_use]
 extern crate bitflags;
-extern crate libc;
 
 pub mod keystone_const;
 
-use keystone_const::{Arch, Error, Mode, OptionType, OptionValue};
+use crate::keystone_const::{Arch, Error, Mode, OptionType, OptionValue};
 use ::std::{
     ffi::CStr,
     fmt,

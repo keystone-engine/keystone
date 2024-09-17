@@ -1,5 +1,3 @@
-extern crate keystone;
-
 use keystone::{Arch, Error, Keystone, Mode, OptionType, OptionValue};
 
 #[test]

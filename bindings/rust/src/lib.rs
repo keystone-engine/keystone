@@ -3,7 +3,6 @@
 //! Rust bindings by Remco Verhoef <remco@dutchcoders.io>, 2016
 //!
 //! ```rust
-//! extern crate keystone;
 //! use keystone::{Keystone, Arch, Mode, OptionType, OptionValue};
 //!
 //! fn main() {
@@ -17,7 +16,6 @@
 //! ```
 
 extern crate keystone_sys as ffi;
-extern crate libc;
 
 use std::{
     convert::TryInto,
@@ -26,8 +24,8 @@ use std::{
     ops::Not,
 };
 
-pub use ffi::keystone_const::*;
-pub use ffi::ks_handle;
+pub use crate::ffi::keystone_const::*;
+pub use crate::ffi::ks_handle;
 
 #[derive(Debug, PartialEq)]
 pub struct AsmResult {

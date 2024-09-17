@@ -1,4 +1,3 @@
-extern crate keystone;
 use keystone::*;
 
 fn main() {
