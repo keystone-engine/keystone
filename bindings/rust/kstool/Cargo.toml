@@ -1,0 +1,14 @@
+[package]
+name = "kstool"
+version = "0.1.0"
+edition = "2021"
+description = "Quick assembler using keystone-engine for CTF"
+
+[dependencies]
+keystone = { version = "0.9", path = "../", default-features = false }
+argh = "0.1"
+
+[features]
+default = ["use_system"]
+use_system = ["keystone/use_system_keystone"]
+use_cmake = ["keystone/build_keystone_cmake"]
