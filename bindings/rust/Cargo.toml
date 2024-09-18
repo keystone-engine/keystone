@@ -18,6 +18,9 @@ include = [
 libc = "0.2"
 keystone-sys = { path = "keystone-sys", version = "0.9.2", default-features = false }
 
+[dev-dependencies]
+argh = "0.1"
+
 [features]
 default = ["use_system_keystone"]
 
