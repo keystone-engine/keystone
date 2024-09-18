@@ -39,11 +39,13 @@ fn build_with_cmake() {
 }
 
 fn main() {
-    #[cfg(feature = "use_system_keystone")] {
+    #[cfg(feature = "use_system_keystone")]
+    {
         pkg_config::find_library("keystone").expect("Could not find system keystone");
         return;
     }
-    #[cfg(feature = "build_keystone_cmake")] {
+    #[cfg(feature = "build_keystone_cmake")]
+    {
         build_with_cmake();
         return;
     }

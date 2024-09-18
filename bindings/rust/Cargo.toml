@@ -19,7 +19,7 @@ libc = "0.2"
 keystone-sys = { path = "keystone-sys", version = "0.9.2", default-features = false }
 
 [features]
-default = []
+default = ["use_system_keystone"]
 
 use_system_keystone = ["keystone-sys/use_system_keystone"]
 build_keystone_cmake = ["keystone-sys/build_keystone_cmake"]
