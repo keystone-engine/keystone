@@ -87,8 +87,8 @@ fn main() -> Result<(), i32> {
         "sparc64be" => (Arch::SPARC, Mode::SPARC64 | Mode::BIG_ENDIAN),
         "systemz" => (Arch::SYSTEMZ, Mode::BIG_ENDIAN),
         "evm" => (Arch::EVM, Mode::LITTLE_ENDIAN),
-        "riscv32" => (Arch::RISCV, Mode::RISCV32 | Mode::LITTLE_ENDIAN),
-        "riscv64" => (Arch::RISCV, Mode::RISCV64 | Mode::LITTLE_ENDIAN),
+        //"riscv32" => (Arch::RISCV, Mode::RISCV32 | Mode::LITTLE_ENDIAN),
+        //"riscv64" => (Arch::RISCV, Mode::RISCV64 | Mode::LITTLE_ENDIAN),
         _ => {
             eprintln!("invalid arch/mode: {mode}");
             return Err(1);

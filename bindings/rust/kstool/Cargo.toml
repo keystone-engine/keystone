@@ -1,19 +1,20 @@
 [package]
-name = "kstool-cli"
+name = "keystone-cli"
 version = "0.1.0"
 edition = "2021"
 description = "Quick assembler using keystone-engine for CTF"
 license = "MIT"
+resolver = "2"
 
 [[bin]]
 name = "kstool"
 path = "src/main.rs"
 
 [dependencies]
-keystone = { version = "0.10", path = "../", default-features = false }
+keystone = { version = "0.1", package = "keystone-engine", default-features = false }
 argh = "0.1"
 
 [features]
 default = ["use_system"]
-use_system = ["keystone/use_system_keystone"]
-use_cmake = ["keystone/build_keystone_cmake"]
+use_system = ["keystone/use-system-lib"]
+use_cmake = ["keystone/cmake"]
