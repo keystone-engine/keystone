@@ -1,11 +1,16 @@
 [package]
-name = "kstool"
+name = "kstool-cli"
 version = "0.1.0"
 edition = "2021"
 description = "Quick assembler using keystone-engine for CTF"
+license = "MIT"
+
+[[bin]]
+name = "kstool"
+path = "src/main.rs"
 
 [dependencies]
-keystone = { version = "0.9", path = "../", default-features = false }
+keystone = { version = "0.10", path = "../", default-features = false }
 argh = "0.1"
 
 [features]

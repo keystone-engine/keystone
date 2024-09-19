@@ -2,10 +2,6 @@
 //! By Nguyen Anh Quynh <aquynh@gmail.com>, 2016 */
 //! Rust bindings by Remco Verhoef <remco@dutchcoders.io>, 2016 */
 //!
-#![allow(bad_style)]
-
-#[macro_use]
-extern crate bitflags;
 
 pub mod keystone_const;
 
@@ -18,6 +14,8 @@ use ::std::{ffi::CStr, fmt, ptr};
 pub struct ks_engine {
     _private: [u8; 0],
 }
+
+#[expect(non_camel_case_types)]
 pub type ks_handle = ptr::NonNull<ks_engine>;
 
 extern "C" {

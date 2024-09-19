@@ -17,30 +17,58 @@
 
 extern crate keystone_sys as ffi;
 
-use std::{
-    convert::TryInto,
-    ffi::{CStr, CString},
-    fmt,
-    ops::Not,
-};
+use std::{convert::TryInto, ffi::CStr, fmt};
 
 pub use crate::ffi::keystone_const::*;
 pub use crate::ffi::ks_handle;
 
 #[derive(Debug, PartialEq)]
 pub struct AsmResult {
-    pub size: u32,
     pub stat_count: u32,
-    pub bytes: Vec<u8>,
+    size: u32,
+    ptr: *mut libc::c_uchar,
+}
+
+impl AsmResult {
+    pub fn as_bytes(&self) -> &[u8] {
+        let bytes = unsafe { core::slice::from_raw_parts(self.ptr, self.size as _) };
+        bytes
+    }
+}
+
+impl Drop for AsmResult {
+    fn drop(&mut self) {
+        unsafe {
+            ffi::ks_free(self.ptr);
+        };
+    }
 }
 
 impl fmt::Display for AsmResult {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        for &byte in &self.bytes {
+        for byte in self.as_bytes() {
             f.write_fmt(format_args!("{:02x}", byte))?;
         }
 
         Ok(())
+    }
+}
+
+#[derive(Debug)]
+pub enum AsmError {
+    NullPtr,
+    SizeOverflow,
+    Raw(Error),
+}
+
+impl fmt::Display for AsmError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let msg = match self {
+            Self::NullPtr => "got NULL ptr in allocation",
+            Self::SizeOverflow => "u32 bigger than size_t",
+            Self::Raw(err) => return fmt::Display::fmt(err, f),
+        };
+        f.write_str(msg)
     }
 }
 
@@ -88,6 +116,7 @@ impl Keystone {
         let err = unsafe { ffi::ks_open(arch, mode, &mut handle) };
         if err == Error::OK {
             Ok(Keystone {
+                // fixme: return err
                 handle: handle.expect("Got NULL engine from ks_open()"),
             })
         } else {
@@ -120,42 +149,36 @@ impl Keystone {
     ///
     /// This API dynamically allocate memory to contain assembled instruction.
     /// Resulted array of bytes containing the machine code  is put into @*encoding
-    pub fn asm(&self, str: String, address: u64) -> Result<AsmResult, Error> {
+    pub fn asm(&self, str: &CStr, address: u64) -> Result<AsmResult, AsmError> {
         let mut size: libc::size_t = 0;
         let mut stat_count: libc::size_t = 0;
 
-        let s = CString::new(str).unwrap();
         let mut ptr: *mut libc::c_uchar = std::ptr::null_mut();
 
-        let err = Error::from_bits_truncate(unsafe {
+        let err = unsafe {
             ffi::ks_asm(
                 self.handle,
-                s.as_ptr(),
+                str.as_ptr(),
                 address,
                 &mut ptr,
                 &mut size,
                 &mut stat_count,
             )
-        });
+        };
 
-        if err == Error::OK {
-            debug_assert!(ptr.is_null().not());
-            let bytes_slice = unsafe { std::slice::from_raw_parts(ptr, size) };
-            let bytes = bytes_slice.to_vec();
-
-            unsafe {
-                ffi::ks_free(ptr);
-            };
-
-            Ok(AsmResult {
-                size: size.try_into().expect("size_t overflowed u32"),
-                stat_count: stat_count.try_into().expect("size_t overflowed u32"),
-                bytes,
-            })
-        } else {
-            let err = self.error().unwrap_or(err);
-            Err(err)
+        if err != 0 {
+            let err = unsafe { ffi::ks_errno(self.handle) };
+            return Err(AsmError::Raw(err));
         }
+        if ptr.is_null() {
+            return Err(AsmError::NullPtr);
+        }
+
+        Ok(AsmResult {
+            stat_count: stat_count.try_into().map_err(|_| AsmError::SizeOverflow)?,
+            size: size.try_into().map_err(|_| AsmError::SizeOverflow)?,
+            ptr,
+        })
     }
 }
 

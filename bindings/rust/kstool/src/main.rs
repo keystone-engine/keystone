@@ -1,4 +1,5 @@
 use argh::FromArgs;
+use std::ffi::CString;
 use std::fmt;
 use std::io;
 use std::str::FromStr;
@@ -99,35 +100,26 @@ fn main() -> Result<(), i32> {
         let Ok(data) = std::fs::read(&args.asm) else {
             panic!("cannot read filename {path}", path = &args.asm);
         };
-        String::from_utf8(data).expect("cannot decode utf-8 file")
+        CString::from_vec_with_nul(data).expect("file shouldn't contains NUL bytes")
     } else {
-        args.asm
+        CString::new(args.asm).expect("assembly contains NUL bytes")
     };
 
-    let result = engine.asm(asm, 0).expect("could not assemble");
+    let result = engine.asm(&asm, 0).expect("could not assemble");
     let output_format = args.format.unwrap_or(FormatOuput::default());
     match output_format {
         FormatOuput::Hex => {
-            println!("{}", enhex(&result.bytes));
+            println!("{result}");
         }
         FormatOuput::Raw => {
             use io::Write;
             let stdout = io::stdout();
             let mut handle = stdout.lock();
             handle
-                .write_all(&result.bytes)
+                .write_all(&result.as_bytes())
                 .expect("cannot write to stdout");
         }
     }
 
     Ok(())
-}
-
-fn enhex(s: &[u8]) -> String {
-    use fmt::Write;
-    let mut out = String::with_capacity(s.len() * 2);
-    for b in s {
-        let _e = write!(&mut out, "{b:02x}");
-    }
-    out
 }
