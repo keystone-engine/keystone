@@ -100,9 +100,14 @@ fn main() -> Result<(), i32> {
         let Ok(data) = std::fs::read(&args.asm) else {
             panic!("cannot read filename {path}", path = &args.asm);
         };
-        CString::from_vec_with_nul(data).expect("file shouldn't contains NUL bytes")
+        CString::from_vec_with_nul(data).expect("file shouldn't contain NUL bytes")
     } else {
-        CString::new(args.asm).expect("assembly contains NUL bytes")
+        let norm = args
+            .asm
+            .replace("word [", "word ptr [")
+            .replace("dword [", "dword ptr [")
+            .replace("qword [", "qword ptr [");
+        CString::new(norm).expect("assembly shouldn't contain NUL bytes")
     };
 
     let result = engine.asm(&asm, 0).expect("could not assemble");
