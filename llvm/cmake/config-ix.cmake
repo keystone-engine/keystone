@@ -35,7 +35,7 @@ function(check_type_exists type files variable)
   add_cxx_include(includes "${files}")
   CHECK_CXX_SOURCE_COMPILES("
     ${includes} ${type} typeVar;
-    int main() {
+    int main(void) {
         return 0;
     }
     " ${variable})
@@ -83,7 +83,7 @@ check_include_file(histedit.h HAVE_HISTEDIT_H)
 check_cxx_source_compiles("
 #include <stddef.h>
 #include <cxxabi.h>
-int main() { return 0; }
+int main(void) { return 0; }
 " HAVE_CXXABI_H)
 
 # library checks
@@ -414,7 +414,7 @@ if( PURE_WINDOWS )
     #include <imagehlp.h>
     extern \"C\" void foo(PENUMLOADED_MODULES_CALLBACK);
     extern \"C\" void foo(BOOL(CALLBACK*)(PCSTR,ULONG_PTR,ULONG,PVOID));
-    int main(){return 0;}"
+    int main(void){return 0;}"
     HAVE_ELMCB_PCSTR)
   if( HAVE_ELMCB_PCSTR )
     set(WIN32_ELMCB_PCSTR "PCSTR")

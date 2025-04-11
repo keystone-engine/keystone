@@ -27,7 +27,7 @@ VALUE KsClass = Qnil;
 VALUE KsError = Qnil;
 
 
-void Init_keystone() {
+void Init_keystone(void) {
     rb_require("keystone/keystone_const");
     KeystoneModule = rb_define_module("Keystone");
     KsError = rb_define_class_under(KeystoneModule, "KsError", rb_eStandardError);

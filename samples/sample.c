@@ -61,7 +61,7 @@ static bool sym_resolver(const char *symbol, uint64_t *value)
 }
 
 // test symbol resolver to handle missing symbols
-static int test_sym_resolver()
+static int test_sym_resolver(void)
 {
     ks_engine *ks;
     ks_err err;
