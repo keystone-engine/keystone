@@ -17,7 +17,7 @@ class TestX86(regress.RegressTest):
         try:
             # An exception should be raised from the jnz exit:; being bad
             encoding, count = ks.asm(b"jnz exit:; add eax, ebx; exit: ret")
-        except Exception, e:
+        except Exception as e:
             return
         raise Exception
 
