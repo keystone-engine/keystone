@@ -1,0 +1,26 @@
+[package]
+name = "keystone-cli"
+version = "0.1.0"
+edition = "2021"
+description = "Quick assembler using keystone-engine for CTF"
+license = "MIT"
+resolver = "2"
+
+[[bin]]
+name = "kstool"
+path = "src/main.rs"
+
+[dependencies]
+# keystone = { version = "0.1", package = "keystone-engine", default-features = false }
+argh = "0.1"
+
+[dependencies.keystone]
+version = "0.2"
+# in my forked
+package = "keystone-engine"
+default-features = false
+
+[features]
+default = ["use_system"]
+use_system = ["keystone/use-system-lib"]
+use_cmake = ["keystone/cmake"]

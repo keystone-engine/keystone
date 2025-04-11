@@ -1,18 +1,13 @@
-#[cfg(feature = "build_keystone_cmake")]
-extern crate cmake;
-#[cfg(feature = "use_system_keystone")]
-extern crate pkg_config;
-
-#[cfg(all(not(windows), feature = "build_keystone_cmake"))]
-use std::os::unix::fs::symlink;
-#[cfg(all(windows, feature = "build_keystone_cmake"))]
-use std::os::windows::fs::symlink_dir as symlink;
-
-#[cfg(feature = "build_keystone_cmake")]
-use std::path::Path;
+#[cfg(all(feature = "use_system_keystone", feature = "build_keystone_cmake"))]
+compile_error!("mutual exclusive features: use_system_keystone & build_with_cmake");
 
 #[cfg(feature = "build_keystone_cmake")]
 fn build_with_cmake() {
+    #[cfg(not(windows))]
+    use std::os::unix::fs::symlink;
+    #[cfg(windows)]
+    use std::os::windows::fs::symlink_dir as symlink;
+    use std::path::Path;
     if !Path::new("keystone").exists() {
         // This only happens when using the crate via a `git` reference as the
         // published version already embeds keystone's source.
@@ -44,11 +39,14 @@ fn build_with_cmake() {
 }
 
 fn main() {
-    if cfg!(feature = "use_system_keystone") {
-        #[cfg(feature = "use_system_keystone")]
+    #[cfg(feature = "use_system_keystone")]
+    {
         pkg_config::find_library("keystone").expect("Could not find system keystone");
-    } else {
-        #[cfg(feature = "build_keystone_cmake")]
+        return;
+    }
+    #[cfg(feature = "build_keystone_cmake")]
+    {
         build_with_cmake();
+        return;
     }
 }

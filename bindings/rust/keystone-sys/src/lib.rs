@@ -2,33 +2,20 @@
 //! By Nguyen Anh Quynh <aquynh@gmail.com>, 2016 */
 //! Rust bindings by Remco Verhoef <remco@dutchcoders.io>, 2016 */
 //!
-#![allow(bad_style)]
-
-#[macro_use]
-extern crate bitflags;
-extern crate libc;
 
 pub mod keystone_const;
 
-use keystone_const::{Arch, Error, Mode, OptionType, OptionValue};
-use ::std::{
-    ffi::CStr,
-    fmt,
-    ptr,
-};
-use ::libc::{
-    c_char,
-    c_uchar,
-    c_int,
-    c_uint,
-    size_t,
-};
+use crate::keystone_const::{Arch, Error, Mode, OptionType, OptionValue};
+use ::libc::{c_char, c_int, c_uchar, c_uint, size_t};
+use ::std::{ffi::CStr, fmt, ptr};
 
 /// Opaque type representing the Keystone engine
 #[repr(C)]
 pub struct ks_engine {
     _private: [u8; 0],
 }
+
+#[expect(non_camel_case_types)]
 pub type ks_handle = ptr::NonNull<ks_engine>;
 
 extern "C" {

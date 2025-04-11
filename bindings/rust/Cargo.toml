@@ -1,11 +1,12 @@
 [package]
 name = "keystone"
-version = "0.9.2"
+version = "0.10.0"
 authors = [
   "Remco Verhoef <remco.verhoef@dutchcoders.io>",
   "Tasuku SUENAGA a.k.a. gunyarakun <tasuku-s-github@titech.ac>"
 ]
 description = "Rust bindings for the keystone-engine"
+edition = "2021"
 license = "GPL-2.0"
 readme = "README.md"
 repository = "https://github.com/keystone-engine/keystone"
@@ -15,12 +16,13 @@ include = [
 
 [dependencies]
 libc = "0.2"
-keystone-sys = { path = "keystone-sys", version = "0.9.2" }
+keystone-sys = { path = "keystone-sys", version = "0.9.2", default-features = false }
 
 [features]
-default = []
+default = ["use_system_keystone"]
 
 use_system_keystone = ["keystone-sys/use_system_keystone"]
 build_keystone_cmake = ["keystone-sys/build_keystone_cmake"]
 
 [workspace]
+members = ["kstool"]
