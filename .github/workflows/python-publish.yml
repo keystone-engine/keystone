@@ -1,66 +1,202 @@
 name: PyPI 📦 Distribution
 
-on: [push]
+on:
+  workflow_dispatch:
+  pull_request: # Ensures PRs don't break the build process
+  push:
 
 jobs:
-  build:
+  build_sdist:
+    name: "sdist"
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-        platform: [x32, x64]
+        os: [ubuntu-latest]
     steps:
-    - uses: actions/checkout@v2
+      - name: Check out repository
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
+      - name: Set up python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
 
-    - name: Set up MSVC x86
-      if: matrix.os == 'windows-latest' && matrix.platform == 'x32'
-      uses: ilammy/msvc-dev-cmd@v1
-      with:
-        arch: x86
+      - name: Build sdist
+        run: |
+          cd bindings/python && python setup.py sdist
 
-    - name: Set up MSVC x64
-      if: matrix.os == 'windows-latest' && matrix.platform == 'x64'
-      uses: ilammy/msvc-dev-cmd@v1
+      - uses: actions/upload-artifact@v3
+        with:
+          path: bindings/python/dist/*
 
-    - name: Install dependencies
-      run: |
-        pip install setuptools wheel
+  build_wheels_windows:
+    name: "${{ matrix.os }} ${{ matrix.cibw_archs }} ${{ matrix.cibw_build }}"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest]
+        cibw_build: ["cp38-*", "cp39-*", "cp310-*", "cp311-*"]
+        cibw_archs: ["AMD64", "x86", "ARM64"]
+        exclude:
+          - os: windows-latest
+            cibw_build: "cp38-*"
+            cibw_archs: "ARM64"
 
-    - name: Build distribution 📦
-      shell: bash 
-      run: |
-        if [ ${{ matrix.platform }} == 'x32' ] && [ ${{ matrix.os }} == 'windows-latest' ]; then
-             cd bindings/python && python setup.py build -p win32 bdist_wheel -p win32
-        elif [ ${{ matrix.platform }} == 'x32' ] && [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
-             docker run --rm -v `pwd`/:/work dockcross/manylinux1-x86 > ./dockcross
-             chmod +x ./dockcross
-             ./dockcross bindings/python/build_wheel.sh
-        elif [ ${{ matrix.platform }} == 'x64' ] && [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
-             docker run --rm -v `pwd`/:/work dockcross/manylinux1-x64 > ./dockcross
-             chmod +x ./dockcross
-             ./dockcross bindings/python/build_wheel.sh
-        elif [ ${{ matrix.platform }} == 'x32' ] && [ ${{ matrix.os }} == 'macos-latest' ]; then
-             cd bindings/python && python setup.py sdist
-        else
-             cd bindings/python && python setup.py bdist_wheel
-        fi
+    steps:
+      - name: "Set environment variables (Windows)"
+        shell: pwsh
+        run: |
+          (Get-ItemProperty "HKLM:System\CurrentControlSet\Control\FileSystem").LongPathsEnabled
 
-    - uses: actions/upload-artifact@v2
-      with:
-         path: ${{ github.workspace }}/bindings/python/dist/*
+      - name: Set up MSVC x64
+        uses: ilammy/msvc-dev-cmd@v1
 
-  publish:
-    needs: [build]
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.12.3
+        with:
+          package-dir: "bindings/python"
+        env:
+          CIBW_ARCHS: ${{ matrix.cibw_archs }}
+          CIBW_BUILD: ${{ matrix.cibw_build }}
+          CIBW_TEST_SKIP: "*"
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: wheelhouse/*.whl
+
+  build_wheels_linux:
+    name: "${{ matrix.os }} ${{ matrix.cibw_archs }} ${{ matrix.cibw_build }}"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        cibw_build: ["cp38-*", "cp39-*", "cp310-*", "cp311-*"]
+        cibw_archs: ["x86_64", "i686", "aarch64", "ppc64le"]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        if: matrix.cibw_archs != 'x86_64'
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.12.3
+        with:
+          package-dir: "bindings/python"
+        env:
+          CIBW_ARCHS: ${{ matrix.cibw_archs }}
+          CIBW_BUILD: ${{ matrix.cibw_build }}
+          CIBW_TEST_SKIP: "*"
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: wheelhouse/*.whl
+
+  build_wheels_macos:
+    name: "${{ matrix.os }} ${{ matrix.cibw_archs }} ${{ matrix.cibw_build }}"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest]
+        cibw_build: ["cp38-*", "cp39-*", "cp310-*", "cp311-*"]
+        cibw_archs: ["x86_64"]
+    env:
+      SYSTEM_VERSION_COMPAT: 0 # https://github.com/actions/setup-python/issues/469#issuecomment-1192522949
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.12.3
+        with:
+          package-dir: "bindings/python"
+        env:
+          CIBW_ARCHS: ${{ matrix.cibw_archs }}
+          CIBW_BUILD: ${{ matrix.cibw_build }}
+          CIBW_TEST_SKIP: "*"
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: wheelhouse/*.whl
+
+  build_wheels_macos_arm64:
+    name: "${{ matrix.os }} ${{ matrix.cibw_archs }} ${{ matrix.cibw_build }}"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest]
+        cibw_build: ["cp38-*", "cp39-*", "cp310-*", "cp311-*"]
+        cibw_archs: ["arm64"]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.12.3
+        with:
+          package-dir: "bindings/python"
+        env:
+          CIBW_BUILD: ${{ matrix.cibw_build }}
+          CIBW_ARCHS: ${{ matrix.cibw_archs }}
+          CIBW_TEST_SKIP: "*"
+          CIBW_REPAIR_WHEEL_COMMAND: |
+            echo "Target delocate archs: {delocate_archs}"
+
+            ORIGINAL_WHEEL={wheel}
+
+            echo "Running delocate-listdeps to list linked original wheel dependencies"
+            delocate-listdeps --all $ORIGINAL_WHEEL
+
+            echo "Renaming .whl file when architecture is 'macosx_arm64'"
+            RENAMED_WHEEL=${ORIGINAL_WHEEL//x86_64/arm64}
+
+            echo "Wheel will be renamed to $RENAMED_WHEEL"
+            mv $ORIGINAL_WHEEL $RENAMED_WHEEL
+
+            echo "Running delocate-wheel command on $RENAMED_WHEEL"
+            delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v $RENAMED_WHEEL
+
+            echo "Running delocate-listdeps to list linked wheel dependencies"
+            WHEEL_SIMPLE_FILENAME="${RENAMED_WHEEL##*/}"
+            delocate-listdeps --all {dest_dir}/$WHEEL_SIMPLE_FILENAME
+
+            echo "DONE."
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: wheelhouse/*.whl
+
+  upload_to_pypi:
+    if: |
+      (github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/'))
+      || github.event_name == 'workflow_dispatch'
+    needs:
+      [
+        "build_sdist",
+        "build_wheels_windows",
+        "build_wheels_linux",
+        "build_wheels_macos",
+        "build_wheels_macos_arm64",
+      ]
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags')
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: artifact
           path: dist
