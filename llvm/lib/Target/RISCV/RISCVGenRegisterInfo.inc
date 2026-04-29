@@ -620,17 +620,17 @@ extern const char RISCVRegClassStrings[] = {
 };
 
 extern const MCRegisterClass RISCVMCRegisterClasses[] = {
-  { FPR32, FPR32Bits, 8, 32, sizeof(FPR32Bits), RISCV::FPR32RegClassID, 1, true },
-  { GPR, GPRBits, 67, 32, sizeof(GPRBits), RISCV::GPRRegClassID, 1, true },
-  { GPRNoX0, GPRNoX0Bits, 0, 31, sizeof(GPRNoX0Bits), RISCV::GPRNoX0RegClassID, 1, true },
-  { GPRNoX0X2, GPRNoX0X2Bits, 14, 30, sizeof(GPRNoX0X2Bits), RISCV::GPRNoX0X2RegClassID, 1, true },
-  { GPRTC, GPRTCBits, 58, 15, sizeof(GPRTCBits), RISCV::GPRTCRegClassID, 1, true },
-  { FPR32C, FPR32CBits, 30, 8, sizeof(FPR32CBits), RISCV::FPR32CRegClassID, 1, true },
-  { GPRC, GPRCBits, 44, 8, sizeof(GPRCBits), RISCV::GPRCRegClassID, 1, true },
-  { GPRC_and_GPRTC, GPRC_and_GPRTCBits, 49, 6, sizeof(GPRC_and_GPRTCBits), RISCV::GPRC_and_GPRTCRegClassID, 1, true },
-  { SP, SPBits, 64, 1, sizeof(SPBits), RISCV::SPRegClassID, 1, true },
-  { FPR64, FPR64Bits, 24, 32, sizeof(FPR64Bits), RISCV::FPR64RegClassID, 1, true },
-  { FPR64C, FPR64CBits, 37, 8, sizeof(FPR64CBits), RISCV::FPR64CRegClassID, 1, true },
+  { FPR32, FPR32Bits, 8, 32, sizeof(FPR32Bits), RISCV::FPR32RegClassID, 4, 4, 1, true },
+  { GPR, GPRBits, 67, 32, sizeof(GPRBits), RISCV::GPRRegClassID, 8, 8, 1, true },
+  { GPRNoX0, GPRNoX0Bits, 0, 31, sizeof(GPRNoX0Bits), RISCV::GPRNoX0RegClassID, 8, 8, 1, true },
+  { GPRNoX0X2, GPRNoX0X2Bits, 14, 30, sizeof(GPRNoX0X2Bits), RISCV::GPRNoX0X2RegClassID, 8, 8, 1, true },
+  { GPRTC, GPRTCBits, 58, 15, sizeof(GPRTCBits), RISCV::GPRTCRegClassID, 8, 8, 1, true },
+  { FPR32C, FPR32CBits, 30, 8, sizeof(FPR32CBits), RISCV::FPR32CRegClassID, 4, 4, 1, true },
+  { GPRC, GPRCBits, 44, 8, sizeof(GPRCBits), RISCV::GPRCRegClassID, 8, 8, 1, true },
+  { GPRC_and_GPRTC, GPRC_and_GPRTCBits, 49, 6, sizeof(GPRC_and_GPRTCBits), RISCV::GPRC_and_GPRTCRegClassID, 8, 8, 1, true },
+  { SP, SPBits, 64, 1, sizeof(SPBits), RISCV::SPRegClassID, 8, 8, 1, true },
+  { FPR64, FPR64Bits, 24, 32, sizeof(FPR64Bits), RISCV::FPR64RegClassID, 8, 8, 1, true },
+  { FPR64C, FPR64CBits, 37, 8, sizeof(FPR64CBits), RISCV::FPR64CRegClassID, 8, 8, 1, true },
 };
 
 // RISCV Dwarf<->LLVM register mappings.
