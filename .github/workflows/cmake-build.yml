@@ -1,0 +1,31 @@
+# Builds the codebase with cmake
+
+name: CMake CI
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  linux-build:
+    name: Linux
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Install prerequisites
+        shell: bash
+        run: |
+          sudo apt-get -y update
+          sudo apt-get install -y \
+              cmake \
+              gcc
+      - name: Configure
+        shell: bash
+        run: |
+          cmake -B build
+      - name: Bulid
+        shell: bash
+        run: |
+          cmake --build build

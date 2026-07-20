@@ -90,7 +90,7 @@ impl Keystone {
         let err = unsafe { ffi::ks_open(arch, mode, &mut handle) };
         if err == Error::OK {
             Ok(Keystone {
-                handle: handle.expect("Got NULL engine from ks_open()")
+                handle: handle.expect("Got NULL engine from ks_open()"),
             })
         } else {
             Err(err)

@@ -10,19 +10,9 @@ extern crate libc;
 
 pub mod keystone_const;
 
+use ::libc::{c_char, c_int, c_uchar, c_uint, size_t};
+use ::std::{ffi::CStr, fmt, ptr};
 use keystone_const::{Arch, Error, Mode, OptionType, OptionValue};
-use ::std::{
-    ffi::CStr,
-    fmt,
-    ptr,
-};
-use ::libc::{
-    c_char,
-    c_uchar,
-    c_int,
-    c_uint,
-    size_t,
-};
 
 /// Opaque type representing the Keystone engine
 #[repr(C)]

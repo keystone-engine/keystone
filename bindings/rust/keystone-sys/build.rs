@@ -17,7 +17,7 @@ fn build_with_cmake() {
         // This only happens when using the crate via a `git` reference as the
         // published version already embeds keystone's source.
         let pwd = std::env::current_dir().unwrap();
-        let keystone_dir = pwd.ancestors().skip(3).next().unwrap();
+        let keystone_dir = pwd.ancestors().nth(3).unwrap();
         symlink(keystone_dir, "keystone").expect("failed to symlink keystone");
     }
 

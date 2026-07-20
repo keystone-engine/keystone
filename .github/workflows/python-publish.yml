@@ -1,6 +1,9 @@
 name: PyPI 📦 Distribution
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   build:

@@ -1,0 +1,31 @@
+# Builds the codebase with cmake on ubuntu, windows and macos.
+#
+name: Rust CI
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  linux-test:
+    name: Linux
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Install prerequisites
+        shell: bash
+        run: |
+          sudo apt-get -y update
+          sudo apt-get install -y \
+              cmake \
+              libclang-dev \
+              pkg-config \
+              gcc
+      - name: Build and test rust
+        shell: bash
+        run: |
+          cd bindings/rust
+          cargo test
