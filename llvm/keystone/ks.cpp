@@ -554,7 +554,10 @@ ks_err ks_close(ks_engine *ks)
 KEYSTONE_EXPORT
 ks_err ks_option(ks_engine *ks, ks_opt_type type, size_t value)
 {
-    ks->MAI->setRadix(16);
+    // MAI is only set up for LLVM-based architectures. Backends such as EVM
+    // leave it NULL, so guard against dereferencing it here.
+    if (ks->MAI)
+        ks->MAI->setRadix(16);
     switch(type) {
         case KS_OPT_SYNTAX:
             if (ks->arch != KS_ARCH_X86)
