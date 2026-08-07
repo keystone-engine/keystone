@@ -49,6 +49,7 @@ MCAsmInfo::MCAsmInfo() {
   Code32Directive = ".code32";
   Code64Directive = ".code64";
   AssemblerDialect = 0;
+  Radix = 10;
   AllowAtInName = false;
   SupportsQuotedNames = true;
   UseDataRegionDirectives = false;
