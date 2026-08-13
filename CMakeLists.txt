@@ -6,6 +6,7 @@ project(keystone)
 
 set(KEYSTONE_VERSION_MAJOR 0)
 set(KEYSTONE_VERSION_MINOR 9)
+set(KEYSTONE_VERSION_EXTRA 2)
 
 option(KEYSTONE_BUILD_STATIC_RUNTIME "Embed static runtime" ON)
 option(BUILD_LIBS_ONLY "Only build keystone library" 0)
