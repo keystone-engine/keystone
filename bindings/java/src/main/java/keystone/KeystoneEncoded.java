@@ -19,7 +19,7 @@ public class KeystoneEncoded {
     /**
      * The address of the first assembly instruction.
      */
-    private final int address;
+    private final long address;
 
     /**
      * The number of statements successfully processed.
@@ -33,7 +33,7 @@ public class KeystoneEncoded {
      * @param address            The address of the first assembly instruction.
      * @param numberOfStatements The number of statements successfully processed.
      */
-    public KeystoneEncoded(byte[] machineCode, int address, int numberOfStatements) {
+    public KeystoneEncoded(byte[] machineCode, long address, int numberOfStatements) {
         this.machineCode = machineCode;
         this.address = address;
         this.numberOfStatements = numberOfStatements;
@@ -49,7 +49,7 @@ public class KeystoneEncoded {
     /**
      * Gets the address of the first assembly instruction.
      */
-    public int getAddress() {
+    public long getAddress() {
         return address;
     }
 

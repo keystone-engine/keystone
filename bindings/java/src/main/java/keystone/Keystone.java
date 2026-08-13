@@ -121,7 +121,7 @@ public class Keystone implements AutoCloseable {
      * @return The return value is the machine code of the assembly instructions.
      * @throws AssembleFailedKeystoneException if the assembly code cannot be assembled properly.
      */
-    public KeystoneEncoded assemble(String assembly, int address) {
+    public KeystoneEncoded assemble(String assembly, long address) {
         var pointerToMachineCodeBuffer = new PointerByReference();
         var pointerToMachineCodeSize = new IntByReference();
         var pointerToNumberOfStatements = new IntByReference();
@@ -161,7 +161,7 @@ public class Keystone implements AutoCloseable {
      * @return The return value is the machine code of the assembly instructions.
      * @throws AssembleFailedKeystoneException if the assembly code cannot be assembled properly.
      */
-    public KeystoneEncoded assemble(Iterable<String> assembly, int address) {
+    public KeystoneEncoded assemble(Iterable<String> assembly, long address) {
         return assemble(String.join(";", assembly), address);
     }
 

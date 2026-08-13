@@ -98,3 +98,9 @@ Ping the contributors of the Java bindings when submitting a pull request, so yo
 
 The Java bindings for Keystone is open-sourced software licensed under the MIT license.
 The license of the library Keystone may be different and is available [at the root of the repository of Keystone](https://github.com/keystone-engine/keystone).
+
+
+
+mvn package -DskipTests
+
+mvn install:install-file -Dfile=F:\coding\java\keystone\bindings\java\target\java-bindings-0.9.1-0-jar-with-dependencies.jar -DgroupId=org.bon.keystone -DartifactId=keystone -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
