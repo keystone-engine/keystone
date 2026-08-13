@@ -6,13 +6,13 @@ While Keystone reuses a part of LLVM as its core (with quite a few of changes to
 
 The section below highlights the areas where Keystone shines.
 
-- **Framework**: *llvm-mc* is a tool, but not a framework. Therefore, it is very tricky to build your own assembler tools on of LLVM, while this is the main purpose of Keystone. Keystone's API makes it easy to handle errors, report internal status of its core or change compilation mode at runtime, etc.
+- **Framework**: *llvm-mc* is a tool, but not a framework. Therefore, it is very tricky to build your own assembler tools on top of LLVM, while this is the main purpose of Keystone. Keystone's API makes it easy to handle errors, report internal status of its core or change compilation mode at runtime, etc.
 
-- **Lightweight**: Keystone is much more lightweight than LLVM because we stripped all the subsystems that do not involve in assembler. As a result, Keystone is more than 10 times smaller in size and in memory consumption. Initial verson of Keystone takes only 30 seconds to compile on a laptop, while LLVM needs 15 minutes to build.
+- **Lightweight**: Keystone is much more lightweight than LLVM because we stripped all the subsystems that are not involved in assembly. As a result, Keystone is more than 10 times smaller in size and in memory consumption. The initial verson of Keystone takes only 30 seconds to compile on a laptop, while LLVM needs 15 minutes to build.
 
-- **Flexibility**: LLVM's assembler is much more restricted. For example, it only accepts assembly in LLVM syntax. On the contrary, Keystone is going to support all kind of input, ranging from Nasm, Masm, etc.
+- **Flexibility**: LLVM's assembler is much more restricted. For example, it only accepts assembly in LLVM syntax. On the contrary, Keystone is going to support all kinds of input, ranging from Nasm, Masm, etc.
 
-- **Capability**: LLVM is for compiling & linking, so (understandably) some of its technical choices are not inline with an independent assembler like Keystone. For example, LLVM always put code and data in separate sections. However, it is very common for assembly to mix code and data in the same section (think about shellcode). Keystone is made to handle this kind of input very well.
+- **Capability**: LLVM is for compiling & linking, so (understandably) some of its technical choices are not in line with an independent assembler like Keystone. For example, LLVM always puts code and data in separate sections. However, it is very common for assembly to mix code and data in the same section (think about shellcode). Keystone is made to handle this kind of input very well.
 
 - **Binding**: As a framework, Keystone supports multiple bindings on top of the core, starting with Python (more bindings will be added later). This makes it easy to be adopted by developers.
 
