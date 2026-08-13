@@ -1,6 +1,7 @@
-#![allow(non_camel_case_types)]
+#![expect(non_camel_case_types)]
 // For Keystone Engine. AUTO-GENERATED FILE, DO NOT EDIT [keystone_const.rs]
 use ::libc::*;
+use bitflags::bitflags;
 
 pub const API_MAJOR: c_uint = 0;
 pub const API_MINOR: c_uint = 9;
