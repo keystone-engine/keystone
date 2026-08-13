@@ -703,6 +703,8 @@ int ks_asm(ks_engine *ks,
 
     if (ks->errnum >= KS_ERR_ASM)
         return -1;
+    else if (Ctx.hadError())
+        return -1;
     else {
         *insn_size = Msg.size();
         encoding = (unsigned char *)malloc(*insn_size);
