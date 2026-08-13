@@ -27,6 +27,7 @@ MCAsmInfo::MCAsmInfo() {
   CalleeSaveStackSlotSize = 4;
 
   IsLittleEndian = true;
+  Radix = 10;
   StackGrowsUp = false;
   HasSubsectionsViaSymbols = false;
   HasMachoZeroFillDirective = false;

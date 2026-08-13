@@ -208,7 +208,7 @@ bool MCAssembler::evaluateFixup(const MCAsmLayout &Layout,
             ks_sym_resolver resolver = (ks_sym_resolver)KsSymResolver;
             if (resolver(Sym.getName().str().c_str(), &imm)) {
                 // resolver handled this symbol
-                Value = imm;
+                Value += imm;
                 IsResolved = true;
             } else {
                 // resolver did not handle this symbol
