@@ -37,7 +37,7 @@ if(NOT LLVM_FORCE_USE_OLD_TOOLCHAIN)
       check_cxx_source_compiles("
 #include <atomic>
 std::atomic<float> x(0.0f);
-int main() { return (float)x; }"
+int main(void) { return (float)x; }"
         LLVM_NO_OLD_LIBSTDCXX)
       if(NOT LLVM_NO_OLD_LIBSTDCXX)
         message(FATAL_ERROR "Host Clang must be able to find libstdc++4.7 or newer!")
@@ -457,7 +457,7 @@ elseif( LLVM_COMPILER_IS_GCC_COMPATIBLE )
       set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} -std=c++11 -Werror=non-virtual-dtor")
       CHECK_CXX_SOURCE_COMPILES("class base {public: virtual void anchor();protected: ~base();};
                                  class derived final : public base { public: ~derived();};
-                                 int main() { return 0; }"
+                                 int main(void) { return 0; }"
                                 CXX_WONT_WARN_ON_FINAL_NONVIRTUALDTOR)
       set(CMAKE_REQUIRED_FLAGS ${OLD_CMAKE_REQUIRED_FLAGS})
       append_if(CXX_WONT_WARN_ON_FINAL_NONVIRTUALDTOR
@@ -471,7 +471,7 @@ elseif( LLVM_COMPILER_IS_GCC_COMPATIBLE )
     # line is also a // comment.
     set(OLD_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
     set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} -Werror -Wcomment")
-    CHECK_C_SOURCE_COMPILES("// \\\\\\n//\\nint main() {return 0;}"
+    CHECK_C_SOURCE_COMPILES("// \\\\\\n//\\nint main(void) {return 0;}"
                             C_WCOMMENT_ALLOWS_LINE_WRAP)
     set(CMAKE_REQUIRED_FLAGS ${OLD_CMAKE_REQUIRED_FLAGS})
     if (NOT C_WCOMMENT_ALLOWS_LINE_WRAP)
@@ -508,7 +508,7 @@ elseif( LLVM_COMPILER_IS_GCC_COMPATIBLE )
                                #include <cassert>
                                #define NDEBUG
                                #include <cassert>
-                               int main() { assert(this code is not compiled); }"
+                               int main(void) { assert(this code is not compiled); }"
                                CXX_SUPPORTS_MODULES)
     set(CMAKE_REQUIRED_FLAGS ${OLD_CMAKE_REQUIRED_FLAGS})
     if (CXX_SUPPORTS_MODULES)

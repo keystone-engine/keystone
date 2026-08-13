@@ -539,7 +539,7 @@ EOF
 		sed 's/^		//' << EOF >$dummy.c
 		#include <sys/systemcfg.h>
 
-		main()
+		int main(void)
 			{
 			if (!__power_pc())
 				exit(1);
@@ -622,7 +622,7 @@ EOF
 		#include <stdlib.h>
 		#include <unistd.h>
 
-		int main ()
+		int main (void)
 		{
 		#if defined(_SC_KERNEL_BITS)
 		    long bits = sysconf(_SC_KERNEL_BITS);
@@ -684,8 +684,8 @@ EOF
 	eval $set_cc_for_build
 	sed 's/^	//' << EOF >$dummy.c
 	#include <unistd.h>
-	int
-	main ()
+
+	int main (void)
 	{
 	  long cpu = sysconf (_SC_CPU_VERSION);
 	  /* The order matters, because CPU_IS_HP_MC68K erroneously returns
@@ -1338,7 +1338,7 @@ cat >$dummy.c <<EOF
 # include <sys/types.h>
 # include <sys/utsname.h>
 #endif
-main ()
+int main (void)
 {
 #if defined (sony)
 #if defined (MIPSEB)

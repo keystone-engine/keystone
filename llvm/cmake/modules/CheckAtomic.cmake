@@ -11,7 +11,7 @@ function(check_working_cxx_atomics varname)
   CHECK_CXX_SOURCE_COMPILES("
 #include <atomic>
 std::atomic<int> x;
-int main() {
+int main(void) {
   return x;
 }
 " ${varname})
@@ -46,7 +46,7 @@ CHECK_CXX_SOURCE_COMPILES("
 #include <Intrin.h> /* Workaround for PR19898. */
 #include <windows.h>
 #endif
-int main() {
+int main(void) {
 #ifdef _MSC_VER
         volatile LONG val = 1;
         MemoryBarrier();
