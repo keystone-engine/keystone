@@ -708,9 +708,15 @@ getBranchTargetOpValue(const MCInst &MI, unsigned OpIdx,
                        const MCSubtargetInfo &STI) const {
   // FIXME: This really, really shouldn't use TargetMachine. We don't want
   // coupling between MC and TM anywhere we can help it.
-  if (isThumb2(STI))
-    return
-      ::getBranchTargetOpValue(MI, OpIdx, ARM::fixup_t2_condbranch, Fixups, STI);
+  if (isThumb2(STI)) {
+    const MCOperand MO = MI.getOperand(OpIdx);
+    if (MO.isExpr())
+      return ::getBranchTargetOpValue(MI, OpIdx, ARM::fixup_t2_condbranch,
+                                      Fixups, STI);
+    // The branch target is an absolute address; convert it to a PC-relative
+    // byte offset. The encoder below drops the (always zero) low bit.
+    return (uint32_t)(int32_t)(MO.getImm() - MI.getAddress() - 4);
+  }
   return getARMBranchTargetOpValue(MI, OpIdx, Fixups, STI);
 }
 
