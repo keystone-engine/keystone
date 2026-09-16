@@ -49,6 +49,12 @@ MCAsmInfo::MCAsmInfo() {
   Code32Directive = ".code32";
   Code64Directive = ".code64";
   AssemblerDialect = 0;
+  // Radix must be initialised here.  AsmLexer copies it into defaultRadix in its
+  // constructor and branches on it in LexDigit(), and the only other writer in the tree
+  // is ks_option(), which sets it to 16 -- but ks_option() rejects every architecture
+  // except x86, so an ARM64/ARM/MIPS engine lexed with whatever was in the freshly
+  // allocated memory.  10 is what LexDigit() already assumes when nothing says otherwise.
+  Radix = 10;
   AllowAtInName = false;
   SupportsQuotedNames = true;
   UseDataRegionDirectives = false;
