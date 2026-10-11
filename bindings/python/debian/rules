@@ -1,7 +1,0 @@
-#!/usr/bin/make -f
-
-export PYBUILD_NAME=keystone-engine
-
-%:
-	dh $@ --with python2,python3 --buildsystem=pybuild
-

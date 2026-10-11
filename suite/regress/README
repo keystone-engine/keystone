@@ -1,6 +1,0 @@
-This directory contains all the regression test, written in Python.
-
-Run ./regress.py to execute all the tests.
-
-Take test1.py as an example when you create a new regression.
-Please fill in the Github issue number & Author in your regression.
