@@ -1,0 +1,6 @@
+allow-expect-in-tests                    = true
+allow-panic-in-tests                     = true
+allow-print-in-tests                     = true
+allow-unwrap-in-tests                    = true
+semicolon-inside-block-ignore-singleline = true
+semicolon-outside-block-ignore-multiline = true

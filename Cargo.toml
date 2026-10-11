@@ -1,0 +1,55 @@
+[workspace]
+default-members = [ "bindings/rust" ]
+members         = [ "bindings/rust", "bindings/rust/sys" ]
+resolver        = "2"
+
+[workspace.package]
+rust-version = "1.85.0"
+version      = "2.0.0"
+authors      = [ "Amaan Qureshi <git@amaanq.com>" ]
+keywords     = [ "keystone", "cpu", "assembly", "bindings" ]
+categories   = [ "api-bindings", "compilers", "no-std" ]
+edition      = "2024"
+license      = "MPL-2.0"
+readme       = "README.md"
+repository   = "https://github.com/keystone-engine/keystone"
+description  = "Rust bindings for the Keystone Engine"
+
+
+[profile.release-dev]
+inherits         = "release"
+lto              = false
+debug            = true
+debug-assertions = true
+overflow-checks  = true
+incremental      = true
+codegen-units    = 256
+
+[workspace.lints.clippy]
+cargo    = { level = "warn", priority = -1 }
+nursery  = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+
+blanket_clippy_restriction_lints = "allow"
+restriction                      = { level = "warn", priority = -1 }
+
+arbitrary_source_item_ordering  = "allow"
+arithmetic_side_effects         = "allow"
+else_if_without_else            = "allow"
+error_impl_error                = "allow"
+exhaustive_enums                = "allow"
+exhaustive_structs              = "allow"
+implicit_return                 = "allow"
+indexing_slicing                = "allow"
+integer_division                = "allow"
+integer_division_remainder_used = "allow"
+missing_trait_methods           = "allow"
+mod_module_files                = "allow"
+module_name_repetitions         = "allow"
+question_mark_used              = "allow"
+ref_patterns                    = "allow"
+separated_literal_suffix        = "allow"
+single_call_fn                  = "allow"
+std_instead_of_alloc            = "allow"
+std_instead_of_core             = "allow"
+tests_outside_test_module       = "allow"
