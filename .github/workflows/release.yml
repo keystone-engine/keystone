@@ -1,0 +1,187 @@
+name: Tag and Release
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  ci:
+    name: CI
+    permissions:
+      contents: read
+    uses: ./.github/workflows/ci.yml # zizmor: ignore[self-repository]
+
+  prepare:
+    needs: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      skip: ${{ steps.check.outputs.skip }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31.11.1
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Read version
+        id: version
+        run: |
+          cargo=$(nix run --inputs-from . nixpkgs#fq -- -r '.workspace.package.version' Cargo.toml)
+          npm=$(nix run --inputs-from . nixpkgs#fq -- -r '.version' bindings/javascript/package.json)
+          cmake=$(sed -nE 's/^project\(keystone VERSION ([0-9.]+) .*/\1/p' CMakeLists.txt)
+          if [[ "$npm" != "$cargo" || "$cmake" != "$cargo" ]]; then
+            echo "::error::Cargo.toml is $cargo, package.json is $npm, CMakeLists.txt is $cmake"
+            exit 1
+          fi
+          echo "version=v${cargo}" >> "$GITHUB_OUTPUT"
+
+      - name: Check if version changed
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          if gh api "/repos/${REPOSITORY}/git/ref/tags/${VERSION}" >/dev/null 2>&1; then
+            echo "::notice::Tag ${VERSION} already exists. Skipping."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Tag and create the release
+        if: steps.check.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          VERSION: ${{ steps.version.outputs.version }}
+          SHA: ${{ github.sha }}
+        run: |
+          gh api --method POST "/repos/${REPOSITORY}/git/refs" -f "ref=refs/tags/${VERSION}" -f "sha=${SHA}"
+
+          flags=(--generate-notes)
+          if [[ "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-.+$ ]]; then
+            flags+=(--prerelease)
+          fi
+          previous=$(gh api "/repos/${REPOSITORY}/git/matching-refs/tags/v" \
+            --jq '.[].ref | ltrimstr("refs/tags/")' | grep -vxF "$VERSION" | sort -V | tail -n1 || true)
+          if [[ -n "$previous" ]]; then
+            flags+=(--notes-start-tag "$previous")
+          fi
+          gh release create "$VERSION" --repo "$REPOSITORY" --title "$VERSION" --target "$SHA" "${flags[@]}"
+
+  crates:
+    needs: prepare
+    if: needs.prepare.outputs.skip != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    environment: release
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      SCCACHE_GHA_ENABLED: "true"
+      CMAKE_C_COMPILER_LAUNCHER: sccache
+      CMAKE_CXX_COMPILER_LAUNCHER: sccache
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.prepare.outputs.version }}
+          persist-credentials: false
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31.11.1
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: mozilla-actions/sccache-action@fc920bf0ec8de6ee65d409111f7ec508035751ba # v0.0.11
+
+      # crates.io caps a crate at 10 MB, and AMDGPU alone would push it over.
+      - name: Vendor the C++ tree into the sys crate
+        run: |
+          mkdir bindings/rust/sys/keystone
+          git ls-files -z -- CMakeLists.txt CMakeUninstall.in LICENSE pkg-config.pc.cmake cmake include llvm/CMakeLists.txt llvm/LICENSE.TXT llvm/cmake llvm/include llvm/keystone llvm/lib ':!:llvm/lib/Target/AMDGPU' \
+            | tar -cf - --null -T - | tar -xf - -C bindings/rust/sys/keystone
+
+      - name: Authenticate with crates.io
+        id: auth
+        uses: rust-lang/crates-io-auth-action@c6f97d42243bad5fab37ca0427f495c86d5b1a18 # v1.0.5
+
+      - name: Publish
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          # Skipping published crates lets a failed run be retried.
+          for crate in keystone-engine-sys keystone-engine; do
+            if curl -sfA "${GITHUB_REPOSITORY} release" "https://crates.io/api/v1/crates/${crate}/${VERSION#v}" >/dev/null; then
+              echo "::notice::${crate} ${VERSION#v} is already on crates.io."
+            else
+              nix develop --command cargo publish -p "$crate" --allow-dirty
+            fi
+          done
+
+  npm:
+    needs: prepare
+    if: needs.prepare.outputs.skip != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    environment: release
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.prepare.outputs.version }}
+          persist-credentials: false
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31.11.1
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish
+        working-directory: bindings/javascript
+        env:
+          EM_CACHE: ${{ runner.temp }}/emscripten
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          if nix shell --inputs-from . nixpkgs#nodejs --command npm view "keystone-engine@${VERSION#v}" version >/dev/null 2>&1; then
+            echo "::notice::keystone-engine ${VERSION#v} is already on npm."
+            exit 0
+          fi
+          nix shell --inputs-from . nixpkgs#emscripten nixpkgs#cmake nixpkgs#ninja nixpkgs#nodejs --command npm publish --access public
+
+  pypi:
+    needs: prepare
+    if: needs.prepare.outputs.skip != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: release
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: python-*
+          path: dist
+          merge-multiple: true
+
+      - uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3
+        with:
+          skip-existing: true

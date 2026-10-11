@@ -1,0 +1,218 @@
+name: CI
+
+on:
+  push:
+    branches: [v2]
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'push' }}
+
+jobs:
+  rust:
+    name: Rust (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-26.04-arm, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
+    env:
+      SCCACHE_GHA_ENABLED: "true"
+      CMAKE_C_COMPILER_LAUNCHER: sccache
+      CMAKE_CXX_COMPILER_LAUNCHER: sccache
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31.11.1
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: mozilla-actions/sccache-action@fc920bf0ec8de6ee65d409111f7ec508035751ba # v0.0.11
+
+      - name: Format
+        if: matrix.os == 'ubuntu-latest'
+        run: nix develop --command bash -euo pipefail -c 'cargo fmt --all --check && taplo fmt --check'
+
+      - name: Clippy
+        if: ${{ !cancelled() }}
+        run: nix develop --command cargo clippy --workspace --all-targets --release --features keystone-engine/arch_all -- -D warnings
+
+      - name: Test
+        if: ${{ !cancelled() }}
+        run: >-
+          nix develop --command bash -euo pipefail -c
+          'cargo nextest run --workspace --release --features keystone-engine/arch_all
+          && cargo test --doc --workspace --release --features keystone-engine/arch_all'
+
+  nix:
+    name: Nix
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31.11.1
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Flake check
+        run: nix flake check --no-build
+
+  gcc:
+    name: GCC
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      SCCACHE_GHA_ENABLED: "true"
+      CMAKE_C_COMPILER_LAUNCHER: sccache
+      CMAKE_CXX_COMPILER_LAUNCHER: sccache
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31.11.1
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: mozilla-actions/sccache-action@fc920bf0ec8de6ee65d409111f7ec508035751ba # v0.0.11
+
+      - name: Build
+        run: >-
+          nix shell --inputs-from . nixpkgs#gcc nixpkgs#cmake nixpkgs#ninja --command
+          bash -euo pipefail -c
+          'CC=gcc CXX=g++ cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release && cmake --build build'
+
+  javascript:
+    name: JavaScript
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31.11.1
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and assemble
+        working-directory: bindings/javascript
+        env:
+          EM_CACHE: ${{ runner.temp }}/emscripten
+        run: |
+          nix shell --inputs-from . nixpkgs#emscripten nixpkgs#cmake nixpkgs#ninja nixpkgs#nodejs --command npm run build
+          nix shell --inputs-from . nixpkgs#nodejs --command node --input-type=module -e '
+            import { init, Keystone, Arch } from "./index.js";
+            await init();
+            const { bytes } = new Keystone(Arch.X86).asm("nop");
+            if (bytes[0] !== 0x90) throw new Error("nop assembled to " + bytes);
+          '
+
+  python:
+    name: Python (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-26.04-arm, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: pypa/cibuildwheel@f9b966cfadf4109556cadc5bb39ddb72d0ce664e # v4.3.5
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: python-${{ matrix.os }}
+          path: wheelhouse/*.whl
+          retention-days: 7
+
+  sdist:
+    name: Python sdist
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build
+        run: pipx run build --sdist --outdir dist
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: python-sdist
+          path: dist/*.tar.gz
+          retention-days: 7
+
+  audit:
+    name: Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31.11.1
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: cargo deny
+        run: nix develop --command cargo deny check
+
+  actions:
+    name: Actions lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31.11.1
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      # actionlint 1.7.12 predates the ubuntu-26.04 runner images
+      # (rhysd/actionlint#743).
+      - name: actionlint
+        run: >-
+          nix shell nixpkgs#actionlint nixpkgs#shellcheck --command
+          actionlint -ignore 'label "ubuntu-26\.04(-arm)?" is unknown'
+
+      - name: zizmor
+        if: ${{ !cancelled() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: nix run nixpkgs#zizmor -- --format github .
+
+  required:
+    name: Required Checks
+    if: always()
+    needs: [rust, nix, gcc, javascript, python, sdist, audit, actions]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1

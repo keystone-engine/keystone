@@ -13,6 +13,7 @@
 !CMakeUninstall.in
 !Cargo.lock
 !Cargo.toml
+!deny.toml
 !LICENSE
 !README.md
 !flake.lock
