@@ -34,5 +34,8 @@
 !llvm/
 !llvm/**
 
+!nix/
+!nix/**
+
 !tools/
 !tools/**
