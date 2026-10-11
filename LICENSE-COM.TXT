@@ -1,8 +1,0 @@
-The commercial license of Keystone allows you to use Keystone libraries & tools
-in commercial products.
-
-- The Keystone commercial license is perpetual and royalty-free.
-- You have the right to distribute the binary and modifications of Keystone.
-- No source code redistribution is allowed in any way.
-
-Contact keystone.engine@gmail.com for further information.

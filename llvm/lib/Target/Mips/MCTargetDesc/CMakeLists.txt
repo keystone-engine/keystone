@@ -1,9 +1,0 @@
-add_llvm_library(LLVMMipsDesc
-  MipsABIInfo.cpp
-  MipsAsmBackend.cpp
-  MipsELFObjectWriter.cpp
-  MipsMCAsmInfo.cpp
-  MipsMCCodeEmitter.cpp
-  MipsMCExpr.cpp
-  MipsMCTargetDesc.cpp
-  )
