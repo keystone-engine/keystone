@@ -1,0 +1,90 @@
+[package]
+name                   = "keystone-engine-sys"
+version.workspace      = true
+authors.workspace      = true
+keywords.workspace     = true
+categories             = [ "api-bindings", "compilers", "external-ffi-bindings", "no-std" ]
+edition.workspace      = true
+rust-version.workspace = true
+license.workspace      = true
+readme.workspace       = true
+repository.workspace   = true
+description            = "Raw FFI bindings to the Keystone assembler engine"
+links                  = "keystone"
+
+[lints]
+workspace = true
+
+[build-dependencies]
+bindgen    = "0.73.2"
+cmake      = "0.1.58"
+pkg-config = "0.3.34"
+
+[features]
+default = [
+  "arch_aarch64",
+  "arch_arm",
+  "arch_avr",
+  "arch_bpf",
+  "arch_csky",
+  "arch_evm",
+  "arch_hexagon",
+  "arch_lanai",
+  "arch_loongarch",
+  "arch_m68k",
+  "arch_mips",
+  "arch_msp430",
+  "arch_ppc",
+  "arch_riscv",
+  "arch_sparc",
+  "arch_systemz",
+  "arch_ve",
+  "arch_wasm",
+  "arch_x86",
+  "arch_xtensa",
+]
+dynamic_linkage = [  ]
+arch_all = [
+  "arch_aarch64",
+  "arch_amdgpu",
+  "arch_arm",
+  "arch_avr",
+  "arch_bpf",
+  "arch_csky",
+  "arch_evm",
+  "arch_hexagon",
+  "arch_lanai",
+  "arch_loongarch",
+  "arch_m68k",
+  "arch_mips",
+  "arch_msp430",
+  "arch_ppc",
+  "arch_riscv",
+  "arch_sparc",
+  "arch_systemz",
+  "arch_ve",
+  "arch_wasm",
+  "arch_x86",
+  "arch_xtensa",
+]
+arch_aarch64 = [  ]
+arch_amdgpu = [  ]
+arch_arm = [  ]
+arch_avr = [  ]
+arch_bpf = [  ]
+arch_csky = [  ]
+arch_evm = [  ]
+arch_hexagon = [  ]
+arch_lanai = [  ]
+arch_loongarch = [  ]
+arch_m68k = [  ]
+arch_mips = [  ]
+arch_msp430 = [  ]
+arch_ppc = [  ]
+arch_riscv = [  ]
+arch_sparc = [  ]
+arch_systemz = [  ]
+arch_ve = [  ]
+arch_wasm = [  ]
+arch_x86 = [  ]
+arch_xtensa = [  ]
