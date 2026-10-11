@@ -1,0 +1,87 @@
+[package]
+name                   = "keystone-engine"
+version.workspace      = true
+authors.workspace      = true
+keywords.workspace     = true
+categories.workspace   = true
+edition.workspace      = true
+rust-version.workspace = true
+license.workspace      = true
+readme.workspace       = true
+repository.workspace   = true
+description.workspace  = true
+
+[lints]
+workspace = true
+
+[dependencies]
+keystone-engine-sys = { default-features = false, path = "sys", version = "2.0.0" }
+
+[features]
+default = [
+  "arch_aarch64",
+  "arch_arm",
+  "arch_avr",
+  "arch_bpf",
+  "arch_csky",
+  "arch_evm",
+  "arch_hexagon",
+  "arch_lanai",
+  "arch_loongarch",
+  "arch_m68k",
+  "arch_mips",
+  "arch_msp430",
+  "arch_ppc",
+  "arch_riscv",
+  "arch_sparc",
+  "arch_systemz",
+  "arch_ve",
+  "arch_wasm",
+  "arch_x86",
+  "arch_xtensa",
+]
+dynamic_linkage = [ "keystone-engine-sys/dynamic_linkage" ]
+arch_all = [
+  "arch_aarch64",
+  "arch_amdgpu",
+  "arch_arm",
+  "arch_avr",
+  "arch_bpf",
+  "arch_csky",
+  "arch_evm",
+  "arch_hexagon",
+  "arch_lanai",
+  "arch_loongarch",
+  "arch_m68k",
+  "arch_mips",
+  "arch_msp430",
+  "arch_ppc",
+  "arch_riscv",
+  "arch_sparc",
+  "arch_systemz",
+  "arch_ve",
+  "arch_wasm",
+  "arch_x86",
+  "arch_xtensa",
+]
+arch_aarch64 = [ "keystone-engine-sys/arch_aarch64" ]
+arch_amdgpu = [ "keystone-engine-sys/arch_amdgpu" ]
+arch_arm = [ "keystone-engine-sys/arch_arm" ]
+arch_avr = [ "keystone-engine-sys/arch_avr" ]
+arch_bpf = [ "keystone-engine-sys/arch_bpf" ]
+arch_csky = [ "keystone-engine-sys/arch_csky" ]
+arch_evm = [ "keystone-engine-sys/arch_evm" ]
+arch_hexagon = [ "keystone-engine-sys/arch_hexagon" ]
+arch_lanai = [ "keystone-engine-sys/arch_lanai" ]
+arch_loongarch = [ "keystone-engine-sys/arch_loongarch" ]
+arch_m68k = [ "keystone-engine-sys/arch_m68k" ]
+arch_mips = [ "keystone-engine-sys/arch_mips" ]
+arch_msp430 = [ "keystone-engine-sys/arch_msp430" ]
+arch_ppc = [ "keystone-engine-sys/arch_ppc" ]
+arch_riscv = [ "keystone-engine-sys/arch_riscv" ]
+arch_sparc = [ "keystone-engine-sys/arch_sparc" ]
+arch_systemz = [ "keystone-engine-sys/arch_systemz" ]
+arch_ve = [ "keystone-engine-sys/arch_ve" ]
+arch_wasm = [ "keystone-engine-sys/arch_wasm" ]
+arch_x86 = [ "keystone-engine-sys/arch_x86" ]
+arch_xtensa = [ "keystone-engine-sys/arch_xtensa" ]
