@@ -48,10 +48,21 @@ foreach(
 endforeach()
 
 # Shared library
-add_library(keystone SHARED ks.cpp ${EVM_SOURCES})
+if(EMSCRIPTEN)
+  add_executable(keystone ks.cpp ${EVM_SOURCES})
+else()
+  add_library(keystone SHARED ks.cpp ${EVM_SOURCES})
+endif()
 
 # Exported symbols are GC roots, so export only the C API.
-if(APPLE)
+if(EMSCRIPTEN)
+  set_target_properties(keystone PROPERTIES SUFFIX .mjs)
+  target_link_options(keystone PRIVATE --no-entry -sMODULARIZE -sEXPORT_ES6
+    -sENVIRONMENT=web,worker,node -sFILESYSTEM=0 -sALLOW_MEMORY_GROWTH
+    -sALLOW_TABLE_GROWTH -sSTACK_SIZE=8MB -Wl,--stack-first
+    -sEXPORTED_FUNCTIONS=_malloc,_free
+    -sEXPORTED_RUNTIME_METHODS=addFunction,removeFunction,UTF8ToString,stringToUTF8,lengthBytesUTF8,HEAPU8,HEAPU32)
+elseif(APPLE)
   target_link_options(keystone PRIVATE -Wl,-dead_strip "-Wl,-exported_symbol,_ks_*")
 elseif(UNIX)
   file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/keystone.map "{ global: ks_*; local: *; };\n")

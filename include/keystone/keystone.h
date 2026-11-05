@@ -21,6 +21,8 @@ extern "C" {
 #else
 #define KEYSTONE_EXPORT
 #endif
+#elif defined(__EMSCRIPTEN__)
+#define KEYSTONE_EXPORT __attribute__((used, visibility("default")))
 #else
 #ifdef __GNUC__
 #ifndef KEYSTONE_STATIC

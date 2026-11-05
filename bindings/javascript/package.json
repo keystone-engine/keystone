@@ -1,0 +1,25 @@
+{
+  "name": "keystone-engine",
+  "version": "1.0.0",
+  "description": "Keystone assembler engine compiled to WebAssembly",
+  "keywords": ["keystone", "assembler", "assembly", "wasm"],
+  "license": "MPL-2.0",
+  "author": "Amaan Qureshi <git@amaanq.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keystone-engine/keystone.git",
+    "directory": "bindings/javascript"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    }
+  },
+  "files": ["index.js", "index.d.ts", "keystone.mjs", "keystone.wasm"],
+  "scripts": {
+    "build": "emcmake cmake -S ../.. -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \"-DKEYSTONE_ARCH=aarch64;arm;avr;bpf;csky;evm;hexagon;lanai;loongarch;m68k;mips;msp430;ppc;riscv;sparc;systemz;ve;wasm;x86;xtensa\" && cmake --build build --target keystone && cmake -E copy build/keystone.mjs build/keystone.wasm .",
+    "prepack": "npm run build"
+  }
+}

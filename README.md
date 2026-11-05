@@ -94,6 +94,31 @@ defaults does make a big difference: an x86-only build is around 3.5 MB,
 compared to 13 MB with the defaults. Keystone is linked statically unless you
 enable `dynamic_linkage`.
 
+### JavaScript
+
+The `keystone-engine` package in [`bindings/javascript`](bindings/javascript)
+is Keystone compiled to WebAssembly, and the same build runs in browsers, Node,
+Deno, and Bun.
+
+```js
+import { Arch, Keystone, X86Syntax, init } from "keystone-engine";
+
+await init();
+const ks = new Keystone(Arch.X86);
+ks.x86Syntax = X86Syntax.NASM;
+
+const { bytes } = ks.asm("mov ah, 0x80", 0);
+// bytes is Uint8Array [0xb4, 0x80]
+ks.close();
+```
+
+Options are properties, and errors are thrown as a `KeystoneError` with the
+`code` and the `locations` of every error. `init()` loads the WebAssembly, and
+everything after it is synchronous. The package is an ES module, which Node
+22.12 and later can also `require()`. It has every architecture except AMDGPU,
+which comes to 10.2 MB, or 2.8 MB gzipped. Building it needs Emscripten, and
+`npm run build` does the rest.
+
 ## Testing
 
 The test suite runs LLVM's own MC encoding tests through Keystone, which has
