@@ -9,6 +9,7 @@ project(keystone VERSION 1.0.0 LANGUAGES C CXX)
 option(KEYSTONE_BUILD_STATIC_RUNTIME "Embed static runtime" ON)
 option(BUILD_LIBS_ONLY "Only build keystone library" OFF)
 option(KEYSTONE_BUILD_SHARED_LIBS "Build shared libraries" ON)
+option(KEYSTONE_BUILD_PYTHON "Build the Python extension module" OFF)
 
 # Set default build type if not specified
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -205,6 +206,10 @@ foreach(lib ${KEYSTONE_LLVM_LIBS})
     target_precompile_headers(${lib} REUSE_FROM LLVMMC)
   endif()
 endforeach()
+
+if(KEYSTONE_BUILD_PYTHON)
+  add_subdirectory(bindings/python)
+endif()
 
 # Generate and install pkg-config file
 find_package(PkgConfig)

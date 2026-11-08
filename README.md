@@ -119,6 +119,28 @@ everything after it is synchronous. The package is an ES module, which Node
 which comes to 10.2 MB, or 2.8 MB gzipped. Building it needs Emscripten, and
 `npm run build` does the rest.
 
+### Python
+
+The `keystone-engine` package is a C extension built on the stable ABI, so
+one wheel per platform covers CPython 3.12 and later.
+
+```python
+from keystone import Arch, Keystone, X86Syntax
+
+ks = Keystone(Arch.X86)
+ks.x86_syntax = X86Syntax.NASM
+
+asm = ks.asm("mov ah, 0x80", 0)
+assert asm.bytes == b"\xb4\x80"
+```
+
+Options are properties here too, and errors raise a `KeystoneError` with the
+`code` and the `locations` of every error. `asm` releases the GIL, so separate
+engines can assemble on separate threads. The wheels have every architecture
+except AMDGPU. To build from source, `pip install .` needs CMake and a C++
+compiler, and passing `-Ccmake.define.KEYSTONE_ARCH="x86;amdgpu"` picks the
+architectures.
+
 ## Testing
 
 The test suite runs LLVM's own MC encoding tests through Keystone, which has

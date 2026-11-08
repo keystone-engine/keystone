@@ -1,0 +1,39 @@
+BasedOnStyle: LLVM
+ColumnLimit: 100
+IndentWidth: 3
+ContinuationIndentWidth: 3
+LineEnding: LF
+InsertNewlineAtEOF: true
+MaxEmptyLinesToKeep: 1
+SeparateDefinitionBlocks: Always
+
+AlignAfterOpenBracket: BlockIndent
+AlignArrayOfStructures: Left
+AlignConsecutiveAssignments: Consecutive
+AlignConsecutiveBitFields: Consecutive
+AlignConsecutiveMacros: AcrossComments
+AlignEscapedNewlines: Left
+AlignTrailingComments: true
+BinPackArguments: false
+BinPackParameters: OnePerLine
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeTernaryOperators: true
+
+AllowShortBlocksOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+InsertBraces: true
+
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^<Python\.h>$'
+    Priority: 1
+  - Regex: "^<keystone/"
+    Priority: 2
+  - Regex: ".*"
+    Priority: 3
+
+MacroBlockBegin: "^Py_BEGIN_ALLOW_THREADS$"
+MacroBlockEnd: "^Py_END_ALLOW_THREADS$"
+StatementMacros: [PyObject_HEAD]

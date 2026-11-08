@@ -1,0 +1,83 @@
+[build-system]
+requires      = [ "scikit-build-core>=1.0" ]
+build-backend = "scikit_build_core.build"
+
+[project]
+name            = "keystone-engine"
+dynamic         = [ "version" ]
+description     = "Keystone assembler engine"
+readme          = "README.md"
+license         = "MPL-2.0"
+license-files   = [ "LICENSE", "llvm/LICENSE.TXT" ]
+authors         = [ { email = "git@amaanq.com", name = "Amaan Qureshi" } ]
+requires-python = ">=3.12"
+keywords        = [ "keystone", "assembler", "assembly" ]
+
+[project.urls]
+Repository = "https://github.com/keystone-engine/keystone"
+
+[tool.scikit-build]
+minimum-version = "build-system.requires"
+cmake.version = ">=3.26"
+build.targets = [ "keystone_python" ]
+install.components = [ "python" ]
+wheel.py-api = "cp312"
+sdist.inclusion-mode = "explicit"
+sdist.include = [
+  "/CMakeLists.txt",
+  "/CMakeUninstall.in",
+  "/LICENSE",
+  "/README.md",
+  "/pkg-config.pc.cmake",
+  "/pyproject.toml",
+  "/bindings/python/",
+  "/cmake/",
+  "/include/",
+  "/llvm/CMakeLists.txt",
+  "/llvm/LICENSE.TXT",
+  "/llvm/cmake/",
+  "/llvm/include/",
+  "/llvm/keystone/",
+  "/llvm/lib/",
+]
+
+[tool.scikit-build.cmake.define]
+KEYSTONE_BUILD_PYTHON = "ON"
+KEYSTONE_ARCH = [
+  "aarch64",
+  "arm",
+  "avr",
+  "bpf",
+  "csky",
+  "evm",
+  "hexagon",
+  "lanai",
+  "loongarch",
+  "m68k",
+  "mips",
+  "msp430",
+  "ppc",
+  "riscv",
+  "sparc",
+  "systemz",
+  "ve",
+  "wasm",
+  "x86",
+  "xtensa",
+]
+
+[[tool.dynamic-metadata]]
+provider = "scikit_build_core.metadata.regex"
+field    = "version"
+input    = "CMakeLists.txt"
+regex    = 'project\(keystone VERSION (?P<value>[0-9.]+)'
+
+[tool.cibuildwheel]
+build         = "cp312-*"
+skip          = "*-musllinux_*"
+test-requires = [ "mypy" ]
+test-sources  = [ "bindings/python/tests" ]
+test-command  = [ "python -m mypy.stubtest keystone", "python -m unittest discover -s bindings/python/tests" ]
+
+[tool.ruff]
+line-length = 100

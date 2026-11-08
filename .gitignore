@@ -18,6 +18,7 @@
 !flake.lock
 !flake.nix
 !pkg-config.pc.cmake
+!pyproject.toml
 
 !.github/
 !.github/**

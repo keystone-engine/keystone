@@ -5,3 +5,12 @@ indent_size = 2
 [*.{cpp,h}]
 indent_style = space
 indent_size = 2
+
+[bindings/python/*.c]
+indent_style = space
+indent_size = 3
+max_line_length = 100
+
+[*.{py,pyi}]
+indent_style = space
+indent_size = 4
